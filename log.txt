@@ -1,0 +1,17 @@
+{
+    "Location": "https://cloudfront.amazonaws.com/2020-05-31/distribution/E528ATQC51NNO/invalidation/I2NQPZU3XC9R3Y9V85XDVINMXB",
+    "Invalidation": {
+        "Id": "I2NQPZU3XC9R3Y9V85XDVINMXB",
+        "Status": "InProgress",
+        "CreateTime": "2024-08-03T20:05:40.732000+00:00",
+        "InvalidationBatch": {
+            "Paths": {
+                "Quantity": 1,
+                "Items": [
+                    "/*"
+                ]
+            },
+            "CallerReference": "cli-1722715539-392054"
+        }
+    }
+}
