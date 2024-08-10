@@ -9,7 +9,6 @@ import { Button } from "antd";
 import WeeklyTimetable from "../components/WeeklyTimetable";
 import Label from "../../../components/Label";
 import AddClassEventDialog from "../components/AddClassEventDialog";
-import Calendar from "../components/TestTimetable";
 import { CourseThunkAction } from "../../../redux/slices/courseSlice";
 import UpdateClassDialog from "../components/UpdateClassDialog";
 import DuplicateClassDialog from "../components/DuplicateClassDialog";
@@ -78,7 +77,7 @@ export default () => {
             <UpdateClassDialog.render />
             <AddClassEventDialog.render />
             <WeeklyTimetable />
-            <Calendar />
+            {/* <Calendar /> */}
             <Spacer height={200} />
         </div>
     );

@@ -15,6 +15,7 @@ import AddClassEventDialog from "./AddClassEventDialog";
 import { CustomResponse } from "../../../axios/responseTypes";
 import { CreateClassRequest } from "../../../dto/dto";
 import durations from "../../../constant/durations";
+import dayjs from "dayjs";
 
 export default (props: {
     dayUnixTimestamp: number,
@@ -60,7 +61,7 @@ export default (props: {
         <Box
             style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
             <Label label="AddClassEventForm.tsx" offsetTop={0} offsetLeft={180} />
-            <SectionTitle>Add Class Event</SectionTitle>
+            <SectionTitle>Add Class Event at {dayjs(hourUnixTimestamp).format("HH:mm")}</SectionTitle>
             <Spacer />
             <div style={{ display: "flex" }}>
                 <FormInputTitle>Select a Class </FormInputTitle>

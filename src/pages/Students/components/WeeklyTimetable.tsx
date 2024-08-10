@@ -26,6 +26,7 @@ export default (props: { date?: Date }) => {
     const { date = new Date() } = props;
     const dispatch = useAppDispatch();
     const studentId = useAppSelector(s => s.student.studentDetail.detail?.id) || "";
+    const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
     const currDate = date;
     const currDraggingId = useRef("");
     const [activeDraggableId, setActiveDraggableId] = useState("");
@@ -33,7 +34,7 @@ export default (props: { date?: Date }) => {
 
     const getHalfHourTimeIntervalsForDay = useCallback((date: Date) => {
         const dayJS = dayjs(date);
-        const start = dayJS.startOf("day").add(9.5, "hour");
+        const start = dayJS.startOf("day").add(9, "hour");
         const intervals: Dayjs[] = [];
         for (let offset = 0; offset < 21; offset++) {
             const time = start.add(offset * 0.5, "hour");
@@ -61,16 +62,43 @@ export default (props: { date?: Date }) => {
         setTimegrid(timetable_);
     }, [offset]);
 
+    const timetableContainerRef = useRef<HTMLDivElement | null>(null);
+
     const gridHeight = 40;
+
+    const adjustWidth = useCallback(() => {
+        const width = window.innerWidth;
+        const columnWidth = Math.min((width - 300) / 7, 140)
+        setTimetableAvailableWidth(columnWidth);
+    }, []);
+
+    const adjustWidthDefined = useRef(false);
+
+
+    useEffect(() => {
+        adjustWidth();
+        if (!adjustWidthDefined.current) {
+            window.addEventListener("resize", adjustWidth);
+            adjustWidthDefined.current = true
+        }
+        return () => {
+            window.removeEventListener("resize", adjustWidth);
+            adjustWidthDefined.current = false
+        }
+    }, [])
 
     return (
         <Box
+            ref={timetableContainerRef}
             sx={{
                 overflowY: "hidden",
-                height: "1000px",
+                height: "1050px",
                 "& .draggable-container": {
                     borderTop: "1px solid rgba(0,0,0,0.1)",
                     borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
+                },
+                "& .draggable-container:nth-child(2n+3)": {
+                    borderTop: "3px dashed rgba(0,0,0,0.15)"
                 },
                 "& .droppable:last-child": {
                     "& .draggable-container": {
@@ -84,25 +112,35 @@ export default (props: { date?: Date }) => {
                     transform: "translate(0px,0px) !important",
                 },
                 "& .grid-time: nth-child(n+2)": {
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
                     paddingRight: "14px",
-                    height: `${gridHeight}px`,
+                    height: `${gridHeight + 1}px`,
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
-                    overflow: "hidden",
                 },
                 "& .grid-hour: nth-child(n+1)": {
-                    width: "120px",
+                    width: `${timetableAvailableWidth}px`,
                     height: `${gridHeight - 1}px`,
+                },
+                "& .grid-hour.header": {
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    padding: 0,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: 0,
                 },
                 "& .droppable": {
                     "& .grid-hour": {
                         "&.disbaletransform": { transform: "none !important" },
                         "&:hover": {
                             cursor: "pointer",
-                            backgroundColor: "rgba(22,119,255,0.2)",
+                            // backgroundColor: "rgba(22,119,255,0.2)",
                         },
                     },
                 },
@@ -170,7 +208,7 @@ export default (props: { date?: Date }) => {
                     <div style={{ flex: 1 }}>
                         <div style={{ display: "flex" }}>
                             <div>
-                                <Spacer height={10} />
+                                <Spacer height={30} />
                                 {getHalfHourTimeIntervalsForDay(weekStart).map((dayJS) => {
                                     return (
                                         <div style={{ fontSize: 13 }} className="grid-time" key={dayJS.valueOf().toString()}>
@@ -185,13 +223,12 @@ export default (props: { date?: Date }) => {
                                     const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
                                     return (
                                         <div key={dayUnixTimestamp}>
-                                            <div className="grid-hour" style={{
+                                            <div className="grid-hour header" style={{
                                                 fontWeight: 400,
-                                                marginBottom: "20px",
-                                                height: 0,
                                                 textAlign: "center"
                                             }}>
-                                                {dayDayJS.format("ddd, MMM D")}
+                                                {timetableAvailableWidth >= 85 && dayDayJS.format("ddd, MMM D")}
+                                                {timetableAvailableWidth < 85 && dayDayJS.format("ddd")}
                                             </div>
                                             <Spacer height={5} />
                                             <Droppable droppableId={dayUnixTimestamp}>
