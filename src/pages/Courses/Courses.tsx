@@ -12,7 +12,7 @@ import Label from "../../components/Label";
 export default () => {
     const dispatch = useAppDispatch();
 
-    const ids = useAppSelector(s => s.class.classes.ids) || [];
+    const ids = useAppSelector(s => s.class.courses.ids) || [];
 
     const openAddClassDialog = () => {
         AddClassDialog.setContent(() => () => <AddClassForm />)

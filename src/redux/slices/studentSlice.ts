@@ -4,11 +4,12 @@ import apiClient from "../../axios/apiClient";
 import { CustomResponse } from "../../axios/responseTypes";
 import apiRoutes from "../../axios/apiRoutes";
 import { processRes } from "../../utils/processRes";
-import { Student, StudentDetail, Class, CreateClassRequest, MoveClassRequest, DuplicateClassRequest, DetachClassRequest, UpdateClassRequest } from "../../dto/dto";
+import { Student, StudentDetail, Class, CreateClassRequest, MoveClassRequest, DuplicateClassRequest, DetachClassRequest, UpdateClassRequest, CreateStudentPackageRequest } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
 import { RootState } from "../store";
 import lodash from "lodash";
+import { Student_package } from "../../prismaTypes/types";
 
 export type StudentSliceState = {
     students: {
@@ -19,6 +20,11 @@ export type StudentSliceState = {
     }
     studentDetail: {
         detail: StudentDetail | null,
+        selectedPackageId: string,
+        packages: {
+            ids?: string[],
+            idToObject?: { [id: string]: Student_package }
+        }
         timetable: {
             hrUnixTimestamps?: string[]
             hrUnixTimestampToObject?: { [id: string]: Class & { hide: boolean } }
@@ -29,6 +35,8 @@ export type StudentSliceState = {
 const initialState: StudentSliceState = {
     students: {},
     studentDetail: {
+        selectedPackageId: "",
+        packages: {},
         detail: null,
         timetable: {}
     }
@@ -38,6 +46,9 @@ const studentSlice = createSlice({
     name: 'student',
     initialState,
     reducers: {
+        setSelectedPackageId: (state, action: PayloadAction<string>) => {
+            state.studentDetail.selectedPackageId = action.payload;
+        },
         unsetStudentEvent: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
             lodash.unset(state.studentDetail.timetable.hrUnixTimestampToObject, hrTimestamp);
@@ -113,6 +124,19 @@ const studentSlice = createSlice({
                 if (state.studentDetail?.timetable.hrUnixTimestampToObject?.[String(hourTimeStamp)]) {
                     state.studentDetail.timetable.hrUnixTimestampToObject[String(hourTimeStamp)].min = min
                 }
+            })
+            .addCase(StudentThunkAction.createStudentPackage.fulfilled, (state, action) => {
+                const package_ = action.payload;
+                const idToObject = state.studentDetail?.packages?.idToObject || {};
+                state.studentDetail.packages.ids = [String(package_.id), ...(state.studentDetail.packages.ids || [])]
+                    .sort((id1, id2) => (idToObject?.[id1].start_date || 0) - (idToObject?.[id2].start_date || 0))
+                state.studentDetail.packages.idToObject = { ...(idToObject), [String(package_.id)]: package_ }
+            })
+            .addCase(StudentThunkAction.getStudentPackages.fulfilled, (state, action) => {
+                const packages = action.payload.packages;
+                const { idToObject, ids } = normalizeUtil.normalize({ idAttribute: "id", targetArr: packages })
+                state.studentDetail.packages.ids = ids.sort((id1, id2) => idToObject[id1].start_date - idToObject[id2].start_date);
+                state.studentDetail.packages.idToObject = idToObject;
             })
     }
 })
@@ -229,6 +253,26 @@ export class StudentThunkAction {
             return processRes(res, api);
         }
     )
+
+    public static createStudentPackage = createAsyncThunk(
+        "studentSlice/createStudentPackage",
+        async (props: CreateStudentPackageRequest, api) => {
+            const res = await apiClient.post<CustomResponse<Student_package>>(
+                apiRoutes.POST_CREATE_STUDENT_PACKAGE,
+                props
+            );
+            return processRes(res, api);
+        }
+    )
+    public static getStudentPackages = createAsyncThunk(
+        "studentSlice/getStudentPackages",
+        async (props: { studentId: string }, api) => {
+            const { studentId } = props;
+            const res = await apiClient.get<CustomResponse<{ packages: Student_package[] }>>(
+                apiRoutes.GET_STUDENT_PACKAGES(studentId));
+            return processRes(res, api);
+        }
+    )
 }
 
 export const studentMiddleware = createListenerMiddleware();
@@ -236,14 +280,15 @@ registerDialogAndActions(studentMiddleware,
     [
         ...loadingActions(StudentThunkAction.getStudentDetail),
         ...loadingActions(StudentThunkAction.getStudents),
-        // ...loadingActions(StudentThunkAction.getStudentClasses),
         ...loadingActions(StudentThunkAction.updateClass),
+        // ...loadingActions(StudentThunkAction.createStudentPackage),
         {
             rejections: [
                 StudentThunkAction.getStudentDetail.rejected,
                 StudentThunkAction.getStudents.rejected,
                 StudentThunkAction.duplicateClases.rejected,
-                StudentThunkAction.updateClass.rejected
+                StudentThunkAction.updateClass.rejected,
+                StudentThunkAction.createStudentPackage.rejected
             ]
         },
         {

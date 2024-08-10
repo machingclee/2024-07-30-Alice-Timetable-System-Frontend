@@ -1,4 +1,4 @@
-import { Button, Select } from "antd"
+import { Button, DatePicker, Select } from "antd"
 import Spacer from "../../../components/Spacer"
 import { useEffect, useRef, useState } from "react"
 import SectionTitle from "../../../components/SectionTitle";
@@ -8,49 +8,40 @@ import FormInputTitle from "../../../components/FormInputTitle";
 import Label from "../../../components/Label";
 import { CourseThunkAction } from "../../../redux/slices/courseSlice";
 import { StudentThunkAction } from "../../../redux/slices/studentSlice";
-import apiClient from "../../../axios/apiClient";
-import apiRoutes from "../../../axios/apiRoutes";
-import toastUtil from "../../../utils/toastUtil";
-import AddClassEventDialog from "./AddClassEventDialog";
-import { CustomResponse } from "../../../axios/responseTypes";
-import { CreateClassRequest } from "../../../dto/dto";
-import durations from "../../../constant/durations";
+import { CreateClassRequest, CreateStudentPackageRequest } from "../../../dto/dto";
 import dayjs from "dayjs";
+import AddPackageDialog from "./AddPackageDialog";
+import range from "../../../utils/range";
+
 
 export default (props: {
-    dayUnixTimestamp: number,
-    hourUnixTimestamp: number,
     studentId: string,
+    studentName: string
 }) => {
-    const { dayUnixTimestamp, hourUnixTimestamp, studentId } = props;
-    const [error, setError] = useState<Partial<CreateClassRequest>>({});
+    const { studentName, studentId } = props;
+    const [error, setError] = useState<Partial<CreateStudentPackageRequest>>({});
     const dispatch = useAppDispatch();
     const classes = useAppSelector(s => s.class.courses);
-    const formData = useRef<Partial<CreateClassRequest>>({
-        day_unix_timestamp: dayUnixTimestamp,
-        hour_unix_timestamp: hourUnixTimestamp,
-        student_id: studentId
-    })
-    const updateFormData = (update: Partial<CreateClassRequest>) => {
+    const formData = useRef<Partial<CreateStudentPackageRequest>>({})
+    const updateFormData = (update: Partial<CreateStudentPackageRequest>) => {
         formData.current = { ...formData.current, ...update };
     }
 
     const submit = async () => {
-        const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_STUDENT_CLASS, formData.current);
-        if (!res.data.success) {
-            const errorMessage = res.data?.errorMessage;
-            const errorObject = res.data?.errorObject;
-            if (errorMessage) {
-                toastUtil.error(errorMessage);
-            }
-            if (errorObject) {
-                setError(errorObject)
-            }
-        } else {
-            toastUtil.success("Event Created")
-            AddClassEventDialog.setOpen(false)
-            dispatch(StudentThunkAction.getStudentClasses({ studentId }));
+        const { course_id, min, start_date, num_of_classes } = formData.current || {};
+        if (!(course_id != null && min != null && start_date != null && num_of_classes != null)) {
+            return;
         }
+        const reqBody: CreateStudentPackageRequest = {
+            num_of_classes,
+            course_id,
+            min,
+            start_date,
+            official_end_date: dayjs(start_date).add(4, "months").valueOf(),
+            student_id: studentId
+        }
+        AddPackageDialog.setOpen(false)
+        await dispatch(StudentThunkAction.createStudentPackage(reqBody)).unwrap()
     }
 
     useEffect(() => {
@@ -60,11 +51,11 @@ export default (props: {
     return (
         <Box
             style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
-            <Label label="AddClassEventForm.tsx" offsetTop={0} offsetLeft={180} />
-            <SectionTitle>Add Class Event at {dayjs(hourUnixTimestamp).format("HH:mm")}</SectionTitle>
+            <Label label="AddPackageForm.tsx" offsetTop={0} offsetLeft={180} />
+            <SectionTitle>Add Student Package to {studentName}</SectionTitle>
             <Spacer />
             <div style={{ display: "flex" }}>
-                <FormInputTitle>Select a Course </FormInputTitle>
+                <FormInputTitle>Select a Course</FormInputTitle>
                 <Spacer />
                 {error.course_id && <div>{error.course_id}</div>}
             </div>
@@ -82,6 +73,17 @@ export default (props: {
                 })}
             />
             <Spacer />
+            <FormInputTitle>Start Date</FormInputTitle>
+            <Spacer height={5} />
+            <DatePicker
+                onChange={(val) => {
+                    formData.current.start_date = val.valueOf()
+                }}
+                popupStyle={{ zIndex: 10 ** 7 }}
+                defaultValue={dayjs(new Date())}
+            />
+            <Spacer />
+
             <div style={{ display: "flex" }}>
                 <FormInputTitle>Select a Duration (in minutes)</FormInputTitle>
                 <Spacer />
@@ -92,8 +94,24 @@ export default (props: {
                 dropdownStyle={{ zIndex: 10 ** 4 }}
                 style={{ width: "100%" }}
                 onChange={(value) => { updateFormData({ min: value }) }}
-                options={durations}
+                options={[
+                    { value: 45, label: "45" },
+                    { value: 60, label: "60" },
+                    { value: 75, label: "75" }
+                ]}
             />
+            <Spacer />
+            <div style={{ display: "flex" }}>
+                <FormInputTitle>Select Number of Classes</FormInputTitle>
+            </div>
+            <Spacer height={5} />
+            <Select
+                dropdownStyle={{ zIndex: 10 ** 4 }}
+                style={{ width: "100%" }}
+                onChange={(value) => { updateFormData({ num_of_classes: value }) }}
+                options={range({ from: 1, to: 100 }).map(value => ({ value, label: value + "" }))}
+            />
+
             <Spacer />
             <Spacer />
             <Button type="primary" block onClick={submit}>

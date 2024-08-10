@@ -6,12 +6,14 @@ export default {
     POST_CREATE_COURSE: "/course/create-course",
     POST_CREATE_STUDENT_CLASS: "/student/create-student-class",
     POST_DUPLICATE_CLASSES: "/student/duplicate-classes",
+    POST_CREATE_STUDENT_PACKAGE: "/student/create-student-package",
 
     GET_USERS: "/user/users",
     GET_STUDENTS: "/student/students",
     GET_COURSES: "/course/courses",
     GET_STUDENT_DETAIL: (studentId: string) => `/student/student-detail/${studentId}`,
     GET_STUDENT_CLASSES: (studentId: string) => `/student/student-classes/${studentId}`,
+    GET_STUDENT_PACKAGES: (studentId: string) => `/student/student-packages/${studentId}`,
 
     PUT_UPDATE_USER: "/user/update-user",
     PUT_UPDATE_STUDENT: "/student/update-student",

@@ -8,7 +8,7 @@
     "build:prod": "tsc && vite build --mode prod",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "deploy": "export AWS_PROFILE=james && yarn build:prod && aws cloudfront create-invalidation --distribution-id E528ATQC51NNO --paths \"/*\" > log.txt && aws s3 sync --delete ./dist/ s3://alice-timetable"
+    "deploy": "yarn build:prod && aws cloudfront create-invalidation --distribution-id E528ATQC51NNO --paths \"/*\" > log.txt && aws s3 sync --delete ./dist/ s3://alice-timetable"
   },
   "dependencies": {
     "@emotion/react": "^11.13.0",
@@ -16,6 +16,7 @@
     "@fontsource/roboto": "^5.0.13",
     "@hello-pangea/dnd": "^16.6.0",
     "@mui/material": "^6.0.0-beta.3",
+    "@prisma/client": "^5.18.0",
     "@reduxjs/toolkit": "1.9.7",
     "@types/lodash": "^4.17.7",
     "@types/node": "^20.14.12",
@@ -27,6 +28,7 @@
     "cross-env": "^7.0.3",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.12",
+    "kysely": "^0.27.4",
     "lodash": "^4.17.21",
     "normalizr": "^3.6.2",
     "overlayscrollbars": "^2.9.2",

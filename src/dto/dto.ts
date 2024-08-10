@@ -111,7 +111,8 @@ export type CreateClassRequest = {
     course_id: number,
     day_unix_timestamp: number,
     hour_unix_timestamp: number,
-    min: number
+    min: number,
+    package_id: number
 }
 
 export type DuplicateClassRequest = {
@@ -126,4 +127,13 @@ export type DetachClassRequest = {
 export type UpdateClassRequest = {
     classId: number,
     min: number
+}
+
+export type CreateStudentPackageRequest = {
+    num_of_classes: number,
+    start_date: number,
+    official_end_date: number,
+    min: number,
+    course_id: number,
+    student_id: string
 }

@@ -33,7 +33,7 @@ export default ({
 }) => {
     const [error, setError] = useState<Partial<CreateClassRequest>>({});
     const dispatch = useAppDispatch();
-    const classes = useAppSelector((s) => s.class.classes);
+    const classes = useAppSelector((s) => s.class.courses);
     const formData = useRef<Partial<CreateClassRequest>>({
         day_unix_timestamp: dayUnixTimestamp,
         hour_unix_timestamp: hourUnixTimestamp,

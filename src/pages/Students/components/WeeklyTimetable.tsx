@@ -68,7 +68,7 @@ export default (props: { date?: Date }) => {
 
     const adjustWidth = useCallback(() => {
         const width = window.innerWidth;
-        const columnWidth = Math.min((width - 300) / 7, 140)
+        const columnWidth = Math.min((width - 660) / 7, 200)
         setTimetableAvailableWidth(columnWidth);
     }, []);
 
@@ -97,7 +97,7 @@ export default (props: { date?: Date }) => {
                     borderTop: "1px solid rgba(0,0,0,0.1)",
                     borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
                 },
-                "& .draggable-container:nth-child(2n+3)": {
+                "& .draggable-container:nth-child(n+1)": {
                     borderTop: "3px dashed rgba(0,0,0,0.15)"
                 },
                 "& .droppable:last-child": {
@@ -115,7 +115,7 @@ export default (props: { date?: Date }) => {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     paddingRight: "14px",
-                    height: `${gridHeight + 1}px`,
+                    height: `${gridHeight + 2}px`,
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -231,7 +231,7 @@ export default (props: { date?: Date }) => {
                                                 {timetableAvailableWidth < 85 && dayDayJS.format("ddd")}
                                             </div>
                                             <Spacer height={5} />
-                                            <Droppable droppableId={dayUnixTimestamp}>
+                                            <Droppable droppableId={dayUnixTimestamp} mode="virtual">
                                                 {(provided) => {
                                                     return (
                                                         <div ref={provided.innerRef} {...provided.droppableProps} className="droppable">

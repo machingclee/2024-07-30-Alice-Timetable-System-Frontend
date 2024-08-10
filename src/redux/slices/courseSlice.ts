@@ -9,7 +9,7 @@ import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
 
 export type ClassSliceState = {
-    classes: {
+    courses: {
         ids?: number[],
         idToObject?: { [id: number]: Course }
     }
@@ -17,7 +17,7 @@ export type ClassSliceState = {
 }
 
 const initialState: ClassSliceState = {
-    classes: {},
+    courses: {},
     classTimetable: []
 }
 
@@ -37,13 +37,13 @@ const classSlice = createSlice({
                     idAttribute: "id",
                     targetArr: classes
                 });
-                state.classes.ids = ids.map(id => Number(id));
-                state.classes.idToObject = idToObject
+                state.courses.ids = ids.map(id => Number(id));
+                state.courses.idToObject = idToObject
             })
             .addCase(CourseThunkAction.updateCourse.fulfilled, (state, action) => {
                 const id = action.payload.course.id;
-                if (state.classes.idToObject?.[id]) {
-                    state.classes.idToObject[id] = action.payload.course;
+                if (state.courses.idToObject?.[id]) {
+                    state.courses.idToObject[id] = action.payload.course;
                 }
             })
     }
