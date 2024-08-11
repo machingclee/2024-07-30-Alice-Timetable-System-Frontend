@@ -11,6 +11,7 @@ export default (props: { children: ReactNode } & HTMLAttributes<HTMLDivElement>)
                 ref={ref}
                 options={{
                     scrollbars: {
+
                         autoHide: "leave",
                         autoHideDelay: 100,
                     }

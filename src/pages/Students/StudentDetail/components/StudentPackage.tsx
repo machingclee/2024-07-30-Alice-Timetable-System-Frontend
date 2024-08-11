@@ -12,7 +12,7 @@ export default (props: { packageId: string }) => {
     const dispatch = useAppDispatch();
     const selectedPackageId = useAppSelector(s => s.student.studentDetail.selectedPackageId);
     const package_ = useAppSelector(s => s.student.studentDetail.packages.idToObject?.[packageId]);
-    const { course_id, created_at, min, official_end_date, start_date, student_id, num_of_classes, consumed_classes } = package_ || {};
+    const { course_id, min, official_end_date, start_date, num_of_classes, consumed_classes } = package_ || {};
     if (!course_id) {
         return null;
     }
@@ -24,9 +24,9 @@ export default (props: { packageId: string }) => {
     return (
         <Box
             style={{
-                boxShadow: boxShadow.SHADOW_62,
+                boxShadow: boxShadow.SHADOW_60,
                 margin: 10,
-                borderRadius: 8,
+                borderRadius: 0,
                 padding: 6
             }}
             sx={{

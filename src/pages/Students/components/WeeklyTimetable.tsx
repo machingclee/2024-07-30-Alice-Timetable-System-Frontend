@@ -266,6 +266,7 @@ export default (props: { date?: Date }) => {
                                     })}
                             </div>
                         </div>
+                        <Spacer />
                     </div>
                 </DragDropContext>
                 <Spacer />

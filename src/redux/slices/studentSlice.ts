@@ -4,7 +4,7 @@ import apiClient from "../../axios/apiClient";
 import { CustomResponse } from "../../axios/responseTypes";
 import apiRoutes from "../../axios/apiRoutes";
 import { processRes } from "../../utils/processRes";
-import { Student, StudentDetail, Class, CreateClassRequest, MoveClassRequest, DuplicateClassRequest, DetachClassRequest, UpdateClassRequest, CreateStudentPackageRequest, Augmented_Student_package } from "../../dto/dto";
+import { Student, StudentDetail, CreateClassRequest, MoveClassRequest, DuplicateClassRequest, DetachClassRequest, UpdateClassRequest, CreateStudentPackageRequest, Augmented_Student_package, Augmented_Class } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
 import { RootState } from "../store";
@@ -27,7 +27,7 @@ export type StudentSliceState = {
         }
         timetable: {
             hrUnixTimestamps?: string[]
-            hrUnixTimestampToObject?: { [id: string]: Class & { hide: boolean } }
+            hrUnixTimestampToObject?: { [id: string]: Augmented_Class & { hide: boolean } }
         }
     }
 }
@@ -152,10 +152,10 @@ export class StudentThunkAction {
         }
     )
     public static getStudentClasses = createAsyncThunk(
-        "studentSlice/getStudentEvents",
+        "studentSlice/getStudentClasses",
         async (props: { studentId: string }, api) => {
             const { studentId } = props;
-            const res = await apiClient.get<CustomResponse<{ classes: Class[] }>>(apiRoutes.GET_STUDENT_CLASSES(studentId));
+            const res = await apiClient.get<CustomResponse<{ classes: Augmented_Class[] }>>(apiRoutes.GET_STUDENT_CLASSES(studentId));
             return processRes(res, api);
         }
     )

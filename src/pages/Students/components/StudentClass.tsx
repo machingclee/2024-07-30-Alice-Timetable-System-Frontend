@@ -14,6 +14,7 @@ import UpdateClassForm from "./UpdateClassForm";
 import DuplicateClassDialog from "./DuplicateClassDialog";
 import DuplicateClassForm from "./DuplicateClassForm";
 import { StudentThunkAction } from "../../../redux/slices/studentSlice";
+import FadeIn from "../../../components/FadeIn";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number }) => {
     const dispatch = useAppDispatch();
@@ -21,6 +22,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const { studentId } = useParams<{ studentId: string }>();
     const studentClass = useAppSelector((s) => s.student.studentDetail.timetable?.hrUnixTimestampToObject?.[hourUnixTimestamp]);
+
+
     const { day_unix_timestamp = 0, hour_unix_timestamp = 0 } = studentClass || {};
     const disableDraggable = !(studentClass != null);
     const createEvent = () => {
@@ -77,7 +80,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
         </>)
     } : ({ children }: PropsWithChildren) => children, [studentClass, selectedPackageId])
 
-
+    const selectedByPackageId = selectedPackageId === String(studentClass?.student_package_id || "0");
 
     return (
         <>
@@ -113,14 +116,15 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                         height: "100%",
                                         position: "relative"
                                     }}>
-                                        {course_name && (
-                                            <>
+                                        {course_name && selectedByPackageId && (
+                                            <FadeIn>
                                                 {/* @ts-ignore */}
                                                 <ContextMenuTrigger id={contextMenuId}>
                                                     <div
                                                         style={{
                                                             position: "absolute",
-                                                            boxShadow: boxShadow.SHADOW_61,
+                                                            border: "1px solid #357fd9",
+                                                            boxShadow: boxShadow.SHADOW_62,
                                                             zIndex: 10 ** 5,
                                                             top: 5,
                                                             left: 5,
@@ -137,9 +141,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                             borderRadius: 4,
                                                             fontSize: 14,
                                                             color: "white",
-                                                            display: "flex",
-                                                            justifyContent: "center"
-
+                                                            textAlign: "center"
                                                         }}
                                                         key={hourUnixTimestamp}
                                                     >
@@ -147,7 +149,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                     </div>
                                                 </ContextMenuTrigger>
                                                 { /* @ts-ignore */}
-                                                <ContextMenu id={contextMenuId} style={{ zIndex: 10 ** 6 }}>
+                                                <ContextMenu id={contextMenuId} style={{ zIndex: 10 ** 7 }}>
                                                     <Box
                                                         sx={{
                                                             backgroundColor: "white",
@@ -200,7 +202,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
 
                                                     </Box>
                                                 </ContextMenu>
-                                            </>
+                                            </FadeIn>
                                         )}
                                     </div>
                                 </div>

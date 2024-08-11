@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import SectionTitle from "../../../components/SectionTitle";
 import { useEffect } from "react";
-import { StudentThunkAction } from "../../../redux/slices/studentSlice";
+import studentSlice, { StudentThunkAction } from "../../../redux/slices/studentSlice";
 import Spacer from "../../../components/Spacer";
 import { IoMdArrowBack } from "react-icons/io";
 import { Button } from "antd";
@@ -47,9 +47,18 @@ export default () => {
         }
     }, [studentId])
 
+    useEffect(() => {
+        return () => {
+            dispatch(studentSlice.actions.reset());
+        }
+    }, [])
+
+
+
     if (!studentDetail) {
         return null;
     }
+
 
     return (
         <div style={{ marginLeft: "10px", marginRight: "50px", height: "100%", display: "flex", flexDirection: "column" }}>

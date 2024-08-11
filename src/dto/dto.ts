@@ -1,4 +1,4 @@
-import { Student_package } from "../prismaTypes/types";
+import { Class, Student_package } from "../prismaTypes/types";
 
 export type Gender = "MALE" | "FEMALE"
 export type RoleInSystem = "SUPER_ADMIN" | "ADMIN" | "STAFF" | "STUDENT"
@@ -90,18 +90,6 @@ export type UpdateCourseRequest = {
     course_name: string
 }
 
-export type Class = {
-    id: number;
-    student_id: string;
-    course_id: number;
-    day_unix_timestamp: number;
-    hour_unix_timestamp: number;
-    min: number;
-    class_group_id: number | null;
-    course_name: string;
-    created_at: number;
-}
-
 export type MoveClassRequest = {
     class_id: number,
     toDayTimestamp: number,
@@ -142,3 +130,5 @@ export type CreateStudentPackageRequest = {
 }
 
 export type Augmented_Student_package = Student_package & { consumed_classes: { count: number } }
+
+export type Augmented_Class = Class & { course_name: string }

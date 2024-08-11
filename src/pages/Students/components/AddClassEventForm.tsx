@@ -58,11 +58,11 @@ export default (props: {
             if (errorObject) {
                 setError(errorObject)
             }
-            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
         } else {
             toastUtil.success("Event Created")
             AddClassEventDialog.setOpen(false)
             dispatch(StudentThunkAction.getStudentClasses({ studentId }));
+            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
         }
     }
 
@@ -74,7 +74,7 @@ export default (props: {
         <Box
             style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
             <Label label="AddClassEventForm.tsx" offsetTop={0} offsetLeft={180} />
-            <SectionTitle>Add Class Event at {dayjs(hourUnixTimestamp).format("HH:mm")}</SectionTitle>
+            <SectionTitle>Add Class at {dayjs(hourUnixTimestamp).format("HH:mm")}</SectionTitle>
             <Spacer />
             <div style={{ display: "flex" }}>
                 <FormInputTitle>Course </FormInputTitle>
