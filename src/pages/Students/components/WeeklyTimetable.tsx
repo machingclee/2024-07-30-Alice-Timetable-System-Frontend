@@ -15,6 +15,7 @@ import { Button } from "antd";
 import { store } from "../../../redux/store";
 import MoveConfirmationDialog from "./MoveConfirmationDialog";
 import MoveConfirmationForm from "./MoveConfirmationForm";
+import CustomScrollbarContainer from "../../../components/CustomScrollbarContainer";
 
 export type WeeklyCoordinate = {
     [dateUnixTimestamp: string]: {
@@ -126,6 +127,8 @@ export default (props: { date?: Date }) => {
                     height: `${gridHeight - 1}px`,
                 },
                 "& .grid-hour.header": {
+                    top: 0,
+                    position: "sticky",
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -134,6 +137,8 @@ export default (props: { date?: Date }) => {
                     justifyContent: "center",
                     alignItems: "center",
                     margin: 0,
+                    backgroundColor: "white",
+                    zIndex: 10 ** 7
                 },
                 "& .droppable": {
                     "& .grid-hour": {
@@ -165,102 +170,106 @@ export default (props: { date?: Date }) => {
                     </Button>
                 </div>
             </SectionTitle>
-            <Spacer />
-            <DragDropContext
-                onBeforeCapture={(e) => {
-                    const { draggableId } = e;
-                    setActiveDraggableId(draggableId);
-                    currDraggingId.current = draggableId;
-                }}
-                onDragEnd={async (result) => {
-                    const { destination } = result;
-                    const { droppableId: toDayUnixTimestamp, index: toIndex } = destination!;
-                    const toHourUnixTimestamp = Object.keys(timeGrid?.[toDayUnixTimestamp]).sort()[toIndex];
-                    const fromClz = store.getState().student.studentDetail.timetable.hrUnixTimestampToObject?.[currDraggingId.current];
-                    if (!fromClz) {
-                        return;
-                    }
-                    const move = async () => {
-                        await dispatch(StudentThunkAction.moveStudentEvent({
-                            fromHourTimestamp: currDraggingId.current,
-                            toDayTimestamp: toDayUnixTimestamp,
-                            toHourTimestamp: toHourUnixTimestamp,
-                        })).unwrap();
-                        dispatch(studentSlice.actions.unHideClass({ hrTimestamp: currDraggingId.current }))
-                        if (fromClz.class_group_id) {
-                            setTimeout(() => {
-                                dispatch(StudentThunkAction.getStudentClasses({ studentId }))
-                            }, 1000)
+
+            <CustomScrollbarContainer style={{ height: "calc(100% - 210px)" }}>
+                <Spacer />
+                <DragDropContext
+                    onBeforeCapture={(e) => {
+                        const { draggableId } = e;
+                        setActiveDraggableId(draggableId);
+                        currDraggingId.current = draggableId;
+                    }}
+                    onDragEnd={async (result) => {
+                        const { destination } = result;
+                        const { droppableId: toDayUnixTimestamp, index: toIndex } = destination!;
+                        const toHourUnixTimestamp = Object.keys(timeGrid?.[toDayUnixTimestamp]).sort()[toIndex];
+                        const fromClz = store.getState().student.studentDetail.timetable.hrUnixTimestampToObject?.[currDraggingId.current];
+                        if (!fromClz) {
+                            return;
                         }
-                    }
-                    if (fromClz.class_group_id) {
-                        dispatch(studentSlice.actions.hideClass({ hrTimestamp: currDraggingId.current }))
-                        MoveConfirmationDialog.setContent(() => () => <MoveConfirmationForm moveClassesAction={move} />)
-                        MoveConfirmationDialog.setOpen(true);
-                    } else {
-                        await move()
-                    }
-                    setActiveDraggableId("");
-                }}
-            >
-                <div style={{ display: "flex" }}>
-                    <div style={{ flex: 1 }}>
-                        <div style={{ display: "flex" }}>
-                            <div>
-                                <Spacer height={30} />
-                                {getHalfHourTimeIntervalsForDay(weekStart).map((dayJS) => {
-                                    return (
-                                        <div style={{ fontSize: 13 }} className="grid-time" key={dayJS.valueOf().toString()}>
-                                            {dayJS.format("HH:mm")}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                            {Object.keys(timeGrid)
-                                .sort()
-                                .map((dayUnixTimestamp) => {
-                                    const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
-                                    return (
-                                        <div key={dayUnixTimestamp} className="day-column">
-                                            <div className="grid-hour header" style={{
-                                                fontWeight: 400,
-                                                textAlign: "center"
-                                            }}>
-                                                {timetableAvailableWidth >= 85 && dayDayJS.format("ddd, MMM D")}
-                                                {timetableAvailableWidth < 85 && dayDayJS.format("ddd")}
+                        const move = async () => {
+                            await dispatch(StudentThunkAction.moveStudentEvent({
+                                fromHourTimestamp: currDraggingId.current,
+                                toDayTimestamp: toDayUnixTimestamp,
+                                toHourTimestamp: toHourUnixTimestamp,
+                            })).unwrap();
+                            dispatch(studentSlice.actions.unHideClass({ hrTimestamp: currDraggingId.current }))
+                            if (fromClz.class_group_id) {
+                                setTimeout(() => {
+                                    dispatch(StudentThunkAction.getStudentClasses({ studentId }))
+                                }, 1000)
+                            }
+                        }
+                        if (fromClz.class_group_id) {
+                            dispatch(studentSlice.actions.hideClass({ hrTimestamp: currDraggingId.current }))
+                            MoveConfirmationDialog.setContent(() => () => <MoveConfirmationForm moveClassesAction={move} />)
+                            MoveConfirmationDialog.setOpen(true);
+                        } else {
+                            await move()
+                        }
+                        setActiveDraggableId("");
+                    }}
+                >
+                    <div style={{ display: "flex" }}>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ display: "flex" }}>
+                                <div>
+                                    <Spacer height={30} style={{ position: "sticky", top: 0, background: "white", width: "100%" }} />
+                                    {getHalfHourTimeIntervalsForDay(weekStart).map((dayJS) => {
+                                        return (
+                                            <div style={{ fontSize: 13 }} className="grid-time" key={dayJS.valueOf().toString()}>
+                                                {dayJS.format("HH:mm")}
                                             </div>
-                                            <Spacer height={5} />
-                                            <Droppable droppableId={dayUnixTimestamp} mode="virtual">
-                                                {(provided) => {
-                                                    return (
-                                                        <div ref={provided.innerRef} {...provided.droppableProps} className="droppable">
-                                                            {Object.keys(timeGrid[dayUnixTimestamp])
-                                                                .sort()
-                                                                .map((hourUnixTimestamp, index) => {
-                                                                    return (
-                                                                        <React.Fragment key={hourUnixTimestamp}>
-                                                                            <StudentClass
-                                                                                colIndex={index}
-                                                                                dayUnixTimestamp={parseInt(dayUnixTimestamp)}
-                                                                                hourUnixTimestamp={parseInt(hourUnixTimestamp)}
-                                                                                activeDraggableId={activeDraggableId}
-                                                                            />
-                                                                            {activeDraggableId === hourUnixTimestamp && provided.placeholder}
-                                                                        </React.Fragment>
-                                                                    );
-                                                                })}
-                                                            {provided.placeholder}
-                                                        </div>
-                                                    );
-                                                }}
-                                            </Droppable>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })}
+                                </div>
+                                {Object.keys(timeGrid)
+                                    .sort()
+                                    .map((dayUnixTimestamp) => {
+                                        const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
+                                        return (
+                                            <div key={dayUnixTimestamp} className="day-column">
+                                                <div className="grid-hour header" style={{
+                                                    fontWeight: 400,
+                                                    textAlign: "center"
+                                                }}>
+                                                    {timetableAvailableWidth >= 85 && dayDayJS.format("ddd, MMM D")}
+                                                    {timetableAvailableWidth < 85 && dayDayJS.format("ddd")}
+                                                </div>
+                                                <Spacer height={5} />
+                                                <Droppable droppableId={dayUnixTimestamp} mode="virtual">
+                                                    {(provided) => {
+                                                        return (
+                                                            <div ref={provided.innerRef} {...provided.droppableProps} className="droppable">
+                                                                {Object.keys(timeGrid[dayUnixTimestamp])
+                                                                    .sort()
+                                                                    .map((hourUnixTimestamp, index) => {
+                                                                        return (
+                                                                            <React.Fragment key={hourUnixTimestamp}>
+                                                                                <StudentClass
+                                                                                    colIndex={index}
+                                                                                    dayUnixTimestamp={parseInt(dayUnixTimestamp)}
+                                                                                    hourUnixTimestamp={parseInt(hourUnixTimestamp)}
+                                                                                    activeDraggableId={activeDraggableId}
+                                                                                />
+                                                                                {activeDraggableId === hourUnixTimestamp && provided.placeholder}
+                                                                            </React.Fragment>
+                                                                        );
+                                                                    })}
+                                                                {provided.placeholder}
+                                                            </div>
+                                                        );
+                                                    }}
+                                                </Droppable>
+                                            </div>
+                                        );
+                                    })}
+                            </div>
                         </div>
                     </div>
-                </div>
-            </DragDropContext>
+                </DragDropContext>
+                <Spacer />
+            </CustomScrollbarContainer>
         </Box>
     );
 };

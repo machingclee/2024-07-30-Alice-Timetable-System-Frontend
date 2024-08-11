@@ -69,9 +69,9 @@ export default () => {
                         {`${first_name} ${last_name}`}
                     </SectionTitle>
 
-                    <CustomScrollbarContainer style={{ height: "calc(100vh - 70px)" }}>
+                    <div style={{ height: "calc(100vh - 70px)", overflow: "hidden" }}>
                         <WeeklyTimetable />
-                    </CustomScrollbarContainer>
+                    </div>
                 </div>
                 <Spacer />
                 <StudentPackageColumn

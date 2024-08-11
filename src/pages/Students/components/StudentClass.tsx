@@ -135,9 +135,10 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                             })(),
                                                             padding: 4,
                                                             borderRadius: 4,
-                                                            fontSize: 12,
+                                                            fontSize: 14,
                                                             color: "white",
                                                             display: "flex",
+                                                            justifyContent: "center"
 
                                                         }}
                                                         key={hourUnixTimestamp}
