@@ -171,7 +171,7 @@ export default (props: { date?: Date }) => {
                 </div>
             </SectionTitle>
 
-            <CustomScrollbarContainer style={{ height: "calc(100% - 210px)" }}>
+            <CustomScrollbarContainer style={{ height: "calc(100vh - 120px)" }}>
                 <Spacer />
                 <DragDropContext
                     onBeforeCapture={(e) => {
