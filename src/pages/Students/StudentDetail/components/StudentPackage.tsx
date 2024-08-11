@@ -12,7 +12,8 @@ export default (props: { packageId: string }) => {
     const dispatch = useAppDispatch();
     const selectedPackageId = useAppSelector(s => s.student.studentDetail.selectedPackageId);
     const package_ = useAppSelector(s => s.student.studentDetail.packages.idToObject?.[packageId]);
-    const { course_id, min, official_end_date, start_date, num_of_classes, consumed_classes } = package_ || {};
+    const { course_id, min, official_end_date, start_date, num_of_classes, consumed_minutes } = package_ || {};
+    const assignedClasses = Math.floor((consumed_minutes?.count || 0) / (package_?.min || 1) * 10) / 10
     if (!course_id) {
         return null;
     }
@@ -69,7 +70,7 @@ export default (props: { packageId: string }) => {
                             <td>Official End</td><td>{dayjs(official_end_date).format("YYYY-MM-DD")}</td>
                         </tr>
                         <tr>
-                            <td>Classes</td><td>{`${consumed_classes?.count || 0}/${num_of_classes}`}</td>
+                            <td>Classes</td><td>{`${assignedClasses}/${num_of_classes}`}</td>
                         </tr>
                     </tbody>
                 </table>

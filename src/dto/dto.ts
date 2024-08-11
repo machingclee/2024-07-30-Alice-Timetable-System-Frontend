@@ -129,6 +129,6 @@ export type CreateStudentPackageRequest = {
     student_id: string
 }
 
-export type Augmented_Student_package = Student_package & { consumed_classes: { count: number } }
+export type Augmented_Student_package = Student_package & { consumed_minutes: { count: number } }
 
 export type Augmented_Class = Class & { course_name: string }

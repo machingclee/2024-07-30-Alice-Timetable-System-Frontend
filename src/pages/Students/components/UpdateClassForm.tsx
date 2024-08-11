@@ -2,17 +2,17 @@ import { Box } from "@mui/material"
 import SectionTitle from "../../../components/SectionTitle"
 import Label from "../../../components/Label"
 import Spacer from "../../../components/Spacer";
-import { Class } from "../../../dto/dto";
 import { useRef } from "react";
 import { Button, Select } from "antd";
 import durations from "../../../constant/durations";
 import { useAppDispatch } from "../../../redux/hooks";
 import { StudentThunkAction } from "../../../redux/slices/studentSlice";
 import UpdateClassDialog from "./UpdateClassDialog";
+import { Class } from "../../../prismaTypes/types";
 
 export default (props: { classEvent: Class }) => {
     const { classEvent } = props;
-    const { id, min } = classEvent;
+    const { id, min, student_id } = classEvent;
     const formData = useRef({ min: min });
     const dispatch = useAppDispatch();
 
@@ -35,6 +35,7 @@ export default (props: { classEvent: Class }) => {
             <Spacer />
             <Button type="primary" block onClick={async () => {
                 await dispatch(StudentThunkAction.updateClass({ classId: id, min: formData.current.min })).unwrap();
+                dispatch(StudentThunkAction.getStudentPackages({ studentId: student_id }))
                 UpdateClassDialog.setOpen(false);
             }}>
                 Submit
