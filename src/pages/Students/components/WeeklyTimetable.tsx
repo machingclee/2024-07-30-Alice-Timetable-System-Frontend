@@ -92,7 +92,7 @@ export default (props: { date?: Date }) => {
             ref={timetableContainerRef}
             sx={{
                 overflowY: "hidden",
-                height: "1100px",
+                height: "1000px",
                 "& .draggable-container": {
                     borderTop: "1px solid rgba(0,0,0,0.1)",
                     borderLeft: "2px solid rgba(0, 0, 0, 0.1)",
@@ -166,8 +166,6 @@ export default (props: { date?: Date }) => {
                 </div>
             </SectionTitle>
             <Spacer />
-            <Spacer />
-
             <DragDropContext
                 onBeforeCapture={(e) => {
                     const { draggableId } = e;

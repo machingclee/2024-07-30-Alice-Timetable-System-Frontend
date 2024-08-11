@@ -7,7 +7,6 @@ import ClassRow from "./components/CourseRow";
 import { Button } from "antd";
 import AddClassDialog from "./components/AddCourseDialog";
 import AddClassForm from "./components/AddCourseForm";
-import Label from "../../components/Label";
 
 export default () => {
     const dispatch = useAppDispatch();
@@ -28,7 +27,7 @@ export default () => {
             <SectionTitle>Courses</SectionTitle>
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button type="primary" onClick={openAddClassDialog}>
-                    <Label label="add course button here" offsetTop={-30} />
+                    {/* <Label label="add course button here" offsetTop={-30} /> */}
                     Add Course
                 </Button>
             </div>

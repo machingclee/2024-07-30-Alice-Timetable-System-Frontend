@@ -63,7 +63,7 @@ export default (props: { id: number }) => {
         }}>
             <div>
                 <table>
-                    <Label label="ClassRow.tsx" offsetTop={-20} />
+                    <Label label="CourseRow.tsx" offsetTop={-20} />
                     <tbody>
                         <tr>
                             <td>Course Name:</td>
