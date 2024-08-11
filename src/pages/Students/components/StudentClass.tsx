@@ -17,10 +17,10 @@ import { StudentThunkAction } from "../../../redux/slices/studentSlice";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number }) => {
     const dispatch = useAppDispatch();
+    const selectedPackageId = useAppSelector(s => s.student.studentDetail.selectedPackageId)
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const { studentId } = useParams<{ studentId: string }>();
     const studentClass = useAppSelector((s) => s.student.studentDetail.timetable?.hrUnixTimestampToObject?.[hourUnixTimestamp]);
-
     const { day_unix_timestamp = 0, hour_unix_timestamp = 0 } = studentClass || {};
     const disableDraggable = !(studentClass != null);
     const createEvent = () => {
@@ -53,6 +53,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                         "& .menu-item": {
                             padding: "10px",
                             cursor: "pointer",
+                            color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
                             "&:hover": {
                                 "&:hover": {
                                     color: "rgb(64, 150, 255)"
@@ -64,16 +65,17 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                     {/* @ts-ignore */}
                     <MenuItem
                         className="menu-item"
+                        disabled={!selectedPackageId}
                         onClick={() => {
                             createEvent();
                         }}
                     >
-                        Add Event at {dayAndTime}
+                        {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
                     </MenuItem>
                 </Box>
             </ContextMenu>
         </>)
-    } : ({ children }: PropsWithChildren) => children, [studentClass])
+    } : ({ children }: PropsWithChildren) => children, [studentClass, selectedPackageId])
 
 
 

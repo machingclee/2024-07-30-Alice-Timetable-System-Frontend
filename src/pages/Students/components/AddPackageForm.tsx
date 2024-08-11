@@ -42,6 +42,7 @@ export default (props: {
         }
         AddPackageDialog.setOpen(false)
         await dispatch(StudentThunkAction.createStudentPackage(reqBody)).unwrap()
+        dispatch(StudentThunkAction.getStudentPackages({ studentId })).unwrap()
     }
 
     useEffect(() => {

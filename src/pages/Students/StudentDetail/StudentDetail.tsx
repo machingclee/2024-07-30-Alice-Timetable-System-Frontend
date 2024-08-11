@@ -19,6 +19,9 @@ import { LuPlusCircle } from "react-icons/lu";
 import Sep from "../../../components/Sep";
 import Title from "../../../components/Title";
 import StudentPackage from "./components/StudentPackage";
+import CustomScrollbarContainer from "../../../components/CustomScrollbarContainer";
+import { FaAngleDoubleRight } from "react-icons/fa";
+import { Box } from "@mui/material";
 
 export default () => {
     const { studentId } = useParams<{ studentId: string }>();
@@ -78,50 +81,71 @@ export default () => {
                 </tbody>
             </table>
             <Spacer />
-            <MoveConfirmationDialog.render />
-            <DuplicateClassDialog.render />
-            <UpdateClassDialog.render />
-            <AddClassEventDialog.render />
+
             <div style={{ display: "flex" }}>
                 <WeeklyTimetable />
                 <Spacer />
-                <div style={{ flex: 1 }}>
-                    <Title>Student Packages</Title>
+                <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <Title>Student Packages</Title>
+                        <Button
+                            style={{ width: 40, height: 40 }}
+                            onClick={() => {
+                                AddPackageDialog.setContent(() => () => <AddPackageForm
+                                    studentId={studentId || ""}
+                                    studentName={`${first_name} ${last_name}`}
+                                />)
+                                AddPackageDialog.setOpen(true)
+                            }}
+                            shape="circle"
+                        >
+                            <LuPlusCircle size={30} />
+                        </Button>
+                    </div>
+                    <Spacer height={5} />
                     <Sep />
                     <Spacer />
-                    <div style={{ display: "flex", justifyContent: 'center', height: "100%", width: "100%" }}>
-                        <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                            <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-                                <Button
-                                    style={{ width: 70, height: 70 }}
-                                    onClick={() => {
-                                        AddPackageDialog.setContent(() => () => <AddPackageForm
-                                            studentId={studentId || ""}
-                                            studentName={`${first_name} ${last_name}`}
-                                        />)
-                                        AddPackageDialog.setOpen(true)
-                                    }}
-                                    shape="circle"
-                                >
-                                    <LuPlusCircle size={50} />
-                                </Button>
-
-                            </div>
-                            <Spacer />
-                            <div style={{ flex: 1, overflowY: "auto" }}>
+                    <Box sx={{
+                        flex: 1,
+                        "& td": {
+                            "& div": {
+                                display: "flex",
+                                alignItems: "center",
+                                width: "100%",
+                                height: "100%"
+                            }
+                        }
+                    }}>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td><div><FaAngleDoubleRight /><Spacer width={5} /> Next Class</div></td><td>???</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </Box>
+                    <Spacer />
+                    <CustomScrollbarContainer style={{ height: 800, width: "100%" }}>
+                        <div style={{ display: "flex", justifyContent: 'center', width: "100%" }}>
+                            <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
                                 {packages.ids?.map(id => {
                                     return (
                                         <StudentPackage packageId={id} />
                                     )
                                 })}
+
                             </div>
                         </div>
-                    </div>
+                    </CustomScrollbarContainer>
+
                 </div>
             </div>
             {/* <Calendar /> */}
+            <MoveConfirmationDialog.render />
+            <DuplicateClassDialog.render />
+            <UpdateClassDialog.render />
+            <AddClassEventDialog.render />
             <AddPackageDialog.render />
-            <Spacer height={200} />
-        </div>
+        </div >
     );
 };

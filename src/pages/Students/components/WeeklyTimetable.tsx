@@ -92,17 +92,17 @@ export default (props: { date?: Date }) => {
             ref={timetableContainerRef}
             sx={{
                 overflowY: "hidden",
-                height: "1050px",
+                height: "1100px",
                 "& .draggable-container": {
                     borderTop: "1px solid rgba(0,0,0,0.1)",
-                    borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
+                    borderLeft: "2px solid rgba(0, 0, 0, 0.1)",
                 },
                 "& .draggable-container:nth-child(n+1)": {
-                    borderTop: "3px dashed rgba(0,0,0,0.15)"
+                    borderTop: "2px dashed rgba(0,0,0,0.15)"
                 },
-                "& .droppable:last-child": {
+                "& .day-column:last-child": {
                     "& .draggable-container": {
-                        borderRight: "1px solid rgba(0,0,0,0.1)",
+                        borderRight: "2px solid rgba(0, 0, 0, 0.1)",
                     }
                 },
                 "& .draggable-container:last-child": {
@@ -115,7 +115,7 @@ export default (props: { date?: Date }) => {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     paddingRight: "14px",
-                    height: `${gridHeight + 2}px`,
+                    height: `${gridHeight + 1}px`,
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -167,6 +167,7 @@ export default (props: { date?: Date }) => {
             </SectionTitle>
             <Spacer />
             <Spacer />
+
             <DragDropContext
                 onBeforeCapture={(e) => {
                     const { draggableId } = e;
@@ -222,7 +223,7 @@ export default (props: { date?: Date }) => {
                                 .map((dayUnixTimestamp) => {
                                     const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
                                     return (
-                                        <div key={dayUnixTimestamp}>
+                                        <div key={dayUnixTimestamp} className="day-column">
                                             <div className="grid-hour header" style={{
                                                 fontWeight: 400,
                                                 textAlign: "center"

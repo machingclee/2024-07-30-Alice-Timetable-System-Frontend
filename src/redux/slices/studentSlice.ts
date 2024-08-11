@@ -4,7 +4,7 @@ import apiClient from "../../axios/apiClient";
 import { CustomResponse } from "../../axios/responseTypes";
 import apiRoutes from "../../axios/apiRoutes";
 import { processRes } from "../../utils/processRes";
-import { Student, StudentDetail, Class, CreateClassRequest, MoveClassRequest, DuplicateClassRequest, DetachClassRequest, UpdateClassRequest, CreateStudentPackageRequest } from "../../dto/dto";
+import { Student, StudentDetail, Class, CreateClassRequest, MoveClassRequest, DuplicateClassRequest, DetachClassRequest, UpdateClassRequest, CreateStudentPackageRequest, Augmented_Student_package } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
 import { RootState } from "../store";
@@ -23,7 +23,7 @@ export type StudentSliceState = {
         selectedPackageId: string,
         packages: {
             ids?: string[],
-            idToObject?: { [id: string]: Student_package }
+            idToObject?: { [id: string]: Augmented_Student_package }
         }
         timetable: {
             hrUnixTimestamps?: string[]
@@ -125,13 +125,6 @@ const studentSlice = createSlice({
                     state.studentDetail.timetable.hrUnixTimestampToObject[String(hourTimeStamp)].min = min
                 }
             })
-            .addCase(StudentThunkAction.createStudentPackage.fulfilled, (state, action) => {
-                const package_ = action.payload;
-                const idToObject = state.studentDetail?.packages?.idToObject || {};
-                state.studentDetail.packages.ids = [String(package_.id), ...(state.studentDetail.packages.ids || [])]
-                    .sort((id1, id2) => (idToObject?.[id1].start_date || 0) - (idToObject?.[id2].start_date || 0))
-                state.studentDetail.packages.idToObject = { ...(idToObject), [String(package_.id)]: package_ }
-            })
             .addCase(StudentThunkAction.getStudentPackages.fulfilled, (state, action) => {
                 const packages = action.payload.packages;
                 const { idToObject, ids } = normalizeUtil.normalize({ idAttribute: "id", targetArr: packages })
@@ -140,6 +133,7 @@ const studentSlice = createSlice({
             })
     }
 })
+
 
 export class StudentThunkAction {
 
@@ -268,7 +262,7 @@ export class StudentThunkAction {
         "studentSlice/getStudentPackages",
         async (props: { studentId: string }, api) => {
             const { studentId } = props;
-            const res = await apiClient.get<CustomResponse<{ packages: Student_package[] }>>(
+            const res = await apiClient.get<CustomResponse<{ packages: Augmented_Student_package[] }>>(
                 apiRoutes.GET_STUDENT_PACKAGES(studentId));
             return processRes(res, api);
         }
