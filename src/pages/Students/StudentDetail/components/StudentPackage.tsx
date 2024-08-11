@@ -69,7 +69,7 @@ export default (props: { packageId: string }) => {
                             <td>Official End</td><td>{dayjs(official_end_date).format("YYYY-MM-DD")}</td>
                         </tr>
                         <tr>
-                            <td>classes</td><td>{`${consumed_classes?.count || 0}/${num_of_classes}`}</td>
+                            <td>Classes</td><td>{`${consumed_classes?.count || 0}/${num_of_classes}`}</td>
                         </tr>
                     </tbody>
                 </table>
