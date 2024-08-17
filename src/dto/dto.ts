@@ -118,6 +118,7 @@ export type UpdateClassRequest = {
     classId: number;
     min: number;
     class_status: string;
+    reason_for_absence: string;
 };
 
 export type CreateStudentPackageRequest = {
