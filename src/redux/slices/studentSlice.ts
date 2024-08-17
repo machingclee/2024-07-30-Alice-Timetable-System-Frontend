@@ -15,6 +15,7 @@ import {
     CreateStudentPackageRequest,
     Augmented_Student_package,
     Augmented_Class,
+    DeleteClassRequest,
 } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
@@ -145,6 +146,12 @@ const studentSlice = createSlice({
                 const { idToObject, ids } = normalizeUtil.normalize({ idAttribute: "id", targetArr: packages });
                 state.studentDetail.packages.ids = ids.sort((id1, id2) => idToObject[id1].start_date - idToObject[id2].start_date);
                 state.studentDetail.packages.idToObject = idToObject;
+            })
+            .addCase(StudentThunkAction.deleteClass.fulfilled, (state, action) => {
+                const classes = action.payload.classes.map((clz) => ({ ...clz, hide: false }));
+                const { ids, idToObject } = normalizeUtil.normalize({ idAttribute: "hour_unix_timestamp", targetArr: classes });
+                state.studentDetail.timetable.hrUnixTimestamps = ids;
+                state.studentDetail.timetable.hrUnixTimestampToObject = idToObject;
             });
     },
 });
@@ -216,7 +223,10 @@ export class StudentThunkAction {
         const res = await apiClient.get<CustomResponse<StudentDetail>>(apiRoutes.GET_STUDENT_DETAIL(studentId));
         return processRes(res, api);
     });
-
+    public static deleteClass = createAsyncThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
+        const res = await apiClient.post<CustomResponse<{ classes: Augmented_Class[] }>>(apiRoutes.DELETE_CLASS, props);
+        return processRes(res, api);
+    });
     public static duplicateClases = createAsyncThunk("studentSlice/duplicateClases", async (props: DuplicateClassRequest, api) => {
         const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_DUPLICATE_CLASSES, props);
         return processRes(res, api);

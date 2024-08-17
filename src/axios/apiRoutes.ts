@@ -20,5 +20,7 @@ export default {
     PUT_UPDATE_COURSE: "/course/update-course",
     PUT_MOVE_STUDNET_EVENT: "/student/move-event",
     PUT_DETACH_CLASS_FROM_GROUP: "/student/detach-from-group",
-    PUT_UPDATE_CLASS: "/student/update-class"
-}
+    PUT_UPDATE_CLASS: "/student/update-class",
+
+    DELETE_CLASS: "/student/delete-class",
+};

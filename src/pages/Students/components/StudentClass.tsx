@@ -11,10 +11,13 @@ import AddClassEventForm from "./AddClassEventForm";
 import { PropsWithChildren, useCallback } from "react";
 import UpdateClassDialog from "./UpdateClassDialog";
 import UpdateClassForm from "./UpdateClassForm";
+import DeleteClassForm from "./DeleteClassForm";
+import DeleteClassDialog from "./DeleteClassDialog";
 import DuplicateClassDialog from "./DuplicateClassDialog";
 import DuplicateClassForm from "./DuplicateClassForm";
 import { StudentThunkAction } from "../../../redux/slices/studentSlice";
 import FadeIn from "../../../components/FadeIn";
+import colors from "../../../constant/colors";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number }) => {
     const dispatch = useAppDispatch();
@@ -141,13 +144,13 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                     return "red";
                                                                 } else {
                                                                     return nonNull && studentClass.class_status === "PRESENT"
-                                                                        ? "#4096ff"
+                                                                        ? colors.blue
                                                                         : nonNull && studentClass.class_status === "SUSPICIOUS_ABSENCE"
-                                                                        ? "#ffdc40"
+                                                                        ? colors.amber
                                                                         : nonNull && studentClass.class_status === "ILLEGIT_ABSENCE"
-                                                                        ? "#ff5454"
+                                                                        ? colors.red
                                                                         : nonNull && studentClass.class_status === "LEGIT_ABSENCE"
-                                                                        ? "#b5b5b5"
+                                                                        ? colors.grey
                                                                         : "";
                                                                 }
                                                             })(),
@@ -214,6 +217,16 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                 Detach from Group
                                                             </MenuItem>
                                                         )}
+                                                        {/* @ts-ignore */}
+                                                        <MenuItem
+                                                            className={classnames("menu-item")}
+                                                            onClick={() => {
+                                                                DeleteClassDialog.setContent(() => () => <DeleteClassForm classEvent={studentClass} />);
+                                                                DeleteClassDialog.setOpen(true);
+                                                            }}
+                                                        >
+                                                            <span style={{ color: "red" }}>Delete Class</span>
+                                                        </MenuItem>
                                                     </Box>
                                                 </ContextMenu>
                                             </FadeIn>

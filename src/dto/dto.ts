@@ -105,6 +105,11 @@ export type CreateClassRequest = {
     student_package_id: number;
 };
 
+export type DeleteClassRequest = {
+    classId: number;
+    student_id: string;
+};
+
 export type DuplicateClassRequest = {
     classId: number;
     numberOfWeeks: number;
