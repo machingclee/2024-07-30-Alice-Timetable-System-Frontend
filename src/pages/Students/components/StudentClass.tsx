@@ -18,11 +18,10 @@ import FadeIn from "../../../components/FadeIn";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number }) => {
     const dispatch = useAppDispatch();
-    const selectedPackageId = useAppSelector(s => s.student.studentDetail.selectedPackageId)
+    const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const { studentId } = useParams<{ studentId: string }>();
     const studentClass = useAppSelector((s) => s.student.studentDetail.timetable?.hrUnixTimestampToObject?.[hourUnixTimestamp]);
-
 
     const { day_unix_timestamp = 0, hour_unix_timestamp = 0 } = studentClass || {};
     const disableDraggable = !(studentClass != null);
@@ -35,50 +34,55 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const rightClickable = !(studentClass != null);
     const dayAndTime = dayjs(hourUnixTimestamp).format("ddd, HH:mm");
     const disableDuplicate = studentClass?.class_group_id != null;
-    const TimeslotWrapper = useCallback(rightClickable ? ({ children }: PropsWithChildren) => {
-        return (<>
-            {/* @ts-ignore */}
-            <ContextMenuTrigger id={hourUnixTimestamp.toString()}>
-                {children}
-            </ContextMenuTrigger>
-            {/* @ts-ignore */}
-            <ContextMenu
-                id={hourUnixTimestamp.toString()}
-                style={{
-                    zIndex: 10 ** 7,
-                    borderRadius: 8,
-                    backgroundColor: "white",
-                    boxShadow: boxShadow.SHADOW_62,
-                }}
-            >
-                <Box
-                    sx={{
-                        "& .menu-item": {
-                            padding: "10px",
-                            cursor: "pointer",
-                            color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
-                            "&:hover": {
-                                "&:hover": {
-                                    color: "rgb(64, 150, 255)"
-                                },
-                            },
-                        },
-                    }}
-                >
-                    {/* @ts-ignore */}
-                    <MenuItem
-                        className="menu-item"
-                        disabled={!selectedPackageId}
-                        onClick={() => {
-                            createEvent();
-                        }}
-                    >
-                        {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
-                    </MenuItem>
-                </Box>
-            </ContextMenu>
-        </>)
-    } : ({ children }: PropsWithChildren) => children, [studentClass, selectedPackageId])
+    const TimeslotWrapper = useCallback(
+        rightClickable
+            ? ({ children }: PropsWithChildren) => {
+                  return (
+                      <>
+                          {/* @ts-ignore */}
+                          <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
+                          {/* @ts-ignore */}
+                          <ContextMenu
+                              id={hourUnixTimestamp.toString()}
+                              style={{
+                                  zIndex: 10 ** 7,
+                                  borderRadius: 8,
+                                  backgroundColor: "white",
+                                  boxShadow: boxShadow.SHADOW_62,
+                              }}
+                          >
+                              <Box
+                                  sx={{
+                                      "& .menu-item": {
+                                          padding: "10px",
+                                          cursor: "pointer",
+                                          color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
+                                          "&:hover": {
+                                              "&:hover": {
+                                                  color: "rgb(64, 150, 255)",
+                                              },
+                                          },
+                                      },
+                                  }}
+                              >
+                                  {/* @ts-ignore */}
+                                  <MenuItem
+                                      className="menu-item"
+                                      disabled={!selectedPackageId}
+                                      onClick={() => {
+                                          createEvent();
+                                      }}
+                                  >
+                                      {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
+                                  </MenuItem>
+                              </Box>
+                          </ContextMenu>
+                      </>
+                  );
+              }
+            : ({ children }: PropsWithChildren) => children,
+        [studentClass, selectedPackageId]
+    );
 
     const selectedByPackageId = selectedPackageId === String(studentClass?.student_package_id || "0");
 
@@ -109,13 +113,15 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                     {..._draggableProps}
                                     {...dragHandleProps}
                                 >
-                                    <div style={{
-                                        display: "flex",
-                                        justifyContent: "flex-start",
-                                        alignItems: "center",
-                                        height: "100%",
-                                        position: "relative"
-                                    }}>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "flex-start",
+                                            alignItems: "center",
+                                            height: "100%",
+                                            position: "relative",
+                                        }}
+                                    >
                                         {course_name && selectedByPackageId && (
                                             <FadeIn>
                                                 {/* @ts-ignore */}
@@ -132,23 +138,31 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                             height: 1.2 * (studentClass.min || 0) - 10,
                                                             backgroundColor: (() => {
                                                                 if (invalidData) {
-                                                                    return "red"
+                                                                    return "red";
                                                                 } else {
-                                                                    return nonNull ? "#4096ff" : ""
+                                                                    return nonNull && studentClass.class_status === "PRESENT"
+                                                                        ? "#4096ff"
+                                                                        : nonNull && studentClass.class_status === "SUSPICIOUS_ABSENCE"
+                                                                        ? "#ffdc40"
+                                                                        : nonNull && studentClass.class_status === "ILLEGIT_ABSENCE"
+                                                                        ? "#ff5454"
+                                                                        : nonNull && studentClass.class_status === "LEGIT_ABSENCE"
+                                                                        ? "#b5b5b5"
+                                                                        : "";
                                                                 }
                                                             })(),
                                                             padding: 4,
                                                             borderRadius: 4,
                                                             fontSize: 14,
                                                             color: "white",
-                                                            textAlign: "center"
+                                                            textAlign: "center",
                                                         }}
                                                         key={hourUnixTimestamp}
                                                     >
                                                         {studentClass.course_name}
                                                     </div>
                                                 </ContextMenuTrigger>
-                                                { /* @ts-ignore */}
+                                                {/* @ts-ignore */}
                                                 <ContextMenu id={contextMenuId} style={{ zIndex: 10 ** 7 }}>
                                                     <Box
                                                         sx={{
@@ -159,12 +173,12 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                 padding: "10px",
                                                                 cursor: "pointer",
                                                                 "&:hover": {
-                                                                    color: "rgb(64, 150, 255)"
+                                                                    color: "rgb(64, 150, 255)",
                                                                 },
                                                                 "&.disabled": {
                                                                     opacity: 0.3,
-                                                                    pointerEvents: "none"
-                                                                }
+                                                                    pointerEvents: "none",
+                                                                },
                                                             },
                                                         }}
                                                     >
@@ -172,11 +186,10 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         <MenuItem
                                                             className="menu-item"
                                                             onClick={() => {
-                                                                UpdateClassDialog.setContent(() => () => <UpdateClassForm
-                                                                    classEvent={studentClass}
-                                                                />)
+                                                                UpdateClassDialog.setContent(() => () => <UpdateClassForm classEvent={studentClass} />);
                                                                 UpdateClassDialog.setOpen(true);
-                                                            }}>
+                                                            }}
+                                                        >
                                                             Edit Class
                                                         </MenuItem>
                                                         {/* @ts-ignore */}
@@ -184,22 +197,23 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                             disabled={disableDuplicate}
                                                             className={classnames("menu-item", disableDuplicate ? "disabled" : "")}
                                                             onClick={() => {
-                                                                DuplicateClassDialog.setContent(() => () => <DuplicateClassForm
-                                                                    classEvent={studentClass}
-                                                                />)
+                                                                DuplicateClassDialog.setContent(() => () => <DuplicateClassForm classEvent={studentClass} />);
                                                                 DuplicateClassDialog.setOpen(true);
-                                                            }}>
+                                                            }}
+                                                        >
                                                             Duplicate Class
                                                         </MenuItem>
                                                         {/* @ts-ignore */}
-                                                        {disableDuplicate && <MenuItem
-                                                            className={classnames("menu-item")}
-                                                            onClick={async () => {
-                                                                await dispatch(StudentThunkAction.detachFromGroup({ classId: studentClass.id })).unwrap();
-                                                            }}>
-                                                            Detach from Group
-                                                        </MenuItem>}
-
+                                                        {disableDuplicate && (
+                                                            <MenuItem
+                                                                className={classnames("menu-item")}
+                                                                onClick={async () => {
+                                                                    await dispatch(StudentThunkAction.detachFromGroup({ classId: studentClass.id })).unwrap();
+                                                                }}
+                                                            >
+                                                                Detach from Group
+                                                            </MenuItem>
+                                                        )}
                                                     </Box>
                                                 </ContextMenu>
                                             </FadeIn>
@@ -210,7 +224,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                         </div>
                     );
                 }}
-            </Draggable >
+            </Draggable>
         </>
     );
 };
