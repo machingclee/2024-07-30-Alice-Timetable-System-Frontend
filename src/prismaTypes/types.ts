@@ -84,6 +84,7 @@ export type Role = (typeof Role)[keyof typeof Role]
 
 export const Class_status: {
   PRESENT: 'PRESENT',
+  MAKEUP: 'MAKEUP',
   ILLEGIT_ABSENCE: 'ILLEGIT_ABSENCE',
   SUSPICIOUS_ABSENCE: 'SUSPICIOUS_ABSENCE',
   LEGIT_ABSENCE: 'LEGIT_ABSENCE'

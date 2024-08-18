@@ -183,7 +183,7 @@ export default (props: { date?: Date }) => {
                         const { destination } = result;
                         const { droppableId: toDayUnixTimestamp, index: toIndex } = destination!;
                         const toHourUnixTimestamp = Object.keys(timeGrid?.[toDayUnixTimestamp]).sort()[toIndex];
-                        const fromClz = store.getState().student.studentDetail.timetable.hrUnixTimestampToObject?.[currDraggingId.current];
+                        const fromClz = store.getState().student.studentDetail.timetable.hrUnixTimestampToClass?.[currDraggingId.current];
                         if (!fromClz) {
                             return;
                         }

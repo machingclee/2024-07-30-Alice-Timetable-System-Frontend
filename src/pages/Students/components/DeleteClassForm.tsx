@@ -35,6 +35,7 @@ export default (props: { classEvent: Class }) => {
                             student_id: student_id,
                         })
                     ).unwrap();
+                    dispatch(StudentThunkAction.getStudentClasses({ studentId: student_id }))
                     dispatch(StudentThunkAction.getStudentPackages({ studentId: student_id }));
                     DeleteClassDialog.setOpen(false);
                 }}

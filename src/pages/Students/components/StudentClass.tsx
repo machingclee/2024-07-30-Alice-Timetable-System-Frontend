@@ -24,7 +24,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const { studentId } = useParams<{ studentId: string }>();
-    const studentClass = useAppSelector((s) => s.student.studentDetail.timetable?.hrUnixTimestampToObject?.[hourUnixTimestamp]);
+    const studentClass = useAppSelector((s) => s.student.studentDetail.timetable?.hrUnixTimestampToClass?.[hourUnixTimestamp]);
 
     const { day_unix_timestamp = 0, hour_unix_timestamp = 0 } = studentClass || {};
     const disableDraggable = !(studentClass != null);
@@ -40,49 +40,49 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const TimeslotWrapper = useCallback(
         rightClickable
             ? ({ children }: PropsWithChildren) => {
-                  return (
-                      <>
-                          {/* @ts-ignore */}
-                          <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
-                          {/* @ts-ignore */}
-                          <ContextMenu
-                              id={hourUnixTimestamp.toString()}
-                              style={{
-                                  zIndex: 10 ** 7,
-                                  borderRadius: 8,
-                                  backgroundColor: "white",
-                                  boxShadow: boxShadow.SHADOW_62,
-                              }}
-                          >
-                              <Box
-                                  sx={{
-                                      "& .menu-item": {
-                                          padding: "10px",
-                                          cursor: "pointer",
-                                          color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
-                                          "&:hover": {
-                                              "&:hover": {
-                                                  color: "rgb(64, 150, 255)",
-                                              },
-                                          },
-                                      },
-                                  }}
-                              >
-                                  {/* @ts-ignore */}
-                                  <MenuItem
-                                      className="menu-item"
-                                      disabled={!selectedPackageId}
-                                      onClick={() => {
-                                          createEvent();
-                                      }}
-                                  >
-                                      {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
-                                  </MenuItem>
-                              </Box>
-                          </ContextMenu>
-                      </>
-                  );
-              }
+                return (
+                    <>
+                        {/* @ts-ignore */}
+                        <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
+                        {/* @ts-ignore */}
+                        <ContextMenu
+                            id={hourUnixTimestamp.toString()}
+                            style={{
+                                zIndex: 10 ** 7,
+                                borderRadius: 8,
+                                backgroundColor: "white",
+                                boxShadow: boxShadow.SHADOW_62,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    "& .menu-item": {
+                                        padding: "10px",
+                                        cursor: "pointer",
+                                        color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
+                                        "&:hover": {
+                                            "&:hover": {
+                                                color: "rgb(64, 150, 255)",
+                                            },
+                                        },
+                                    },
+                                }}
+                            >
+                                {/* @ts-ignore */}
+                                <MenuItem
+                                    className="menu-item"
+                                    disabled={!selectedPackageId}
+                                    onClick={() => {
+                                        createEvent();
+                                    }}
+                                >
+                                    {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
+                                </MenuItem>
+                            </Box>
+                        </ContextMenu>
+                    </>
+                );
+            }
             : ({ children }: PropsWithChildren) => children,
         [studentClass, selectedPackageId]
     );
@@ -146,12 +146,12 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                     return nonNull && studentClass.class_status === "PRESENT"
                                                                         ? colors.blue
                                                                         : nonNull && studentClass.class_status === "SUSPICIOUS_ABSENCE"
-                                                                        ? colors.amber
-                                                                        : nonNull && studentClass.class_status === "ILLEGIT_ABSENCE"
-                                                                        ? colors.red
-                                                                        : nonNull && studentClass.class_status === "LEGIT_ABSENCE"
-                                                                        ? colors.grey
-                                                                        : "";
+                                                                            ? colors.amber
+                                                                            : nonNull && studentClass.class_status === "ILLEGIT_ABSENCE"
+                                                                                ? colors.red
+                                                                                : nonNull && studentClass.class_status === "LEGIT_ABSENCE"
+                                                                                    ? colors.grey
+                                                                                    : "";
                                                                 }
                                                             })(),
                                                             padding: 4,

@@ -41,7 +41,7 @@ export type StudentSliceState = {
         };
         timetable: {
             hrUnixTimestamps?: string[];
-            hrUnixTimestampToObject?: { [id: string]: Augmented_Class & { hide: boolean } };
+            hrUnixTimestampToClass?: { [id: string]: Augmented_Class & { hide: boolean } };
         };
     };
 };
@@ -65,18 +65,18 @@ const studentSlice = createSlice({
         },
         unsetStudentEvent: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
-            lodash.unset(state.studentDetail.timetable.hrUnixTimestampToObject, hrTimestamp);
+            lodash.unset(state.studentDetail.timetable.hrUnixTimestampToClass, hrTimestamp);
         },
         hideClass: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
-            if (state.studentDetail.timetable?.hrUnixTimestampToObject?.[hrTimestamp]) {
-                state.studentDetail.timetable.hrUnixTimestampToObject[hrTimestamp].hide = true;
+            if (state.studentDetail.timetable?.hrUnixTimestampToClass?.[hrTimestamp]) {
+                state.studentDetail.timetable.hrUnixTimestampToClass[hrTimestamp].hide = true;
             }
         },
         unHideClass: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
-            if (state.studentDetail.timetable?.hrUnixTimestampToObject?.[hrTimestamp]) {
-                state.studentDetail.timetable.hrUnixTimestampToObject[hrTimestamp].hide = false;
+            if (state.studentDetail.timetable?.hrUnixTimestampToClass?.[hrTimestamp]) {
+                state.studentDetail.timetable.hrUnixTimestampToClass[hrTimestamp].hide = false;
             }
         },
         resetStudentDetail: (state) => {
@@ -108,7 +108,7 @@ const studentSlice = createSlice({
                 const classes = action.payload.classes.map((clz) => ({ ...clz, hide: false }));
                 const { ids, idToObject } = normalizeUtil.normalize({ idAttribute: "hour_unix_timestamp", targetArr: classes });
                 state.studentDetail.timetable.hrUnixTimestamps = ids;
-                state.studentDetail.timetable.hrUnixTimestampToObject = idToObject;
+                state.studentDetail.timetable.hrUnixTimestampToClass = idToObject;
             })
             .addCase(StudentThunkAction.moveStudentEvent.fulfilled, (state, action) => {
                 if (action.payload?.type === "proceed") {
@@ -122,23 +122,23 @@ const studentSlice = createSlice({
                         console.log("index exists", index);
                         state.studentDetail.timetable.hrUnixTimestamps[index] = String(hour_unix_timestamp);
                     }
-                    if (state.studentDetail.timetable.hrUnixTimestampToObject) {
-                        lodash.setWith(state.studentDetail.timetable.hrUnixTimestampToObject, hour_unix_timestamp, event);
+                    if (state.studentDetail.timetable.hrUnixTimestampToClass) {
+                        lodash.setWith(state.studentDetail.timetable.hrUnixTimestampToClass, hour_unix_timestamp, event);
                     }
                 }
             })
             .addCase(StudentThunkAction.detachFromGroup.fulfilled, (state, action) => {
                 const hourTimeStamp = action.payload.hour_unix_timestamp;
-                if (state.studentDetail?.timetable.hrUnixTimestampToObject?.[String(hourTimeStamp)]) {
-                    state.studentDetail.timetable.hrUnixTimestampToObject[String(hourTimeStamp)].class_group_id = null;
+                if (state.studentDetail?.timetable.hrUnixTimestampToClass?.[String(hourTimeStamp)]) {
+                    state.studentDetail.timetable.hrUnixTimestampToClass[String(hourTimeStamp)].class_group_id = null;
                 }
             })
             .addCase(StudentThunkAction.updateClass.fulfilled, (state, action) => {
                 const { hour_unix_timestamp: hourTimeStamp, min, class_status, reason_for_absence } = action.payload;
-                if (state.studentDetail?.timetable.hrUnixTimestampToObject?.[String(hourTimeStamp)]) {
-                    state.studentDetail.timetable.hrUnixTimestampToObject[String(hourTimeStamp)].min = min;
-                    state.studentDetail.timetable.hrUnixTimestampToObject[String(hourTimeStamp)].class_status = class_status;
-                    state.studentDetail.timetable.hrUnixTimestampToObject[String(hourTimeStamp)].reason_for_absence = reason_for_absence;
+                if (state.studentDetail?.timetable.hrUnixTimestampToClass?.[String(hourTimeStamp)]) {
+                    state.studentDetail.timetable.hrUnixTimestampToClass[String(hourTimeStamp)].min = min;
+                    state.studentDetail.timetable.hrUnixTimestampToClass[String(hourTimeStamp)].class_status = class_status;
+                    state.studentDetail.timetable.hrUnixTimestampToClass[String(hourTimeStamp)].reason_for_absence = reason_for_absence;
                 }
             })
             .addCase(StudentThunkAction.getStudentPackages.fulfilled, (state, action) => {
@@ -147,12 +147,6 @@ const studentSlice = createSlice({
                 state.studentDetail.packages.ids = ids.sort((id1, id2) => idToObject[id1].start_date - idToObject[id2].start_date);
                 state.studentDetail.packages.idToObject = idToObject;
             })
-            .addCase(StudentThunkAction.deleteClass.fulfilled, (state, action) => {
-                const classes = action.payload.classes.map((clz) => ({ ...clz, hide: false }));
-                const { ids, idToObject } = normalizeUtil.normalize({ idAttribute: "hour_unix_timestamp", targetArr: classes });
-                state.studentDetail.timetable.hrUnixTimestamps = ids;
-                state.studentDetail.timetable.hrUnixTimestampToObject = idToObject;
-            });
     },
 });
 
@@ -178,12 +172,12 @@ export class StudentThunkAction {
         "studentSlice/moveStudentEvent",
         async (props: { fromHourTimestamp: string; toDayTimestamp: string; toHourTimestamp: string }, api) => {
             const { fromHourTimestamp: fromTimestamp, toDayTimestamp, toHourTimestamp } = props;
-            const existingRecord = (api.getState() as RootState).student.studentDetail.timetable.hrUnixTimestampToObject?.[toHourTimestamp];
+            const existingRecord = (api.getState() as RootState).student.studentDetail.timetable.hrUnixTimestampToClass?.[toHourTimestamp];
             const currStudentId = (api.getState() as RootState).student.studentDetail.detail?.id || "";
             if (existingRecord) {
                 return { type: "skipped" };
             }
-            const event = lodash.cloneDeep((api.getState() as RootState).student?.studentDetail.timetable.hrUnixTimestampToObject?.[fromTimestamp])!;
+            const event = lodash.cloneDeep((api.getState() as RootState).student?.studentDetail.timetable.hrUnixTimestampToClass?.[fromTimestamp])!;
             event.day_unix_timestamp = Number(toDayTimestamp);
             event.hour_unix_timestamp = Number(toHourTimestamp);
 
@@ -224,7 +218,7 @@ export class StudentThunkAction {
         return processRes(res, api);
     });
     public static deleteClass = createAsyncThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
-        const res = await apiClient.post<CustomResponse<{ classes: Augmented_Class[] }>>(apiRoutes.DELETE_CLASS, props);
+        const res = await apiClient.post<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS, props);
         return processRes(res, api);
     });
     public static duplicateClases = createAsyncThunk("studentSlice/duplicateClases", async (props: DuplicateClassRequest, api) => {
