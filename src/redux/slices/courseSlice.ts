@@ -4,14 +4,15 @@ import apiClient from "../../axios/apiClient";
 import { CustomResponse } from "../../axios/responseTypes";
 import apiRoutes from "../../axios/apiRoutes";
 import { processRes } from "../../utils/processRes";
-import { Course, CreateCourseRequest, Class } from "../../dto/dto";
+import { Course, CreateCourseRequest } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
+import { Class } from "../../prismaTypes/types";
 
 export type ClassSliceState = {
     courses: {
         ids?: number[],
-        idToObject?: { [id: number]: Course }
+        idToCourse?: { [id: number]: Course }
     }
     classTimetable: Class[]
 }
@@ -38,12 +39,12 @@ const classSlice = createSlice({
                     targetArr: classes
                 });
                 state.courses.ids = ids.map(id => Number(id));
-                state.courses.idToObject = idToObject
+                state.courses.idToCourse = idToObject
             })
             .addCase(CourseThunkAction.updateCourse.fulfilled, (state, action) => {
                 const id = action.payload.course.id;
-                if (state.courses.idToObject?.[id]) {
-                    state.courses.idToObject[id] = action.payload.course;
+                if (state.courses.idToCourse?.[id]) {
+                    state.courses.idToCourse[id] = action.payload.course;
                 }
             })
     }

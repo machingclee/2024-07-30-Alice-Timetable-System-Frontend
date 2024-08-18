@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import colors from "../constant/colors";
 
 interface ResizableDivProps {
     nonNull: boolean;
@@ -38,7 +39,7 @@ const ResizableBox: React.FC<ResizableDivProps> = ({ nonNull, hourUnixTimestamp,
         <div
             style={{
                 height: `70px`, // Main div height is fixed
-                backgroundColor: nonNull ? "#4096ff" : "transparent",
+                backgroundColor: nonNull ? colors.blue : "transparent",
                 padding: "5px",
                 borderRadius: "4px",
                 fontSize: "12px",

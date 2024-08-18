@@ -87,7 +87,7 @@ export default ({
                     updateFormData({ course_id: value });
                 }}
                 options={classes.ids?.map((id_) => {
-                    const { course_name, id } = classes.idToObject?.[id_] || {};
+                    const { course_name, id } = classes.idToCourse?.[id_] || {};
                     return {
                         value: id || 0,
                         label: course_name || "",

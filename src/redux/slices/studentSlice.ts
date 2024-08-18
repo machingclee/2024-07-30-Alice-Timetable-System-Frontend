@@ -28,7 +28,7 @@ type TimetableAction = "Create Class" | "Move Class" | "Resize Class" | "Edit Cl
 export type StudentSliceState = {
     students: {
         ids?: string[];
-        idToObject?: {
+        idToStduent?: {
             [key: string]: Student;
         };
     };
@@ -37,9 +37,10 @@ export type StudentSliceState = {
         selectedPackageId: string;
         packages: {
             ids?: string[];
-            idToObject?: { [id: string]: Augmented_Student_package };
+            idToPackage?: { [id: string]: Augmented_Student_package };
         };
         timetable: {
+            selectedDate: Date,
             hrUnixTimestamps?: string[];
             hrUnixTimestampToClass?: { [id: string]: Augmented_Class & { hide: boolean } };
         };
@@ -52,7 +53,9 @@ const initialState: StudentSliceState = {
         selectedPackageId: "",
         packages: {},
         detail: null,
-        timetable: {},
+        timetable: {
+            selectedDate: new Date()
+        },
     },
 };
 
@@ -61,7 +64,16 @@ const studentSlice = createSlice({
     initialState,
     reducers: {
         setSelectedPackageId: (state, action: PayloadAction<string>) => {
-            state.studentDetail.selectedPackageId = action.payload;
+            const packageId = action.payload;
+            state.studentDetail.selectedPackageId = packageId;
+            const availableFirstDate = state.studentDetail.timetable.hrUnixTimestamps
+                ?.filter(timestamp => {
+                    return state.studentDetail.timetable?.hrUnixTimestampToClass?.[timestamp].student_package_id == Number(packageId)
+                }).sort((a, b) => Number(a) - Number(b)).slice(0, 1)?.[0];
+            if (availableFirstDate) {
+                state.studentDetail.timetable.selectedDate = new Date(Number(availableFirstDate))
+            }
+
         },
         unsetStudentEvent: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
@@ -92,12 +104,12 @@ const studentSlice = createSlice({
                 const students = action.payload;
                 const { idToObject, ids } = normalizeUtil.normalize({ idAttribute: "id", targetArr: students });
                 state.students.ids = ids;
-                state.students.idToObject = idToObject;
+                state.students.idToStduent = idToObject;
             })
             .addCase(StudentThunkAction.updateStudent.fulfilled, (state, action) => {
                 const student = action.payload.student;
-                if (state.students.idToObject?.[student.id]) {
-                    state.students.idToObject[student.id] = student;
+                if (state.students.idToStduent?.[student.id]) {
+                    state.students.idToStduent[student.id] = student;
                 }
             })
             .addCase(StudentThunkAction.getStudentDetail.fulfilled, (state, action) => {
@@ -145,7 +157,7 @@ const studentSlice = createSlice({
                 const packages = action.payload.packages;
                 const { idToObject, ids } = normalizeUtil.normalize({ idAttribute: "id", targetArr: packages });
                 state.studentDetail.packages.ids = ids.sort((id1, id2) => idToObject[id1].start_date - idToObject[id2].start_date);
-                state.studentDetail.packages.idToObject = idToObject;
+                state.studentDetail.packages.idToPackage = idToObject;
             })
     },
 });
@@ -218,7 +230,7 @@ export class StudentThunkAction {
         return processRes(res, api);
     });
     public static deleteClass = createAsyncThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
-        const res = await apiClient.post<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS, props);
+        const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.classId),);
         return processRes(res, api);
     });
     public static duplicateClases = createAsyncThunk("studentSlice/duplicateClases", async (props: DuplicateClassRequest, api) => {
@@ -247,6 +259,20 @@ export class StudentThunkAction {
         const res = await apiClient.get<CustomResponse<{ packages: Augmented_Student_package[] }>>(apiRoutes.GET_STUDENT_PACKAGES(studentId));
         return processRes(res, api);
     });
+    public static markPackageAsPaid = createAsyncThunk("studentSlice/markPackageAsPaid", async (props: { packageId: number, paidAt: number }, api) => {
+        const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_MARK_PACAKGE_AS_PAID, props);
+        return processRes(res, api);
+    });
+    public static markPackageAsUnPaid = createAsyncThunk("studentSlice/markPackageAsUnPaid", async (props: { packageId: number }, api) => {
+        const { packageId } = props;
+        const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_MARK_PACAKGE_AS_UNPAID, { packageId });
+        return processRes(res, api);
+    });
+    public static deletePackage = createAsyncThunk("studentSlice/deletePackage", async (props: { packageId: number }, api) => {
+        const { packageId } = props;
+        const res = await apiClient.delete<CustomResponse<undefined>>(apiRoutes.DELETE_PACKAGE(packageId));
+        return processRes(res, api);
+    });
 }
 
 export const studentMiddleware = createListenerMiddleware();
@@ -262,6 +288,9 @@ registerDialogAndActions(studentMiddleware, [
             StudentThunkAction.duplicateClases.rejected,
             StudentThunkAction.updateClass.rejected,
             StudentThunkAction.createStudentPackage.rejected,
+            StudentThunkAction.markPackageAsPaid.rejected,
+            StudentThunkAction.markPackageAsUnPaid.rejected,
+            StudentThunkAction.deletePackage.rejected,
         ],
     },
     {

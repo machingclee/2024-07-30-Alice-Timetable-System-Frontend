@@ -15,7 +15,7 @@ import Spacer from "../../../components/Spacer";
 export default (props: { id: string }) => {
     const { id } = props;
     const navigate = useNavigate();
-    const student = useAppSelector(s => s.student.students?.idToObject?.[id])
+    const student = useAppSelector(s => s.student.students?.idToStduent?.[id])
     const goDetailPage = () => {
         navigate(`${RouteEnum.DASHBOARD_STUDENTS}/${id}`)
     }

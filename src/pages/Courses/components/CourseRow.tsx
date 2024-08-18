@@ -12,7 +12,7 @@ import lodash from "lodash";
 export default (props: { id: number }) => {
     const { id } = props;
     const dispatch = useAppDispatch();
-    const class_ = useAppSelector(s => s.class.courses.idToObject?.[id]);
+    const class_ = useAppSelector(s => s.class.courses.idToCourse?.[id]);
     if (!class_) {
         return null;
     }

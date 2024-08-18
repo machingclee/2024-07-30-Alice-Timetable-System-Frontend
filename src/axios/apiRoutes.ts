@@ -21,6 +21,9 @@ export default {
     PUT_MOVE_STUDNET_EVENT: "/student/move-event",
     PUT_DETACH_CLASS_FROM_GROUP: "/student/detach-from-group",
     PUT_UPDATE_CLASS: "/student/update-class",
+    PUT_MARK_PACAKGE_AS_PAID: "/student/mark-package-as-paid",
+    PUT_MARK_PACAKGE_AS_UNPAID: "/student/mark-package-as-unpaid",
 
-    DELETE_CLASS: "/student/delete-class",
+    DELETE_PACKAGE: (packageId: number) => `/student/delete-package/${packageId}`,
+    DELETE_CLASS: (classId: number) => `/student/delete-class/${classId}`,
 };

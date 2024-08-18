@@ -106,8 +106,7 @@ export type CreateClassRequest = {
 };
 
 export type DeleteClassRequest = {
-    classId: number;
-    student_id: string;
+    classId: number
 };
 
 export type DuplicateClassRequest = {

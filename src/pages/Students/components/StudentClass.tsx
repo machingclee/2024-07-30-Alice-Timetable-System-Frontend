@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { useParams } from "react-router-dom";
 import AddClassEventDialog from "./AddClassEventDialog";
 import AddClassEventForm from "./AddClassEventForm";
-import { PropsWithChildren, useCallback } from "react";
+import { PropsWithChildren, useCallback, useState } from "react";
 import UpdateClassDialog from "./UpdateClassDialog";
 import UpdateClassForm from "./UpdateClassForm";
 import DeleteClassForm from "./DeleteClassForm";
@@ -18,6 +18,7 @@ import DuplicateClassForm from "./DuplicateClassForm";
 import { StudentThunkAction } from "../../../redux/slices/studentSlice";
 import FadeIn from "../../../components/FadeIn";
 import colors from "../../../constant/colors";
+import Label from "../../../components/Label";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number }) => {
     const dispatch = useAppDispatch();
@@ -25,8 +26,10 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const { studentId } = useParams<{ studentId: string }>();
     const studentClass = useAppSelector((s) => s.student.studentDetail.timetable?.hrUnixTimestampToClass?.[hourUnixTimestamp]);
+    const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
 
-    const { day_unix_timestamp = 0, hour_unix_timestamp = 0 } = studentClass || {};
+    const { day_unix_timestamp = 0, hour_unix_timestamp = 0, class_group_id } = studentClass || {};
+    const hasDuplicationGroup = class_group_id != null;
     const disableDraggable = !(studentClass != null);
     const createEvent = () => {
         AddClassEventDialog.setContent(() => () => <AddClassEventForm dayUnixTimestamp={dayUnixTimestamp} hourUnixTimestamp={hourUnixTimestamp} studentId={studentId || ""} />);
@@ -37,6 +40,21 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const rightClickable = !(studentClass != null);
     const dayAndTime = dayjs(hourUnixTimestamp).format("ddd, HH:mm");
     const disableDuplicate = studentClass?.class_group_id != null;
+    const groupedLabel = () => {
+        if (!hasDuplicationGroup) {
+            return null;
+        }
+        return (
+            <div style={{
+                padding: "2px 5px",
+                fontSize: 12,
+                color: "white",
+                backgroundColor: colors.purple,
+            }}>
+                Grouped
+            </div>
+        )
+    }
     const TimeslotWrapper = useCallback(
         rightClickable
             ? ({ children }: PropsWithChildren) => {
@@ -88,6 +106,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     );
 
     const selectedByPackageId = selectedPackageId === String(studentClass?.student_package_id || "0");
+    const showLabel = (studentClass?.hide != null) && selectedByPackageId
 
     return (
         <>
@@ -102,11 +121,11 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                     const { dragHandleProps, draggableProps, innerRef } = provided_;
                     const { style, ..._draggableProps } = draggableProps;
                     const course_name = studentClass?.course_name;
-                    const nonNull = event != null;
                     const shouldFreeze = parseInt(activeDraggableId) !== hourUnixTimestamp;
 
                     return (
-                        <div className="draggable-container" style={{ opacity: studentClass?.hide ? 0 : 1 }}>
+                        <div className="draggable-container" style={{ opacity: studentClass?.hide ? 0 : 1, position: "relative" }}>
+                            {showLabel && <Label label="StudentClass.tsx" />}
                             {/* @ts-ignore */}
                             <TimeslotWrapper>
                                 <div
@@ -129,32 +148,41 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                             <FadeIn>
                                                 {/* @ts-ignore */}
                                                 <ContextMenuTrigger id={contextMenuId}>
-                                                    <div
+                                                    <Box
+                                                        onMouseEnter={() => {
+                                                            setClassEventHeight(120)
+                                                        }}
+                                                        onMouseLeave={() => {
+                                                            setClassEventHeight(null)
+                                                        }}
                                                         style={{
                                                             position: "absolute",
                                                             border: "1px solid #357fd9",
                                                             boxShadow: boxShadow.SHADOW_62,
-                                                            zIndex: 10 ** 5,
+                                                            transition: "height 0.18s ease-in-out",
+                                                            zIndex: classEventHeight ? 10 ** 7 : 10 ** 5,
+                                                            overflow: "hidden",
                                                             top: 5,
                                                             left: 5,
                                                             width: "calc(100% - 20px)",
-                                                            height: 1.2 * (studentClass.min || 0) - 10,
+                                                            height: classEventHeight || (1.2 * (studentClass.min || 0) - 10),
                                                             backgroundColor: (() => {
                                                                 if (invalidData) {
                                                                     return "red";
                                                                 } else {
-                                                                    return nonNull && studentClass.class_status === "PRESENT"
-                                                                        ? colors.blue
-                                                                        : nonNull && studentClass.class_status === "SUSPICIOUS_ABSENCE"
-                                                                            ? colors.amber
-                                                                            : nonNull && studentClass.class_status === "ILLEGIT_ABSENCE"
-                                                                                ? colors.red
-                                                                                : nonNull && studentClass.class_status === "LEGIT_ABSENCE"
-                                                                                    ? colors.grey
-                                                                                    : "";
+                                                                    switch (studentClass.class_status) {
+                                                                        case "PRESENT":
+                                                                            return colors.blue
+                                                                        case "SUSPICIOUS_ABSENCE":
+                                                                            return colors.amber
+                                                                        case "ILLEGIT_ABSENCE":
+                                                                            return colors.red
+                                                                        case "MAKEUP":
+                                                                            return colors.grey
+                                                                    }
                                                                 }
                                                             })(),
-                                                            padding: 4,
+
                                                             borderRadius: 4,
                                                             fontSize: 14,
                                                             color: "white",
@@ -162,8 +190,11 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         }}
                                                         key={hourUnixTimestamp}
                                                     >
-                                                        {studentClass.course_name}
-                                                    </div>
+                                                        {showLabel && groupedLabel()}
+                                                        <div style={{ padding: 4, }}>
+                                                            {studentClass.course_name}
+                                                        </div>
+                                                    </Box>
                                                 </ContextMenuTrigger>
                                                 {/* @ts-ignore */}
                                                 <ContextMenu id={contextMenuId} style={{ zIndex: 10 ** 7 }}>
@@ -208,14 +239,17 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         </MenuItem>
                                                         {/* @ts-ignore */}
                                                         {disableDuplicate && (
-                                                            <MenuItem
-                                                                className={classnames("menu-item")}
-                                                                onClick={async () => {
-                                                                    await dispatch(StudentThunkAction.detachFromGroup({ classId: studentClass.id })).unwrap();
-                                                                }}
-                                                            >
-                                                                Detach from Group
-                                                            </MenuItem>
+                                                            <>
+                                                                {/* @ts-ignore */}
+                                                                <MenuItem
+                                                                    className={classnames("menu-item")}
+                                                                    onClick={async () => {
+                                                                        await dispatch(StudentThunkAction.detachFromGroup({ classId: studentClass.id })).unwrap();
+                                                                    }}
+                                                                >
+                                                                    Detach from Group
+                                                                </MenuItem>
+                                                            </>
                                                         )}
                                                         {/* @ts-ignore */}
                                                         <MenuItem

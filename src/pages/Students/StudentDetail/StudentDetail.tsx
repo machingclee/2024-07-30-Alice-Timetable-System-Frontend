@@ -17,6 +17,7 @@ import AddPackageDialog from "../components/AddPackageDialog";
 import CustomScrollbarContainer from "../../../components/CustomScrollbarContainer";
 import StudentPackageColumn from "./components/StudentPackageColumn";
 import DeleteClassDialog from "../components/DeleteClassDialog";
+import AddPaymentDetailDialog from "./components/AddPaymentDetailDialog";
 
 export default () => {
     const { studentId } = useParams<{ studentId: string }>();
@@ -87,6 +88,7 @@ export default () => {
             <DeleteClassDialog.render />
             <AddClassEventDialog.render />
             <AddPackageDialog.render />
+            <AddPaymentDetailDialog.render />
         </div>
     );
 };

@@ -24,11 +24,11 @@ export type WeeklyCoordinate = {
 };
 
 export default (props: { date?: Date }) => {
-    const { date = new Date() } = props;
     const dispatch = useAppDispatch();
     const studentId = useAppSelector(s => s.student.studentDetail.detail?.id) || "";
     const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
-    const currDate = date;
+    const selectedPackageId = useAppSelector(s => s.student.studentDetail.selectedPackageId);
+    const courseStartDate = useAppSelector(s => s.student.studentDetail.timetable.selectedDate);
     const currDraggingId = useRef("");
     const [activeDraggableId, setActiveDraggableId] = useState("");
     const [offset, setOffset] = useState(0);
@@ -44,8 +44,8 @@ export default (props: { date?: Date }) => {
         return intervals;
     }, []);
 
-    const weekStart = dayjs(startOfWeek(currDate, { weekStartsOn: 1 })).add(offset, "day").toDate();
-    const weekEnd = dayjs(endOfWeek(currDate, { weekStartsOn: 1 })).add(offset, "day").toDate();
+    const weekStart = dayjs(startOfWeek(courseStartDate, { weekStartsOn: 1 })).add(offset, "day").toDate();
+    const weekEnd = dayjs(endOfWeek(courseStartDate, { weekStartsOn: 1 })).add(offset, "day").toDate();
     const daysOfWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
     const [timeGrid, setTimegrid] = useState<WeeklyCoordinate>({});
 
@@ -61,7 +61,11 @@ export default (props: { date?: Date }) => {
             });
         });
         setTimegrid(timetable_);
-    }, [offset]);
+    }, [offset, courseStartDate, selectedPackageId]);
+
+    useEffect(() => {
+        setOffset(0);
+    }, [selectedPackageId])
 
     const timetableContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -201,8 +205,10 @@ export default (props: { date?: Date }) => {
                             }
                         }
                         if (fromClz.class_group_id) {
+
                             dispatch(studentSlice.actions.hideClass({ hrTimestamp: currDraggingId.current }))
-                            MoveConfirmationDialog.setContent(() => () => <MoveConfirmationForm moveClassesAction={move} />)
+                            MoveConfirmationDialog.setContent(() => () => (<MoveConfirmationForm moveClassesAction={move} />
+                            ))
                             MoveConfirmationDialog.setOpen(true);
                         } else {
                             await move()

@@ -26,9 +26,9 @@ export default (props: {
     const { dayUnixTimestamp, hourUnixTimestamp, studentId } = props;
     const [error, setError] = useState<Partial<CreateClassRequest>>({});
     const selectedPackageId = useAppSelector(s => s.student.studentDetail.selectedPackageId)
-    const defaultCourseId = useAppSelector(s => s.student.studentDetail.packages.idToObject?.[selectedPackageId]?.course_id || 0)
-    const defaultMin = useAppSelector(s => s.student.studentDetail.packages.idToObject?.[selectedPackageId]?.min || 0)
-    const defaultNumOfClasses = useAppSelector(s => s.student.studentDetail.packages.idToObject?.[selectedPackageId]?.num_of_classes || 1)
+    const defaultCourseId = useAppSelector(s => s.student.studentDetail.packages.idToPackage?.[selectedPackageId]?.course_id || 0)
+    const defaultMin = useAppSelector(s => s.student.studentDetail.packages.idToPackage?.[selectedPackageId]?.min || 0)
+    const defaultNumOfClasses = useAppSelector(s => s.student.studentDetail.packages.idToPackage?.[selectedPackageId]?.num_of_classes || 1)
     const dispatch = useAppDispatch();
     const classes = useAppSelector(s => s.class.courses);
     const formData = useRef<Partial<CreateClassRequest>>({
@@ -89,7 +89,7 @@ export default (props: {
                 defaultValue={defaultCourseId}
                 onChange={(value) => { updateFormData({ course_id: value }) }}
                 options={classes.ids?.map(id_ => {
-                    const { course_name, id } = classes.idToObject?.[id_] || {}
+                    const { course_name, id } = classes.idToCourse?.[id_] || {}
                     return {
                         value: id || 0,
                         label: course_name || ""

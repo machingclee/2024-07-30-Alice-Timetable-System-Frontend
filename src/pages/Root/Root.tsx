@@ -47,7 +47,7 @@ export default () => {
                 ref={ref}
                 options={{
                     scrollbars: {
-                        autoHide: "leave",
+                        autoHide: "scroll",
                         autoHideDelay: 100,
                     },
                 }}
