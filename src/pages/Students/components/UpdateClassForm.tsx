@@ -40,7 +40,7 @@ export default (props: { classEvent: Class }) => {
                 style={{ width: "100%" }}
                 defaultValue={status}
                 onChange={(value) => {
-                    setHasAbsence(!(value === "PRESENT"));
+                    setHasAbsence(!(value === "PRESENT" || value === "MAKEUP"));
                     formData.current = { ...formData.current, class_status: value };
                 }}
                 options={classStatuses}

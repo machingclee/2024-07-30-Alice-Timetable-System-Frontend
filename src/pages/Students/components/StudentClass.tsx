@@ -170,6 +170,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                 if (invalidData) {
                                                                     return "red";
                                                                 } else {
+<<<<<<< Updated upstream
                                                                     switch (studentClass.class_status) {
                                                                         case "PRESENT":
                                                                             return colors.blue
@@ -180,6 +181,19 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                         case "MAKEUP":
                                                                             return colors.grey
                                                                     }
+=======
+                                                                    return nonNull && studentClass.class_status === "PRESENT"
+                                                                        ? colors.blue
+                                                                        : nonNull && studentClass.class_status === "SUSPICIOUS_ABSENCE"
+                                                                        ? colors.amber
+                                                                        : nonNull && studentClass.class_status === "ILLEGIT_ABSENCE"
+                                                                        ? colors.red
+                                                                        : nonNull && studentClass.class_status === "LEGIT_ABSENCE"
+                                                                        ? colors.grey
+                                                                        : nonNull && studentClass.class_status === "MAKEUP"
+                                                                        ? colors.green
+                                                                        : "";
+>>>>>>> Stashed changes
                                                                 }
                                                             })(),
 
