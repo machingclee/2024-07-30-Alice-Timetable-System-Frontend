@@ -14,7 +14,6 @@ import UpdateClassDialog from "../components/UpdateClassDialog";
 import DuplicateClassDialog from "../components/DuplicateClassDialog";
 import MoveConfirmationDialog from "../components/MoveConfirmationDialog";
 import AddPackageDialog from "../components/AddPackageDialog";
-import CustomScrollbarContainer from "../../../components/CustomScrollbarContainer";
 import StudentPackageColumn from "./components/StudentPackageColumn";
 import DeleteClassDialog from "../components/DeleteClassDialog";
 import AddPaymentDetailDialog from "./components/AddPaymentDetailDialog";
