@@ -45,68 +45,70 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
             return null;
         }
         return (
-            <div style={{
-                padding: "2px 5px",
-                fontSize: 12,
-                color: "white",
-                backgroundColor: colors.purple,
-            }}>
+            <div
+                style={{
+                    padding: "2px 5px",
+                    fontSize: 12,
+                    color: "white",
+                    backgroundColor: colors.purple,
+                }}
+            >
                 Grouped
             </div>
-        )
-    }
+        );
+    };
     const TimeslotWrapper = useCallback(
         rightClickable
             ? ({ children }: PropsWithChildren) => {
-                return (
-                    <>
-                        {/* @ts-ignore */}
-                        <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
-                        {/* @ts-ignore */}
-                        <ContextMenu
-                            id={hourUnixTimestamp.toString()}
-                            style={{
-                                zIndex: 10 ** 7,
-                                borderRadius: 8,
-                                backgroundColor: "white",
-                                boxShadow: boxShadow.SHADOW_62,
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    "& .menu-item": {
-                                        padding: "10px",
-                                        cursor: "pointer",
-                                        color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
-                                        "&:hover": {
-                                            "&:hover": {
-                                                color: "rgb(64, 150, 255)",
-                                            },
-                                        },
-                                    },
-                                }}
-                            >
-                                {/* @ts-ignore */}
-                                <MenuItem
-                                    className="menu-item"
-                                    disabled={!selectedPackageId}
-                                    onClick={() => {
-                                        createEvent();
-                                    }}
-                                >
-                                    {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
-                                </MenuItem>
-                            </Box>
-                        </ContextMenu>
-                    </>
-                );
-            }
+                  return (
+                      <>
+                          {/* @ts-ignore */}
+                          <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
+                          {/* @ts-ignore */}
+                          <ContextMenu
+                              id={hourUnixTimestamp.toString()}
+                              style={{
+                                  zIndex: 10 ** 7,
+                                  borderRadius: 8,
+                                  backgroundColor: "white",
+                                  boxShadow: boxShadow.SHADOW_62,
+                              }}
+                          >
+                              <Box
+                                  sx={{
+                                      "& .menu-item": {
+                                          padding: "10px",
+                                          cursor: "pointer",
+                                          color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
+                                          "&:hover": {
+                                              "&:hover": {
+                                                  color: "rgb(64, 150, 255)",
+                                              },
+                                          },
+                                      },
+                                  }}
+                              >
+                                  {/* @ts-ignore */}
+                                  <MenuItem
+                                      className="menu-item"
+                                      disabled={!selectedPackageId}
+                                      onClick={() => {
+                                          createEvent();
+                                      }}
+                                  >
+                                      {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
+                                  </MenuItem>
+                              </Box>
+                          </ContextMenu>
+                      </>
+                  );
+              }
             : ({ children }: PropsWithChildren) => children,
         [studentClass, selectedPackageId]
     );
 
     const selectedByPackageId = selectedPackageId === String(studentClass?.student_package_id || "0");
-    const showLabel = (studentClass?.hide != null) && selectedByPackageId
+    const showLabel = studentClass?.hide != null && selectedByPackageId;
 
     return (
         <>
@@ -150,10 +152,10 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                 <ContextMenuTrigger id={contextMenuId}>
                                                     <Box
                                                         onMouseEnter={() => {
-                                                            setClassEventHeight(120)
+                                                            setClassEventHeight(120);
                                                         }}
                                                         onMouseLeave={() => {
-                                                            setClassEventHeight(null)
+                                                            setClassEventHeight(null);
                                                         }}
                                                         style={{
                                                             position: "absolute",
@@ -165,35 +167,23 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                             top: 5,
                                                             left: 5,
                                                             width: "calc(100% - 20px)",
-                                                            height: classEventHeight || (1.2 * (studentClass.min || 0) - 10),
+                                                            height: classEventHeight || 1.2 * (studentClass.min || 0) - 10,
                                                             backgroundColor: (() => {
                                                                 if (invalidData) {
                                                                     return "red";
                                                                 } else {
-<<<<<<< Updated upstream
                                                                     switch (studentClass.class_status) {
                                                                         case "PRESENT":
-                                                                            return colors.blue
+                                                                            return colors.blue;
                                                                         case "SUSPICIOUS_ABSENCE":
-                                                                            return colors.amber
+                                                                            return colors.amber;
                                                                         case "ILLEGIT_ABSENCE":
-                                                                            return colors.red
+                                                                            return colors.red;
+                                                                        case "LEGIT_ABSENCE":
+                                                                            return colors.grey;
                                                                         case "MAKEUP":
-                                                                            return colors.grey
+                                                                            return colors.green;
                                                                     }
-=======
-                                                                    return nonNull && studentClass.class_status === "PRESENT"
-                                                                        ? colors.blue
-                                                                        : nonNull && studentClass.class_status === "SUSPICIOUS_ABSENCE"
-                                                                        ? colors.amber
-                                                                        : nonNull && studentClass.class_status === "ILLEGIT_ABSENCE"
-                                                                        ? colors.red
-                                                                        : nonNull && studentClass.class_status === "LEGIT_ABSENCE"
-                                                                        ? colors.grey
-                                                                        : nonNull && studentClass.class_status === "MAKEUP"
-                                                                        ? colors.green
-                                                                        : "";
->>>>>>> Stashed changes
                                                                 }
                                                             })(),
 
@@ -205,9 +195,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         key={hourUnixTimestamp}
                                                     >
                                                         {showLabel && groupedLabel()}
-                                                        <div style={{ padding: 4, }}>
-                                                            {studentClass.course_name}
-                                                        </div>
+                                                        <div style={{ padding: 4 }}>{studentClass.course_name}</div>
                                                     </Box>
                                                 </ContextMenuTrigger>
                                                 {/* @ts-ignore */}
