@@ -135,6 +135,16 @@ export type CreateStudentPackageRequest = {
     student_id: string;
 };
 
+export type UpdateStudentPackageRequest = {
+    id: number;
+    num_of_classes: number;
+    start_date: number;
+    expiry_date: number;
+    min: number;
+    course_id: number;
+    student_id: string;
+};
+
 export type Augmented_Student_package = Student_package & { consumed_minutes: { count: number } };
 
 export type Augmented_Class = Class & { course_name: string };

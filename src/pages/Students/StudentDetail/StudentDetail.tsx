@@ -17,6 +17,7 @@ import StudentPackageColumn from "./components/StudentPackageColumn";
 import DeleteClassDialog from "../components/DeleteClassDialog";
 import AddPaymentDetailDialog from "./components/AddPaymentDetailDialog";
 import ViewClassDialog from "../components/ViewClassDialog";
+import EditPackageDialog from "./components/EditPackageDialog";
 
 export default () => {
     const { studentId } = useParams<{ studentId: string }>();
@@ -87,6 +88,7 @@ export default () => {
             <DeleteClassDialog.render />
             <AddClassEventDialog.render />
             <AddPackageDialog.render />
+            <EditPackageDialog.render />
             <AddPaymentDetailDialog.render />
         </div>
     );

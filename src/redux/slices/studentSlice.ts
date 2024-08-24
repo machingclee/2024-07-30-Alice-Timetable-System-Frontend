@@ -16,6 +16,7 @@ import {
     Augmented_Student_package,
     Augmented_Class,
     DeleteClassRequest,
+    UpdateStudentPackageRequest,
 } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
@@ -162,6 +163,15 @@ const studentSlice = createSlice({
                     state.studentDetail.timetable.hrUnixTimestampToClass[String(hourTimeStamp)].reason_for_absence = reason_for_absence;
                 }
             })
+            .addCase(StudentThunkAction.updatePackage.fulfilled, (state, action) => {
+                const updatedPackage = action.payload;
+                if (state.studentDetail.packages.idToPackage?.[String(updatedPackage.id)]) {
+                    state.studentDetail.packages.idToPackage[String(updatedPackage.id)].start_date = updatedPackage.start_date;
+                    state.studentDetail.packages.idToPackage[String(updatedPackage.id)].course_id = updatedPackage.course_id;
+                    state.studentDetail.packages.idToPackage[String(updatedPackage.id)].min = updatedPackage.min;
+                    state.studentDetail.packages.idToPackage[String(updatedPackage.id)].num_of_classes = updatedPackage.num_of_classes;
+                }
+            })
             .addCase(StudentThunkAction.getStudentPackages.fulfilled, (state, action) => {
                 const packages = action.payload.packages;
                 const { idToObject, ids } = normalizeUtil.normalize({ idAttribute: "id", targetArr: packages });
@@ -174,6 +184,10 @@ const studentSlice = createSlice({
 export class StudentThunkAction {
     public static getStudents = createAsyncThunk("studentSlice/getStudents", async (_: undefined, api) => {
         const res = await apiClient.get<CustomResponse<Student[]>>(apiRoutes.GET_STUDENTS);
+        return processRes(res, api);
+    });
+    public static updatePackage = createAsyncThunk("studentSlice/updatePackage", async (props: UpdateStudentPackageRequest, api) => {
+        const res = await apiClient.put<CustomResponse<Student_package>>(apiRoutes.PUT_UPDATE_PACKAGE, props);
         return processRes(res, api);
     });
     public static createStudent = createAsyncThunk("studentSlice/createStudent", async (props: Student, api) => {

@@ -13,6 +13,8 @@ import { FaRegCheckCircle } from "react-icons/fa";
 import { MdOutlinePending } from "react-icons/md";
 import AddPaymentDetailDialog from "./AddPaymentDetailDialog";
 import AddPaymentDetailForm from "./AddPaymentDetailForm";
+import EditPackageDialog from "./EditPackageDialog";
+import EditPackageForm from "./EditPackageForm";
 
 export default (props: { packageId: string }) => {
     const { packageId } = props;
@@ -49,6 +51,11 @@ export default (props: { packageId: string }) => {
         if (studentId) {
             dispatch(StudentThunkAction.getStudentPackages({ studentId }));
         }
+    };
+
+    const editPackage = async () => {
+        EditPackageDialog.setContent(() => () => <EditPackageForm packageId={packageId} />);
+        EditPackageDialog.setOpen(true);
     };
     const paidIcon = () => {
         return (
@@ -171,6 +178,16 @@ export default (props: { packageId: string }) => {
                         },
                     }}
                 >
+                    {/* @ts-ignore */}
+                    <MenuItem className="menu-item" onClick={editPackage}>
+                        Edit package
+                    </MenuItem>
+                    <>
+                        {/* @ts-ignore */}
+                        <MenuItem className="menu-item" onClick={deletePackage}>
+                            Delete package
+                        </MenuItem>
+                    </>
                     {!isPaid && (
                         <>
                             {/* @ts-ignore */}
@@ -187,12 +204,6 @@ export default (props: { packageId: string }) => {
                             </MenuItem>
                         </>
                     )}
-                    <>
-                        {/* @ts-ignore */}
-                        <MenuItem className="menu-item" onClick={deletePackage}>
-                            Delete package
-                        </MenuItem>
-                    </>
                 </Box>
             </ContextMenu>
         </Box>
