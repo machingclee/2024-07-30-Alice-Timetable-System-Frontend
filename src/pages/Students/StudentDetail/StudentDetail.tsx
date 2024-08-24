@@ -10,13 +10,13 @@ import WeeklyTimetable from "../components/WeeklyTimetable";
 import Label from "../../../components/Label";
 import AddClassEventDialog from "../components/AddClassEventDialog";
 import { CourseThunkAction } from "../../../redux/slices/courseSlice";
-import UpdateClassDialog from "../components/UpdateClassDialog";
 import DuplicateClassDialog from "../components/DuplicateClassDialog";
 import MoveConfirmationDialog from "../components/MoveConfirmationDialog";
 import AddPackageDialog from "../components/AddPackageDialog";
 import StudentPackageColumn from "./components/StudentPackageColumn";
 import DeleteClassDialog from "../components/DeleteClassDialog";
 import AddPaymentDetailDialog from "./components/AddPaymentDetailDialog";
+import ViewClassDialog from "../components/ViewClassDialog";
 
 export default () => {
     const { studentId } = useParams<{ studentId: string }>();
@@ -83,7 +83,7 @@ export default () => {
             {/* <Calendar /> */}
             <MoveConfirmationDialog.render />
             <DuplicateClassDialog.render />
-            <UpdateClassDialog.render />
+            <ViewClassDialog.render />
             <DeleteClassDialog.render />
             <AddClassEventDialog.render />
             <AddPackageDialog.render />

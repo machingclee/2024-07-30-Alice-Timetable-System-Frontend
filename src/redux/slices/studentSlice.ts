@@ -16,14 +16,13 @@ import {
     Augmented_Student_package,
     Augmented_Class,
     DeleteClassRequest,
+    ClassAction,
 } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
 import { RootState } from "../store";
 import lodash from "lodash";
 import { Class_status, Student_package } from "../../prismaTypes/types";
-
-type TimetableAction = "Create Class" | "Move Class" | "Resize Class" | "Edit Class" | null;
 
 export type StudentSliceState = {
     students: {
@@ -40,11 +39,13 @@ export type StudentSliceState = {
             idToPackage?: { [id: string]: Augmented_Student_package };
         };
         timetable: {
-            selectedDate: Date,
+            selectedDate: Date;
             hrUnixTimestamps?: string[];
             hrUnixTimestampToClass?: { [id: string]: Augmented_Class & { hide: boolean } };
         };
     };
+    // To trigger rerendering in case a studentClass needs to react to the changes in other studentClasses
+    classAction: ClassAction;
 };
 
 const initialState: StudentSliceState = {
@@ -54,9 +55,10 @@ const initialState: StudentSliceState = {
         packages: {},
         detail: null,
         timetable: {
-            selectedDate: new Date()
+            selectedDate: new Date(),
         },
     },
+    classAction: null,
 };
 
 const studentSlice = createSlice({
@@ -67,13 +69,14 @@ const studentSlice = createSlice({
             const packageId = action.payload;
             state.studentDetail.selectedPackageId = packageId;
             const availableFirstDate = state.studentDetail.timetable.hrUnixTimestamps
-                ?.filter(timestamp => {
-                    return state.studentDetail.timetable?.hrUnixTimestampToClass?.[timestamp].student_package_id == Number(packageId)
-                }).sort((a, b) => Number(a) - Number(b)).slice(0, 1)?.[0];
+                ?.filter((timestamp) => {
+                    return state.studentDetail.timetable?.hrUnixTimestampToClass?.[timestamp].student_package_id == Number(packageId);
+                })
+                .sort((a, b) => Number(a) - Number(b))
+                .slice(0, 1)?.[0];
             if (availableFirstDate) {
-                state.studentDetail.timetable.selectedDate = new Date(Number(availableFirstDate))
+                state.studentDetail.timetable.selectedDate = new Date(Number(availableFirstDate));
             }
-
         },
         unsetStudentEvent: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
@@ -96,6 +99,9 @@ const studentSlice = createSlice({
         },
         reset: () => {
             return initialState;
+        },
+        setClassAction: (state, action: PayloadAction<ClassAction>) => {
+            state.classAction = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -158,7 +164,7 @@ const studentSlice = createSlice({
                 const { idToObject, ids } = normalizeUtil.normalize({ idAttribute: "id", targetArr: packages });
                 state.studentDetail.packages.ids = ids.sort((id1, id2) => idToObject[id1].start_date - idToObject[id2].start_date);
                 state.studentDetail.packages.idToPackage = idToObject;
-            })
+            });
     },
 });
 
@@ -230,7 +236,7 @@ export class StudentThunkAction {
         return processRes(res, api);
     });
     public static deleteClass = createAsyncThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
-        const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.classId),);
+        const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.classId));
         return processRes(res, api);
     });
     public static duplicateClases = createAsyncThunk("studentSlice/duplicateClases", async (props: DuplicateClassRequest, api) => {
@@ -259,7 +265,7 @@ export class StudentThunkAction {
         const res = await apiClient.get<CustomResponse<{ packages: Augmented_Student_package[] }>>(apiRoutes.GET_STUDENT_PACKAGES(studentId));
         return processRes(res, api);
     });
-    public static markPackageAsPaid = createAsyncThunk("studentSlice/markPackageAsPaid", async (props: { packageId: number, paidAt: number }, api) => {
+    public static markPackageAsPaid = createAsyncThunk("studentSlice/markPackageAsPaid", async (props: { packageId: number; paidAt: number }, api) => {
         const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_MARK_PACAKGE_AS_PAID, props);
         return processRes(res, api);
     });

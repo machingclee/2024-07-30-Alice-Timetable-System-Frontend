@@ -8,9 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { useParams } from "react-router-dom";
 import AddClassEventDialog from "./AddClassEventDialog";
 import AddClassEventForm from "./AddClassEventForm";
-import { PropsWithChildren, useCallback, useState } from "react";
-import UpdateClassDialog from "./UpdateClassDialog";
-import UpdateClassForm from "./UpdateClassForm";
+import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 import DeleteClassForm from "./DeleteClassForm";
 import DeleteClassDialog from "./DeleteClassDialog";
 import DuplicateClassDialog from "./DuplicateClassDialog";
@@ -19,6 +17,8 @@ import { StudentThunkAction } from "../../../redux/slices/studentSlice";
 import FadeIn from "../../../components/FadeIn";
 import colors from "../../../constant/colors";
 import Label from "../../../components/Label";
+import ViewClassDialog from "./ViewClassDialog";
+import ViewClassForm from "./ViewClassForm";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number }) => {
     const dispatch = useAppDispatch();
@@ -26,6 +26,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const { studentId } = useParams<{ studentId: string }>();
     const studentClass = useAppSelector((s) => s.student.studentDetail.timetable?.hrUnixTimestampToClass?.[hourUnixTimestamp]);
+    const timetable = useAppSelector((s) => s.student.studentDetail.timetable);
+    const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
 
     const { day_unix_timestamp = 0, hour_unix_timestamp = 0, class_group_id } = studentClass || {};
@@ -109,6 +111,28 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
 
     const selectedByPackageId = selectedPackageId === String(studentClass?.student_package_id || "0");
     const showLabel = studentClass?.hide != null && selectedByPackageId;
+
+    useEffect(() => {
+        if (studentClass && timetable.hrUnixTimestampToClass) {
+            let currentClassNumber = 0;
+
+            const sortedClasses = Object.values(timetable.hrUnixTimestampToClass).sort((a, b) => {
+                return a.hour_unix_timestamp - b.hour_unix_timestamp;
+            });
+
+            sortedClasses.forEach((item) => {
+                if (
+                    item.course_name === studentClass.course_name &&
+                    (item.class_status === "PRESENT" || item.class_status === "MAKEUP" || item.class_status === "ILLEGIT_ABSENCE")
+                ) {
+                    currentClassNumber++;
+                    if (item.hour_unix_timestamp === studentClass.hour_unix_timestamp) {
+                        setClassNumber(currentClassNumber);
+                    }
+                }
+            });
+        }
+    }, [studentClass]);
 
     return (
         <>
@@ -196,6 +220,25 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                     >
                                                         {showLabel && groupedLabel()}
                                                         <div style={{ padding: 4 }}>{studentClass.course_name}</div>
+                                                        {classNumber !== 0 && (
+                                                            <div
+                                                                style={{
+                                                                    marginTop: 5,
+                                                                    paddingTop: 5,
+                                                                    paddingBottom: 5,
+                                                                    marginLeft: 10,
+                                                                    width: "80%",
+                                                                    backgroundColor: "white",
+                                                                    color: "black",
+                                                                    borderRadius: "5px",
+                                                                    display: "flex",
+                                                                    justifyContent: "center",
+                                                                    alignItems: "center",
+                                                                }}
+                                                            >
+                                                                Class: {classNumber}
+                                                            </div>
+                                                        )}
                                                     </Box>
                                                 </ContextMenuTrigger>
                                                 {/* @ts-ignore */}
@@ -222,11 +265,11 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         <MenuItem
                                                             className="menu-item"
                                                             onClick={() => {
-                                                                UpdateClassDialog.setContent(() => () => <UpdateClassForm classEvent={studentClass} />);
-                                                                UpdateClassDialog.setOpen(true);
+                                                                ViewClassDialog.setContent(() => () => <ViewClassForm classEvent={studentClass} />);
+                                                                ViewClassDialog.setOpen(true);
                                                             }}
                                                         >
-                                                            Edit Class
+                                                            View Class
                                                         </MenuItem>
                                                         {/* @ts-ignore */}
                                                         <MenuItem
