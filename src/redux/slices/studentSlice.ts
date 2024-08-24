@@ -152,10 +152,11 @@ const studentSlice = createSlice({
                 }
             })
             .addCase(StudentThunkAction.updateClass.fulfilled, (state, action) => {
-                const { hour_unix_timestamp: hourTimeStamp, min, class_status, reason_for_absence } = action.payload;
+                const { hour_unix_timestamp: hourTimeStamp, min, class_status, reason_for_absence, remark } = action.payload;
                 if (state.studentDetail?.timetable.hrUnixTimestampToClass?.[String(hourTimeStamp)]) {
                     state.studentDetail.timetable.hrUnixTimestampToClass[String(hourTimeStamp)].min = min;
                     state.studentDetail.timetable.hrUnixTimestampToClass[String(hourTimeStamp)].class_status = class_status;
+                    state.studentDetail.timetable.hrUnixTimestampToClass[String(hourTimeStamp)].remark = remark;
                     state.studentDetail.timetable.hrUnixTimestampToClass[String(hourTimeStamp)].reason_for_absence = reason_for_absence;
                 }
             })
@@ -249,7 +250,7 @@ export class StudentThunkAction {
         return processRes(res, api);
     });
     public static updateClass = createAsyncThunk("studentSlice/updateClass", async (props: UpdateClassRequest, api) => {
-        const res = await apiClient.put<CustomResponse<{ hour_unix_timestamp: number; min: number; class_status: Class_status; reason_for_absence: string }>>(
+        const res = await apiClient.put<CustomResponse<{ hour_unix_timestamp: number; min: number; class_status: Class_status; reason_for_absence: string; remark: string }>>(
             apiRoutes.PUT_UPDATE_CLASS,
             props
         );

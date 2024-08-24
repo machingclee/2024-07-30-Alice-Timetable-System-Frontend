@@ -112,6 +112,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const selectedByPackageId = selectedPackageId === String(studentClass?.student_package_id || "0");
     const showLabel = studentClass?.hide != null && selectedByPackageId;
 
+    // To account for the numbering of classes
     useEffect(() => {
         if (studentClass && timetable.hrUnixTimestampToClass) {
             let currentClassNumber = 0;
@@ -265,7 +266,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         <MenuItem
                                                             className="menu-item"
                                                             onClick={() => {
-                                                                ViewClassDialog.setContent(() => () => <ViewClassForm classEvent={studentClass} />);
+                                                                ViewClassDialog.setContent(() => () => <ViewClassForm classEvent={studentClass} classNumber={classNumber} />);
                                                                 ViewClassDialog.setOpen(true);
                                                             }}
                                                         >
