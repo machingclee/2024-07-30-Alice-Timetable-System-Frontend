@@ -16,7 +16,6 @@ import {
     Augmented_Student_package,
     Augmented_Class,
     DeleteClassRequest,
-    ClassAction,
 } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
@@ -44,8 +43,7 @@ export type StudentSliceState = {
             hrUnixTimestampToClass?: { [id: string]: Augmented_Class & { hide: boolean } };
         };
     };
-    // To trigger rerendering in case a studentClass needs to react to the changes in other studentClasses
-    classAction: ClassAction;
+    officialEndDateStatus: boolean;
 };
 
 const initialState: StudentSliceState = {
@@ -58,7 +56,7 @@ const initialState: StudentSliceState = {
             selectedDate: new Date(),
         },
     },
-    classAction: null,
+    officialEndDateStatus: false,
 };
 
 const studentSlice = createSlice({
@@ -100,8 +98,8 @@ const studentSlice = createSlice({
         reset: () => {
             return initialState;
         },
-        setClassAction: (state, action: PayloadAction<ClassAction>) => {
-            state.classAction = action.payload;
+        setOfficialEndDateStatus: (state, action) => {
+            state.officialEndDateStatus = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -131,10 +129,14 @@ const studentSlice = createSlice({
             .addCase(StudentThunkAction.moveStudentEvent.fulfilled, (state, action) => {
                 if (action.payload?.type === "proceed") {
                     console.log("now proceed");
-                    const { fromTimestamp = "", result } = action.payload;
+                    const { fromTimestamp = "", result, newOfficialEndDate, packageIdToChangeOfficialEndDate } = action.payload;
                     const { event } = result || {};
                     const hour_unix_timestamp = event?.hour_unix_timestamp || "";
                     const index = (state.studentDetail.timetable.hrUnixTimestamps || []).indexOf(fromTimestamp);
+
+                    if (newOfficialEndDate && packageIdToChangeOfficialEndDate && state.studentDetail.packages.idToPackage) {
+                        state.studentDetail.packages.idToPackage[packageIdToChangeOfficialEndDate].official_end_date = newOfficialEndDate;
+                    }
 
                     if (index > -1 && state.studentDetail.timetable.hrUnixTimestamps?.[index]) {
                         console.log("index exists", index);
@@ -208,23 +210,25 @@ export class StudentThunkAction {
                 toDayTimestamp: parseInt(toDayTimestamp),
                 toHourTimestamp: parseInt(toHourTimestamp),
             };
-            apiClient
-                .put<
-                    CustomResponse<{
-                        eventDetatil: {
-                            student_id: string;
-                            class_id: number;
-                            day_unix_timestamp: number;
-                            hour_unix_timestamp: number;
-                        };
-                    }>
-                >(apiRoutes.PUT_MOVE_STUDNET_EVENT, requestBody)
-                .then((result) => {
-                    if (!result.data.success) {
-                        api.dispatch(StudentThunkAction.getStudentClasses({ studentId: currStudentId }));
-                    }
-                });
-            return { type: "proceed", fromTimestamp, result: { event } };
+            const res = await apiClient.put<
+                CustomResponse<{
+                    eventDetatil: {
+                        student_id: string;
+                        class_id: number;
+                        day_unix_timestamp: number;
+                        hour_unix_timestamp: number;
+                    };
+                    packageIdToChangeOfficialEndDate: number;
+                    newOfficialEndDate: number;
+                }>
+            >(apiRoutes.PUT_MOVE_STUDNET_EVENT, requestBody);
+            if (!res.data.success) {
+                api.dispatch(StudentThunkAction.getStudentClasses({ studentId: currStudentId }));
+                return { type: "proceed", fromTimestamp, result: { event } };
+            } else {
+                const { packageIdToChangeOfficialEndDate, newOfficialEndDate } = res.data.result;
+                return { type: "proceed", fromTimestamp, result: { event }, packageIdToChangeOfficialEndDate, newOfficialEndDate };
+            }
         }
     );
     public static updateStudent = createAsyncThunk("studentSlice/updateStudent", async (props: Student, api) => {

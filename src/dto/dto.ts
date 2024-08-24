@@ -109,8 +109,6 @@ export type DeleteClassRequest = {
     classId: number;
 };
 
-export type ClassAction = "Change Class Status" | null;
-
 export type DuplicateClassRequest = {
     classId: number;
     numberOfWeeks: number;

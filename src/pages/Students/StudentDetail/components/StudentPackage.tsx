@@ -124,7 +124,7 @@ export default (props: { packageId: string }) => {
                             </tr>
                             <tr>
                                 <td>End Date</td>
-                                <td>{dayjs(official_end_date).format("YYYY-MM-DD")}</td>
+                                <td>{official_end_date === 0 ? "???" : dayjs(official_end_date).format("YYYY-MM-DD")}</td>
                             </tr>
                             <tr>
                                 <td>Expiry Date</td>
