@@ -44,7 +44,7 @@ export type StudentSliceState = {
             hrUnixTimestampToClass?: { [id: string]: Augmented_Class & { hide: boolean } };
         };
     };
-    officialEndDateStatus: boolean;
+    showAllClassesForOneStudent: boolean;
 };
 
 const initialState: StudentSliceState = {
@@ -57,7 +57,7 @@ const initialState: StudentSliceState = {
             selectedDate: new Date(),
         },
     },
-    officialEndDateStatus: false,
+    showAllClassesForOneStudent: false,
 };
 
 const studentSlice = createSlice({
@@ -99,8 +99,8 @@ const studentSlice = createSlice({
         reset: () => {
             return initialState;
         },
-        setOfficialEndDateStatus: (state, action) => {
-            state.officialEndDateStatus = action.payload;
+        setShowAllClassesForOneStudent: (state, action) => {
+            state.showAllClassesForOneStudent = action.payload;
         },
     },
     extraReducers: (builder) => {
