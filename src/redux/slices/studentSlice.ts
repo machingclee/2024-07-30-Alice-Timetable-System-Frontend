@@ -57,7 +57,7 @@ const initialState: StudentSliceState = {
             selectedDate: new Date(),
         },
     },
-    showAllClassesForOneStudent: false,
+    showAllClassesForOneStudent: true,
 };
 
 const studentSlice = createSlice({
