@@ -75,7 +75,7 @@ export default (props: { packageId: string }) => {
                 })}
             />
             <Spacer />
-            <FormInputTitle>Start Date</FormInputTitle>
+            {/* <FormInputTitle>Start Date</FormInputTitle>
             <Spacer height={5} />
             <DatePicker
                 onChange={(val) => {
@@ -84,7 +84,7 @@ export default (props: { packageId: string }) => {
                 popupStyle={{ zIndex: 10 ** 7 }}
                 defaultValue={currentPackage?.start_date ? dayjs(new Date(currentPackage?.start_date)) : dayjs(new Date())}
             />
-            <Spacer />
+            <Spacer /> */}
 
             <div style={{ display: "flex" }}>
                 <FormInputTitle>Select a Duration (in minutes)</FormInputTitle>

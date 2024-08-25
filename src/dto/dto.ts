@@ -129,6 +129,7 @@ export type UpdateClassRequest = {
 export type CreateStudentPackageRequest = {
     num_of_classes: number;
     start_date: number;
+    start_time: number;
     expiry_date: number;
     min: number;
     course_id: number;

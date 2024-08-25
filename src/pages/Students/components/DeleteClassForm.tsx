@@ -2,7 +2,7 @@ import { Alert, Box } from "@mui/material";
 import SectionTitle from "../../../components/SectionTitle";
 import Label from "../../../components/Label";
 import Spacer from "../../../components/Spacer";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Button } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { StudentThunkAction } from "../../../redux/slices/studentSlice";
@@ -13,25 +13,17 @@ import dayjs from "dayjs";
 
 export default (props: { classEvent: Class }) => {
     const { classEvent } = props;
-    const {
-        id,
-        min,
-        student_id,
-        class_status,
-        reason_for_absence,
-        class_group_id,
-        course_id,
-        hour_unix_timestamp,
-        day_unix_timestamp
-    } = classEvent;
-    const courseName = useAppSelector(s => s.class.courses.idToCourse?.[course_id || 0])?.course_name
-    const classAt = dayjs(hour_unix_timestamp).format("HH:mm")
-    const classOn = dayjs(day_unix_timestamp).format("dddd")
+    const { id, min, student_id, class_status, reason_for_absence, class_group_id, course_id, hour_unix_timestamp, day_unix_timestamp } = classEvent;
+    const courseName = useAppSelector((s) => s.class.courses.idToCourse?.[course_id || 0])?.course_name;
+    const classAt = dayjs(hour_unix_timestamp).format("HH:mm");
+    const classOn = dayjs(day_unix_timestamp).format("dddd");
     const status = class_status.toString();
-    const formData = useRef({ min: min, class_status: status, reason_for_absence: reason_for_absence });
     const dispatch = useAppDispatch();
     const hasDuplicationGroup = class_group_id != null;
 
+    useEffect(() => {
+        console.log(DeleteClassDialog);
+    }, [DeleteClassDialog]);
 
     return (
         <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
@@ -40,22 +32,22 @@ export default (props: { classEvent: Class }) => {
             <Spacer />
             Class Detail:
             <Spacer height={10} />
-            <div style={{ display: "flex", justifyContent: "center" }}>
-                {courseName}
-            </div>
+            <div style={{ display: "flex", justifyContent: "center" }}>{courseName}</div>
             <Spacer height={10} />
             <div>
-                scheduled at {classAt} on  {hasDuplicationGroup ? `every ${classOn}` : classOn}
+                scheduled at {classAt} on {hasDuplicationGroup ? `every ${classOn}` : classOn}
             </div>
             <Spacer />
-            {hasDuplicationGroup && <Alert severity="warning">
-                <div>
-                    This timeslot is <b>within a group of</b> duplicated classes, do you want to delete all of them?
-                </div>
-                <Spacer />
-                <div>If not, you may first detach this class from the group.</div>
-                <Spacer />
-            </Alert>}
+            {hasDuplicationGroup && (
+                <Alert severity="warning">
+                    <div>
+                        This timeslot is <b>within a group of</b> duplicated classes, do you want to delete all of them?
+                    </div>
+                    <Spacer />
+                    <div>If not, you may first detach this class from the group.</div>
+                    <Spacer />
+                </Alert>
+            )}
             <Spacer />
             <Button
                 style={{ backgroundColor: colors.red }}
@@ -64,10 +56,10 @@ export default (props: { classEvent: Class }) => {
                 onClick={async () => {
                     await dispatch(
                         StudentThunkAction.deleteClass({
-                            classId: id
+                            classId: id,
                         })
                     ).unwrap();
-                    dispatch(StudentThunkAction.getStudentClasses({ studentId: student_id }))
+                    dispatch(StudentThunkAction.getStudentClasses({ studentId: student_id }));
                     dispatch(StudentThunkAction.getStudentPackages({ studentId: student_id }));
                     DeleteClassDialog.setOpen(false);
                 }}
@@ -78,10 +70,12 @@ export default (props: { classEvent: Class }) => {
             <Button
                 type="text"
                 block
-                onClick={async () => { DeleteClassDialog.setOpen(false) }}
+                onClick={async () => {
+                    DeleteClassDialog.setOpen(false);
+                }}
             >
                 Cancel
             </Button>
-        </Box >
+        </Box>
     );
 };

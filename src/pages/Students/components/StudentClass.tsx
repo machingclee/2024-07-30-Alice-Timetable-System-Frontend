@@ -38,7 +38,9 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
         AddClassEventDialog.setContent(() => () => <AddClassEventForm dayUnixTimestamp={dayUnixTimestamp} hourUnixTimestamp={hourUnixTimestamp} studentId={studentId || ""} />);
         AddClassEventDialog.setOpen(true);
     };
+
     const invalidData = day_unix_timestamp >= hour_unix_timestamp;
+
     const contextMenuId = `${studentClass?.student_id || ""}-${studentClass?.hour_unix_timestamp || ""}`;
     const rightClickable = !(studentClass != null);
     const dayAndTime = dayjs(hourUnixTimestamp).format("ddd, HH:mm");
@@ -111,7 +113,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     );
 
     const selectedByPackageId = selectedPackageId === String(studentClass?.student_package_id || "0");
-    const showLabel = studentClass?.hide != null && selectedByPackageId;
+    const showLabel = studentClass?.hide != null;
 
     // To account for the numbering of classes
     useEffect(() => {
