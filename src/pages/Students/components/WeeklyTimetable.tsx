@@ -25,10 +25,10 @@ export type WeeklyCoordinate = {
 
 export default (props: { date?: Date }) => {
     const dispatch = useAppDispatch();
-    const studentId = useAppSelector(s => s.student.studentDetail.detail?.id) || "";
+    const studentId = useAppSelector((s) => s.student.studentDetail.detail?.id) || "";
     const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
-    const selectedPackageId = useAppSelector(s => s.student.studentDetail.selectedPackageId);
-    const courseStartDate = useAppSelector(s => s.student.studentDetail.timetable.selectedDate);
+    const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
+    const courseStartDate = useAppSelector((s) => s.student.studentDetail.timetable.selectedDate);
     const currDraggingId = useRef("");
     const [activeDraggableId, setActiveDraggableId] = useState("");
     const [offset, setOffset] = useState(0);
@@ -44,8 +44,12 @@ export default (props: { date?: Date }) => {
         return intervals;
     }, []);
 
-    const weekStart = dayjs(startOfWeek(courseStartDate, { weekStartsOn: 1 })).add(offset, "day").toDate();
-    const weekEnd = dayjs(endOfWeek(courseStartDate, { weekStartsOn: 1 })).add(offset, "day").toDate();
+    const weekStart = dayjs(startOfWeek(courseStartDate, { weekStartsOn: 1 }))
+        .add(offset, "day")
+        .toDate();
+    const weekEnd = dayjs(endOfWeek(courseStartDate, { weekStartsOn: 1 }))
+        .add(offset, "day")
+        .toDate();
     const daysOfWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
     const [timeGrid, setTimegrid] = useState<WeeklyCoordinate>({});
 
@@ -65,7 +69,7 @@ export default (props: { date?: Date }) => {
 
     useEffect(() => {
         setOffset(0);
-    }, [selectedPackageId])
+    }, [selectedPackageId]);
 
     const timetableContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -73,24 +77,23 @@ export default (props: { date?: Date }) => {
 
     const adjustWidth = useCallback(() => {
         const width = window.innerWidth;
-        const columnWidth = Math.min((width - 660) / 7, 200)
+        const columnWidth = Math.min((width - 660) / 7, 200);
         setTimetableAvailableWidth(columnWidth);
     }, []);
 
     const adjustWidthDefined = useRef(false);
 
-
     useEffect(() => {
         adjustWidth();
         if (!adjustWidthDefined.current) {
             window.addEventListener("resize", adjustWidth);
-            adjustWidthDefined.current = true
+            adjustWidthDefined.current = true;
         }
         return () => {
             window.removeEventListener("resize", adjustWidth);
-            adjustWidthDefined.current = false
-        }
-    }, [])
+            adjustWidthDefined.current = false;
+        };
+    }, []);
 
     return (
         <Box
@@ -103,12 +106,12 @@ export default (props: { date?: Date }) => {
                     borderLeft: "2px solid rgba(0, 0, 0, 0.1)",
                 },
                 "& .draggable-container:nth-child(n+1)": {
-                    borderTop: "2px dashed rgba(0,0,0,0.15)"
+                    borderTop: "2px dashed rgba(0,0,0,0.15)",
                 },
                 "& .day-column:last-child": {
                     "& .draggable-container": {
                         borderRight: "2px solid rgba(0, 0, 0, 0.1)",
-                    }
+                    },
                 },
                 "& .draggable-container:last-child": {
                     borderBottom: "1px solid rgba(0,0,0,0.1)",
@@ -142,7 +145,7 @@ export default (props: { date?: Date }) => {
                     alignItems: "center",
                     margin: 0,
                     backgroundColor: "white",
-                    zIndex: 10 ** 7
+                    zIndex: 10 ** 7,
                 },
                 "& .droppable": {
                     "& .grid-hour": {
@@ -157,8 +160,15 @@ export default (props: { date?: Date }) => {
         >
             <SectionTitle>
                 <div style={{ display: "flex", alignItems: "center", padding: 10 }}>
-                    <Button onClick={() => { setOffset(v => v - 7) }}>
-                        <div style={{ display: "flex", alignItems: "center", fontSize: 14 }}><FaChevronLeft /> <Spacer width={5} />Previous Week </div>
+                    <Button
+                        onClick={() => {
+                            setOffset((v) => v - 7);
+                        }}
+                    >
+                        <div style={{ display: "flex", alignItems: "center", fontSize: 14 }}>
+                            <FaChevronLeft /> <Spacer width={5} />
+                            Previous Week{" "}
+                        </div>
                     </Button>
                     <Spacer width={20} />
                     <div>{dayjs(weekStart).format("YYYY-MM-DD (ddd)")}</div>
@@ -167,10 +177,15 @@ export default (props: { date?: Date }) => {
                     <Spacer width={10} />
                     <div>{dayjs(weekEnd).format("YYYY-MM-DD (ddd)")}</div>
                     <Spacer width={20} />
-                    <Button onClick={() => {
-                        setOffset(v => v + 7)
-                    }}>
-                        <div style={{ display: "flex", alignItems: "center", fontSize: 14 }}>Next Week <Spacer width={5} /><FaChevronRight /></div>
+                    <Button
+                        onClick={() => {
+                            setOffset((v) => v + 7);
+                        }}
+                    >
+                        <div style={{ display: "flex", alignItems: "center", fontSize: 14 }}>
+                            Next Week <Spacer width={5} />
+                            <FaChevronRight />
+                        </div>
                     </Button>
                 </div>
             </SectionTitle>
@@ -192,26 +207,26 @@ export default (props: { date?: Date }) => {
                             return;
                         }
                         const move = async () => {
-                            await dispatch(StudentThunkAction.moveStudentEvent({
-                                fromHourTimestamp: currDraggingId.current,
-                                toDayTimestamp: toDayUnixTimestamp,
-                                toHourTimestamp: toHourUnixTimestamp,
-                            })).unwrap();
-                            dispatch(studentSlice.actions.unHideClass({ hrTimestamp: currDraggingId.current }))
+                            await dispatch(
+                                StudentThunkAction.moveStudentEvent({
+                                    fromHourTimestamp: currDraggingId.current,
+                                    toDayTimestamp: toDayUnixTimestamp,
+                                    toHourTimestamp: toHourUnixTimestamp,
+                                })
+                            ).unwrap();
+                            dispatch(studentSlice.actions.unHideClass({ hrTimestamp: currDraggingId.current }));
                             if (fromClz.class_group_id) {
                                 setTimeout(() => {
-                                    dispatch(StudentThunkAction.getStudentClasses({ studentId }))
-                                }, 1000)
+                                    dispatch(StudentThunkAction.getStudentClasses({ studentId }));
+                                }, 1000);
                             }
-                        }
+                        };
                         if (fromClz.class_group_id) {
-
-                            dispatch(studentSlice.actions.hideClass({ hrTimestamp: currDraggingId.current }))
-                            MoveConfirmationDialog.setContent(() => () => (<MoveConfirmationForm moveClassesAction={move} />
-                            ))
+                            dispatch(studentSlice.actions.hideClass({ hrTimestamp: currDraggingId.current }));
+                            MoveConfirmationDialog.setContent(() => () => <MoveConfirmationForm moveClassesAction={move} />);
                             MoveConfirmationDialog.setOpen(true);
                         } else {
-                            await move()
+                            await move();
                         }
                         setActiveDraggableId("");
                     }}
@@ -235,10 +250,13 @@ export default (props: { date?: Date }) => {
                                         const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
                                         return (
                                             <div key={dayUnixTimestamp} className="day-column">
-                                                <div className="grid-hour header" style={{
-                                                    fontWeight: 400,
-                                                    textAlign: "center"
-                                                }}>
+                                                <div
+                                                    className="grid-hour header"
+                                                    style={{
+                                                        fontWeight: 400,
+                                                        textAlign: "center",
+                                                    }}
+                                                >
                                                     {timetableAvailableWidth >= 85 && dayDayJS.format("ddd, MMM D")}
                                                     {timetableAvailableWidth < 85 && dayDayJS.format("ddd")}
                                                 </div>

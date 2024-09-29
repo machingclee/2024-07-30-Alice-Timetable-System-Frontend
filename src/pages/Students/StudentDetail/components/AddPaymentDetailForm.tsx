@@ -24,7 +24,7 @@ export default (props: { packageId: number }) => {
             packageId,
             paidAt: paymentDate.current
         })).unwrap();
-        dispatch(StudentThunkAction.getStudentPackages({ studentId: studentId || "" }))
+        dispatch(StudentThunkAction.getStudentPackages({ studentId: studentId || "" }));
     }
 
     return (

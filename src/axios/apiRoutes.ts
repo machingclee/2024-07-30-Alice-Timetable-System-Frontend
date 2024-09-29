@@ -23,6 +23,7 @@ export default {
     PUT_UPDATE_CLASS: "/student/update-class",
     PUT_MARK_PACAKGE_AS_PAID: "/student/mark-package-as-paid",
     PUT_MARK_PACAKGE_AS_UNPAID: "/student/mark-package-as-unpaid",
+    PUT_UPDATE_PACKAGE: "/student/update-package",
 
     DELETE_PACKAGE: (packageId: number) => `/student/delete-package/${packageId}`,
     DELETE_CLASS: (classId: number) => `/student/delete-class/${classId}`,

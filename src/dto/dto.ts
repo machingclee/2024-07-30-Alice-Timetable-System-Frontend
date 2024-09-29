@@ -2,7 +2,7 @@ import { Class, Student_package } from "../prismaTypes/types";
 
 export type Gender = "MALE" | "FEMALE";
 export type RoleInSystem = "SUPER_ADMIN" | "ADMIN" | "STAFF" | "STUDENT";
-export type classStatus = "PRESENT" | "ILLEGIT_ABSENCE" | "SUSPICIOUS_ABSENCE" | "LEGIT_ABSENCE";
+export type classStatus = "PRESENT" | "ILLEGIT_ABSENCE" | "SUSPICIOUS_ABSENCE" | "LEGIT_ABSENCE" | "MAKEUP";
 
 export type TokenPayload = {
     first_name: string;
@@ -106,7 +106,7 @@ export type CreateClassRequest = {
 };
 
 export type DeleteClassRequest = {
-    classId: number
+    classId: number;
 };
 
 export type DuplicateClassRequest = {
@@ -123,12 +123,24 @@ export type UpdateClassRequest = {
     min: number;
     class_status: string;
     reason_for_absence: string;
+    remark: string;
 };
 
 export type CreateStudentPackageRequest = {
     num_of_classes: number;
     start_date: number;
-    official_end_date: number;
+    start_time: number;
+    expiry_date: number;
+    min: number;
+    course_id: number;
+    student_id: string;
+};
+
+export type UpdateStudentPackageRequest = {
+    id: number;
+    num_of_classes: number;
+    start_date: number;
+    expiry_date: number;
     min: number;
     course_id: number;
     student_id: string;
