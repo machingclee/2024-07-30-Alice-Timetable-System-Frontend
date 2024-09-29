@@ -1,16 +1,10 @@
 import { Box, Button } from "@mui/material";
-import { Button as AntdButton } from "antd";
 import boxShadow from "../../../constant/boxShadow";
 import { useAppSelector } from "../../../redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { RouteEnum } from "../../../router/router";
 import { FaChevronRight } from "react-icons/fa";
 import Label from "../../../components/Label";
-import { RiTableFill } from "react-icons/ri";
-import AddPackageForm from "./AddPackageForm";
-import AddPackageDialog from "./AddPackageDialog";
-import Spacer from "../../../components/Spacer";
-
 
 export default (props: { id: string }) => {
     const { id } = props;

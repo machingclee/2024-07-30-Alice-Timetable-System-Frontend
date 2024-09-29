@@ -6,7 +6,7 @@ import { store, persistor } from "./redux/store"
 import { ToastContainer } from "react-toastify"
 import ConfigAxios from "./components/ConfigAxios"
 
-const App = () => {
+export default () => {
     return (
         <Provider store={store}>
             <PersistGate persistor={persistor}>
@@ -21,4 +21,3 @@ const App = () => {
     )
 }
 
-export default App

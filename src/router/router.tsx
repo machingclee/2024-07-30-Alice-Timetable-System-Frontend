@@ -16,7 +16,7 @@ export enum RouteEnum {
     DASHBOARD_TIMETABLE = "/dashboard/timetables",
 }
 
-export const getRouter = (_: any) => {
+const getRouter = (_store: any) => {
     return createBrowserRouter(
         createRoutesFromElements(
             <Route path={"/"} element={<Root />}>
@@ -35,7 +35,6 @@ export const getRouter = (_: any) => {
         )
     );
 };
-export default getRouter;
 
 const Dashboard = () => {
     return (
@@ -48,3 +47,5 @@ const Dashboard = () => {
         </div>
     );
 };
+
+export default getRouter;
