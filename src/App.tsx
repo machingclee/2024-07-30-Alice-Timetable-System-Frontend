@@ -5,10 +5,8 @@ import { PersistGate } from "redux-persist/integration/react"
 import { store, persistor } from "./redux/store"
 import { ToastContainer } from "react-toastify"
 import ConfigAxios from "./components/ConfigAxios"
-import { OverlayScrollbarsComponent } from "overlayscrollbars-react"
 
-
-function App() {
+const App = () => {
     return (
         <Provider store={store}>
             <PersistGate persistor={persistor}>

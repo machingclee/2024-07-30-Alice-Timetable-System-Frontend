@@ -24,12 +24,12 @@ const useStyles = tss.create(() => ((
     })
 ));
 
-export default function FadeIn({ children, delay = 0, dependencies = [], style, className, ...props }:
+export default ({ children, delay = 0, dependencies = [], style, className, ...props }:
     {
         children: ReactNode
         delay?: number,
         dependencies?: any[]
-    } & HTMLAttributes<HTMLDivElement>) {
+    } & HTMLAttributes<HTMLDivElement>) => {
     const [fadeIn, setFadeIn] = useState(false);
     const { classes } = useStyles();
 
