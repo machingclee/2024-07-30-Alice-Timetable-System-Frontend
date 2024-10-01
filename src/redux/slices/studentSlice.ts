@@ -293,9 +293,12 @@ export class StudentThunkAction {
         const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_MARK_PACAKGE_AS_UNPAID, { packageId });
         return processRes(res, api);
     });
-    public static deletePackage = createAsyncThunk("studentSlice/deletePackage", async (props: { packageId: number }, api) => {
-        const { packageId } = props;
-        const res = await apiClient.delete<CustomResponse<undefined>>(apiRoutes.DELETE_PACKAGE(packageId));
+    public static deletePackage = createAsyncThunk("studentSlice/deletePackage", async (props: {
+        studentId: string,
+        packageId: number
+    }, api) => {
+        const { studentId, packageId } = props;
+        const res = await apiClient.delete<CustomResponse<undefined>>(apiRoutes.DELETE_PACKAGE(studentId, packageId));
         return processRes(res, api);
     });
 }

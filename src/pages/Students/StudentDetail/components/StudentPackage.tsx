@@ -47,9 +47,16 @@ export default (props: { packageId: string }) => {
         }
     };
     const deletePackage = async () => {
-        await dispatch(StudentThunkAction.deletePackage({ packageId: Number(packageId) })).unwrap();
+        if (!studentId) {
+            return
+        }
+        await dispatch(StudentThunkAction.deletePackage({
+            studentId,
+            packageId: Number(packageId)
+        })).unwrap();
         if (studentId) {
             dispatch(StudentThunkAction.getStudentPackages({ studentId }));
+            dispatch(StudentThunkAction.getStudentClasses({ studentId }));
         }
     };
 

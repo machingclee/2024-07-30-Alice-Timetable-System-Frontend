@@ -25,6 +25,7 @@ export default {
     PUT_MARK_PACAKGE_AS_UNPAID: "/student/mark-package-as-unpaid",
     PUT_UPDATE_PACKAGE: "/student/update-package",
 
-    DELETE_PACKAGE: (packageId: number) => `/student/delete-package/${packageId}`,
+    DELETE_PACKAGE: (studentId: string, packageId: number) =>
+        `/student/delete-package?studentId=${studentId}&packageId=${packageId}`,
     DELETE_CLASS: (classId: number) => `/student/delete-class/${classId}`,
 };
