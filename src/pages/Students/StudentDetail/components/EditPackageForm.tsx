@@ -16,7 +16,7 @@ export default (props: { packageId: string }) => {
     const { packageId } = props;
     const currentPackage = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[packageId]);
 
-    const [error, setError] = useState<Partial<UpdateStudentPackageRequest>>({});
+    const [error, _] = useState<Partial<UpdateStudentPackageRequest>>({});
     const dispatch = useAppDispatch();
     const classes = useAppSelector((s) => s.class.courses);
     const formData = useRef<Partial<UpdateStudentPackageRequest>>({});

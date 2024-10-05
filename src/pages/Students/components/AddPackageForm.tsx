@@ -27,7 +27,7 @@ const toMidnight = (timestamp: number): number => {
 
 export default (props: { studentId: string; studentName: string }) => {
     const { studentName, studentId } = props;
-    const [error, setError] = useState<Partial<CreateStudentPackageRequest>>({});
+    const [error, _] = useState<Partial<CreateStudentPackageRequest>>({});
     const dispatch = useAppDispatch();
     const classes = useAppSelector((s) => s.class.courses);
     const formData = useRef<Partial<CreateStudentPackageRequest>>({});
