@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import NavButton from "./NavButton";
 import appSlice from "../../../redux/slices/appSlice";
 import Label from "../../../components/Label";
+import colors from "../../../constant/colors";
 
 const pathRegex = {
     STUDENTS: /\/dashboard\/students/,
@@ -51,7 +52,7 @@ export default () => {
 
     return (
         <Box
-            style={{ width: 150, height: "100%", marginTop: "20px", marginLeft: "30px" }}
+            style={{ width: 160, height: "100%", marginTop: "20px", marginLeft: "30px" }}
             sx={{
                 display: "flex",
                 flexDirection: "column",
@@ -70,6 +71,34 @@ export default () => {
                 <NavButton activeNavigationRegex={pathRegex.TIMET_TABLES} routeEnum={RouteEnum.DASHBOARD_TIMETABLE} title="Timetables" />
             </div>
             <div>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                    <div>
+                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Present</div>
+                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Sus. Absence</div>
+                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Illegit Absence</div>
+                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Legit Absence</div>
+                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Makeup</div>
+                    </div>
+                    <div style={{ marginLeft: "30px" }}>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.blue, width: "15px", height: "15px" }} />
+                        </div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.amber, width: "15px", height: "15px" }} />
+                        </div>
+
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.red, width: "15px", height: "15px" }} />
+                        </div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.grey, width: "15px", height: "15px" }} />
+                        </div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.green, width: "15px", height: "15px" }} />
+                        </div>
+                    </div>
+                </div>
+                <Spacer height={25} />
                 <div style={{ boxShadow: boxShadow.SHADOW_61, borderRadius: 4, padding: 10, position: "relative" }}>
                     <div style={{ display: "flex" }}>
                         <div
