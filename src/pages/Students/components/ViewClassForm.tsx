@@ -14,11 +14,12 @@ import ViewClassDialog from "./ViewClassDialog";
 import getColorForClassStatus from "../../../utils/getColorForClassStatus";
 import getNumberSuffix from "../../../utils/getNumberSuffix";
 
-export default (props: { classEvent: Class; classNumber: number }) => {
+export default (props: { classEvent: Class; classNumber: number; course_id: number; student_id: string }) => {
     const [editing, setEditing] = useState(false);
     const { classEvent, classNumber } = props;
-    const { id, min, student_id, class_status, reason_for_absence, remark, course_id } = classEvent;
-    const courseInfo = useAppSelector((s) => s.class.courses?.idToCourse?.[course_id || 0]);
+    const { id, min, class_status, reason_for_absence, remark } = classEvent;
+    const courseInfo = useAppSelector((s) => s.class.courses?.idToCourse?.[props.course_id || 0]);
+    const idsToCourse = useAppSelector((s) => s.class.courses?.idToCourse);
     const status = class_status.toString();
     const formData = useRef({ min: min, class_status: status, reason_for_absence: reason_for_absence, remark: remark });
     const [hasAbsence, setHasAbsence] = useState<boolean>(class_status === "PRESENT" ? false : true);
@@ -26,10 +27,10 @@ export default (props: { classEvent: Class; classNumber: number }) => {
 
     return (
         <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
-            <Label label="UpdateClassForm.tsx" offsetTop={0} offsetLeft={380} />
+            <Label label="ViewClassForm.tsx" offsetTop={0} offsetLeft={380} />
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", width: "100%" }}>
-                <div style={{ fontWeight: "bold", fontSize: "23px", display: "flex", alignItems: "center" }}>
-                    {courseInfo?.course_name}
+                <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ fontWeight: "bold", fontSize: "23px", marginLeft: "5px" }}>{courseInfo?.course_name}</div>
                     {classNumber !== 0 && <span style={{ fontWeight: "lighter", fontSize: "12px", marginLeft: "5px" }}>{getNumberSuffix(classNumber)}</span>}
                 </div>
                 <div
@@ -134,7 +135,7 @@ export default (props: { classEvent: Class; classNumber: number }) => {
                                     remark: formData.current.remark || "",
                                 })
                             ).unwrap();
-                            dispatch(StudentThunkAction.getStudentPackages({ studentId: student_id }));
+                            dispatch(StudentThunkAction.getStudentPackages({ studentId: props.student_id }));
                             ViewClassDialog.setOpen(false);
                         }}
                     >
