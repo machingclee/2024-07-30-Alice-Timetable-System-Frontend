@@ -1,6 +1,6 @@
 import { IoCloseSharp } from "react-icons/io5";
 
-export default function ({ onClick, width, marginTop }: { onClick: () => void; width?: string; marginTop?: string }) {
+export default ({ onClick, width, marginTop }: { onClick: () => void; width?: string; marginTop?: string }) => {
     return (
         <div
             onClick={() => {

@@ -9,10 +9,9 @@ import Label from "../../../components/Label";
 import { CourseThunkAction } from "../../../redux/slices/courseSlice";
 import { StudentThunkAction } from "../../../redux/slices/studentSlice";
 import { TimePicker } from "antd";
-import { CreateClassRequest, CreateStudentPackageRequest } from "../../../dto/dto";
+import { CreateStudentPackageRequest } from "../../../dto/dto";
 import dayjs from "dayjs";
 import AddPackageDialog from "./AddPackageDialog";
-import range from "../../../utils/range";
 
 // Function to convert timestamp to the start of the day (midnight)
 const toMidnight = (timestamp: number): number => {

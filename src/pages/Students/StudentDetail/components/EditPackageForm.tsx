@@ -1,17 +1,14 @@
-import { Alert, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import SectionTitle from "../../../../components/SectionTitle";
 import Label from "../../../../components/Label";
 import Spacer from "../../../../components/Spacer";
 import { useEffect, useRef, useState } from "react";
-import { Button, DatePicker, Select } from "antd";
+import { Button, Select } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import { StudentThunkAction } from "../../../../redux/slices/studentSlice";
 import EditPackageDialog from "./../components/EditPackageDialog";
-import { Class } from "../../../../prismaTypes/types";
-import colors from "../../../../constant/colors";
-import dayjs from "dayjs";
 import FormInputTitle from "../../../../components/FormInputTitle";
-import { CreateStudentPackageRequest, UpdateStudentPackageRequest } from "../../../../dto/dto";
+import { UpdateStudentPackageRequest } from "../../../../dto/dto";
 import { CourseThunkAction } from "../../../../redux/slices/courseSlice";
 import range from "../../../../utils/range";
 
@@ -50,7 +47,7 @@ export default (props: { packageId: string }) => {
 
     return (
         <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
-            <Label label="AddPackageForm.tsx" offsetTop={0} offsetLeft={180} />
+            <Label label="Edit Package Information.tsx" offsetTop={0} offsetLeft={180} />
             <SectionTitle>Edit Package Information</SectionTitle>
             <Spacer />
             <div style={{ display: "flex" }}>
@@ -93,6 +90,7 @@ export default (props: { packageId: string }) => {
             </div>
             <Spacer height={5} />
             <Select
+                disabled={true}
                 dropdownStyle={{ zIndex: 10 ** 4 }}
                 style={{ width: "100%" }}
                 onChange={(value) => {

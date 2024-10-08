@@ -1,12 +1,11 @@
 import { normalize as normalize_, schema } from "normalizr";
-
-function normalize<T>({
+const normalize = <T>({
     targetArr,
     idAttribute,
 }: {
     targetArr: T[];
     idAttribute: string;
-}) {
+}) => {
     const objectEntity = new schema.Entity<Selection>("object", undefined, {
         idAttribute,
     });

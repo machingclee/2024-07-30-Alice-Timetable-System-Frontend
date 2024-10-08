@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { AuthThunkAction } from "../../redux/slices/authSlice";
 import { RouteEnum } from "../../router/router";
-import LoginImage from "../../assets/login-image.svg";
 
 export default () => {
     const dispatch = useAppDispatch();
@@ -32,10 +31,8 @@ export default () => {
     }, [reduxEmail]);
 
     return (
-        <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-            <div>
-                <img style={{ height: "50%", width: "50%", objectFit: "cover" }} src={LoginImage} alt="login-image" />
-            </div>
+        <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+            <div style={{ flex: 4 }} />
             <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <div style={{ display: "flex", alignItems: "center", height: "100%", justifyContent: "center", flexDirection: "column", margin: "10px" }}>
                     <div style={{ flex: 2 }} />
@@ -45,7 +42,7 @@ export default () => {
                             onChange={(t) => {
                                 setEmail(t);
                             }}
-                            inputProps={{ style: { minWidth: 400, fontSize: 20 } }}
+                            inputProps={{ style: { minWidth: 400, fontSize: 16 } }}
                             value={email}
                         />
                         <FormInputField
@@ -53,7 +50,7 @@ export default () => {
                             onChange={(t) => {
                                 setPassword(t);
                             }}
-                            inputProps={{ style: { minWidth: 400, fontSize: 20 } }}
+                            inputProps={{ style: { minWidth: 400, fontSize: 16 } }}
                             onEnter={login}
                         />
                         <Spacer />
@@ -65,6 +62,7 @@ export default () => {
                     <div style={{ flex: 6 }} />
                 </div>
             </div>
+            <div style={{ flex: 10 }} />
         </div>
     );
 };
