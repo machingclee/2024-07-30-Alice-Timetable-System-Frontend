@@ -30,7 +30,7 @@ export default () => {
     useEffect(() => {
         if (studentId) {
             dispatch(StudentThunkAction.getStudentDetail({ studentId }));
-            dispatch(StudentThunkAction.getStudentClasses({ studentId }));
+            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
         }
     }, [studentId]);
 

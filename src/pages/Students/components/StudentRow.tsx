@@ -9,29 +9,26 @@ import Label from "../../../components/Label";
 export default (props: { id: string }) => {
     const { id } = props;
     const navigate = useNavigate();
-    const student = useAppSelector(s => s.student.students?.idToStduent?.[id])
+    const student = useAppSelector((s) => s.student.students?.idToStuduent?.[id]);
     const goDetailPage = () => {
-        navigate(`${RouteEnum.DASHBOARD_STUDENTS}/${id}`)
-    }
+        navigate(`${RouteEnum.DASHBOARD_STUDENTS}/${id}`);
+    };
 
     if (!student) {
         return null;
     }
-    const {
-        first_name,
-        parent_email,
-        last_name,
-    } = student;
+    const { first_name, parent_email, last_name } = student;
 
     return (
         <div style={{ display: "flex", alignItems: "center" }}>
-            <Box style={{
-                flex: 1,
-                boxShadow: boxShadow.SHADOW_62,
-                padding: "20px 30px",
-                marginBottom: "15px",
-                borderRadius: "8px",
-            }}
+            <Box
+                style={{
+                    flex: 1,
+                    boxShadow: boxShadow.SHADOW_62,
+                    padding: "20px 30px",
+                    marginBottom: "15px",
+                    borderRadius: "8px",
+                }}
                 sx={{
                     position: "relative",
                     display: "flex",
@@ -43,19 +40,19 @@ export default (props: { id: string }) => {
                         flex: 1,
                         padding: "1.4px",
                         border: "none",
-                        outline: "none"
+                        outline: "none",
                     },
                     "& td:nth-child(1)": {
                         verticalAlign: "middle",
                         width: "100px",
-                        color: "rgb(150,150,150)"
+                        color: "rgb(150,150,150)",
                     },
                     "& td:nth-child(2), & td:nth-child(3)": {
                         display: "flex",
                         width: "300px",
                         borderRadius: "4px",
                         background: "rgb(240,240,240)",
-                        padding: "5px"
+                        padding: "5px",
                     },
                 }}
             >
@@ -80,9 +77,10 @@ export default (props: { id: string }) => {
                         height: "100%",
                         position: "absolute",
                         top: 0,
-                        left: 0
-                    }} />
+                        left: 0,
+                    }}
+                />
             </Box>
-        </div >
-    )
-}
+        </div>
+    );
+};

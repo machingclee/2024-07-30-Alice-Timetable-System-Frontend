@@ -25,8 +25,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const { studentId } = useParams<{ studentId: string }>();
-    const studentClass = useAppSelector((s) => s.student.studentDetail.timetable?.hrUnixTimestampToClass?.[hourUnixTimestamp]);
-    const timetable = useAppSelector((s) => s.student.studentDetail.timetable);
+    const studentClass = useAppSelector((s) => s.student.studentDetail.weeklyTimetable?.hrUnixTimestampToClass?.[hourUnixTimestamp]);
+    const timetable = useAppSelector((s) => s.student.studentDetail.weeklyTimetable);
     const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
     const showAllClassesForOneStudent = useAppSelector((s) => s.student.showAllClassesForOneStudent);
@@ -151,11 +151,13 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                     const { dragHandleProps, draggableProps, innerRef } = provided_;
                     const { style, ..._draggableProps } = draggableProps;
                     const course_name = studentClass?.course_name;
+                    console.log("studentClass:", studentClass);
+                    console.log("course_name:", course_name);
                     const shouldFreeze = parseInt(activeDraggableId) !== hourUnixTimestamp;
 
                     return (
                         <div className="draggable-container" style={{ opacity: studentClass?.hide ? 0 : 1, position: "relative" }}>
-                            {showLabel && <Label label="StudentClass.tsx" />}
+                            {showLabel && <Label label="StudentClassForWeeklyTimetable.tsx" />}
                             {/* @ts-ignore */}
                             <TimeslotWrapper>
                                 <div

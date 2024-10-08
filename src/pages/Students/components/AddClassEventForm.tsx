@@ -57,7 +57,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; st
         } else {
             toastUtil.success("Event Created");
             AddClassEventDialog.setOpen(false);
-            dispatch(StudentThunkAction.getStudentClasses({ studentId }));
+            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
             dispatch(StudentThunkAction.getStudentPackages({ studentId }));
         }
     };

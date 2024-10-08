@@ -60,7 +60,7 @@ export default (props: { studentId: string; studentName: string }) => {
         AddPackageDialog.setOpen(false);
         await dispatch(StudentThunkAction.createStudentPackage(reqBody)).unwrap();
         dispatch(StudentThunkAction.getStudentPackages({ studentId })).unwrap();
-        dispatch(StudentThunkAction.getStudentClasses({ studentId })).unwrap();
+        dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId })).unwrap();
     };
 
     const disabledHours = () => {

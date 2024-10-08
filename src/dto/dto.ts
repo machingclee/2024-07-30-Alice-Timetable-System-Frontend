@@ -49,17 +49,17 @@ export type User = {
     id: string;
 };
 
-export type Student = {
+export type LimitedStudentInfo = {
     id: string;
     first_name: string;
     last_name: string;
-    gender: Gender;
-    birthdate: number;
-    parent_email: string;
-    school_name: string;
-    grade: string;
-    phone_number?: string;
-    wechat_id?: string;
+    // gender: Gender;
+    // birthdate: number;
+    // parent_email: string;
+    // school_name: string;
+    // grade: string;
+    // phone_number?: string;
+    // wechat_id?: string;
 };
 
 export type StudentDetail = {

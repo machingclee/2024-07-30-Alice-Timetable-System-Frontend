@@ -48,15 +48,17 @@ export default (props: { packageId: string }) => {
     };
     const deletePackage = async () => {
         if (!studentId) {
-            return
+            return;
         }
-        await dispatch(StudentThunkAction.deletePackage({
-            studentId,
-            packageId: Number(packageId)
-        })).unwrap();
+        await dispatch(
+            StudentThunkAction.deletePackage({
+                studentId,
+                packageId: Number(packageId),
+            })
+        ).unwrap();
         if (studentId) {
             dispatch(StudentThunkAction.getStudentPackages({ studentId }));
-            dispatch(StudentThunkAction.getStudentClasses({ studentId }));
+            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
         }
     };
 
