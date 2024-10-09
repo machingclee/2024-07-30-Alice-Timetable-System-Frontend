@@ -8,15 +8,15 @@ import { IoMdArrowBack } from "react-icons/io";
 import { Button } from "antd";
 import WeeklyTimetable from "../components/WeeklyTimetable";
 import Label from "../../../components/Label";
-import AddClassEventDialog from "../components/AddClassEventDialog";
+import AddClassEventDialog from "../../../components/AddClassEventDialog";
 import { CourseThunkAction } from "../../../redux/slices/courseSlice";
-import DuplicateClassDialog from "../components/DuplicateClassDialog";
+import DuplicateClassDialog from "../../../components/DuplicateClassDialog";
 import MoveConfirmationDialog from "../components/MoveConfirmationDialog";
 import AddPackageDialog from "../components/AddPackageDialog";
 import StudentPackageColumn from "./components/StudentPackageColumn";
-import DeleteClassDialog from "../components/DeleteClassDialog";
+import DeleteClassDialog from "../../../components/DeleteClassDialog";
 import AddPaymentDetailDialog from "./components/AddPaymentDetailDialog";
-import ViewClassDialog from "../components/ViewClassDialog";
+import ViewClassDialog from "../../../components/ViewClassDialog";
 import EditPackageDialog from "./components/EditPackageDialog";
 
 export default () => {

@@ -10,12 +10,14 @@ import { Calendar, theme } from "antd";
 import type { CalendarProps } from "antd";
 import * as React from "react";
 import dayjs, { Dayjs } from "dayjs";
-import studentSlice from "../../../redux/slices/studentSlice";
+import studentSlice, { StudentThunkAction } from "../../../redux/slices/studentSlice";
+import timeUtil from "../../../utils/timeUtil";
+import { AppDispatch } from "../../../redux/store";
 
 export default (props: { packagesOffsetY: number }) => {
     const { packagesOffsetY } = props;
     const selectedDate = useAppSelector((s) => s.student.studentDetail.dailyTimetable.selectedDate);
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>["mode"]) => {
         console.log(value.format("YYYY-MM-DD"), mode);
@@ -36,6 +38,11 @@ export default (props: { packagesOffsetY: number }) => {
                     value={dayjs(selectedDate)}
                     onSelect={(date, { source }) => {
                         dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: date.toDate() }));
+                        dispatch(
+                            StudentThunkAction.getStudentClassesForDailyTimetable({
+                                dateUnixTimestamp: timeUtil.getDayUnixTimestamp(date.toDate().getTime()).toString(),
+                            })
+                        );
                     }}
                     style={{ width: 290 }}
                 />

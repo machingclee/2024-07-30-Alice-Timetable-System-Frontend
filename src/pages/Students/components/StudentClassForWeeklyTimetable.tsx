@@ -6,19 +6,19 @@ import boxShadow from "../../../constant/boxShadow";
 import { Box } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { useParams } from "react-router-dom";
-import AddClassEventDialog from "./AddClassEventDialog";
-import AddClassEventForm from "./AddClassEventForm";
+import AddClassEventDialog from "../../../components/AddClassEventDialog";
+import AddClassEventForm from "../../../components/AddClassEventForm";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
-import DeleteClassForm from "./DeleteClassForm";
-import DeleteClassDialog from "./DeleteClassDialog";
-import DuplicateClassDialog from "./DuplicateClassDialog";
-import DuplicateClassForm from "./DuplicateClassForm";
+import DeleteClassForm from "../../../components/DeleteClassForm";
+import DeleteClassDialog from "../../../components/DeleteClassDialog";
+import DuplicateClassDialog from "../../../components/DuplicateClassDialog";
+import DuplicateClassForm from "../../../components/DuplicateClassForm";
 import { StudentThunkAction } from "../../../redux/slices/studentSlice";
 import FadeIn from "../../../components/FadeIn";
 import colors from "../../../constant/colors";
 import Label from "../../../components/Label";
-import ViewClassDialog from "./ViewClassDialog";
-import ViewClassForm from "./ViewClassForm";
+import ViewClassDialog from "../../../components/ViewClassDialog";
+import ViewClassForm from "../../../components/ViewClassForm";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number }) => {
     const dispatch = useAppDispatch();
