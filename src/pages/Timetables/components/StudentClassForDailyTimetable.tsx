@@ -17,6 +17,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const studentClass = useAppSelector((s) => s.student.studentDetail.dailyTimetable?.hrUnixTimestampToClass?.[hourUnixTimestamp]);
+    console.log("studentClass:", studentClass);
     const timetable = useAppSelector((s) => s.student.studentDetail.dailyTimetable);
     const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);

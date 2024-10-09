@@ -1814,6 +1814,7 @@ export namespace Prisma {
     id: string | null
     first_name: string | null
     last_name: string | null
+    chinese_name: string | null
     gender: $Enums.Gender | null
     school_name: string | null
     grade: string | null
@@ -1829,6 +1830,7 @@ export namespace Prisma {
     id: string | null
     first_name: string | null
     last_name: string | null
+    chinese_name: string | null
     gender: $Enums.Gender | null
     school_name: string | null
     grade: string | null
@@ -1844,6 +1846,7 @@ export namespace Prisma {
     id: number
     first_name: number
     last_name: number
+    chinese_name: number
     gender: number
     school_name: number
     grade: number
@@ -1871,6 +1874,7 @@ export namespace Prisma {
     id?: true
     first_name?: true
     last_name?: true
+    chinese_name?: true
     gender?: true
     school_name?: true
     grade?: true
@@ -1886,6 +1890,7 @@ export namespace Prisma {
     id?: true
     first_name?: true
     last_name?: true
+    chinese_name?: true
     gender?: true
     school_name?: true
     grade?: true
@@ -1901,6 +1906,7 @@ export namespace Prisma {
     id?: true
     first_name?: true
     last_name?: true
+    chinese_name?: true
     gender?: true
     school_name?: true
     grade?: true
@@ -2003,6 +2009,7 @@ export namespace Prisma {
     id: string
     first_name: string
     last_name: string
+    chinese_name: string | null
     gender: $Enums.Gender
     school_name: string
     grade: string
@@ -2037,6 +2044,7 @@ export namespace Prisma {
     id?: boolean
     first_name?: boolean
     last_name?: boolean
+    chinese_name?: boolean
     gender?: boolean
     school_name?: boolean
     grade?: boolean
@@ -2055,6 +2063,7 @@ export namespace Prisma {
     id?: boolean
     first_name?: boolean
     last_name?: boolean
+    chinese_name?: boolean
     gender?: boolean
     school_name?: boolean
     grade?: boolean
@@ -2070,6 +2079,7 @@ export namespace Prisma {
     id?: boolean
     first_name?: boolean
     last_name?: boolean
+    chinese_name?: boolean
     gender?: boolean
     school_name?: boolean
     grade?: boolean
@@ -2098,6 +2108,7 @@ export namespace Prisma {
       id: string
       first_name: string
       last_name: string
+      chinese_name: string | null
       gender: $Enums.Gender
       school_name: string
       grade: string
@@ -2505,6 +2516,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Student", 'String'>
     readonly first_name: FieldRef<"Student", 'String'>
     readonly last_name: FieldRef<"Student", 'String'>
+    readonly chinese_name: FieldRef<"Student", 'String'>
     readonly gender: FieldRef<"Student", 'Gender'>
     readonly school_name: FieldRef<"Student", 'String'>
     readonly grade: FieldRef<"Student", 'String'>
@@ -7788,10 +7800,10 @@ export namespace Prisma {
     created_at: number | null
     created_at_hk: string | null
     class_group_id: number | null
+    actual_classroom: string | null
     reason_for_absence: string | null
     class_status: $Enums.Class_status | null
     student_package_id: number | null
-    actual_classroom: $Enums.Classroom | null
     remark: string | null
   }
 
@@ -7803,10 +7815,10 @@ export namespace Prisma {
     created_at: number | null
     created_at_hk: string | null
     class_group_id: number | null
+    actual_classroom: string | null
     reason_for_absence: string | null
     class_status: $Enums.Class_status | null
     student_package_id: number | null
-    actual_classroom: $Enums.Classroom | null
     remark: string | null
   }
 
@@ -7818,10 +7830,10 @@ export namespace Prisma {
     created_at: number
     created_at_hk: number
     class_group_id: number
+    actual_classroom: number
     reason_for_absence: number
     class_status: number
     student_package_id: number
-    actual_classroom: number
     remark: number
     _all: number
   }
@@ -7855,10 +7867,10 @@ export namespace Prisma {
     created_at?: true
     created_at_hk?: true
     class_group_id?: true
+    actual_classroom?: true
     reason_for_absence?: true
     class_status?: true
     student_package_id?: true
-    actual_classroom?: true
     remark?: true
   }
 
@@ -7870,10 +7882,10 @@ export namespace Prisma {
     created_at?: true
     created_at_hk?: true
     class_group_id?: true
+    actual_classroom?: true
     reason_for_absence?: true
     class_status?: true
     student_package_id?: true
-    actual_classroom?: true
     remark?: true
   }
 
@@ -7885,10 +7897,10 @@ export namespace Prisma {
     created_at?: true
     created_at_hk?: true
     class_group_id?: true
+    actual_classroom?: true
     reason_for_absence?: true
     class_status?: true
     student_package_id?: true
-    actual_classroom?: true
     remark?: true
     _all?: true
   }
@@ -7987,10 +7999,10 @@ export namespace Prisma {
     created_at: number
     created_at_hk: string
     class_group_id: number | null
+    actual_classroom: string | null
     reason_for_absence: string | null
     class_status: $Enums.Class_status
     student_package_id: number
-    actual_classroom: $Enums.Classroom
     remark: string | null
     _count: ClassCountAggregateOutputType | null
     _avg: ClassAvgAggregateOutputType | null
@@ -8021,10 +8033,10 @@ export namespace Prisma {
     created_at?: boolean
     created_at_hk?: boolean
     class_group_id?: boolean
+    actual_classroom?: boolean
     reason_for_absence?: boolean
     class_status?: boolean
     student_package_id?: boolean
-    actual_classroom?: boolean
     remark?: boolean
     Class_group_of_Classes?: boolean | Class$Class_group_of_ClassesArgs<ExtArgs>
     Student_package?: boolean | Student_packageDefaultArgs<ExtArgs>
@@ -8038,10 +8050,10 @@ export namespace Prisma {
     created_at?: boolean
     created_at_hk?: boolean
     class_group_id?: boolean
+    actual_classroom?: boolean
     reason_for_absence?: boolean
     class_status?: boolean
     student_package_id?: boolean
-    actual_classroom?: boolean
     remark?: boolean
     Class_group_of_Classes?: boolean | Class$Class_group_of_ClassesArgs<ExtArgs>
     Student_package?: boolean | Student_packageDefaultArgs<ExtArgs>
@@ -8055,10 +8067,10 @@ export namespace Prisma {
     created_at?: boolean
     created_at_hk?: boolean
     class_group_id?: boolean
+    actual_classroom?: boolean
     reason_for_absence?: boolean
     class_status?: boolean
     student_package_id?: boolean
-    actual_classroom?: boolean
     remark?: boolean
   }
 
@@ -8085,10 +8097,10 @@ export namespace Prisma {
       created_at: number
       created_at_hk: string
       class_group_id: number | null
+      actual_classroom: string | null
       reason_for_absence: string | null
       class_status: $Enums.Class_status
       student_package_id: number
-      actual_classroom: $Enums.Classroom
       remark: string | null
     }, ExtArgs["result"]["class"]>
     composites: {}
@@ -8492,10 +8504,10 @@ export namespace Prisma {
     readonly created_at: FieldRef<"Class", 'Float'>
     readonly created_at_hk: FieldRef<"Class", 'String'>
     readonly class_group_id: FieldRef<"Class", 'Int'>
+    readonly actual_classroom: FieldRef<"Class", 'String'>
     readonly reason_for_absence: FieldRef<"Class", 'String'>
     readonly class_status: FieldRef<"Class", 'Class_status'>
     readonly student_package_id: FieldRef<"Class", 'Int'>
-    readonly actual_classroom: FieldRef<"Class", 'Classroom'>
     readonly remark: FieldRef<"Class", 'String'>
   }
     
@@ -10911,6 +10923,7 @@ export namespace Prisma {
     id: 'id',
     first_name: 'first_name',
     last_name: 'last_name',
+    chinese_name: 'chinese_name',
     gender: 'gender',
     school_name: 'school_name',
     grade: 'grade',
@@ -10996,10 +11009,10 @@ export namespace Prisma {
     created_at: 'created_at',
     created_at_hk: 'created_at_hk',
     class_group_id: 'class_group_id',
+    actual_classroom: 'actual_classroom',
     reason_for_absence: 'reason_for_absence',
     class_status: 'class_status',
     student_package_id: 'student_package_id',
-    actual_classroom: 'actual_classroom',
     remark: 'remark'
   };
 
@@ -11189,6 +11202,7 @@ export namespace Prisma {
     id?: UuidFilter<"Student"> | string
     first_name?: StringFilter<"Student"> | string
     last_name?: StringFilter<"Student"> | string
+    chinese_name?: StringNullableFilter<"Student"> | string | null
     gender?: EnumGenderFilter<"Student"> | $Enums.Gender
     school_name?: StringFilter<"Student"> | string
     grade?: StringFilter<"Student"> | string
@@ -11206,6 +11220,7 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_name?: SortOrderInput | SortOrder
     gender?: SortOrder
     school_name?: SortOrder
     grade?: SortOrder
@@ -11228,6 +11243,7 @@ export namespace Prisma {
     NOT?: StudentWhereInput | StudentWhereInput[]
     first_name?: StringFilter<"Student"> | string
     last_name?: StringFilter<"Student"> | string
+    chinese_name?: StringNullableFilter<"Student"> | string | null
     gender?: EnumGenderFilter<"Student"> | $Enums.Gender
     school_name?: StringFilter<"Student"> | string
     grade?: StringFilter<"Student"> | string
@@ -11243,6 +11259,7 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_name?: SortOrderInput | SortOrder
     gender?: SortOrder
     school_name?: SortOrder
     grade?: SortOrder
@@ -11266,6 +11283,7 @@ export namespace Prisma {
     id?: UuidWithAggregatesFilter<"Student"> | string
     first_name?: StringWithAggregatesFilter<"Student"> | string
     last_name?: StringWithAggregatesFilter<"Student"> | string
+    chinese_name?: StringNullableWithAggregatesFilter<"Student"> | string | null
     gender?: EnumGenderWithAggregatesFilter<"Student"> | $Enums.Gender
     school_name?: StringWithAggregatesFilter<"Student"> | string
     grade?: StringWithAggregatesFilter<"Student"> | string
@@ -11610,10 +11628,10 @@ export namespace Prisma {
     created_at?: FloatFilter<"Class"> | number
     created_at_hk?: StringFilter<"Class"> | string
     class_group_id?: IntNullableFilter<"Class"> | number | null
+    actual_classroom?: StringNullableFilter<"Class"> | string | null
     reason_for_absence?: StringNullableFilter<"Class"> | string | null
     class_status?: EnumClass_statusFilter<"Class"> | $Enums.Class_status
     student_package_id?: IntFilter<"Class"> | number
-    actual_classroom?: EnumClassroomFilter<"Class"> | $Enums.Classroom
     remark?: StringNullableFilter<"Class"> | string | null
     Class_group_of_Classes?: XOR<Class_groupNullableRelationFilter, Class_groupWhereInput> | null
     Student_package?: XOR<Student_packageRelationFilter, Student_packageWhereInput>
@@ -11627,10 +11645,10 @@ export namespace Prisma {
     created_at?: SortOrder
     created_at_hk?: SortOrder
     class_group_id?: SortOrderInput | SortOrder
+    actual_classroom?: SortOrderInput | SortOrder
     reason_for_absence?: SortOrderInput | SortOrder
     class_status?: SortOrder
     student_package_id?: SortOrder
-    actual_classroom?: SortOrder
     remark?: SortOrderInput | SortOrder
     Class_group_of_Classes?: Class_groupOrderByWithRelationInput
     Student_package?: Student_packageOrderByWithRelationInput
@@ -11648,10 +11666,10 @@ export namespace Prisma {
     created_at?: FloatFilter<"Class"> | number
     created_at_hk?: StringFilter<"Class"> | string
     class_group_id?: IntNullableFilter<"Class"> | number | null
+    actual_classroom?: StringNullableFilter<"Class"> | string | null
     reason_for_absence?: StringNullableFilter<"Class"> | string | null
     class_status?: EnumClass_statusFilter<"Class"> | $Enums.Class_status
     student_package_id?: IntFilter<"Class"> | number
-    actual_classroom?: EnumClassroomFilter<"Class"> | $Enums.Classroom
     remark?: StringNullableFilter<"Class"> | string | null
     Class_group_of_Classes?: XOR<Class_groupNullableRelationFilter, Class_groupWhereInput> | null
     Student_package?: XOR<Student_packageRelationFilter, Student_packageWhereInput>
@@ -11665,10 +11683,10 @@ export namespace Prisma {
     created_at?: SortOrder
     created_at_hk?: SortOrder
     class_group_id?: SortOrderInput | SortOrder
+    actual_classroom?: SortOrderInput | SortOrder
     reason_for_absence?: SortOrderInput | SortOrder
     class_status?: SortOrder
     student_package_id?: SortOrder
-    actual_classroom?: SortOrder
     remark?: SortOrderInput | SortOrder
     _count?: ClassCountOrderByAggregateInput
     _avg?: ClassAvgOrderByAggregateInput
@@ -11688,10 +11706,10 @@ export namespace Prisma {
     created_at?: FloatWithAggregatesFilter<"Class"> | number
     created_at_hk?: StringWithAggregatesFilter<"Class"> | string
     class_group_id?: IntNullableWithAggregatesFilter<"Class"> | number | null
+    actual_classroom?: StringNullableWithAggregatesFilter<"Class"> | string | null
     reason_for_absence?: StringNullableWithAggregatesFilter<"Class"> | string | null
     class_status?: EnumClass_statusWithAggregatesFilter<"Class"> | $Enums.Class_status
     student_package_id?: IntWithAggregatesFilter<"Class"> | number
-    actual_classroom?: EnumClassroomWithAggregatesFilter<"Class"> | $Enums.Classroom
     remark?: StringNullableWithAggregatesFilter<"Class"> | string | null
   }
 
@@ -11834,6 +11852,7 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_name?: string | null
     gender: $Enums.Gender
     school_name: string
     grade: string
@@ -11851,6 +11870,7 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_name?: string | null
     gender: $Enums.Gender
     school_name: string
     grade: string
@@ -11868,6 +11888,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
@@ -11885,6 +11906,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
@@ -11902,6 +11924,7 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_name?: string | null
     gender: $Enums.Gender
     school_name: string
     grade: string
@@ -11917,6 +11940,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
@@ -11932,6 +11956,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
@@ -12285,9 +12310,9 @@ export namespace Prisma {
     min: number
     created_at?: number
     created_at_hk?: string
+    actual_classroom?: string | null
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
-    actual_classroom: $Enums.Classroom
     remark?: string | null
     Class_group_of_Classes?: Class_groupCreateNestedOneWithoutGroupOfClassesInput
     Student_package: Student_packageCreateNestedOneWithoutClassInput
@@ -12301,10 +12326,10 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     class_group_id?: number | null
+    actual_classroom?: string | null
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
     student_package_id: number
-    actual_classroom: $Enums.Classroom
     remark?: string | null
   }
 
@@ -12314,9 +12339,9 @@ export namespace Prisma {
     min?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    actual_classroom?: NullableStringFieldUpdateOperationsInput | string | null
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
-    actual_classroom?: EnumClassroomFieldUpdateOperationsInput | $Enums.Classroom
     remark?: NullableStringFieldUpdateOperationsInput | string | null
     Class_group_of_Classes?: Class_groupUpdateOneWithoutGroupOfClassesNestedInput
     Student_package?: Student_packageUpdateOneRequiredWithoutClassNestedInput
@@ -12330,10 +12355,10 @@ export namespace Prisma {
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
     class_group_id?: NullableIntFieldUpdateOperationsInput | number | null
+    actual_classroom?: NullableStringFieldUpdateOperationsInput | string | null
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     student_package_id?: IntFieldUpdateOperationsInput | number
-    actual_classroom?: EnumClassroomFieldUpdateOperationsInput | $Enums.Classroom
     remark?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -12345,10 +12370,10 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     class_group_id?: number | null
+    actual_classroom?: string | null
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
     student_package_id: number
-    actual_classroom: $Enums.Classroom
     remark?: string | null
   }
 
@@ -12358,9 +12383,9 @@ export namespace Prisma {
     min?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    actual_classroom?: NullableStringFieldUpdateOperationsInput | string | null
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
-    actual_classroom?: EnumClassroomFieldUpdateOperationsInput | $Enums.Classroom
     remark?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -12372,10 +12397,10 @@ export namespace Prisma {
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
     class_group_id?: NullableIntFieldUpdateOperationsInput | number | null
+    actual_classroom?: NullableStringFieldUpdateOperationsInput | string | null
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     student_package_id?: IntFieldUpdateOperationsInput | number
-    actual_classroom?: EnumClassroomFieldUpdateOperationsInput | $Enums.Classroom
     remark?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -12540,13 +12565,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type EnumGenderFilter<$PrismaModel = never> = {
-    equals?: $Enums.Gender | EnumGenderFieldRefInput<$PrismaModel>
-    in?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
-    not?: NestedEnumGenderFilter<$PrismaModel> | $Enums.Gender
-  }
-
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -12560,6 +12578,13 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type EnumGenderFilter<$PrismaModel = never> = {
+    equals?: $Enums.Gender | EnumGenderFieldRefInput<$PrismaModel>
+    in?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
+    not?: NestedEnumGenderFilter<$PrismaModel> | $Enums.Gender
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -12602,6 +12627,7 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_name?: SortOrder
     gender?: SortOrder
     school_name?: SortOrder
     grade?: SortOrder
@@ -12622,6 +12648,7 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_name?: SortOrder
     gender?: SortOrder
     school_name?: SortOrder
     grade?: SortOrder
@@ -12637,6 +12664,7 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_name?: SortOrder
     gender?: SortOrder
     school_name?: SortOrder
     grade?: SortOrder
@@ -12686,16 +12714,6 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type EnumGenderWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Gender | EnumGenderFieldRefInput<$PrismaModel>
-    in?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
-    not?: NestedEnumGenderWithAggregatesFilter<$PrismaModel> | $Enums.Gender
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumGenderFilter<$PrismaModel>
-    _max?: NestedEnumGenderFilter<$PrismaModel>
-  }
-
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -12712,6 +12730,16 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type EnumGenderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Gender | EnumGenderFieldRefInput<$PrismaModel>
+    in?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
+    not?: NestedEnumGenderWithAggregatesFilter<$PrismaModel> | $Enums.Gender
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumGenderFilter<$PrismaModel>
+    _max?: NestedEnumGenderFilter<$PrismaModel>
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -13036,13 +13064,6 @@ export namespace Prisma {
     not?: NestedEnumClass_statusFilter<$PrismaModel> | $Enums.Class_status
   }
 
-  export type EnumClassroomFilter<$PrismaModel = never> = {
-    equals?: $Enums.Classroom | EnumClassroomFieldRefInput<$PrismaModel>
-    in?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
-    not?: NestedEnumClassroomFilter<$PrismaModel> | $Enums.Classroom
-  }
-
   export type Class_groupNullableRelationFilter = {
     is?: Class_groupWhereInput | null
     isNot?: Class_groupWhereInput | null
@@ -13066,10 +13087,10 @@ export namespace Prisma {
     created_at?: SortOrder
     created_at_hk?: SortOrder
     class_group_id?: SortOrder
+    actual_classroom?: SortOrder
     reason_for_absence?: SortOrder
     class_status?: SortOrder
     student_package_id?: SortOrder
-    actual_classroom?: SortOrder
     remark?: SortOrder
   }
 
@@ -13091,10 +13112,10 @@ export namespace Prisma {
     created_at?: SortOrder
     created_at_hk?: SortOrder
     class_group_id?: SortOrder
+    actual_classroom?: SortOrder
     reason_for_absence?: SortOrder
     class_status?: SortOrder
     student_package_id?: SortOrder
-    actual_classroom?: SortOrder
     remark?: SortOrder
   }
 
@@ -13106,10 +13127,10 @@ export namespace Prisma {
     created_at?: SortOrder
     created_at_hk?: SortOrder
     class_group_id?: SortOrder
+    actual_classroom?: SortOrder
     reason_for_absence?: SortOrder
     class_status?: SortOrder
     student_package_id?: SortOrder
-    actual_classroom?: SortOrder
     remark?: SortOrder
   }
 
@@ -13149,16 +13170,6 @@ export namespace Prisma {
     _max?: NestedEnumClass_statusFilter<$PrismaModel>
   }
 
-  export type EnumClassroomWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Classroom | EnumClassroomFieldRefInput<$PrismaModel>
-    in?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
-    not?: NestedEnumClassroomWithAggregatesFilter<$PrismaModel> | $Enums.Classroom
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumClassroomFilter<$PrismaModel>
-    _max?: NestedEnumClassroomFilter<$PrismaModel>
-  }
-
   export type FloatNullableFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
     in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
@@ -13168,6 +13179,13 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type EnumClassroomFilter<$PrismaModel = never> = {
+    equals?: $Enums.Classroom | EnumClassroomFieldRefInput<$PrismaModel>
+    in?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
+    not?: NestedEnumClassroomFilter<$PrismaModel> | $Enums.Classroom
   }
 
   export type ClassListRelationFilter = {
@@ -13270,6 +13288,16 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type EnumClassroomWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Classroom | EnumClassroomFieldRefInput<$PrismaModel>
+    in?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
+    not?: NestedEnumClassroomWithAggregatesFilter<$PrismaModel> | $Enums.Classroom
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumClassroomFilter<$PrismaModel>
+    _max?: NestedEnumClassroomFilter<$PrismaModel>
+  }
+
   export type Class_groupCountOrderByAggregateInput = {
     id?: SortOrder
   }
@@ -13322,12 +13350,12 @@ export namespace Prisma {
     set?: string
   }
 
-  export type EnumGenderFieldUpdateOperationsInput = {
-    set?: $Enums.Gender
-  }
-
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type EnumGenderFieldUpdateOperationsInput = {
+    set?: $Enums.Gender
   }
 
   export type FloatFieldUpdateOperationsInput = {
@@ -13542,10 +13570,6 @@ export namespace Prisma {
     set?: $Enums.Class_status
   }
 
-  export type EnumClassroomFieldUpdateOperationsInput = {
-    set?: $Enums.Classroom
-  }
-
   export type Class_groupUpdateOneWithoutGroupOfClassesNestedInput = {
     create?: XOR<Class_groupCreateWithoutGroupOfClassesInput, Class_groupUncheckedCreateWithoutGroupOfClassesInput>
     connectOrCreate?: Class_groupCreateOrConnectWithoutGroupOfClassesInput
@@ -13604,6 +13628,10 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type EnumClassroomFieldUpdateOperationsInput = {
+    set?: $Enums.Classroom
   }
 
   export type ClassUpdateManyWithoutStudent_packageNestedInput = {
@@ -13717,13 +13745,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedEnumGenderFilter<$PrismaModel = never> = {
-    equals?: $Enums.Gender | EnumGenderFieldRefInput<$PrismaModel>
-    in?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
-    not?: NestedEnumGenderFilter<$PrismaModel> | $Enums.Gender
-  }
-
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -13736,6 +13757,13 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedEnumGenderFilter<$PrismaModel = never> = {
+    equals?: $Enums.Gender | EnumGenderFieldRefInput<$PrismaModel>
+    in?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
+    not?: NestedEnumGenderFilter<$PrismaModel> | $Enums.Gender
   }
 
   export type NestedFloatFilter<$PrismaModel = never> = {
@@ -13791,16 +13819,6 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type NestedEnumGenderWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Gender | EnumGenderFieldRefInput<$PrismaModel>
-    in?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
-    not?: NestedEnumGenderWithAggregatesFilter<$PrismaModel> | $Enums.Gender
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumGenderFilter<$PrismaModel>
-    _max?: NestedEnumGenderFilter<$PrismaModel>
-  }
-
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -13827,6 +13845,16 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumGenderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Gender | EnumGenderFieldRefInput<$PrismaModel>
+    in?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Gender[] | ListEnumGenderFieldRefInput<$PrismaModel>
+    not?: NestedEnumGenderWithAggregatesFilter<$PrismaModel> | $Enums.Gender
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumGenderFilter<$PrismaModel>
+    _max?: NestedEnumGenderFilter<$PrismaModel>
   }
 
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -13923,13 +13951,6 @@ export namespace Prisma {
     not?: NestedEnumClass_statusFilter<$PrismaModel> | $Enums.Class_status
   }
 
-  export type NestedEnumClassroomFilter<$PrismaModel = never> = {
-    equals?: $Enums.Classroom | EnumClassroomFieldRefInput<$PrismaModel>
-    in?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
-    not?: NestedEnumClassroomFilter<$PrismaModel> | $Enums.Classroom
-  }
-
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -13967,14 +13988,11 @@ export namespace Prisma {
     _max?: NestedEnumClass_statusFilter<$PrismaModel>
   }
 
-  export type NestedEnumClassroomWithAggregatesFilter<$PrismaModel = never> = {
+  export type NestedEnumClassroomFilter<$PrismaModel = never> = {
     equals?: $Enums.Classroom | EnumClassroomFieldRefInput<$PrismaModel>
     in?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
     notIn?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
-    not?: NestedEnumClassroomWithAggregatesFilter<$PrismaModel> | $Enums.Classroom
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumClassroomFilter<$PrismaModel>
-    _max?: NestedEnumClassroomFilter<$PrismaModel>
+    not?: NestedEnumClassroomFilter<$PrismaModel> | $Enums.Classroom
   }
 
   export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -13991,6 +14009,16 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumClassroomWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Classroom | EnumClassroomFieldRefInput<$PrismaModel>
+    in?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Classroom[] | ListEnumClassroomFieldRefInput<$PrismaModel>
+    not?: NestedEnumClassroomWithAggregatesFilter<$PrismaModel> | $Enums.Classroom
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumClassroomFilter<$PrismaModel>
+    _max?: NestedEnumClassroomFilter<$PrismaModel>
   }
 
   export type PortfolioCreateWithoutStudentInput = {
@@ -14123,6 +14151,7 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_name?: string | null
     gender: $Enums.Gender
     school_name: string
     grade: string
@@ -14139,6 +14168,7 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_name?: string | null
     gender: $Enums.Gender
     school_name: string
     grade: string
@@ -14192,6 +14222,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
@@ -14208,6 +14239,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
@@ -14461,9 +14493,9 @@ export namespace Prisma {
     min: number
     created_at?: number
     created_at_hk?: string
+    actual_classroom?: string | null
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
-    actual_classroom: $Enums.Classroom
     remark?: string | null
     Class_group_of_Classes?: Class_groupCreateNestedOneWithoutGroupOfClassesInput
   }
@@ -14476,9 +14508,9 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     class_group_id?: number | null
+    actual_classroom?: string | null
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
-    actual_classroom: $Enums.Classroom
     remark?: string | null
   }
 
@@ -14514,6 +14546,7 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_name?: string | null
     gender: $Enums.Gender
     school_name: string
     grade: string
@@ -14530,6 +14563,7 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_name?: string | null
     gender: $Enums.Gender
     school_name: string
     grade: string
@@ -14574,10 +14608,10 @@ export namespace Prisma {
     created_at?: FloatFilter<"Class"> | number
     created_at_hk?: StringFilter<"Class"> | string
     class_group_id?: IntNullableFilter<"Class"> | number | null
+    actual_classroom?: StringNullableFilter<"Class"> | string | null
     reason_for_absence?: StringNullableFilter<"Class"> | string | null
     class_status?: EnumClass_statusFilter<"Class"> | $Enums.Class_status
     student_package_id?: IntFilter<"Class"> | number
-    actual_classroom?: EnumClassroomFilter<"Class"> | $Enums.Classroom
     remark?: StringNullableFilter<"Class"> | string | null
   }
 
@@ -14620,6 +14654,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
@@ -14636,6 +14671,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
@@ -14654,9 +14690,9 @@ export namespace Prisma {
     min: number
     created_at?: number
     created_at_hk?: string
+    actual_classroom?: string | null
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
-    actual_classroom: $Enums.Classroom
     remark?: string | null
     Student_package: Student_packageCreateNestedOneWithoutClassInput
   }
@@ -14668,10 +14704,10 @@ export namespace Prisma {
     min: number
     created_at?: number
     created_at_hk?: string
+    actual_classroom?: string | null
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
     student_package_id: number
-    actual_classroom: $Enums.Classroom
     remark?: string | null
   }
 
@@ -14876,9 +14912,9 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     class_group_id?: number | null
+    actual_classroom?: string | null
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
-    actual_classroom: $Enums.Classroom
     remark?: string | null
   }
 
@@ -14888,9 +14924,9 @@ export namespace Prisma {
     min?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    actual_classroom?: NullableStringFieldUpdateOperationsInput | string | null
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
-    actual_classroom?: EnumClassroomFieldUpdateOperationsInput | $Enums.Classroom
     remark?: NullableStringFieldUpdateOperationsInput | string | null
     Class_group_of_Classes?: Class_groupUpdateOneWithoutGroupOfClassesNestedInput
   }
@@ -14903,9 +14939,9 @@ export namespace Prisma {
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
     class_group_id?: NullableIntFieldUpdateOperationsInput | number | null
+    actual_classroom?: NullableStringFieldUpdateOperationsInput | string | null
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
-    actual_classroom?: EnumClassroomFieldUpdateOperationsInput | $Enums.Classroom
     remark?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -14917,9 +14953,9 @@ export namespace Prisma {
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
     class_group_id?: NullableIntFieldUpdateOperationsInput | number | null
+    actual_classroom?: NullableStringFieldUpdateOperationsInput | string | null
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
-    actual_classroom?: EnumClassroomFieldUpdateOperationsInput | $Enums.Classroom
     remark?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -14930,10 +14966,10 @@ export namespace Prisma {
     min: number
     created_at?: number
     created_at_hk?: string
+    actual_classroom?: string | null
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
     student_package_id: number
-    actual_classroom: $Enums.Classroom
     remark?: string | null
   }
 
@@ -14943,9 +14979,9 @@ export namespace Prisma {
     min?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    actual_classroom?: NullableStringFieldUpdateOperationsInput | string | null
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
-    actual_classroom?: EnumClassroomFieldUpdateOperationsInput | $Enums.Classroom
     remark?: NullableStringFieldUpdateOperationsInput | string | null
     Student_package?: Student_packageUpdateOneRequiredWithoutClassNestedInput
   }
@@ -14957,10 +14993,10 @@ export namespace Prisma {
     min?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    actual_classroom?: NullableStringFieldUpdateOperationsInput | string | null
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     student_package_id?: IntFieldUpdateOperationsInput | number
-    actual_classroom?: EnumClassroomFieldUpdateOperationsInput | $Enums.Classroom
     remark?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
@@ -14971,10 +15007,10 @@ export namespace Prisma {
     min?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    actual_classroom?: NullableStringFieldUpdateOperationsInput | string | null
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     student_package_id?: IntFieldUpdateOperationsInput | number
-    actual_classroom?: EnumClassroomFieldUpdateOperationsInput | $Enums.Classroom
     remark?: NullableStringFieldUpdateOperationsInput | string | null
   }
 

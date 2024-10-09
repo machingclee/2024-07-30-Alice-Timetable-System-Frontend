@@ -128,6 +128,11 @@ export default (props: { date?: Date }) => {
                     <Button
                         onClick={() => {
                             dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: dayjs(selectedDate).subtract(1, "day").toDate() }));
+                            dispatch(
+                                StudentThunkAction.getStudentClassesForDailyTimetable({
+                                    dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).subtract(1, "day").toDate().getTime()).toString(),
+                                })
+                            );
                         }}
                     >
                         <div style={{ display: "flex", alignItems: "center", fontSize: 14 }}>
@@ -140,6 +145,11 @@ export default (props: { date?: Date }) => {
                     <Button
                         onClick={() => {
                             dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: dayjs(selectedDate).add(1, "day").toDate() }));
+                            dispatch(
+                                StudentThunkAction.getStudentClassesForDailyTimetable({
+                                    dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).add(1, "day").toDate().getTime()).toString(),
+                                })
+                            );
                         }}
                     >
                         <div style={{ display: "flex", alignItems: "center", fontSize: 14 }}>
