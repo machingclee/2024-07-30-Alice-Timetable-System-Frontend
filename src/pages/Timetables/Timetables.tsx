@@ -6,10 +6,22 @@ import { Button } from "antd";
 import Spacer from "../../components/Spacer";
 import CalendarColumn from "./components/CalendarColumn";
 import { useNavigate } from "react-router-dom";
+import DuplicateClassDialog from "../../components/DuplicateClassDialog";
+import ViewClassDialog from "../../components/ViewClassDialog";
+import DeleteClassDialog from "../../components/DeleteClassDialog";
+import AddClassEventDialog from "../../components/AddClassEventDialog";
+import { useEffect } from "react";
+import { StudentThunkAction } from "../../redux/slices/studentSlice";
+import { useAppDispatch } from "../../redux/hooks";
+import { CourseThunkAction } from "../../redux/slices/courseSlice";
 
 export default () => {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
+    useEffect(() => {
+        dispatch(CourseThunkAction.getCourses());
+    }, []);
     return (
         <div style={{ marginLeft: "10px", marginRight: "50px", height: "100%", display: "flex", flexDirection: "column" }}>
             <div style={{ width: "100%", display: "flex" }}>
@@ -34,6 +46,11 @@ export default () => {
                 <Spacer />
                 <CalendarColumn packagesOffsetY={200} />
             </div>
+            {/* <MoveConfirmationDialog.render /> */}
+            <DuplicateClassDialog.render />
+            <ViewClassDialog.render />
+            <DeleteClassDialog.render />
+            <AddClassEventDialog.render />
         </div>
     );
 };

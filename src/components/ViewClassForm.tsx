@@ -2,28 +2,30 @@ import { Box } from "@mui/material";
 import SectionTitle from "./SectionTitle";
 import Label from "./Label";
 import Spacer from "./Spacer";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Select, Input } from "antd";
 import durations from "../constant/durations";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { StudentThunkAction } from "../redux/slices/studentSlice";
-import { Class } from "../prismaTypes/types";
+import { Class, Course, Student_package } from "../prismaTypes/types";
 import { MdEdit } from "react-icons/md";
 import classStatuses from "../constant/classStatuses";
 import ViewClassDialog from "./ViewClassDialog";
 import getColorForClassStatus from "../utils/getColorForClassStatus";
 import getNumberSuffix from "../utils/getNumberSuffix";
 
-export default (props: { classEvent: Class; classNumber: number; course_id: number; student_id: string }) => {
+export default (props: { classEvent: Class & Course & Student_package & { hide: boolean }; classNumber: number; course_id: number; student_id: string }) => {
     const [editing, setEditing] = useState(false);
     const { classEvent, classNumber } = props;
     const { id, min, class_status, reason_for_absence, remark } = classEvent;
     const courseInfo = useAppSelector((s) => s.class.courses?.idToCourse?.[props.course_id || 0]);
-    const idsToCourse = useAppSelector((s) => s.class.courses?.idToCourse);
+    // console.log("classEvent:", classEvent);
     const status = class_status.toString();
     const formData = useRef({ min: min, class_status: status, reason_for_absence: reason_for_absence, remark: remark });
     const [hasAbsence, setHasAbsence] = useState<boolean>(class_status === "PRESENT" ? false : true);
     const dispatch = useAppDispatch();
+
+    useEffect(() => {}, []);
 
     return (
         <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>

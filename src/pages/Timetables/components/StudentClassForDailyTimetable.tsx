@@ -25,11 +25,10 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const studentClass = useAppSelector((s) => s.student.studentDetail.dailyTimetable?.hrUnixTimestampToClass?.[hourUnixTimestamp]);
-    console.log("studentClass:", studentClass);
+    console.log("studentClass?.course_id:", studentClass?.course_id);
     const timetable = useAppSelector((s) => s.student.studentDetail.dailyTimetable);
     const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
-    const studentPackage = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[studentClass?.student_package_id || ""]);
 
     const { day_unix_timestamp = 0, hour_unix_timestamp = 0, class_group_id } = studentClass || {};
     const hasDuplicationGroup = class_group_id != null;
@@ -42,7 +41,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     };
 
     const invalidData = day_unix_timestamp >= hour_unix_timestamp;
-    const contextMenuId = `${studentPackage?.student_id || ""}-${studentClass?.hour_unix_timestamp || ""}`;
+    const contextMenuId = `${props.studentId || ""}-${studentClass?.hour_unix_timestamp || ""}`;
     const rightClickable = !(studentClass != null);
     const dayAndTime = dayjs(hourUnixTimestamp).format("ddd, HH:mm");
     const disableDuplicate = studentClass?.class_group_id != null;
@@ -278,8 +277,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                     <ViewClassForm
                                                                         classEvent={studentClass}
                                                                         classNumber={classNumber}
-                                                                        course_id={studentPackage?.course_id || 0}
-                                                                        student_id={studentPackage?.student_id || ""}
+                                                                        course_id={studentClass?.course_id || 0}
+                                                                        student_id={studentClass?.student_id || ""}
                                                                     />
                                                                 ));
                                                                 ViewClassDialog.setOpen(true);

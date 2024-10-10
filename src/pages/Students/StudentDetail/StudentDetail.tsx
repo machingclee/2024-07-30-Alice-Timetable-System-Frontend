@@ -31,21 +31,13 @@ export default () => {
         if (studentId) {
             dispatch(StudentThunkAction.getStudentDetail({ studentId }));
             dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
+            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
         }
     }, [studentId]);
 
     // To get courses in case the user wants to add a course to the timetable
     useEffect(() => {
         dispatch(CourseThunkAction.getCourses());
-    }, []);
-
-    useEffect(() => {
-        if (studentId) {
-            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
-        }
-    }, [studentId]);
-
-    useEffect(() => {
         return () => {
             dispatch(studentSlice.actions.reset());
         };

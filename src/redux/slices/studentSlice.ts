@@ -46,7 +46,7 @@ export type StudentSliceState = {
         dailyTimetable: {
             selectedDate: Date;
             hrUnixTimestamps?: string[];
-            hrUnixTimestampToClass?: { [id: string]: Augmented_Class & { student_id: string } & { hide: boolean } };
+            hrUnixTimestampToClass?: { [id: string]: Class & Course & Student_package & { student_id: string } & { hide: boolean } };
         };
     };
     showAllClassesForOneStudent: boolean;
@@ -191,6 +191,7 @@ const studentSlice = createSlice({
                 state.studentDetail.dailyTimetable.hrUnixTimestampToClass = idToObject;
             })
             .addCase(StudentThunkAction.getStudentClassesForWeeklyTimetable.fulfilled, (state, action) => {
+                console.log("action.payload:", action.payload);
                 const classes = action.payload.classes.map((clz) => ({ ...clz, hide: false }));
                 const { ids, idToObject } = normalizeUtil.normalize({ idAttribute: "hour_unix_timestamp", targetArr: classes });
                 state.studentDetail.weeklyTimetable.hrUnixTimestamps = ids;
@@ -215,7 +216,9 @@ export class StudentThunkAction {
 
     public static getStudentClassesForWeeklyTimetable = createAsyncThunk("studentSlice/getStudentClassesForWeeklyTimetable", async (props: { studentId: string }, api) => {
         const { studentId } = props;
-        const res = await apiClient.get<CustomResponse<{ classes: (Student_package & Class & Course)[] }>>(apiRoutes.GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE(studentId));
+        const res = await apiClient.get<
+            CustomResponse<{ classes: (Omit<Student_package, "id"> & { student_package_id: number } & Class & Omit<Course, "id"> & { course_id: number })[] }>
+        >(apiRoutes.GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE(studentId));
         return processRes(res, api);
     });
     public static getStudentDetail = createAsyncThunk("studentSlice/getStudentDetail", async (props: { studentId: string }, api) => {
