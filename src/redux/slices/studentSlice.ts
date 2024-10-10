@@ -151,12 +151,24 @@ const studentSlice = createSlice({
                     if (state.studentDetail.weeklyTimetable.hrUnixTimestampToClass) {
                         lodash.setWith(state.studentDetail.weeklyTimetable.hrUnixTimestampToClass, hour_unix_timestamp, event);
                     }
+
+                    if (index > -1 && state.studentDetail.dailyTimetable.hrUnixTimestamps?.[index]) {
+                        console.log("index exists", index);
+                        state.studentDetail.dailyTimetable.hrUnixTimestamps[index] = String(hour_unix_timestamp);
+                    }
+
+                    if (state.studentDetail.dailyTimetable.hrUnixTimestampToClass) {
+                        lodash.setWith(state.studentDetail.dailyTimetable.hrUnixTimestampToClass, hour_unix_timestamp, event);
+                    }
                 }
             })
             .addCase(StudentThunkAction.detachFromGroup.fulfilled, (state, action) => {
                 const hourTimeStamp = action.payload.hour_unix_timestamp;
                 if (state.studentDetail?.weeklyTimetable.hrUnixTimestampToClass?.[String(hourTimeStamp)]) {
                     state.studentDetail.weeklyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].class_group_id = null;
+                }
+                if (state.studentDetail?.dailyTimetable.hrUnixTimestampToClass?.[String(hourTimeStamp)]) {
+                    state.studentDetail.dailyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].class_group_id = null;
                 }
             })
             .addCase(StudentThunkAction.updateClass.fulfilled, (state, action) => {
@@ -166,6 +178,12 @@ const studentSlice = createSlice({
                     state.studentDetail.weeklyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].class_status = class_status;
                     state.studentDetail.weeklyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].remark = remark;
                     state.studentDetail.weeklyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].reason_for_absence = reason_for_absence;
+                }
+                if (state.studentDetail?.dailyTimetable.hrUnixTimestampToClass?.[String(hourTimeStamp)]) {
+                    state.studentDetail.dailyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].min = min;
+                    state.studentDetail.dailyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].class_status = class_status;
+                    state.studentDetail.dailyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].remark = remark;
+                    state.studentDetail.dailyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].reason_for_absence = reason_for_absence;
                 }
             })
             .addCase(StudentThunkAction.updatePackage.fulfilled, (state, action) => {

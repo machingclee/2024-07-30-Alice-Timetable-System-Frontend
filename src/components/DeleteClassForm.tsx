@@ -7,13 +7,13 @@ import { Button } from "antd";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { StudentThunkAction } from "../redux/slices/studentSlice";
 import DeleteClassDialog from "./DeleteClassDialog";
-import { Class } from "../prismaTypes/types";
+import { Class, Course, Student_package } from "../prismaTypes/types";
 import colors from "../constant/colors";
 import dayjs from "dayjs";
 
-export default (props: { classEvent: Class }) => {
+export default (props: { classEvent: Class & Course & Student_package & { hide: boolean } }) => {
     const { classEvent } = props;
-    const { id, min, student_id, class_status, reason_for_absence, class_group_id, course_id, hour_unix_timestamp, day_unix_timestamp } = classEvent;
+    const { id, student_id, class_status, class_group_id, course_id, hour_unix_timestamp, day_unix_timestamp } = classEvent;
     const courseName = useAppSelector((s) => s.class.courses.idToCourse?.[course_id || 0])?.course_name;
     const classAt = dayjs(hour_unix_timestamp).format("HH:mm");
     const classOn = dayjs(day_unix_timestamp).format("dddd");
@@ -59,6 +59,7 @@ export default (props: { classEvent: Class }) => {
                             classId: id,
                         })
                     ).unwrap();
+                    dispatch(StudentThunkAction.getStudentClassesForDailyTimetable({ dateUnixTimestamp: day_unix_timestamp.toString() }));
                     dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: student_id }));
                     dispatch(StudentThunkAction.getStudentPackages({ studentId: student_id }));
                     DeleteClassDialog.setOpen(false);
