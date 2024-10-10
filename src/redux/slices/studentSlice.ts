@@ -193,6 +193,7 @@ const studentSlice = createSlice({
                     state.studentDetail.packages.idToPackage[String(updatedPackage.id)].course_id = updatedPackage.course_id;
                     state.studentDetail.packages.idToPackage[String(updatedPackage.id)].min = updatedPackage.min;
                     state.studentDetail.packages.idToPackage[String(updatedPackage.id)].num_of_classes = updatedPackage.num_of_classes;
+                    state.studentDetail.packages.idToPackage[String(updatedPackage.id)].default_classroom = updatedPackage.default_classroom;
                 }
             })
             .addCase(StudentThunkAction.getStudentPackages.fulfilled, (state, action) => {

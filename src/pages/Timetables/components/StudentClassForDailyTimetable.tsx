@@ -178,7 +178,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                         {/* Control what to show on the entire timetable */}
                                         {course_name && student_id === props.studentId && (
                                             <FadeIn>
-                                                {showLabel && <Label label="StudentClassForWeeklyTimetable.tsx" />}
+                                                {showLabel && <Label label="StudentClassForDailyTimetable.tsx" />}
                                                 {/* @ts-ignore */}
                                                 <ContextMenuTrigger id={contextMenuId}>
                                                     <Box
@@ -227,7 +227,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                     >
                                                         {showLabel && groupedLabel()}
                                                         <div style={{ padding: 4 }}>{studentClass.course_name}</div>
-                                                        {classNumber !== 0 && (
+                                                        {/* {classNumber !== 0 && (
                                                             <div
                                                                 style={{
                                                                     marginTop: 5,
@@ -245,7 +245,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                             >
                                                                 Class: {classNumber}
                                                             </div>
-                                                        )}
+                                                        )} */}
                                                     </Box>
                                                 </ContextMenuTrigger>
                                                 {/* @ts-ignore */}

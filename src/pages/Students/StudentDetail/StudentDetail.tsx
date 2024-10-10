@@ -49,8 +49,8 @@ export default () => {
 
     return (
         <div style={{ marginLeft: "10px", marginRight: "50px", height: "100%", display: "flex", flexDirection: "column" }}>
-            <div style={{ width: "100%", display: "flex" }}>
-                <div>
+            <div style={{ display: "flex" }}>
+                <div style={{ width: "100%" }}>
                     <SectionTitle>
                         <Label label="StudenDetail.tsx" offsetTop={-20} />
                         <Button
@@ -65,7 +65,7 @@ export default () => {
                         {`${first_name} ${last_name}`}
                     </SectionTitle>
 
-                    <div style={{ height: "calc(100vh - 70px)", overflow: "hidden" }}>
+                    <div style={{ height: "calc(100vh - 70px)", width: "100%", overflow: "hidden" }}>
                         <WeeklyTimetable />
                     </div>
                 </div>

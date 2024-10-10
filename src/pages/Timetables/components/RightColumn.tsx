@@ -13,9 +13,11 @@ import dayjs, { Dayjs } from "dayjs";
 import studentSlice, { StudentThunkAction } from "../../../redux/slices/studentSlice";
 import timeUtil from "../../../utils/timeUtil";
 import { AppDispatch } from "../../../redux/store";
+import { Box } from "@mui/material";
+import { FaAngleDoubleRight } from "react-icons/fa";
 
-export default (props: { packagesOffsetY: number }) => {
-    const { packagesOffsetY } = props;
+export default () => {
+    const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
     const selectedDate = useAppSelector((s) => s.student.studentDetail.dailyTimetable.selectedDate);
     const dispatch = useDispatch<AppDispatch>();
 
@@ -26,10 +28,10 @@ export default (props: { packagesOffsetY: number }) => {
     };
 
     return (
-        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <div style={{ width: "300px", marginRight: "50px" }}>
             <div style={{ height: "calc(100vh - 40px)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <Label label="StudentPackageColumn.tsx" offsetTop={-15} offsetLeft={20} />
+                    <Label label="RightColumn.tsx" offsetTop={0} offsetLeft={-70} />
                     <Title>Calendar</Title>
                 </div>
                 <Calendar
@@ -49,7 +51,7 @@ export default (props: { packagesOffsetY: number }) => {
                 <Spacer height={5} />
                 <Sep />
                 <Spacer />
-                {/* <Box
+                <Box
                     sx={{
                         flex: 1,
                         "& td": {
@@ -68,14 +70,14 @@ export default (props: { packagesOffsetY: number }) => {
                                 <td>
                                     <div>
                                         <FaAngleDoubleRight />
-                                        <Spacer width={5} /> Next Class
+                                        <Spacer width={5} /> Filter
                                     </div>
                                 </td>
-                                <td>???</td>
+                                <td></td>
                             </tr>
                         </tbody>
                     </table>
-                </Box> */}
+                </Box>
                 {/* Calendar */}
             </div>
         </div>

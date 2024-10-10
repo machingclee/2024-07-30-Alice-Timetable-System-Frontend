@@ -11,6 +11,7 @@ import NavButton from "./NavButton";
 import appSlice from "../../../redux/slices/appSlice";
 import Label from "../../../components/Label";
 import colors from "../../../constant/colors";
+import CollapseButton from "../../../assets/collapse-button.png";
 
 const pathRegex = {
     STUDENTS: /\/dashboard\/students/,
@@ -23,6 +24,7 @@ export default () => {
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
     const authData = useAppSelector((s) => s.auth.user);
+    const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
     const { first_name, last_name, role_in_system } = authData;
     const logout = () => {
         dispatch(authSlice.actions.reset());
@@ -52,14 +54,20 @@ export default () => {
 
     return (
         <Box
-            style={{ width: 160, height: "100%", marginTop: "20px", marginLeft: "30px" }}
+            style={{
+                width: leftNavigatorCollapsed ? 0 : 160,
+                height: "100%",
+                marginTop: "20px",
+                marginLeft: "30px",
+                transition: "width 0.3s ease",
+            }}
             sx={{
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
             }}
         >
-            <div>
+            <div style={{ transition: "opacity 0.3s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
                 <Spacer />
                 <Label label="LeftNavigation.tsx" offsetTop={-10} />
                 <NavButton activeNavigationRegex={pathRegex.STUDENTS} routeEnum={RouteEnum.DASHBOARD_STUDENTS} title="Students" />
@@ -70,7 +78,7 @@ export default () => {
                 <Spacer height={10} />
                 <NavButton activeNavigationRegex={pathRegex.TIMET_TABLES} routeEnum={RouteEnum.DASHBOARD_TIMETABLE} title="Timetables" />
             </div>
-            <div>
+            <div style={{ transition: "opacity 0.3s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
                 <div style={{ display: "flex", flexDirection: "row" }}>
                     <div>
                         <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Present</div>
@@ -136,6 +144,22 @@ export default () => {
                 <Spacer />
                 <Spacer />
             </div>
+            <img
+                onClick={() => {
+                    dispatch(appSlice.actions.setleftNavigatorCollapsed(!leftNavigatorCollapsed));
+                }}
+                style={{
+                    position: "absolute",
+                    bottom: "50%",
+                    right: "0",
+                    width: 30,
+                    height: 30,
+                    cursor: "pointer",
+                    transition: "rotate 1s ease-out-in",
+                    transform: leftNavigatorCollapsed ? "rotate(180deg)" : "rotate(0deg)",
+                }}
+                src={CollapseButton}
+            />
         </Box>
     );
 };

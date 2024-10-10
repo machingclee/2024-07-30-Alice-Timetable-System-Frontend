@@ -1,10 +1,10 @@
 import { IoMdArrowBack } from "react-icons/io";
 import SectionTitle from "../../components/SectionTitle";
-import DailyTimetable from "../Students/components/DailyTimetable";
+import DailyTimetable from "./components/DailyTimetable";
 import Label from "../../components/Label";
 import { Button } from "antd";
 import Spacer from "../../components/Spacer";
-import CalendarColumn from "./components/CalendarColumn";
+import RightColumn from "./components/RightColumn";
 import { useNavigate } from "react-router-dom";
 import DuplicateClassDialog from "../../components/DuplicateClassDialog";
 import ViewClassDialog from "../../components/ViewClassDialog";
@@ -12,20 +12,21 @@ import DeleteClassDialog from "../../components/DeleteClassDialog";
 import AddClassEventDialog from "../../components/AddClassEventDialog";
 import { useEffect } from "react";
 import { StudentThunkAction } from "../../redux/slices/studentSlice";
-import { useAppDispatch } from "../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { CourseThunkAction } from "../../redux/slices/courseSlice";
 
 export default () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
 
     useEffect(() => {
         dispatch(CourseThunkAction.getCourses());
     }, []);
     return (
-        <div style={{ marginLeft: "10px", marginRight: "50px", height: "100%", display: "flex", flexDirection: "column" }}>
+        <div style={{ marginLeft: "10px", marginRight: "50px", height: "100%", width: "100%", display: "flex", flexDirection: "column" }}>
             <div style={{ width: "100%", display: "flex" }}>
-                <div style={{ flex: 4 }}>
+                <div style={{ width: "100%" }}>
                     <SectionTitle>
                         <Label label="Timetables.tsx" offsetTop={-20} />
                         <Button
@@ -44,7 +45,7 @@ export default () => {
                     </div>
                 </div>
                 <Spacer />
-                <CalendarColumn packagesOffsetY={200} />
+                <RightColumn />
             </div>
             {/* <MoveConfirmationDialog.render /> */}
             <DuplicateClassDialog.render />

@@ -1,4 +1,4 @@
-import { Class, Student_package } from "../prismaTypes/types";
+import { Class, Classroom, Student_package } from "../prismaTypes/types";
 
 export type Gender = "MALE" | "FEMALE";
 export type RoleInSystem = "SUPER_ADMIN" | "ADMIN" | "STAFF" | "STUDENT";
@@ -134,11 +134,13 @@ export type CreateStudentPackageRequest = {
     min: number;
     course_id: number;
     student_id: string;
+    default_classroom: Classroom;
 };
 
 export type UpdateStudentPackageRequest = {
     id: number;
     num_of_classes: number;
+    default_classroom: Classroom;
     start_date: number;
     expiry_date: number;
     min: number;

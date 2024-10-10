@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import studentSlice, { StudentThunkAction } from "../../../redux/slices/studentSlice";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import timeUtil from "../../../utils/timeUtil";
-import StudentClassForDailyTimetable from "../../Timetables/components/StudentClassForDailyTimetable";
+import StudentClassForDailyTimetable from "./StudentClassForDailyTimetable";
 
 export type DailyCoordinate = {
     [studentId: string]: {

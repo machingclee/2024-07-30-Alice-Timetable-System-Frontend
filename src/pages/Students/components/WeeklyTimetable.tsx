@@ -96,6 +96,7 @@ export default (props: { date?: Date }) => {
     return (
         <Box
             ref={timetableContainerRef}
+            style={{ width: "100%" }}
             sx={{
                 overflowY: "hidden",
                 height: "1000px",
@@ -188,7 +189,7 @@ export default (props: { date?: Date }) => {
                 </div>
             </SectionTitle>
 
-            <CustomScrollbarContainer style={{ height: "calc(100vh - 120px)" }}>
+            <CustomScrollbarContainer style={{ height: "calc(100vh - 120px)", width: "100%" }}>
                 <Spacer />
                 <DragDropContext
                     onBeforeCapture={(e) => {
@@ -231,7 +232,7 @@ export default (props: { date?: Date }) => {
                 >
                     <div style={{ display: "flex" }}>
                         <div style={{ flex: 1 }}>
-                            <div style={{ display: "flex" }}>
+                            <div style={{ display: "flex", alignItems: "flex-end" }}>
                                 <div>
                                     <Spacer height={30} style={{ position: "sticky", top: 0, background: "white", width: "100%" }} />
                                     {getHalfHourTimeIntervalsForDay(weekStart).map((dayJS) => {
