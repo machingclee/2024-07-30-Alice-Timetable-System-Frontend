@@ -23,6 +23,7 @@ export type DailyCoordinate = {
 export default () => {
     const dispatch = useAppDispatch();
     const timetableType = useAppSelector((s) => s.student.studentDetail.dailyTimetable.timetableType);
+    const filter = useAppSelector((s) => s.student.studentDetail.dailyTimetable.filter);
     const idToStduent = useAppSelector((s) => s.student.students.idToStudent);
     const hrUnixTimestamps = useAppSelector((s) => s.student.studentDetail.dailyTimetable.hrUnixTimestamps) || [];
     const hrUnixTimestampToClass = useAppSelector((s) => s.student.studentDetail.dailyTimetable.hrUnixTimestampToClass) || {};
@@ -67,9 +68,10 @@ export default () => {
         if (timetableType) {
             console.log("timetableType:", timetableType);
             dispatch(
-                StudentThunkAction.getStudentClassesForDailyTimetable({
+                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
                     dateUnixTimestamp: timeUtil.getDayUnixTimestamp(selectedDate.getTime()).toString(),
                     timetableType: timetableType,
+                    filter: filter,
                 })
             );
         }
@@ -127,9 +129,10 @@ export default () => {
                         onClick={() => {
                             dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: dayjs(selectedDate).subtract(1, "day").toDate() }));
                             dispatch(
-                                StudentThunkAction.getStudentClassesForDailyTimetable({
+                                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
                                     dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).subtract(1, "day").toDate().getTime()).toString(),
                                     timetableType: timetableType,
+                                    filter: filter,
                                 })
                             );
                         }}
@@ -145,9 +148,10 @@ export default () => {
                         onClick={() => {
                             dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: dayjs(selectedDate).add(1, "day").toDate() }));
                             dispatch(
-                                StudentThunkAction.getStudentClassesForDailyTimetable({
+                                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
                                     dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).add(1, "day").toDate().getTime()).toString(),
                                     timetableType: timetableType,
+                                    filter: filter,
                                 })
                             );
                         }}
