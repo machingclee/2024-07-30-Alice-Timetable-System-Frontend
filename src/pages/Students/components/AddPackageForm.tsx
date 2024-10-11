@@ -13,6 +13,8 @@ import { CreateStudentPackageRequest } from "../../../dto/dto";
 import dayjs from "dayjs";
 import AddPackageDialog from "./AddPackageDialog";
 import { Classroom } from "../../../prismaTypes/types";
+import { IoIosInformationCircle } from "react-icons/io";
+import colors from "../../../constant/colors";
 
 // Function to convert timestamp to the start of the day (midnight)
 const toMidnight = (timestamp: number): number => {
@@ -28,7 +30,7 @@ const toMidnight = (timestamp: number): number => {
 
 export default (props: { studentId: string; studentName: string }) => {
     const { studentName, studentId } = props;
-    const [error, setError] = useState<Partial<CreateStudentPackageRequest>>({});
+    const [error, _] = useState<Partial<CreateStudentPackageRequest>>({});
     const dispatch = useAppDispatch();
     const classes = useAppSelector((s) => s.class.courses);
     const formData = useRef<Partial<CreateStudentPackageRequest>>({});
@@ -38,6 +40,7 @@ export default (props: { studentId: string; studentName: string }) => {
 
     const submit = async () => {
         const { course_id, min, start_date, num_of_classes, start_time, default_classroom } = formData.current || {};
+        console.log("submission data", course_id, min, start_date, num_of_classes, start_time, default_classroom);
         if (!(course_id != null && min != null && num_of_classes != null && default_classroom != null)) {
             return;
         }
@@ -108,25 +111,35 @@ export default (props: { studentId: string; studentName: string }) => {
             <FormInputTitle>Start Date</FormInputTitle>
             <Spacer height={5} />
             <DatePicker
+                disabledDate={(current) => {
+                    // Can't select days before today
+                    return current && current < dayjs().startOf('day');
+                }}
                 onChange={(val) => {
                     formData.current.start_date = val.valueOf();
                 }}
                 popupStyle={{ zIndex: 10 ** 7 }}
-                defaultValue={dayjs(new Date())}
+            // defaultValue={dayjs(new Date())}
             />
             <Spacer />
             <FormInputTitle>Start Time</FormInputTitle>
             <Spacer height={5} />
-            <TimePicker
-                onChange={(val) => {
-                    formData.current.start_time = val.valueOf();
-                }}
-                minuteStep={15}
-                disabledHours={disabledHours}
-                defaultValue={dayjs("09:00", "HH:mm")}
-                format={"HH:mm"}
-                popupStyle={{ zIndex: 10 ** 7 }}
-            />
+            <div style={{ display: "flex", alignItems: "center" }}>
+                <TimePicker
+                    onChange={(val) => {
+                        formData.current.start_time = val.valueOf();
+                    }}
+                    minuteStep={15}
+                    disabledHours={disabledHours}
+                    // defaultValue={dayjs("09:00", "HH:mm")}
+                    format={"HH:mm"}
+                    popupStyle={{ zIndex: 10 ** 7 }}
+                />
+                <Spacer width={15} />
+                <div style={{ color: colors.grey_deep, display: "flex", alignItems: "center" }}>
+                    <IoIosInformationCircle size={20} />  <Spacer width={5} /> (double click to confirm)
+                </div>
+            </div>
             <Spacer />
             <div style={{ display: "flex" }}>
                 <FormInputTitle>Select a Duration (in minutes)</FormInputTitle>
@@ -168,7 +181,7 @@ export default (props: { studentId: string; studentName: string }) => {
                 dropdownStyle={{ zIndex: 10 ** 4 }}
                 style={{ width: "100%" }}
                 onChange={(value) => {
-                    updateFormData({ num_of_classes: value });
+                    updateFormData({ default_classroom: value });
                 }}
                 options={classroomOptions.map((value) => ({ value: value, label: `${value}` }))} // Map allowed options to Select options
             />

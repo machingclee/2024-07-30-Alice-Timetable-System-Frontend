@@ -97,6 +97,7 @@ export default (props: { packageId: string }) => {
     return (
         <Box
             style={{
+                margin: "5px",
                 boxShadow: boxShadow.SHADOW_60,
                 borderRadius: 0,
                 padding: 6,
