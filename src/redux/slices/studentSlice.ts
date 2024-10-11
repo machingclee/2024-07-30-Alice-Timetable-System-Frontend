@@ -225,13 +225,14 @@ const studentSlice = createSlice({
             })
             .addCase(StudentThunkAction.getFilteredStudentClassesForDailyTimetable.fulfilled, (state, action) => {
                 const classes = action.payload.classes.map((clz) => ({ ...clz, hide: false }));
-                const timetableType = state.studentDetail.dailyTimetable.timetableType.replace("_Timetable", "");
+                const timetableType = state.studentDetail.dailyTimetable.timetableType.replace("_Timetable", "").toUpperCase();
                 let presentClasses = 0;
                 let suspiciousAbsenceClasses = 0;
                 let illegitAbsenceClasses = 0;
                 let legitAbsenceClasses = 0;
                 let makeupClasses = 0;
                 let changeOfClassroomClasses = 0;
+                console.log("classes:", classes);
                 classes.forEach((classDetail) => {
                     console.log("timetableType:", timetableType);
                     console.log("classDetail.actual_classroom:", classDetail.actual_classroom);
@@ -256,9 +257,6 @@ const studentSlice = createSlice({
                                 changeOfClassroomClasses++;
                                 break;
                         }
-                    else if (classDetail.class_status === "CHANGE_OF_CLASSROOM") {
-                        changeOfClassroomClasses++;
-                    }
                 });
                 state.studentDetail.dailyTimetable.summaryOfClassStatues = {
                     present: presentClasses,

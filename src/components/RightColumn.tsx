@@ -189,6 +189,16 @@ export default () => {
                             <div style={{ background: colors.purple, width: "15px", height: "15px" }} />
                         </div>
                     </div>
+                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "9px", marginTop: "12px" }}>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.present})</div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.suspiciousAbsence})</div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.illegitAbsence})</div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.legitAbsence})</div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.makeup})</div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "10px" }}>
+                            ({summaryOfClassStatues.changeOfClassroom})
+                        </div>
+                    </div>
                 </div>
                 <Button type="primary" block onClick={submit} style={{ marginTop: "10px" }}>
                     Confirm
