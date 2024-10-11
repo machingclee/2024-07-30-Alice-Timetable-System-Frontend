@@ -1,0 +1,17 @@
+{
+    "Location": "https://cloudfront.amazonaws.com/2020-05-31/distribution/E528ATQC51NNO/invalidation/I88M5M92TKI8I80ONIGA1QOL7L",
+    "Invalidation": {
+        "Id": "I88M5M92TKI8I80ONIGA1QOL7L",
+        "Status": "InProgress",
+        "CreateTime": "2024-10-05T15:16:21.551000+00:00",
+        "InvalidationBatch": {
+            "Paths": {
+                "Quantity": 1,
+                "Items": [
+                    "/*"
+                ]
+            },
+            "CallerReference": "cli-1728141380-929664"
+        }
+    }
+}
