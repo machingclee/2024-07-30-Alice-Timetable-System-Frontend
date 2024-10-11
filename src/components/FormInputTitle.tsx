@@ -1,5 +1,6 @@
 import { PropsWithChildren } from "react";
+import colors from "../constant/colors";
 
 export default ({ children }: PropsWithChildren) => {
-    return <div style={{ color: "rgba(0,0,0,0.6)", fontWeight: 400, fontSize: 16, paddingLeft: 4 }}>{children}</div>;
+    return <div style={{ color: colors.grey_deep, fontWeight: 400, fontSize: 16, paddingLeft: 4 }}>{children}</div>;
 };

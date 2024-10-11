@@ -121,7 +121,7 @@ export default (props: { packageId: string }) => {
                 }}
                 options={range({ from: 1, to: 100 }).map((value) => ({ value, label: value + "" }))}
             />
-
+            <Spacer />
             <div style={{ display: "flex" }}>
                 <FormInputTitle>Select Classroom</FormInputTitle>
             </div>
