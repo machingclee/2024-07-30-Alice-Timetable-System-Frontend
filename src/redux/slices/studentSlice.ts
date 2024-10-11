@@ -21,6 +21,7 @@ import {
     UpdateStudentRequest,
     SummaryOfClassStatues,
     WeeklyTimetableClass,
+    FilterToGetClassesForDailyTimetable,
 } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
@@ -54,6 +55,7 @@ export type StudentSliceState = {
             selectedDate: Date;
             hrUnixTimestamps?: string[];
             hrUnixTimestampToClass?: { [id: string]: Class & Course & Student_package & { student_id: string } & { hide: boolean } };
+            filter: FilterToGetClassesForDailyTimetable;
             summaryOfClassStatues: {
                 present: number;
                 suspiciousAbsence: number;
@@ -79,6 +81,14 @@ const initialState: StudentSliceState = {
         dailyTimetable: {
             selectedDate: new Date(),
             timetableType: "Prince_Edward_Timetable",
+            filter: {
+                present: true,
+                suspicious_absence: true,
+                illegit_absence: true,
+                legit_absence: true,
+                makeup: true,
+                changeOfClassroom: true,
+            },
             summaryOfClassStatues: {
                 present: 0,
                 suspiciousAbsence: 0,
@@ -281,14 +291,11 @@ export class StudentThunkAction {
         return processRes(res, api);
     });
 
-    public static getStudentClassesForWeeklyTimetable = createAsyncThunk("studentSlice/getStudentClassesForWeeklyTimetable",
-        async (props: { studentId: string }, api) => {
-            const { studentId } = props;
-            const res = await apiClient.get<CustomResponse<{ classes: WeeklyTimetableClass[] }>>(
-                apiRoutes.GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE(studentId)
-            );
-            return processRes(res, api);
-        });
+    public static getStudentClassesForWeeklyTimetable = createAsyncThunk("studentSlice/getStudentClassesForWeeklyTimetable", async (props: { studentId: string }, api) => {
+        const { studentId } = props;
+        const res = await apiClient.get<CustomResponse<{ classes: WeeklyTimetableClass[] }>>(apiRoutes.GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE(studentId));
+        return processRes(res, api);
+    });
     public static getStudentDetail = createAsyncThunk("studentSlice/getStudentDetail", async (props: { studentId: string }, api) => {
         const { studentId } = props;
         const res = await apiClient.get<CustomResponse<Student>>(apiRoutes.GET_STUDENT_DETAIL(studentId));
@@ -354,10 +361,13 @@ export class StudentThunkAction {
             return processRes(res, api);
         }
     );
-    // public static deleteStudent = createAsyncThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
-    //     const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.studentId));
-    //     return processRes(res, api);
-    // });
+    public static getFilteredStudentClassesForDailyTimetable = createAsyncThunk(
+        "studentSlice/getFilteredStudentClassesForDailyTimetable",
+        async (props: { dateUnixTimestamp: string; timetableType: TimetableType; filter: FilterToGetClassesForDailyTimetable }, api) => {
+            const res = await apiClient.post<CustomResponse<{ classes: (Student_package & Class & Course)[] }>>(apiRoutes.POST_GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE, props);
+            return processRes(res, api);
+        }
+    );
     public static deleteClass = createAsyncThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
         const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.classId));
         return processRes(res, api);
