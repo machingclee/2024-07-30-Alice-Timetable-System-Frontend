@@ -10,9 +10,8 @@ import DeleteClassDialog from "./DeleteClassDialog";
 import { Class, Course, Student_package } from "../prismaTypes/types";
 import colors from "../constant/colors";
 import dayjs from "dayjs";
-import { TimetableType } from "../dto/dto";
 
-export default (props: { classEvent: Class & Course & Student_package & { hide: boolean }; timetableType?: TimetableType }) => {
+export default (props: { classEvent: Class & Course & Student_package & { hide: boolean } }) => {
     const { classEvent } = props;
     const { id, student_id, class_status, class_group_id, course_id, hour_unix_timestamp, day_unix_timestamp } = classEvent;
     const courseName = useAppSelector((s) => s.class.courses.idToCourse?.[course_id || 0])?.course_name;
