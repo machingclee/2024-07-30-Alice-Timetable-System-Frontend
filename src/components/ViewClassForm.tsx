@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import SectionTitle from "./SectionTitle";
 import Label from "./Label";
 import Spacer from "./Spacer";
 import { useEffect, useRef, useState } from "react";
@@ -13,19 +12,20 @@ import classStatuses from "../constant/classStatuses";
 import ViewClassDialog from "./ViewClassDialog";
 import getColorForClassStatus from "../utils/getColorForClassStatus";
 import getNumberSuffix from "../utils/getNumberSuffix";
+import useGetStudentIdFromParam from "../hooks/useGetStudentIdFromParam";
 
 export default (props: { classEvent: Class & Course & Student_package & { hide: boolean }; classNumber: number; course_id: number; student_id: string }) => {
     const [editing, setEditing] = useState(false);
+    const { studentId } = useGetStudentIdFromParam();
     const { classEvent, classNumber } = props;
     const { id, min, class_status, reason_for_absence, remark, actual_classroom, default_classroom } = classEvent;
     const courseInfo = useAppSelector((s) => s.class.courses?.idToCourse?.[props.course_id || 0]);
-    // console.log("classEvent:", classEvent);
     const status = class_status.toString();
     const formData = useRef({ min: min, class_status: status, reason_for_absence: reason_for_absence, remark: remark, actual_classroom: actual_classroom });
     const [hasAbsence, setHasAbsence] = useState<boolean>(class_status === "PRESENT" || class_status === "CHANGE_OF_CLASSROOM" ? false : true);
     const dispatch = useAppDispatch();
 
-    useEffect(() => {}, []);
+    useEffect(() => { }, []);
 
     const classroomOptions: Classroom[] = ["PRINCE_EDWARD", "CAUSEWAY_BAY"];
 
@@ -71,6 +71,7 @@ export default (props: { classEvent: Class & Course & Student_package & { hide: 
                     />
                 )}
             </div>
+
             <div>
                 <div style={{ marginBottom: "10px", marginTop: "5px", fontSize: "16px", fontWeight: "bold" }}>Classroom:</div>
                 {!editing && <div style={{ width: "100%", height: "32px", fontWeight: "lighter" }}>{actual_classroom ? actual_classroom : default_classroom}</div>}
@@ -148,18 +149,18 @@ export default (props: { classEvent: Class & Course & Student_package & { hide: 
                         type="primary"
                         block
                         onClick={async () => {
-                            await dispatch(
-                                StudentThunkAction.updateClass({
-                                    classId: id,
-                                    min: formData.current.min,
-                                    class_status: formData.current.class_status,
-                                    reason_for_absence: formData.current.reason_for_absence || "",
-                                    remark: formData.current.remark || "",
-                                    actual_classroom: formData.current.actual_classroom as $Enums.Classroom,
-                                    student_package_id: classEvent.student_package_id.toString(),
-                                })
+                            await dispatch(StudentThunkAction.updateClass({
+                                classId: id,
+                                min: formData.current.min,
+                                class_status: formData.current.class_status,
+                                reason_for_absence: formData.current.reason_for_absence || "",
+                                remark: formData.current.remark || "",
+                                actual_classroom: formData.current.actual_classroom as $Enums.Classroom,
+                                student_package_id: classEvent.student_package_id,
+                            })
                             ).unwrap();
-                            dispatch(StudentThunkAction.getStudentPackages({ studentId: props.student_id }));
+                            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: studentId }))
+                            dispatch(StudentThunkAction.getStudentPackages({ studentId: studentId }));
                             ViewClassDialog.setOpen(false);
                         }}
                     >

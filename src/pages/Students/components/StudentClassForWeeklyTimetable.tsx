@@ -64,49 +64,49 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const TimeslotWrapper = useCallback(
         rightClickable
             ? ({ children }: PropsWithChildren) => {
-                  return (
-                      <>
-                          {/* @ts-ignore */}
-                          <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
-                          {/* @ts-ignore */}
-                          <ContextMenu
-                              id={hourUnixTimestamp.toString()}
-                              style={{
-                                  zIndex: 10 ** 7,
-                                  borderRadius: 8,
-                                  backgroundColor: "white",
-                                  boxShadow: boxShadow.SHADOW_62,
-                              }}
-                          >
-                              <Box
-                                  sx={{
-                                      "& .menu-item": {
-                                          padding: "10px",
-                                          cursor: "pointer",
-                                          color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
-                                          "&:hover": {
-                                              "&:hover": {
-                                                  color: "rgb(64, 150, 255)",
-                                              },
-                                          },
-                                      },
-                                  }}
-                              >
-                                  {/* @ts-ignore */}
-                                  <MenuItem
-                                      className="menu-item"
-                                      disabled={!selectedPackageId}
-                                      onClick={() => {
-                                          createEvent();
-                                      }}
-                                  >
-                                      {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
-                                  </MenuItem>
-                              </Box>
-                          </ContextMenu>
-                      </>
-                  );
-              }
+                return (
+                    <>
+                        {/* @ts-ignore */}
+                        <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
+                        {/* @ts-ignore */}
+                        <ContextMenu
+                            id={hourUnixTimestamp.toString()}
+                            style={{
+                                zIndex: 10 ** 7,
+                                borderRadius: 8,
+                                backgroundColor: "white",
+                                boxShadow: boxShadow.SHADOW_62,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    "& .menu-item": {
+                                        padding: "10px",
+                                        cursor: "pointer",
+                                        color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
+                                        "&:hover": {
+                                            "&:hover": {
+                                                color: "rgb(64, 150, 255)",
+                                            },
+                                        },
+                                    },
+                                }}
+                            >
+                                {/* @ts-ignore */}
+                                <MenuItem
+                                    className="menu-item"
+                                    disabled={!selectedPackageId}
+                                    onClick={() => {
+                                        createEvent();
+                                    }}
+                                >
+                                    {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
+                                </MenuItem>
+                            </Box>
+                        </ContextMenu>
+                    </>
+                );
+            }
             : ({ children }: PropsWithChildren) => children,
         [studentClass, selectedPackageId]
     );
@@ -213,6 +213,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                             return colors.green;
                                                                         case "CHANGE_OF_CLASSROOM":
                                                                             return colors.purple;
+                                                                        case "TRIAL":
+                                                                            return "black"
                                                                     }
                                                                 }
                                                             })(),
