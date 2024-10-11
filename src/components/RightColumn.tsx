@@ -21,7 +21,7 @@ import Checkbox from "@mui/material/Checkbox";
 import colors from "../constant/colors";
 
 export default () => {
-    const timetableType = useAppSelector((s) => s.app.timetableType);
+    const timetableType = useAppSelector((s) => s.student.studentDetail.dailyTimetable.timetableType);
     const selectedDate = useAppSelector((s) => s.student.studentDetail.dailyTimetable.selectedDate);
     const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
     const summaryOfClassStatues = useAppSelector((s) => s.student.studentDetail.dailyTimetable.summaryOfClassStatues);

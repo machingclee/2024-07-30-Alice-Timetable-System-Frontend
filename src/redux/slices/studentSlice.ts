@@ -237,7 +237,6 @@ const studentSlice = createSlice({
                 state.studentDetail.packages.idToPackage = idToObject;
             })
             .addCase(StudentThunkAction.getStudentClassesForDailyTimetable.fulfilled, (state, action) => {
-                console.log("action.payload:", action.payload);
                 const classes = action.payload.classes.map((clz) => ({ ...clz, hide: false }));
                 const timetableType = state.studentDetail.dailyTimetable.timetableType.replace("_Timetable", "");
                 let presentClasses = 0;
@@ -246,7 +245,6 @@ const studentSlice = createSlice({
                 let legitAbsenceClasses = 0;
                 let makeupClasses = 0;
                 let changeOfClassroomClasses = 0;
-                console.log("classes:", classes);
                 classes.forEach((classDetail) => {
                     console.log("timetableType:", timetableType);
                     console.log("classDetail.actual_classroom:", classDetail.actual_classroom);
