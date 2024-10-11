@@ -33,7 +33,7 @@ export default (props: { packagesOffsetY: number }) => {
     return (
         <div
             style={{
-                width: rightColumnCollapsed ? "0px" : "290px",
+                width: rightColumnCollapsed ? "0px" : "300px",
                 display: "flex",
                 flexDirection: "column",
                 position: "relative",
@@ -121,7 +121,7 @@ export default (props: { packagesOffsetY: number }) => {
                 style={{
                     position: "absolute",
                     bottom: "50%",
-                    left: rightColumnCollapsed ? "0%" : "-15%",
+                    left: rightColumnCollapsed ? "0%" : "-13%",
                     width: 30,
                     height: 30,
                     cursor: "pointer",

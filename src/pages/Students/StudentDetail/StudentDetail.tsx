@@ -73,7 +73,7 @@ export default () => {
                         <WeeklyTimetable />
                     </div>
                 </div>
-                <Spacer style={{ position: "relative" }} width={rightColumnCollapsed ? 0 : 60} />
+                <Spacer style={{ position: "relative" }} width={rightColumnCollapsed ? 0 : 40} />
                 <StudentPackageColumn packagesOffsetY={200} />
             </div>
 
