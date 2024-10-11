@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { RouteEnum } from "../../../router/router";
 import Label from "../../../components/Label";
 
-export default (props: { activeNavigationRegex: RegExp, title: string, routeEnum: RouteEnum }) => {
+export default (props: { activeNavigationRegex: RegExp; title: string; routeEnum: RouteEnum }) => {
     const { pathname } = useLocation();
     const { activeNavigationRegex, routeEnum, title } = props;
     const navigate = useNavigate();
@@ -12,16 +12,18 @@ export default (props: { activeNavigationRegex: RegExp, title: string, routeEnum
 
     return (
         <>
-            <Label label="NavButton.tsx" offsetLeft={-40} offsetTop={10} />
+            <Label label="NavButton.tsx" offsetLeft={-40} offsetTop={-10} />
             <Button
                 block
                 type={active ? "primary" : "default"}
                 onClick={() => {
                     navigate(routeEnum);
-                }}>
-
-                <div key={path} style={{ textTransform: "capitalize" }}>{title}</div>
+                }}
+            >
+                <div key={path} style={{ textTransform: "capitalize" }}>
+                    {title}
+                </div>
             </Button>
         </>
-    )
-}
+    );
+};

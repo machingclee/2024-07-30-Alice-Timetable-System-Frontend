@@ -17,16 +17,18 @@ import { CreateClassRequest } from "../dto/dto";
 import durations from "../constant/durations";
 import dayjs from "dayjs";
 import range from "../utils/range";
+import { Classroom } from "../prismaTypes/types";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; studentId: string }) => {
     const { dayUnixTimestamp, hourUnixTimestamp, studentId } = props;
     const [error, setError] = useState<Partial<CreateClassRequest>>({});
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
+    const defaultClassroom = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[selectedPackageId]?.default_classroom);
     const defaultCourseId = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[selectedPackageId]?.course_id || 0);
     const defaultMin = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[selectedPackageId]?.min || 0);
     const defaultNumOfClasses = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[selectedPackageId]?.num_of_classes || 1);
     const dispatch = useAppDispatch();
-    const classes = useAppSelector((s) => s.class.courses);
+    const courses = useAppSelector((s) => s.class.courses);
     const formData = useRef<Partial<CreateClassRequest>>({
         day_unix_timestamp: dayUnixTimestamp,
         hour_unix_timestamp: hourUnixTimestamp,
@@ -35,6 +37,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; st
         course_id: defaultCourseId,
         min: defaultMin,
         num_of_classes: defaultNumOfClasses,
+        actual_classroom: defaultClassroom,
     });
     const updateFormData = (update: Partial<CreateClassRequest>) => {
         formData.current = {
@@ -68,6 +71,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; st
 
     const allowedOptionsForNumberOfClasses = [1, 7, 15, 30, 50];
 
+    const classroomOptions: Classroom[] = ["PRINCE_EDWARD", "CAUSEWAY_BAY"];
+
     return (
         <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
             <Label label="AddClassEventForm.tsx" offsetTop={0} offsetLeft={180} />
@@ -78,7 +83,6 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; st
                 <Spacer />
                 {error.course_id && <div>{error.course_id}</div>}
             </div>
-            <Spacer height={5} />
             <Select
                 disabled={true}
                 dropdownStyle={{ zIndex: 10 ** 4 }}
@@ -87,11 +91,32 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; st
                 onChange={(value) => {
                     updateFormData({ course_id: value });
                 }}
-                options={classes.ids?.map((id_) => {
-                    const { course_name, id } = classes.idToCourse?.[id_] || {};
+                options={courses.ids?.map((id_) => {
+                    const { course_name, id } = courses.idToCourse?.[id_] || {};
                     return {
                         value: id || 0,
                         label: course_name || "",
+                    };
+                })}
+            />
+            <Spacer />
+            <div style={{ display: "flex" }}>
+                <FormInputTitle>Classroom</FormInputTitle>
+                <Spacer />
+                {error.actual_classroom && <div>{error.actual_classroom}</div>}
+            </div>
+            <Spacer height={5} />
+            <Select
+                dropdownStyle={{ zIndex: 10 ** 4 }}
+                style={{ width: "100%" }}
+                defaultValue={defaultClassroom}
+                onChange={(value) => {
+                    updateFormData({ actual_classroom: value });
+                }}
+                options={classroomOptions.map((classroom) => {
+                    return {
+                        value: classroom,
+                        label: classroom,
                     };
                 })}
             />

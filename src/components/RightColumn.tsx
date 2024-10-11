@@ -1,23 +1,23 @@
 import { Button } from "antd";
-import Title from "../../../components/Title";
+import Title from "../components/Title";
 import { useParams } from "react-router-dom";
-import Spacer from "../../../components/Spacer";
-import { useAppSelector } from "../../../redux/hooks";
+import Spacer from "../components/Spacer";
+import { useAppSelector } from "../redux/hooks";
 import { useDispatch } from "react-redux";
-import Sep from "../../../components/Sep";
-import Label from "../../../components/Label";
+import Sep from "../components/Sep";
+import Label from "../components/Label";
 import { Calendar, theme } from "antd";
 import type { CalendarProps } from "antd";
 import * as React from "react";
 import dayjs, { Dayjs } from "dayjs";
-import studentSlice, { StudentThunkAction } from "../../../redux/slices/studentSlice";
-import timeUtil from "../../../utils/timeUtil";
-import { AppDispatch } from "../../../redux/store";
+import studentSlice, { StudentThunkAction } from "../redux/slices/studentSlice";
+import timeUtil from "../utils/timeUtil";
+import { AppDispatch } from "../redux/store";
 import { Box } from "@mui/material";
 import { FaAngleDoubleRight } from "react-icons/fa";
+import { TimetableType } from "../dto/dto";
 
-export default () => {
-    const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
+export default ({ timetableType }: { timetableType: TimetableType }) => {
     const selectedDate = useAppSelector((s) => s.student.studentDetail.dailyTimetable.selectedDate);
     const dispatch = useDispatch<AppDispatch>();
 
@@ -43,6 +43,7 @@ export default () => {
                         dispatch(
                             StudentThunkAction.getStudentClassesForDailyTimetable({
                                 dateUnixTimestamp: timeUtil.getDayUnixTimestamp(date.toDate().getTime()).toString(),
+                                timetableType: timetableType,
                             })
                         );
                     }}

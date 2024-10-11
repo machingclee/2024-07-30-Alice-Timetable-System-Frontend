@@ -17,7 +17,8 @@ const pathRegex = {
     STUDENTS: /\/dashboard\/students/,
     COURSES: /\/dashboard\/courses/,
     USERS: /\/dashboard\/users/,
-    TIMET_TABLES: /\/dashboard\/timetables/,
+    PRINCE_EDWARD_TIMETABLE: /\/dashboard\/PE-timetable/,
+    CWB_TIMETABLE: /\/dashboard\/CWB-timetable/,
 };
 
 export default () => {
@@ -36,8 +37,8 @@ export default () => {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_STUDENTS));
             } else if (pathRegex.USERS.test(pathname)) {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_USERS));
-            } else if (pathRegex.TIMET_TABLES.test(pathname)) {
-                dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_TIMETABLE));
+            } else if (pathRegex.PRINCE_EDWARD_TIMETABLE.test(pathname)) {
+                dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE));
             } else if (pathRegex.COURSES.test(pathname)) {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_COURSES));
             } else {
@@ -76,7 +77,9 @@ export default () => {
                 <Spacer height={10} />
                 <NavButton activeNavigationRegex={pathRegex.USERS} routeEnum={RouteEnum.DASHBOARD_USERS} title="Users" />
                 <Spacer height={10} />
-                <NavButton activeNavigationRegex={pathRegex.TIMET_TABLES} routeEnum={RouteEnum.DASHBOARD_TIMETABLE} title="Timetables" />
+                <NavButton activeNavigationRegex={pathRegex.PRINCE_EDWARD_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE} title="Prince Ed. Timetable" />
+                <Spacer height={10} />
+                <NavButton activeNavigationRegex={pathRegex.CWB_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_CWB_TIMETABLE} title="CWB Timetable" />
             </div>
             <div style={{ transition: "opacity 0.3s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
                 <div style={{ display: "flex", flexDirection: "row" }}>
@@ -86,6 +89,7 @@ export default () => {
                         <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Illegit Absence</div>
                         <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Legit Absence</div>
                         <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Makeup</div>
+                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Change of Classroom</div>
                     </div>
                     <div style={{ marginLeft: "30px" }}>
                         <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
@@ -104,9 +108,12 @@ export default () => {
                         <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
                             <div style={{ background: colors.green, width: "15px", height: "15px" }} />
                         </div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.purple, width: "15px", height: "15px" }} />
+                        </div>
                     </div>
                 </div>
-                <Spacer height={25} />
+                <Spacer height={30} />
                 <div style={{ boxShadow: boxShadow.SHADOW_61, borderRadius: 4, padding: 10, position: "relative" }}>
                     <div style={{ display: "flex" }}>
                         <div

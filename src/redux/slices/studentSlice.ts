@@ -17,12 +17,13 @@ import {
     Augmented_Class,
     DeleteClassRequest,
     UpdateStudentPackageRequest,
+    TimetableType,
 } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
 import { RootState } from "../store";
 import lodash from "lodash";
-import { Class, Class_status, Course, Student_package } from "../../prismaTypes/types";
+import { Class, Class_status, Classroom, Course, Student_package } from "../../prismaTypes/types";
 
 export type StudentSliceState = {
     students: {
@@ -172,18 +173,20 @@ const studentSlice = createSlice({
                 }
             })
             .addCase(StudentThunkAction.updateClass.fulfilled, (state, action) => {
-                const { hour_unix_timestamp: hourTimeStamp, min, class_status, reason_for_absence, remark } = action.payload;
+                const { hour_unix_timestamp: hourTimeStamp, min, class_status, reason_for_absence, remark, actual_classroom } = action.payload;
                 if (state.studentDetail?.weeklyTimetable.hrUnixTimestampToClass?.[String(hourTimeStamp)]) {
                     state.studentDetail.weeklyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].min = min;
                     state.studentDetail.weeklyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].class_status = class_status;
                     state.studentDetail.weeklyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].remark = remark;
                     state.studentDetail.weeklyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].reason_for_absence = reason_for_absence;
+                    state.studentDetail.weeklyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].actual_classroom = actual_classroom;
                 }
                 if (state.studentDetail?.dailyTimetable.hrUnixTimestampToClass?.[String(hourTimeStamp)]) {
                     state.studentDetail.dailyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].min = min;
                     state.studentDetail.dailyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].class_status = class_status;
                     state.studentDetail.dailyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].remark = remark;
                     state.studentDetail.dailyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].reason_for_absence = reason_for_absence;
+                    state.studentDetail.dailyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].actual_classroom = actual_classroom;
                 }
             })
             .addCase(StudentThunkAction.updatePackage.fulfilled, (state, action) => {
@@ -295,12 +298,15 @@ export class StudentThunkAction {
         const res = await apiClient.put<CustomResponse<{ student: LimitedStudentInfo }>>(apiRoutes.PUT_UPDATE_STUDENT, props);
         return processRes(res, api);
     });
-    public static getStudentClassesForDailyTimetable = createAsyncThunk("studentSlice/getStudentClassesForDailyTimetable", async (props: { dateUnixTimestamp: string }, api) => {
-        const res = await apiClient.get<CustomResponse<{ classes: (Student_package & Class & Course)[] }>>(
-            apiRoutes.GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE(props.dateUnixTimestamp)
-        );
-        return processRes(res, api);
-    });
+    public static getStudentClassesForDailyTimetable = createAsyncThunk(
+        "studentSlice/getStudentClassesForDailyTimetable",
+        async (props: { dateUnixTimestamp: string; timetableType: TimetableType }, api) => {
+            const res = await apiClient.get<CustomResponse<{ classes: (Student_package & Class & Course)[] }>>(
+                apiRoutes.GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE(props.dateUnixTimestamp, props.timetableType)
+            );
+            return processRes(res, api);
+        }
+    );
     public static deleteClass = createAsyncThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
         const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.classId));
         return processRes(res, api);
@@ -315,10 +321,9 @@ export class StudentThunkAction {
         return processRes(res, api);
     });
     public static updateClass = createAsyncThunk("studentSlice/updateClass", async (props: UpdateClassRequest, api) => {
-        const res = await apiClient.put<CustomResponse<{ hour_unix_timestamp: number; min: number; class_status: Class_status; reason_for_absence: string; remark: string }>>(
-            apiRoutes.PUT_UPDATE_CLASS,
-            props
-        );
+        const res = await apiClient.put<
+            CustomResponse<{ hour_unix_timestamp: number; min: number; class_status: Class_status; reason_for_absence: string; remark: string; actual_classroom: Classroom }>
+        >(apiRoutes.PUT_UPDATE_CLASS, props);
         return processRes(res, api);
     });
 

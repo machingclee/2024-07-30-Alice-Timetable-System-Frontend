@@ -87,7 +87,8 @@ export const Class_status: {
   ILLEGIT_ABSENCE: 'ILLEGIT_ABSENCE',
   SUSPICIOUS_ABSENCE: 'SUSPICIOUS_ABSENCE',
   LEGIT_ABSENCE: 'LEGIT_ABSENCE',
-  MAKEUP: 'MAKEUP'
+  MAKEUP: 'MAKEUP',
+  CHANGE_OF_CLASSROOM: 'CHANGE_OF_CLASSROOM'
 };
 
 export type Class_status = (typeof Class_status)[keyof typeof Class_status]
@@ -12413,7 +12414,7 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     num_of_classes: number
-    default_classroom: $Enums.Classroom
+    default_classroom?: $Enums.Classroom
     Class?: ClassCreateNestedManyWithoutStudent_packageInput
     Course: CourseCreateNestedOneWithoutStudent_packageInput
     Student: StudentCreateNestedOneWithoutStudent_packageInput
@@ -12431,7 +12432,7 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     num_of_classes: number
-    default_classroom: $Enums.Classroom
+    default_classroom?: $Enums.Classroom
     Class?: ClassUncheckedCreateNestedManyWithoutStudent_packageInput
   }
 
@@ -12478,7 +12479,7 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     num_of_classes: number
-    default_classroom: $Enums.Classroom
+    default_classroom?: $Enums.Classroom
   }
 
   export type Student_packageUpdateManyMutationInput = {
@@ -14056,7 +14057,7 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     num_of_classes: number
-    default_classroom: $Enums.Classroom
+    default_classroom?: $Enums.Classroom
     Class?: ClassCreateNestedManyWithoutStudent_packageInput
     Course: CourseCreateNestedOneWithoutStudent_packageInput
   }
@@ -14072,7 +14073,7 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     num_of_classes: number
-    default_classroom: $Enums.Classroom
+    default_classroom?: $Enums.Classroom
     Class?: ClassUncheckedCreateNestedManyWithoutStudent_packageInput
   }
 
@@ -14335,7 +14336,7 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     num_of_classes: number
-    default_classroom: $Enums.Classroom
+    default_classroom?: $Enums.Classroom
     Class?: ClassCreateNestedManyWithoutStudent_packageInput
     Student: StudentCreateNestedOneWithoutStudent_packageInput
   }
@@ -14351,7 +14352,7 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     num_of_classes: number
-    default_classroom: $Enums.Classroom
+    default_classroom?: $Enums.Classroom
     Class?: ClassUncheckedCreateNestedManyWithoutStudent_packageInput
   }
 
@@ -14403,7 +14404,7 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     num_of_classes: number
-    default_classroom: $Enums.Classroom
+    default_classroom?: $Enums.Classroom
     Course: CourseCreateNestedOneWithoutStudent_packageInput
     Student: StudentCreateNestedOneWithoutStudent_packageInput
   }
@@ -14420,7 +14421,7 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     num_of_classes: number
-    default_classroom: $Enums.Classroom
+    default_classroom?: $Enums.Classroom
   }
 
   export type Student_packageCreateOrConnectWithoutClassInput = {
@@ -14755,7 +14756,7 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     num_of_classes: number
-    default_classroom: $Enums.Classroom
+    default_classroom?: $Enums.Classroom
   }
 
   export type PortfolioUpdateWithoutStudentInput = {
@@ -14858,7 +14859,7 @@ export namespace Prisma {
     created_at?: number
     created_at_hk?: string
     num_of_classes: number
-    default_classroom: $Enums.Classroom
+    default_classroom?: $Enums.Classroom
   }
 
   export type Student_packageUpdateWithoutCourseInput = {

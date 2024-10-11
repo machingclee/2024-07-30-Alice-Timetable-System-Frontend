@@ -2,23 +2,23 @@ import { Draggable } from "react-beautiful-dnd";
 import classnames from "classnames";
 import dayjs from "dayjs";
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu";
-import boxShadow from "../../../constant/boxShadow";
+import boxShadow from "../constant/boxShadow";
 import { Box } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { useParams } from "react-router-dom";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
-import { StudentThunkAction } from "../../../redux/slices/studentSlice";
-import FadeIn from "../../../components/FadeIn";
-import colors from "../../../constant/colors";
-import Label from "../../../components/Label";
-import AddClassEventDialog from "../../../components/AddClassEventDialog";
-import AddClassEventForm from "../../../components/AddClassEventForm";
-import DeleteClassForm from "../../../components/DeleteClassForm";
-import DeleteClassDialog from "../../../components/DeleteClassDialog";
-import DuplicateClassDialog from "../../../components/DuplicateClassDialog";
-import DuplicateClassForm from "../../../components/DuplicateClassForm";
-import ViewClassForm from "../../../components/ViewClassForm";
-import ViewClassDialog from "../../../components/ViewClassDialog";
+import { StudentThunkAction } from "../redux/slices/studentSlice";
+import FadeIn from "../components/FadeIn";
+import colors from "../constant/colors";
+import Label from "../components/Label";
+import AddClassEventDialog from "../components/AddClassEventDialog";
+import AddClassEventForm from "../components/AddClassEventForm";
+import DeleteClassForm from "../components/DeleteClassForm";
+import DeleteClassDialog from "../components/DeleteClassDialog";
+import DuplicateClassDialog from "../components/DuplicateClassDialog";
+import DuplicateClassForm from "../components/DuplicateClassForm";
+import ViewClassForm from "../components/ViewClassForm";
+import ViewClassDialog from "../components/ViewClassDialog";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number; studentId: string }) => {
     const dispatch = useAppDispatch();
@@ -214,6 +214,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                             return colors.grey;
                                                                         case "MAKEUP":
                                                                             return colors.green;
+                                                                        case "CHANGE_OF_CLASSROOM":
+                                                                            return colors.purple;
                                                                     }
                                                                 }
                                                             })(),

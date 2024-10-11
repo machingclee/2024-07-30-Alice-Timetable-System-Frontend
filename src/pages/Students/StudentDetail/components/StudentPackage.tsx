@@ -22,7 +22,7 @@ export default (props: { packageId: string }) => {
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { studentId } = useParams<{ studentId: string }>();
     const package_ = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[packageId]);
-    const { course_id, min, official_end_date, expiry_date, start_date, num_of_classes, consumed_minutes, paid_at } = package_ || {};
+    const { course_id, min, official_end_date, expiry_date, start_date, num_of_classes, consumed_minutes, paid_at, default_classroom } = package_ || {};
     const assignedClasses = Math.floor(((consumed_minutes?.count || 0) / (package_?.min || 1)) * 10) / 10;
     if (!course_id) {
         return null;
@@ -97,7 +97,6 @@ export default (props: { packageId: string }) => {
         <Box
             style={{
                 boxShadow: boxShadow.SHADOW_60,
-                margin: 10,
                 borderRadius: 0,
                 padding: 6,
             }}
@@ -130,6 +129,10 @@ export default (props: { packageId: string }) => {
                     <Spacer height={5} />
                     <table>
                         <tbody>
+                            <tr>
+                                <td>Classroom</td>
+                                <td>{default_classroom}</td>
+                            </tr>
                             <tr>
                                 <td>Duration</td>
                                 <td>{min}</td>

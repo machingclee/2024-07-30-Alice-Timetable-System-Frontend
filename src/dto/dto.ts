@@ -2,7 +2,6 @@ import { Class, Classroom, Student_package } from "../prismaTypes/types";
 
 export type Gender = "MALE" | "FEMALE";
 export type RoleInSystem = "SUPER_ADMIN" | "ADMIN" | "STAFF" | "STUDENT";
-export type classStatus = "PRESENT" | "ILLEGIT_ABSENCE" | "SUSPICIOUS_ABSENCE" | "LEGIT_ABSENCE" | "MAKEUP";
 
 export type TokenPayload = {
     first_name: string;
@@ -103,7 +102,10 @@ export type CreateClassRequest = {
     hour_unix_timestamp: number;
     min: number;
     student_package_id: number;
+    actual_classroom: Classroom;
 };
+
+export type TimetableType = "Prince_Edward_Timetable" | "Causeway_Bay_Timetable";
 
 export type DeleteClassRequest = {
     classId: number;
@@ -124,6 +126,8 @@ export type UpdateClassRequest = {
     class_status: string;
     reason_for_absence: string;
     remark: string;
+    actual_classroom: Classroom;
+    student_package_id: string;
 };
 
 export type CreateStudentPackageRequest = {

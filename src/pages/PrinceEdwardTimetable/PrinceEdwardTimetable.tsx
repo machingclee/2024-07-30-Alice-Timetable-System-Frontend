@@ -1,10 +1,10 @@
 import { IoMdArrowBack } from "react-icons/io";
 import SectionTitle from "../../components/SectionTitle";
-import DailyTimetable from "./components/DailyTimetable";
+import DailyTimetable from "../../components/DailyTimetable";
 import Label from "../../components/Label";
 import { Button } from "antd";
 import Spacer from "../../components/Spacer";
-import RightColumn from "./components/RightColumn";
+import RightColumn from "../../components/RightColumn";
 import { useNavigate } from "react-router-dom";
 import DuplicateClassDialog from "../../components/DuplicateClassDialog";
 import ViewClassDialog from "../../components/ViewClassDialog";
@@ -18,7 +18,6 @@ import { CourseThunkAction } from "../../redux/slices/courseSlice";
 export default () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
 
     useEffect(() => {
         dispatch(CourseThunkAction.getCourses());
@@ -38,14 +37,14 @@ export default () => {
                             <IoMdArrowBack />
                         </Button>
                         <Spacer height={1} />
-                        Daily Timetable
+                        Prince Edward Daily Timetable
                     </SectionTitle>
                     <div style={{ height: "calc(100vh - 70px)", overflow: "hidden" }}>
-                        <DailyTimetable />
+                        <DailyTimetable timetableType="Prince_Edward_Timetable" />
                     </div>
                 </div>
                 <Spacer />
-                <RightColumn />
+                <RightColumn timetableType="Prince_Edward_Timetable" />
             </div>
             {/* <MoveConfirmationDialog.render /> */}
             <DuplicateClassDialog.render />

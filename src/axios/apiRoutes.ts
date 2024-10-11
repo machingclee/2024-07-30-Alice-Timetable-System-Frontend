@@ -1,3 +1,5 @@
+import { TimetableType } from "../dto/dto";
+
 export default {
     POST_REFRESH_TOKEN: "/auth/refresh-token",
     POST_LOGIN: "/auth/login",
@@ -13,7 +15,8 @@ export default {
     GET_COURSES: "/course/courses",
     GET_STUDENT_DETAIL: (studentId: string) => `/student/student-detail/${studentId}`,
     GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE: (studentId: string) => `/student/student-classes-for-weekly-timteable/${studentId}`,
-    GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: (dateUnixTimestamp: string) => `/student/student-classes-for-daily-timteable/${dateUnixTimestamp}`,
+    GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: (dateUnixTimestamp: string, timetableType: TimetableType) =>
+        `/student/student-classes-for-daily-timteable/${dateUnixTimestamp}/${timetableType}`,
     GET_STUDENT_PACKAGES: (studentId: string) => `/student/student-packages/${studentId}`,
 
     PUT_UPDATE_USER: "/user/update-user",
