@@ -26,9 +26,7 @@ import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
 import { RootState } from "../store";
 import lodash from "lodash";
-import { Class, Class_status, Classroom, Course, Student_package } from "../../prismaTypes/types";
-import { act } from "react";
-import StudentDetail from "../../pages/Students/StudentDetail/StudentDetail";
+import { Class, Course, Student_package } from "../../prismaTypes/types";
 
 export type StudentSliceState = {
     students: {

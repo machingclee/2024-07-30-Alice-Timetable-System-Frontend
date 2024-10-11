@@ -1,19 +1,15 @@
-import { Button } from "antd";
 import Title from "../components/Title";
-import { useParams } from "react-router-dom";
 import Spacer from "../components/Spacer";
 import { useAppSelector } from "../redux/hooks";
 import { useDispatch } from "react-redux";
 import Sep from "../components/Sep";
 import Label from "../components/Label";
-import { Calendar, theme } from "antd";
+import { Calendar } from "antd";
 import type { CalendarProps } from "antd";
-import * as React from "react";
 import dayjs, { Dayjs } from "dayjs";
 import studentSlice, { StudentThunkAction } from "../redux/slices/studentSlice";
 import timeUtil from "../utils/timeUtil";
 import { AppDispatch } from "../redux/store";
-import { TimetableType } from "../dto/dto";
 import appSlice from "../redux/slices/appSlice";
 import CollapseButton from "../assets/collapse-button.png";
 import { FaFilter } from "react-icons/fa";
@@ -27,7 +23,7 @@ export default () => {
     const summaryOfClassStatues = useAppSelector((s) => s.student.studentDetail.dailyTimetable.summaryOfClassStatues);
     const dispatch = useDispatch<AppDispatch>();
 
-    const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>["mode"]) => {
+    const onPanelChange = (value: Dayjs, _: CalendarProps<Dayjs>["mode"]) => {
         dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: value.toDate() }));
     };
 
@@ -53,7 +49,7 @@ export default () => {
                     fullscreen={false}
                     onPanelChange={onPanelChange}
                     value={dayjs(selectedDate)}
-                    onSelect={(date, { source }) => {
+                    onSelect={(date, _) => {
                         dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: date.toDate() }));
                         dispatch(
                             StudentThunkAction.getStudentClassesForDailyTimetable({

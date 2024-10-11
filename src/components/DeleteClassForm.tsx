@@ -13,11 +13,10 @@ import { TimetableType, WeeklyTimetableClass } from "../dto/dto";
 
 export default (props: { classEvent: WeeklyTimetableClass; timetableType?: TimetableType }) => {
     const { classEvent } = props;
-    const { id, student_id, class_status, class_group_id, course_id, hour_unix_timestamp, day_unix_timestamp } = classEvent;
+    const { id, student_id, class_group_id, course_id, hour_unix_timestamp, day_unix_timestamp } = classEvent;
     const courseName = useAppSelector((s) => s.class.courses.idToCourse?.[course_id || 0])?.course_name;
     const classAt = dayjs(hour_unix_timestamp).format("HH:mm");
     const classOn = dayjs(day_unix_timestamp).format("dddd");
-    const status = class_status.toString();
     const dispatch = useAppDispatch();
     const hasDuplicationGroup = class_group_id != null;
 
