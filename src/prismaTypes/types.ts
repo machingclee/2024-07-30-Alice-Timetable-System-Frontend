@@ -15,6 +15,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 
 /**
+ * Model Parent
+ * 
+ */
+export type Parent = $Result.DefaultSelection<Prisma.$ParentPayload>
+/**
  * Model Student
  * 
  */
@@ -76,7 +81,8 @@ export const Role: {
   SUPER_ADMIN: 'SUPER_ADMIN',
   ADMIN: 'ADMIN',
   STAFF: 'STAFF',
-  STUDENT: 'STUDENT'
+  STUDENT: 'STUDENT',
+  PARENT: 'PARENT'
 };
 
 export type Role = (typeof Role)[keyof typeof Role]
@@ -88,7 +94,8 @@ export const Class_status: {
   SUSPICIOUS_ABSENCE: 'SUSPICIOUS_ABSENCE',
   LEGIT_ABSENCE: 'LEGIT_ABSENCE',
   MAKEUP: 'MAKEUP',
-  CHANGE_OF_CLASSROOM: 'CHANGE_OF_CLASSROOM'
+  CHANGE_OF_CLASSROOM: 'CHANGE_OF_CLASSROOM',
+  TRIAL: 'TRIAL'
 };
 
 export type Class_status = (typeof Class_status)[keyof typeof Class_status]
@@ -126,8 +133,8 @@ export const Classroom: typeof $Enums.Classroom
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Students
- * const students = await prisma.student.findMany()
+ * // Fetch zero or more Parents
+ * const parents = await prisma.parent.findMany()
  * ```
  *
  * 
@@ -147,8 +154,8 @@ export class PrismaClient<
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Students
-   * const students = await prisma.student.findMany()
+   * // Fetch zero or more Parents
+   * const parents = await prisma.parent.findMany()
    * ```
    *
    * 
@@ -242,6 +249,16 @@ export class PrismaClient<
   $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb, ExtArgs>
 
       /**
+   * `prisma.parent`: Exposes CRUD operations for the **Parent** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Parents
+    * const parents = await prisma.parent.findMany()
+    * ```
+    */
+  get parent(): Prisma.ParentDelegate<ExtArgs>;
+
+  /**
    * `prisma.student`: Exposes CRUD operations for the **Student** model.
     * Example usage:
     * ```ts
@@ -807,6 +824,7 @@ export namespace Prisma {
 
 
   export const ModelName: {
+    Parent: 'Parent',
     Student: 'Student',
     Portfolio: 'Portfolio',
     Portfolio_to_art_photo: 'Portfolio_to_art_photo',
@@ -831,10 +849,80 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "student" | "portfolio" | "portfolio_to_art_photo" | "login_session" | "user" | "course" | "class" | "student_package" | "class_group"
+      modelProps: "parent" | "student" | "portfolio" | "portfolio_to_art_photo" | "login_session" | "user" | "course" | "class" | "student_package" | "class_group"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
+      Parent: {
+        payload: Prisma.$ParentPayload<ExtArgs>
+        fields: Prisma.ParentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ParentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ParentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentPayload>
+          }
+          findFirst: {
+            args: Prisma.ParentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ParentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentPayload>
+          }
+          findMany: {
+            args: Prisma.ParentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentPayload>[]
+          }
+          create: {
+            args: Prisma.ParentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentPayload>
+          }
+          createMany: {
+            args: Prisma.ParentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ParentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentPayload>[]
+          }
+          delete: {
+            args: Prisma.ParentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentPayload>
+          }
+          update: {
+            args: Prisma.ParentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentPayload>
+          }
+          deleteMany: {
+            args: Prisma.ParentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ParentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ParentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ParentPayload>
+          }
+          aggregate: {
+            args: Prisma.ParentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateParent>
+          }
+          groupBy: {
+            args: Prisma.ParentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ParentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ParentCountArgs<ExtArgs>
+            result: $Utils.Optional<ParentCountAggregateOutputType> | number
+          }
+        }
+      }
       Student: {
         payload: Prisma.$StudentPayload<ExtArgs>
         fields: Prisma.StudentFieldRefs
@@ -1622,6 +1710,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type ParentCountOutputType
+   */
+
+  export type ParentCountOutputType = {
+    Student: number
+  }
+
+  export type ParentCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Student?: boolean | ParentCountOutputTypeCountStudentArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ParentCountOutputType without action
+   */
+  export type ParentCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ParentCountOutputType
+     */
+    select?: ParentCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ParentCountOutputType without action
+   */
+  export type ParentCountOutputTypeCountStudentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StudentWhereInput
+  }
+
+
+  /**
    * Count Type StudentCountOutputType
    */
 
@@ -1790,6 +1909,1024 @@ export namespace Prisma {
    */
 
   /**
+   * Model Parent
+   */
+
+  export type AggregateParent = {
+    _count: ParentCountAggregateOutputType | null
+    _avg: ParentAvgAggregateOutputType | null
+    _sum: ParentSumAggregateOutputType | null
+    _min: ParentMinAggregateOutputType | null
+    _max: ParentMaxAggregateOutputType | null
+  }
+
+  export type ParentAvgAggregateOutputType = {
+    created_at: number | null
+  }
+
+  export type ParentSumAggregateOutputType = {
+    created_at: number | null
+  }
+
+  export type ParentMinAggregateOutputType = {
+    id: string | null
+    first_name: string | null
+    last_name: string | null
+    chinese_first_name: string | null
+    chinese_last_name: string | null
+    gender: $Enums.Gender | null
+    created_at: number | null
+    created_at_hk: string | null
+  }
+
+  export type ParentMaxAggregateOutputType = {
+    id: string | null
+    first_name: string | null
+    last_name: string | null
+    chinese_first_name: string | null
+    chinese_last_name: string | null
+    gender: $Enums.Gender | null
+    created_at: number | null
+    created_at_hk: string | null
+  }
+
+  export type ParentCountAggregateOutputType = {
+    id: number
+    first_name: number
+    last_name: number
+    chinese_first_name: number
+    chinese_last_name: number
+    gender: number
+    created_at: number
+    created_at_hk: number
+    _all: number
+  }
+
+
+  export type ParentAvgAggregateInputType = {
+    created_at?: true
+  }
+
+  export type ParentSumAggregateInputType = {
+    created_at?: true
+  }
+
+  export type ParentMinAggregateInputType = {
+    id?: true
+    first_name?: true
+    last_name?: true
+    chinese_first_name?: true
+    chinese_last_name?: true
+    gender?: true
+    created_at?: true
+    created_at_hk?: true
+  }
+
+  export type ParentMaxAggregateInputType = {
+    id?: true
+    first_name?: true
+    last_name?: true
+    chinese_first_name?: true
+    chinese_last_name?: true
+    gender?: true
+    created_at?: true
+    created_at_hk?: true
+  }
+
+  export type ParentCountAggregateInputType = {
+    id?: true
+    first_name?: true
+    last_name?: true
+    chinese_first_name?: true
+    chinese_last_name?: true
+    gender?: true
+    created_at?: true
+    created_at_hk?: true
+    _all?: true
+  }
+
+  export type ParentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Parent to aggregate.
+     */
+    where?: ParentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Parents to fetch.
+     */
+    orderBy?: ParentOrderByWithRelationInput | ParentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ParentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Parents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Parents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Parents
+    **/
+    _count?: true | ParentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ParentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ParentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ParentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ParentMaxAggregateInputType
+  }
+
+  export type GetParentAggregateType<T extends ParentAggregateArgs> = {
+        [P in keyof T & keyof AggregateParent]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateParent[P]>
+      : GetScalarType<T[P], AggregateParent[P]>
+  }
+
+
+
+
+  export type ParentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ParentWhereInput
+    orderBy?: ParentOrderByWithAggregationInput | ParentOrderByWithAggregationInput[]
+    by: ParentScalarFieldEnum[] | ParentScalarFieldEnum
+    having?: ParentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ParentCountAggregateInputType | true
+    _avg?: ParentAvgAggregateInputType
+    _sum?: ParentSumAggregateInputType
+    _min?: ParentMinAggregateInputType
+    _max?: ParentMaxAggregateInputType
+  }
+
+  export type ParentGroupByOutputType = {
+    id: string
+    first_name: string
+    last_name: string
+    chinese_first_name: string | null
+    chinese_last_name: string | null
+    gender: $Enums.Gender
+    created_at: number
+    created_at_hk: string
+    _count: ParentCountAggregateOutputType | null
+    _avg: ParentAvgAggregateOutputType | null
+    _sum: ParentSumAggregateOutputType | null
+    _min: ParentMinAggregateOutputType | null
+    _max: ParentMaxAggregateOutputType | null
+  }
+
+  type GetParentGroupByPayload<T extends ParentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ParentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ParentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ParentGroupByOutputType[P]>
+            : GetScalarType<T[P], ParentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ParentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    first_name?: boolean
+    last_name?: boolean
+    chinese_first_name?: boolean
+    chinese_last_name?: boolean
+    gender?: boolean
+    created_at?: boolean
+    created_at_hk?: boolean
+    Student?: boolean | Parent$StudentArgs<ExtArgs>
+    _count?: boolean | ParentCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["parent"]>
+
+  export type ParentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    first_name?: boolean
+    last_name?: boolean
+    chinese_first_name?: boolean
+    chinese_last_name?: boolean
+    gender?: boolean
+    created_at?: boolean
+    created_at_hk?: boolean
+  }, ExtArgs["result"]["parent"]>
+
+  export type ParentSelectScalar = {
+    id?: boolean
+    first_name?: boolean
+    last_name?: boolean
+    chinese_first_name?: boolean
+    chinese_last_name?: boolean
+    gender?: boolean
+    created_at?: boolean
+    created_at_hk?: boolean
+  }
+
+  export type ParentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Student?: boolean | Parent$StudentArgs<ExtArgs>
+    _count?: boolean | ParentCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ParentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $ParentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Parent"
+    objects: {
+      Student: Prisma.$StudentPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      first_name: string
+      last_name: string
+      chinese_first_name: string | null
+      chinese_last_name: string | null
+      gender: $Enums.Gender
+      created_at: number
+      created_at_hk: string
+    }, ExtArgs["result"]["parent"]>
+    composites: {}
+  }
+
+  type ParentGetPayload<S extends boolean | null | undefined | ParentDefaultArgs> = $Result.GetResult<Prisma.$ParentPayload, S>
+
+  type ParentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ParentFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ParentCountAggregateInputType | true
+    }
+
+  export interface ParentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Parent'], meta: { name: 'Parent' } }
+    /**
+     * Find zero or one Parent that matches the filter.
+     * @param {ParentFindUniqueArgs} args - Arguments to find a Parent
+     * @example
+     * // Get one Parent
+     * const parent = await prisma.parent.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ParentFindUniqueArgs>(args: SelectSubset<T, ParentFindUniqueArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Parent that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {ParentFindUniqueOrThrowArgs} args - Arguments to find a Parent
+     * @example
+     * // Get one Parent
+     * const parent = await prisma.parent.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ParentFindUniqueOrThrowArgs>(args: SelectSubset<T, ParentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Parent that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentFindFirstArgs} args - Arguments to find a Parent
+     * @example
+     * // Get one Parent
+     * const parent = await prisma.parent.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ParentFindFirstArgs>(args?: SelectSubset<T, ParentFindFirstArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Parent that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentFindFirstOrThrowArgs} args - Arguments to find a Parent
+     * @example
+     * // Get one Parent
+     * const parent = await prisma.parent.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ParentFindFirstOrThrowArgs>(args?: SelectSubset<T, ParentFindFirstOrThrowArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Parents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Parents
+     * const parents = await prisma.parent.findMany()
+     * 
+     * // Get first 10 Parents
+     * const parents = await prisma.parent.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const parentWithIdOnly = await prisma.parent.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ParentFindManyArgs>(args?: SelectSubset<T, ParentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Parent.
+     * @param {ParentCreateArgs} args - Arguments to create a Parent.
+     * @example
+     * // Create one Parent
+     * const Parent = await prisma.parent.create({
+     *   data: {
+     *     // ... data to create a Parent
+     *   }
+     * })
+     * 
+     */
+    create<T extends ParentCreateArgs>(args: SelectSubset<T, ParentCreateArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Parents.
+     * @param {ParentCreateManyArgs} args - Arguments to create many Parents.
+     * @example
+     * // Create many Parents
+     * const parent = await prisma.parent.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ParentCreateManyArgs>(args?: SelectSubset<T, ParentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Parents and returns the data saved in the database.
+     * @param {ParentCreateManyAndReturnArgs} args - Arguments to create many Parents.
+     * @example
+     * // Create many Parents
+     * const parent = await prisma.parent.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Parents and only return the `id`
+     * const parentWithIdOnly = await prisma.parent.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ParentCreateManyAndReturnArgs>(args?: SelectSubset<T, ParentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Parent.
+     * @param {ParentDeleteArgs} args - Arguments to delete one Parent.
+     * @example
+     * // Delete one Parent
+     * const Parent = await prisma.parent.delete({
+     *   where: {
+     *     // ... filter to delete one Parent
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ParentDeleteArgs>(args: SelectSubset<T, ParentDeleteArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Parent.
+     * @param {ParentUpdateArgs} args - Arguments to update one Parent.
+     * @example
+     * // Update one Parent
+     * const parent = await prisma.parent.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ParentUpdateArgs>(args: SelectSubset<T, ParentUpdateArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Parents.
+     * @param {ParentDeleteManyArgs} args - Arguments to filter Parents to delete.
+     * @example
+     * // Delete a few Parents
+     * const { count } = await prisma.parent.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ParentDeleteManyArgs>(args?: SelectSubset<T, ParentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Parents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Parents
+     * const parent = await prisma.parent.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ParentUpdateManyArgs>(args: SelectSubset<T, ParentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Parent.
+     * @param {ParentUpsertArgs} args - Arguments to update or create a Parent.
+     * @example
+     * // Update or create a Parent
+     * const parent = await prisma.parent.upsert({
+     *   create: {
+     *     // ... data to create a Parent
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Parent we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ParentUpsertArgs>(args: SelectSubset<T, ParentUpsertArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Parents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentCountArgs} args - Arguments to filter Parents to count.
+     * @example
+     * // Count the number of Parents
+     * const count = await prisma.parent.count({
+     *   where: {
+     *     // ... the filter for the Parents we want to count
+     *   }
+     * })
+    **/
+    count<T extends ParentCountArgs>(
+      args?: Subset<T, ParentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ParentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Parent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ParentAggregateArgs>(args: Subset<T, ParentAggregateArgs>): Prisma.PrismaPromise<GetParentAggregateType<T>>
+
+    /**
+     * Group by Parent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ParentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ParentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ParentGroupByArgs['orderBy'] }
+        : { orderBy?: ParentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ParentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetParentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Parent model
+   */
+  readonly fields: ParentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Parent.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ParentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    Student<T extends Parent$StudentArgs<ExtArgs> = {}>(args?: Subset<T, Parent$StudentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findMany"> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Parent model
+   */ 
+  interface ParentFieldRefs {
+    readonly id: FieldRef<"Parent", 'String'>
+    readonly first_name: FieldRef<"Parent", 'String'>
+    readonly last_name: FieldRef<"Parent", 'String'>
+    readonly chinese_first_name: FieldRef<"Parent", 'String'>
+    readonly chinese_last_name: FieldRef<"Parent", 'String'>
+    readonly gender: FieldRef<"Parent", 'Gender'>
+    readonly created_at: FieldRef<"Parent", 'Float'>
+    readonly created_at_hk: FieldRef<"Parent", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Parent findUnique
+   */
+  export type ParentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInclude<ExtArgs> | null
+    /**
+     * Filter, which Parent to fetch.
+     */
+    where: ParentWhereUniqueInput
+  }
+
+  /**
+   * Parent findUniqueOrThrow
+   */
+  export type ParentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInclude<ExtArgs> | null
+    /**
+     * Filter, which Parent to fetch.
+     */
+    where: ParentWhereUniqueInput
+  }
+
+  /**
+   * Parent findFirst
+   */
+  export type ParentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInclude<ExtArgs> | null
+    /**
+     * Filter, which Parent to fetch.
+     */
+    where?: ParentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Parents to fetch.
+     */
+    orderBy?: ParentOrderByWithRelationInput | ParentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Parents.
+     */
+    cursor?: ParentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Parents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Parents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Parents.
+     */
+    distinct?: ParentScalarFieldEnum | ParentScalarFieldEnum[]
+  }
+
+  /**
+   * Parent findFirstOrThrow
+   */
+  export type ParentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInclude<ExtArgs> | null
+    /**
+     * Filter, which Parent to fetch.
+     */
+    where?: ParentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Parents to fetch.
+     */
+    orderBy?: ParentOrderByWithRelationInput | ParentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Parents.
+     */
+    cursor?: ParentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Parents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Parents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Parents.
+     */
+    distinct?: ParentScalarFieldEnum | ParentScalarFieldEnum[]
+  }
+
+  /**
+   * Parent findMany
+   */
+  export type ParentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInclude<ExtArgs> | null
+    /**
+     * Filter, which Parents to fetch.
+     */
+    where?: ParentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Parents to fetch.
+     */
+    orderBy?: ParentOrderByWithRelationInput | ParentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Parents.
+     */
+    cursor?: ParentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Parents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Parents.
+     */
+    skip?: number
+    distinct?: ParentScalarFieldEnum | ParentScalarFieldEnum[]
+  }
+
+  /**
+   * Parent create
+   */
+  export type ParentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Parent.
+     */
+    data: XOR<ParentCreateInput, ParentUncheckedCreateInput>
+  }
+
+  /**
+   * Parent createMany
+   */
+  export type ParentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Parents.
+     */
+    data: ParentCreateManyInput | ParentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Parent createManyAndReturn
+   */
+  export type ParentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many Parents.
+     */
+    data: ParentCreateManyInput | ParentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Parent update
+   */
+  export type ParentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Parent.
+     */
+    data: XOR<ParentUpdateInput, ParentUncheckedUpdateInput>
+    /**
+     * Choose, which Parent to update.
+     */
+    where: ParentWhereUniqueInput
+  }
+
+  /**
+   * Parent updateMany
+   */
+  export type ParentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Parents.
+     */
+    data: XOR<ParentUpdateManyMutationInput, ParentUncheckedUpdateManyInput>
+    /**
+     * Filter which Parents to update
+     */
+    where?: ParentWhereInput
+  }
+
+  /**
+   * Parent upsert
+   */
+  export type ParentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Parent to update in case it exists.
+     */
+    where: ParentWhereUniqueInput
+    /**
+     * In case the Parent found by the `where` argument doesn't exist, create a new Parent with this data.
+     */
+    create: XOR<ParentCreateInput, ParentUncheckedCreateInput>
+    /**
+     * In case the Parent was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ParentUpdateInput, ParentUncheckedUpdateInput>
+  }
+
+  /**
+   * Parent delete
+   */
+  export type ParentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInclude<ExtArgs> | null
+    /**
+     * Filter which Parent to delete.
+     */
+    where: ParentWhereUniqueInput
+  }
+
+  /**
+   * Parent deleteMany
+   */
+  export type ParentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Parents to delete
+     */
+    where?: ParentWhereInput
+  }
+
+  /**
+   * Parent.Student
+   */
+  export type Parent$StudentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Student
+     */
+    select?: StudentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StudentInclude<ExtArgs> | null
+    where?: StudentWhereInput
+    orderBy?: StudentOrderByWithRelationInput | StudentOrderByWithRelationInput[]
+    cursor?: StudentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StudentScalarFieldEnum | StudentScalarFieldEnum[]
+  }
+
+  /**
+   * Parent without action
+   */
+  export type ParentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model Student
    */
 
@@ -1815,8 +2952,8 @@ export namespace Prisma {
     id: string | null
     first_name: string | null
     last_name: string | null
-    chinese_name: string | null
-    gender: $Enums.Gender | null
+    chinese_first_name: string | null
+    chinese_last_name: string | null
     school_name: string | null
     grade: string | null
     phone_number: string | null
@@ -1825,14 +2962,16 @@ export namespace Prisma {
     parent_email: string | null
     created_at: number | null
     created_at_hk: string | null
+    parent_id: string | null
+    gender: $Enums.Gender | null
   }
 
   export type StudentMaxAggregateOutputType = {
     id: string | null
     first_name: string | null
     last_name: string | null
-    chinese_name: string | null
-    gender: $Enums.Gender | null
+    chinese_first_name: string | null
+    chinese_last_name: string | null
     school_name: string | null
     grade: string | null
     phone_number: string | null
@@ -1841,14 +2980,16 @@ export namespace Prisma {
     parent_email: string | null
     created_at: number | null
     created_at_hk: string | null
+    parent_id: string | null
+    gender: $Enums.Gender | null
   }
 
   export type StudentCountAggregateOutputType = {
     id: number
     first_name: number
     last_name: number
-    chinese_name: number
-    gender: number
+    chinese_first_name: number
+    chinese_last_name: number
     school_name: number
     grade: number
     phone_number: number
@@ -1857,6 +2998,8 @@ export namespace Prisma {
     parent_email: number
     created_at: number
     created_at_hk: number
+    parent_id: number
+    gender: number
     _all: number
   }
 
@@ -1875,8 +3018,8 @@ export namespace Prisma {
     id?: true
     first_name?: true
     last_name?: true
-    chinese_name?: true
-    gender?: true
+    chinese_first_name?: true
+    chinese_last_name?: true
     school_name?: true
     grade?: true
     phone_number?: true
@@ -1885,14 +3028,16 @@ export namespace Prisma {
     parent_email?: true
     created_at?: true
     created_at_hk?: true
+    parent_id?: true
+    gender?: true
   }
 
   export type StudentMaxAggregateInputType = {
     id?: true
     first_name?: true
     last_name?: true
-    chinese_name?: true
-    gender?: true
+    chinese_first_name?: true
+    chinese_last_name?: true
     school_name?: true
     grade?: true
     phone_number?: true
@@ -1901,14 +3046,16 @@ export namespace Prisma {
     parent_email?: true
     created_at?: true
     created_at_hk?: true
+    parent_id?: true
+    gender?: true
   }
 
   export type StudentCountAggregateInputType = {
     id?: true
     first_name?: true
     last_name?: true
-    chinese_name?: true
-    gender?: true
+    chinese_first_name?: true
+    chinese_last_name?: true
     school_name?: true
     grade?: true
     phone_number?: true
@@ -1917,6 +3064,8 @@ export namespace Prisma {
     parent_email?: true
     created_at?: true
     created_at_hk?: true
+    parent_id?: true
+    gender?: true
     _all?: true
   }
 
@@ -2010,8 +3159,8 @@ export namespace Prisma {
     id: string
     first_name: string
     last_name: string
-    chinese_name: string | null
-    gender: $Enums.Gender
+    chinese_first_name: string | null
+    chinese_last_name: string | null
     school_name: string
     grade: string
     phone_number: string | null
@@ -2020,6 +3169,8 @@ export namespace Prisma {
     parent_email: string
     created_at: number
     created_at_hk: string
+    parent_id: string | null
+    gender: $Enums.Gender
     _count: StudentCountAggregateOutputType | null
     _avg: StudentAvgAggregateOutputType | null
     _sum: StudentSumAggregateOutputType | null
@@ -2045,8 +3196,8 @@ export namespace Prisma {
     id?: boolean
     first_name?: boolean
     last_name?: boolean
-    chinese_name?: boolean
-    gender?: boolean
+    chinese_first_name?: boolean
+    chinese_last_name?: boolean
     school_name?: boolean
     grade?: boolean
     phone_number?: boolean
@@ -2055,8 +3206,11 @@ export namespace Prisma {
     parent_email?: boolean
     created_at?: boolean
     created_at_hk?: boolean
+    parent_id?: boolean
+    gender?: boolean
     Portfolio?: boolean | Student$PortfolioArgs<ExtArgs>
     Student_package?: boolean | Student$Student_packageArgs<ExtArgs>
+    Parent?: boolean | Student$ParentArgs<ExtArgs>
     _count?: boolean | StudentCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["student"]>
 
@@ -2064,8 +3218,8 @@ export namespace Prisma {
     id?: boolean
     first_name?: boolean
     last_name?: boolean
-    chinese_name?: boolean
-    gender?: boolean
+    chinese_first_name?: boolean
+    chinese_last_name?: boolean
     school_name?: boolean
     grade?: boolean
     phone_number?: boolean
@@ -2074,14 +3228,17 @@ export namespace Prisma {
     parent_email?: boolean
     created_at?: boolean
     created_at_hk?: boolean
+    parent_id?: boolean
+    gender?: boolean
+    Parent?: boolean | Student$ParentArgs<ExtArgs>
   }, ExtArgs["result"]["student"]>
 
   export type StudentSelectScalar = {
     id?: boolean
     first_name?: boolean
     last_name?: boolean
-    chinese_name?: boolean
-    gender?: boolean
+    chinese_first_name?: boolean
+    chinese_last_name?: boolean
     school_name?: boolean
     grade?: boolean
     phone_number?: boolean
@@ -2090,27 +3247,33 @@ export namespace Prisma {
     parent_email?: boolean
     created_at?: boolean
     created_at_hk?: boolean
+    parent_id?: boolean
+    gender?: boolean
   }
 
   export type StudentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Portfolio?: boolean | Student$PortfolioArgs<ExtArgs>
     Student_package?: boolean | Student$Student_packageArgs<ExtArgs>
+    Parent?: boolean | Student$ParentArgs<ExtArgs>
     _count?: boolean | StudentCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type StudentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type StudentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    Parent?: boolean | Student$ParentArgs<ExtArgs>
+  }
 
   export type $StudentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Student"
     objects: {
       Portfolio: Prisma.$PortfolioPayload<ExtArgs>[]
       Student_package: Prisma.$Student_packagePayload<ExtArgs>[]
+      Parent: Prisma.$ParentPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       first_name: string
       last_name: string
-      chinese_name: string | null
-      gender: $Enums.Gender
+      chinese_first_name: string | null
+      chinese_last_name: string | null
       school_name: string
       grade: string
       phone_number: string | null
@@ -2119,6 +3282,8 @@ export namespace Prisma {
       parent_email: string
       created_at: number
       created_at_hk: string
+      parent_id: string | null
+      gender: $Enums.Gender
     }, ExtArgs["result"]["student"]>
     composites: {}
   }
@@ -2485,6 +3650,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     Portfolio<T extends Student$PortfolioArgs<ExtArgs> = {}>(args?: Subset<T, Student$PortfolioArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PortfolioPayload<ExtArgs>, T, "findMany"> | Null>
     Student_package<T extends Student$Student_packageArgs<ExtArgs> = {}>(args?: Subset<T, Student$Student_packageArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Student_packagePayload<ExtArgs>, T, "findMany"> | Null>
+    Parent<T extends Student$ParentArgs<ExtArgs> = {}>(args?: Subset<T, Student$ParentArgs<ExtArgs>>): Prisma__ParentClient<$Result.GetResult<Prisma.$ParentPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2517,8 +3683,8 @@ export namespace Prisma {
     readonly id: FieldRef<"Student", 'String'>
     readonly first_name: FieldRef<"Student", 'String'>
     readonly last_name: FieldRef<"Student", 'String'>
-    readonly chinese_name: FieldRef<"Student", 'String'>
-    readonly gender: FieldRef<"Student", 'Gender'>
+    readonly chinese_first_name: FieldRef<"Student", 'String'>
+    readonly chinese_last_name: FieldRef<"Student", 'String'>
     readonly school_name: FieldRef<"Student", 'String'>
     readonly grade: FieldRef<"Student", 'String'>
     readonly phone_number: FieldRef<"Student", 'String'>
@@ -2527,6 +3693,8 @@ export namespace Prisma {
     readonly parent_email: FieldRef<"Student", 'String'>
     readonly created_at: FieldRef<"Student", 'Float'>
     readonly created_at_hk: FieldRef<"Student", 'String'>
+    readonly parent_id: FieldRef<"Student", 'String'>
+    readonly gender: FieldRef<"Student", 'Gender'>
   }
     
 
@@ -2748,6 +3916,10 @@ export namespace Prisma {
      */
     data: StudentCreateManyInput | StudentCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StudentIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -2878,6 +4050,21 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Student_packageScalarFieldEnum | Student_packageScalarFieldEnum[]
+  }
+
+  /**
+   * Student.Parent
+   */
+  export type Student$ParentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Parent
+     */
+    select?: ParentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ParentInclude<ExtArgs> | null
+    where?: ParentWhereInput
   }
 
   /**
@@ -5815,6 +7002,8 @@ export namespace Prisma {
     id: string | null
     first_name: string | null
     last_name: string | null
+    chinese_first_name: string | null
+    chinese_last_name: string | null
     is_blocked: boolean | null
     company_email: string | null
     password_hash: string | null
@@ -5830,6 +7019,8 @@ export namespace Prisma {
     id: string | null
     first_name: string | null
     last_name: string | null
+    chinese_first_name: string | null
+    chinese_last_name: string | null
     is_blocked: boolean | null
     company_email: string | null
     password_hash: string | null
@@ -5845,6 +7036,8 @@ export namespace Prisma {
     id: number
     first_name: number
     last_name: number
+    chinese_first_name: number
+    chinese_last_name: number
     is_blocked: number
     company_email: number
     password_hash: number
@@ -5870,6 +7063,8 @@ export namespace Prisma {
     id?: true
     first_name?: true
     last_name?: true
+    chinese_first_name?: true
+    chinese_last_name?: true
     is_blocked?: true
     company_email?: true
     password_hash?: true
@@ -5885,6 +7080,8 @@ export namespace Prisma {
     id?: true
     first_name?: true
     last_name?: true
+    chinese_first_name?: true
+    chinese_last_name?: true
     is_blocked?: true
     company_email?: true
     password_hash?: true
@@ -5900,6 +7097,8 @@ export namespace Prisma {
     id?: true
     first_name?: true
     last_name?: true
+    chinese_first_name?: true
+    chinese_last_name?: true
     is_blocked?: true
     company_email?: true
     password_hash?: true
@@ -6002,6 +7201,8 @@ export namespace Prisma {
     id: string
     first_name: string
     last_name: string
+    chinese_first_name: string | null
+    chinese_last_name: string | null
     is_blocked: boolean
     company_email: string
     password_hash: string
@@ -6036,6 +7237,8 @@ export namespace Prisma {
     id?: boolean
     first_name?: boolean
     last_name?: boolean
+    chinese_first_name?: boolean
+    chinese_last_name?: boolean
     is_blocked?: boolean
     company_email?: boolean
     password_hash?: boolean
@@ -6051,6 +7254,8 @@ export namespace Prisma {
     id?: boolean
     first_name?: boolean
     last_name?: boolean
+    chinese_first_name?: boolean
+    chinese_last_name?: boolean
     is_blocked?: boolean
     company_email?: boolean
     password_hash?: boolean
@@ -6066,6 +7271,8 @@ export namespace Prisma {
     id?: boolean
     first_name?: boolean
     last_name?: boolean
+    chinese_first_name?: boolean
+    chinese_last_name?: boolean
     is_blocked?: boolean
     company_email?: boolean
     password_hash?: boolean
@@ -6085,6 +7292,8 @@ export namespace Prisma {
       id: string
       first_name: string
       last_name: string
+      chinese_first_name: string | null
+      chinese_last_name: string | null
       is_blocked: boolean
       company_email: string
       password_hash: string
@@ -6490,6 +7699,8 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'String'>
     readonly first_name: FieldRef<"User", 'String'>
     readonly last_name: FieldRef<"User", 'String'>
+    readonly chinese_first_name: FieldRef<"User", 'String'>
+    readonly chinese_last_name: FieldRef<"User", 'String'>
     readonly is_blocked: FieldRef<"User", 'Boolean'>
     readonly company_email: FieldRef<"User", 'String'>
     readonly password_hash: FieldRef<"User", 'String'>
@@ -10920,12 +12131,26 @@ export namespace Prisma {
   export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+  export const ParentScalarFieldEnum: {
+    id: 'id',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    chinese_first_name: 'chinese_first_name',
+    chinese_last_name: 'chinese_last_name',
+    gender: 'gender',
+    created_at: 'created_at',
+    created_at_hk: 'created_at_hk'
+  };
+
+  export type ParentScalarFieldEnum = (typeof ParentScalarFieldEnum)[keyof typeof ParentScalarFieldEnum]
+
+
   export const StudentScalarFieldEnum: {
     id: 'id',
     first_name: 'first_name',
     last_name: 'last_name',
-    chinese_name: 'chinese_name',
-    gender: 'gender',
+    chinese_first_name: 'chinese_first_name',
+    chinese_last_name: 'chinese_last_name',
     school_name: 'school_name',
     grade: 'grade',
     phone_number: 'phone_number',
@@ -10933,7 +12158,9 @@ export namespace Prisma {
     birthdate: 'birthdate',
     parent_email: 'parent_email',
     created_at: 'created_at',
-    created_at_hk: 'created_at_hk'
+    created_at_hk: 'created_at_hk',
+    parent_id: 'parent_id',
+    gender: 'gender'
   };
 
   export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeof StudentScalarFieldEnum]
@@ -10978,6 +12205,8 @@ export namespace Prisma {
     id: 'id',
     first_name: 'first_name',
     last_name: 'last_name',
+    chinese_first_name: 'chinese_first_name',
+    chinese_last_name: 'chinese_last_name',
     is_blocked: 'is_blocked',
     company_email: 'company_email',
     password_hash: 'password_hash',
@@ -11196,6 +12425,78 @@ export namespace Prisma {
    */
 
 
+  export type ParentWhereInput = {
+    AND?: ParentWhereInput | ParentWhereInput[]
+    OR?: ParentWhereInput[]
+    NOT?: ParentWhereInput | ParentWhereInput[]
+    id?: UuidFilter<"Parent"> | string
+    first_name?: StringFilter<"Parent"> | string
+    last_name?: StringFilter<"Parent"> | string
+    chinese_first_name?: StringNullableFilter<"Parent"> | string | null
+    chinese_last_name?: StringNullableFilter<"Parent"> | string | null
+    gender?: EnumGenderFilter<"Parent"> | $Enums.Gender
+    created_at?: FloatFilter<"Parent"> | number
+    created_at_hk?: StringFilter<"Parent"> | string
+    Student?: StudentListRelationFilter
+  }
+
+  export type ParentOrderByWithRelationInput = {
+    id?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    chinese_first_name?: SortOrderInput | SortOrder
+    chinese_last_name?: SortOrderInput | SortOrder
+    gender?: SortOrder
+    created_at?: SortOrder
+    created_at_hk?: SortOrder
+    Student?: StudentOrderByRelationAggregateInput
+  }
+
+  export type ParentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ParentWhereInput | ParentWhereInput[]
+    OR?: ParentWhereInput[]
+    NOT?: ParentWhereInput | ParentWhereInput[]
+    first_name?: StringFilter<"Parent"> | string
+    last_name?: StringFilter<"Parent"> | string
+    chinese_first_name?: StringNullableFilter<"Parent"> | string | null
+    chinese_last_name?: StringNullableFilter<"Parent"> | string | null
+    gender?: EnumGenderFilter<"Parent"> | $Enums.Gender
+    created_at?: FloatFilter<"Parent"> | number
+    created_at_hk?: StringFilter<"Parent"> | string
+    Student?: StudentListRelationFilter
+  }, "id">
+
+  export type ParentOrderByWithAggregationInput = {
+    id?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    chinese_first_name?: SortOrderInput | SortOrder
+    chinese_last_name?: SortOrderInput | SortOrder
+    gender?: SortOrder
+    created_at?: SortOrder
+    created_at_hk?: SortOrder
+    _count?: ParentCountOrderByAggregateInput
+    _avg?: ParentAvgOrderByAggregateInput
+    _max?: ParentMaxOrderByAggregateInput
+    _min?: ParentMinOrderByAggregateInput
+    _sum?: ParentSumOrderByAggregateInput
+  }
+
+  export type ParentScalarWhereWithAggregatesInput = {
+    AND?: ParentScalarWhereWithAggregatesInput | ParentScalarWhereWithAggregatesInput[]
+    OR?: ParentScalarWhereWithAggregatesInput[]
+    NOT?: ParentScalarWhereWithAggregatesInput | ParentScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"Parent"> | string
+    first_name?: StringWithAggregatesFilter<"Parent"> | string
+    last_name?: StringWithAggregatesFilter<"Parent"> | string
+    chinese_first_name?: StringNullableWithAggregatesFilter<"Parent"> | string | null
+    chinese_last_name?: StringNullableWithAggregatesFilter<"Parent"> | string | null
+    gender?: EnumGenderWithAggregatesFilter<"Parent"> | $Enums.Gender
+    created_at?: FloatWithAggregatesFilter<"Parent"> | number
+    created_at_hk?: StringWithAggregatesFilter<"Parent"> | string
+  }
+
   export type StudentWhereInput = {
     AND?: StudentWhereInput | StudentWhereInput[]
     OR?: StudentWhereInput[]
@@ -11203,8 +12504,8 @@ export namespace Prisma {
     id?: UuidFilter<"Student"> | string
     first_name?: StringFilter<"Student"> | string
     last_name?: StringFilter<"Student"> | string
-    chinese_name?: StringNullableFilter<"Student"> | string | null
-    gender?: EnumGenderFilter<"Student"> | $Enums.Gender
+    chinese_first_name?: StringNullableFilter<"Student"> | string | null
+    chinese_last_name?: StringNullableFilter<"Student"> | string | null
     school_name?: StringFilter<"Student"> | string
     grade?: StringFilter<"Student"> | string
     phone_number?: StringNullableFilter<"Student"> | string | null
@@ -11213,16 +12514,19 @@ export namespace Prisma {
     parent_email?: StringFilter<"Student"> | string
     created_at?: FloatFilter<"Student"> | number
     created_at_hk?: StringFilter<"Student"> | string
+    parent_id?: UuidNullableFilter<"Student"> | string | null
+    gender?: EnumGenderFilter<"Student"> | $Enums.Gender
     Portfolio?: PortfolioListRelationFilter
     Student_package?: Student_packageListRelationFilter
+    Parent?: XOR<ParentNullableRelationFilter, ParentWhereInput> | null
   }
 
   export type StudentOrderByWithRelationInput = {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
-    chinese_name?: SortOrderInput | SortOrder
-    gender?: SortOrder
+    chinese_first_name?: SortOrderInput | SortOrder
+    chinese_last_name?: SortOrderInput | SortOrder
     school_name?: SortOrder
     grade?: SortOrder
     phone_number?: SortOrderInput | SortOrder
@@ -11231,8 +12535,11 @@ export namespace Prisma {
     parent_email?: SortOrder
     created_at?: SortOrder
     created_at_hk?: SortOrder
+    parent_id?: SortOrderInput | SortOrder
+    gender?: SortOrder
     Portfolio?: PortfolioOrderByRelationAggregateInput
     Student_package?: Student_packageOrderByRelationAggregateInput
+    Parent?: ParentOrderByWithRelationInput
   }
 
   export type StudentWhereUniqueInput = Prisma.AtLeast<{
@@ -11244,24 +12551,27 @@ export namespace Prisma {
     NOT?: StudentWhereInput | StudentWhereInput[]
     first_name?: StringFilter<"Student"> | string
     last_name?: StringFilter<"Student"> | string
-    chinese_name?: StringNullableFilter<"Student"> | string | null
-    gender?: EnumGenderFilter<"Student"> | $Enums.Gender
+    chinese_first_name?: StringNullableFilter<"Student"> | string | null
+    chinese_last_name?: StringNullableFilter<"Student"> | string | null
     school_name?: StringFilter<"Student"> | string
     grade?: StringFilter<"Student"> | string
     birthdate?: FloatFilter<"Student"> | number
     parent_email?: StringFilter<"Student"> | string
     created_at?: FloatFilter<"Student"> | number
     created_at_hk?: StringFilter<"Student"> | string
+    parent_id?: UuidNullableFilter<"Student"> | string | null
+    gender?: EnumGenderFilter<"Student"> | $Enums.Gender
     Portfolio?: PortfolioListRelationFilter
     Student_package?: Student_packageListRelationFilter
+    Parent?: XOR<ParentNullableRelationFilter, ParentWhereInput> | null
   }, "id" | "phone_number" | "wechat_id">
 
   export type StudentOrderByWithAggregationInput = {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
-    chinese_name?: SortOrderInput | SortOrder
-    gender?: SortOrder
+    chinese_first_name?: SortOrderInput | SortOrder
+    chinese_last_name?: SortOrderInput | SortOrder
     school_name?: SortOrder
     grade?: SortOrder
     phone_number?: SortOrderInput | SortOrder
@@ -11270,6 +12580,8 @@ export namespace Prisma {
     parent_email?: SortOrder
     created_at?: SortOrder
     created_at_hk?: SortOrder
+    parent_id?: SortOrderInput | SortOrder
+    gender?: SortOrder
     _count?: StudentCountOrderByAggregateInput
     _avg?: StudentAvgOrderByAggregateInput
     _max?: StudentMaxOrderByAggregateInput
@@ -11284,8 +12596,8 @@ export namespace Prisma {
     id?: UuidWithAggregatesFilter<"Student"> | string
     first_name?: StringWithAggregatesFilter<"Student"> | string
     last_name?: StringWithAggregatesFilter<"Student"> | string
-    chinese_name?: StringNullableWithAggregatesFilter<"Student"> | string | null
-    gender?: EnumGenderWithAggregatesFilter<"Student"> | $Enums.Gender
+    chinese_first_name?: StringNullableWithAggregatesFilter<"Student"> | string | null
+    chinese_last_name?: StringNullableWithAggregatesFilter<"Student"> | string | null
     school_name?: StringWithAggregatesFilter<"Student"> | string
     grade?: StringWithAggregatesFilter<"Student"> | string
     phone_number?: StringNullableWithAggregatesFilter<"Student"> | string | null
@@ -11294,6 +12606,8 @@ export namespace Prisma {
     parent_email?: StringWithAggregatesFilter<"Student"> | string
     created_at?: FloatWithAggregatesFilter<"Student"> | number
     created_at_hk?: StringWithAggregatesFilter<"Student"> | string
+    parent_id?: UuidNullableWithAggregatesFilter<"Student"> | string | null
+    gender?: EnumGenderWithAggregatesFilter<"Student"> | $Enums.Gender
   }
 
   export type PortfolioWhereInput = {
@@ -11484,6 +12798,8 @@ export namespace Prisma {
     id?: UuidFilter<"User"> | string
     first_name?: StringFilter<"User"> | string
     last_name?: StringFilter<"User"> | string
+    chinese_first_name?: StringNullableFilter<"User"> | string | null
+    chinese_last_name?: StringNullableFilter<"User"> | string | null
     is_blocked?: BoolFilter<"User"> | boolean
     company_email?: StringFilter<"User"> | string
     password_hash?: StringFilter<"User"> | string
@@ -11499,6 +12815,8 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_first_name?: SortOrderInput | SortOrder
+    chinese_last_name?: SortOrderInput | SortOrder
     is_blocked?: SortOrder
     company_email?: SortOrder
     password_hash?: SortOrder
@@ -11518,6 +12836,8 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     first_name?: StringFilter<"User"> | string
     last_name?: StringFilter<"User"> | string
+    chinese_first_name?: StringNullableFilter<"User"> | string | null
+    chinese_last_name?: StringNullableFilter<"User"> | string | null
     is_blocked?: BoolFilter<"User"> | boolean
     password_hash?: StringFilter<"User"> | string
     avatar_file_url?: StringFilter<"User"> | string
@@ -11532,6 +12852,8 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_first_name?: SortOrderInput | SortOrder
+    chinese_last_name?: SortOrderInput | SortOrder
     is_blocked?: SortOrder
     company_email?: SortOrder
     password_hash?: SortOrder
@@ -11555,6 +12877,8 @@ export namespace Prisma {
     id?: UuidWithAggregatesFilter<"User"> | string
     first_name?: StringWithAggregatesFilter<"User"> | string
     last_name?: StringWithAggregatesFilter<"User"> | string
+    chinese_first_name?: StringNullableWithAggregatesFilter<"User"> | string | null
+    chinese_last_name?: StringNullableWithAggregatesFilter<"User"> | string | null
     is_blocked?: BoolWithAggregatesFilter<"User"> | boolean
     company_email?: StringWithAggregatesFilter<"User"> | string
     password_hash?: StringWithAggregatesFilter<"User"> | string
@@ -11849,12 +13173,93 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Class_group"> | number
   }
 
+  export type ParentCreateInput = {
+    id?: string
+    first_name: string
+    last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
+    gender: $Enums.Gender
+    created_at?: number
+    created_at_hk?: string
+    Student?: StudentCreateNestedManyWithoutParentInput
+  }
+
+  export type ParentUncheckedCreateInput = {
+    id?: string
+    first_name: string
+    last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
+    gender: $Enums.Gender
+    created_at?: number
+    created_at_hk?: string
+    Student?: StudentUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type ParentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
+    Student?: StudentUpdateManyWithoutParentNestedInput
+  }
+
+  export type ParentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
+    Student?: StudentUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type ParentCreateManyInput = {
+    id?: string
+    first_name: string
+    last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
+    gender: $Enums.Gender
+    created_at?: number
+    created_at_hk?: string
+  }
+
+  export type ParentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ParentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
+  }
+
   export type StudentCreateInput = {
     id?: string
     first_name: string
     last_name: string
-    chinese_name?: string | null
-    gender: $Enums.Gender
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     school_name: string
     grade: string
     phone_number?: string | null
@@ -11863,16 +13268,18 @@ export namespace Prisma {
     parent_email: string
     created_at?: number
     created_at_hk?: string
+    gender: $Enums.Gender
     Portfolio?: PortfolioCreateNestedManyWithoutStudentInput
     Student_package?: Student_packageCreateNestedManyWithoutStudentInput
+    Parent?: ParentCreateNestedOneWithoutStudentInput
   }
 
   export type StudentUncheckedCreateInput = {
     id?: string
     first_name: string
     last_name: string
-    chinese_name?: string | null
-    gender: $Enums.Gender
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     school_name: string
     grade: string
     phone_number?: string | null
@@ -11881,6 +13288,8 @@ export namespace Prisma {
     parent_email: string
     created_at?: number
     created_at_hk?: string
+    parent_id?: string | null
+    gender: $Enums.Gender
     Portfolio?: PortfolioUncheckedCreateNestedManyWithoutStudentInput
     Student_package?: Student_packageUncheckedCreateNestedManyWithoutStudentInput
   }
@@ -11889,8 +13298,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
-    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11899,16 +13308,18 @@ export namespace Prisma {
     parent_email?: StringFieldUpdateOperationsInput | string
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     Portfolio?: PortfolioUpdateManyWithoutStudentNestedInput
     Student_package?: Student_packageUpdateManyWithoutStudentNestedInput
+    Parent?: ParentUpdateOneWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
-    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11917,6 +13328,8 @@ export namespace Prisma {
     parent_email?: StringFieldUpdateOperationsInput | string
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     Portfolio?: PortfolioUncheckedUpdateManyWithoutStudentNestedInput
     Student_package?: Student_packageUncheckedUpdateManyWithoutStudentNestedInput
   }
@@ -11925,8 +13338,8 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
-    chinese_name?: string | null
-    gender: $Enums.Gender
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     school_name: string
     grade: string
     phone_number?: string | null
@@ -11935,14 +13348,16 @@ export namespace Prisma {
     parent_email: string
     created_at?: number
     created_at_hk?: string
+    parent_id?: string | null
+    gender: $Enums.Gender
   }
 
   export type StudentUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
-    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11951,14 +13366,15 @@ export namespace Prisma {
     parent_email?: StringFieldUpdateOperationsInput | string
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   }
 
   export type StudentUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
-    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11967,6 +13383,8 @@ export namespace Prisma {
     parent_email?: StringFieldUpdateOperationsInput | string
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   }
 
   export type PortfolioCreateInput = {
@@ -12154,6 +13572,8 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     is_blocked: boolean
     company_email: string
     password_hash: string
@@ -12169,6 +13589,8 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     is_blocked: boolean
     company_email: string
     password_hash: string
@@ -12184,6 +13606,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     is_blocked?: BoolFieldUpdateOperationsInput | boolean
     company_email?: StringFieldUpdateOperationsInput | string
     password_hash?: StringFieldUpdateOperationsInput | string
@@ -12199,6 +13623,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     is_blocked?: BoolFieldUpdateOperationsInput | boolean
     company_email?: StringFieldUpdateOperationsInput | string
     password_hash?: StringFieldUpdateOperationsInput | string
@@ -12214,6 +13640,8 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     is_blocked: boolean
     company_email: string
     password_hash: string
@@ -12229,6 +13657,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     is_blocked?: BoolFieldUpdateOperationsInput | boolean
     company_email?: StringFieldUpdateOperationsInput | string
     password_hash?: StringFieldUpdateOperationsInput | string
@@ -12244,6 +13674,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     is_blocked?: BoolFieldUpdateOperationsInput | boolean
     company_email?: StringFieldUpdateOperationsInput | string
     password_hash?: StringFieldUpdateOperationsInput | string
@@ -12599,16 +14031,10 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type PortfolioListRelationFilter = {
-    every?: PortfolioWhereInput
-    some?: PortfolioWhereInput
-    none?: PortfolioWhereInput
-  }
-
-  export type Student_packageListRelationFilter = {
-    every?: Student_packageWhereInput
-    some?: Student_packageWhereInput
-    none?: Student_packageWhereInput
+  export type StudentListRelationFilter = {
+    every?: StudentWhereInput
+    some?: StudentWhereInput
+    none?: StudentWhereInput
   }
 
   export type SortOrderInput = {
@@ -12616,69 +14042,48 @@ export namespace Prisma {
     nulls?: NullsOrder
   }
 
-  export type PortfolioOrderByRelationAggregateInput = {
+  export type StudentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type Student_packageOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type StudentCountOrderByAggregateInput = {
+  export type ParentCountOrderByAggregateInput = {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
-    chinese_name?: SortOrder
+    chinese_first_name?: SortOrder
+    chinese_last_name?: SortOrder
     gender?: SortOrder
-    school_name?: SortOrder
-    grade?: SortOrder
-    phone_number?: SortOrder
-    wechat_id?: SortOrder
-    birthdate?: SortOrder
-    parent_email?: SortOrder
     created_at?: SortOrder
     created_at_hk?: SortOrder
   }
 
-  export type StudentAvgOrderByAggregateInput = {
-    birthdate?: SortOrder
+  export type ParentAvgOrderByAggregateInput = {
     created_at?: SortOrder
   }
 
-  export type StudentMaxOrderByAggregateInput = {
+  export type ParentMaxOrderByAggregateInput = {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
-    chinese_name?: SortOrder
+    chinese_first_name?: SortOrder
+    chinese_last_name?: SortOrder
     gender?: SortOrder
-    school_name?: SortOrder
-    grade?: SortOrder
-    phone_number?: SortOrder
-    wechat_id?: SortOrder
-    birthdate?: SortOrder
-    parent_email?: SortOrder
     created_at?: SortOrder
     created_at_hk?: SortOrder
   }
 
-  export type StudentMinOrderByAggregateInput = {
+  export type ParentMinOrderByAggregateInput = {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
-    chinese_name?: SortOrder
+    chinese_first_name?: SortOrder
+    chinese_last_name?: SortOrder
     gender?: SortOrder
-    school_name?: SortOrder
-    grade?: SortOrder
-    phone_number?: SortOrder
-    wechat_id?: SortOrder
-    birthdate?: SortOrder
-    parent_email?: SortOrder
     created_at?: SortOrder
     created_at_hk?: SortOrder
   }
 
-  export type StudentSumOrderByAggregateInput = {
-    birthdate?: SortOrder
+  export type ParentSumOrderByAggregateInput = {
     created_at?: SortOrder
   }
 
@@ -12757,6 +14162,122 @@ export namespace Prisma {
     _sum?: NestedFloatFilter<$PrismaModel>
     _min?: NestedFloatFilter<$PrismaModel>
     _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type UuidNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type PortfolioListRelationFilter = {
+    every?: PortfolioWhereInput
+    some?: PortfolioWhereInput
+    none?: PortfolioWhereInput
+  }
+
+  export type Student_packageListRelationFilter = {
+    every?: Student_packageWhereInput
+    some?: Student_packageWhereInput
+    none?: Student_packageWhereInput
+  }
+
+  export type ParentNullableRelationFilter = {
+    is?: ParentWhereInput | null
+    isNot?: ParentWhereInput | null
+  }
+
+  export type PortfolioOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type Student_packageOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type StudentCountOrderByAggregateInput = {
+    id?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    chinese_first_name?: SortOrder
+    chinese_last_name?: SortOrder
+    school_name?: SortOrder
+    grade?: SortOrder
+    phone_number?: SortOrder
+    wechat_id?: SortOrder
+    birthdate?: SortOrder
+    parent_email?: SortOrder
+    created_at?: SortOrder
+    created_at_hk?: SortOrder
+    parent_id?: SortOrder
+    gender?: SortOrder
+  }
+
+  export type StudentAvgOrderByAggregateInput = {
+    birthdate?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type StudentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    chinese_first_name?: SortOrder
+    chinese_last_name?: SortOrder
+    school_name?: SortOrder
+    grade?: SortOrder
+    phone_number?: SortOrder
+    wechat_id?: SortOrder
+    birthdate?: SortOrder
+    parent_email?: SortOrder
+    created_at?: SortOrder
+    created_at_hk?: SortOrder
+    parent_id?: SortOrder
+    gender?: SortOrder
+  }
+
+  export type StudentMinOrderByAggregateInput = {
+    id?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    chinese_first_name?: SortOrder
+    chinese_last_name?: SortOrder
+    school_name?: SortOrder
+    grade?: SortOrder
+    phone_number?: SortOrder
+    wechat_id?: SortOrder
+    birthdate?: SortOrder
+    parent_email?: SortOrder
+    created_at?: SortOrder
+    created_at_hk?: SortOrder
+    parent_id?: SortOrder
+    gender?: SortOrder
+  }
+
+  export type StudentSumOrderByAggregateInput = {
+    birthdate?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type StudentRelationFilter = {
@@ -12957,6 +14478,8 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_first_name?: SortOrder
+    chinese_last_name?: SortOrder
     is_blocked?: SortOrder
     company_email?: SortOrder
     password_hash?: SortOrder
@@ -12976,6 +14499,8 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_first_name?: SortOrder
+    chinese_last_name?: SortOrder
     is_blocked?: SortOrder
     company_email?: SortOrder
     password_hash?: SortOrder
@@ -12991,6 +14516,8 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_first_name?: SortOrder
+    chinese_last_name?: SortOrder
     is_blocked?: SortOrder
     company_email?: SortOrder
     password_hash?: SortOrder
@@ -13319,32 +14846,18 @@ export namespace Prisma {
     id?: SortOrder
   }
 
-  export type PortfolioCreateNestedManyWithoutStudentInput = {
-    create?: XOR<PortfolioCreateWithoutStudentInput, PortfolioUncheckedCreateWithoutStudentInput> | PortfolioCreateWithoutStudentInput[] | PortfolioUncheckedCreateWithoutStudentInput[]
-    connectOrCreate?: PortfolioCreateOrConnectWithoutStudentInput | PortfolioCreateOrConnectWithoutStudentInput[]
-    createMany?: PortfolioCreateManyStudentInputEnvelope
-    connect?: PortfolioWhereUniqueInput | PortfolioWhereUniqueInput[]
+  export type StudentCreateNestedManyWithoutParentInput = {
+    create?: XOR<StudentCreateWithoutParentInput, StudentUncheckedCreateWithoutParentInput> | StudentCreateWithoutParentInput[] | StudentUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: StudentCreateOrConnectWithoutParentInput | StudentCreateOrConnectWithoutParentInput[]
+    createMany?: StudentCreateManyParentInputEnvelope
+    connect?: StudentWhereUniqueInput | StudentWhereUniqueInput[]
   }
 
-  export type Student_packageCreateNestedManyWithoutStudentInput = {
-    create?: XOR<Student_packageCreateWithoutStudentInput, Student_packageUncheckedCreateWithoutStudentInput> | Student_packageCreateWithoutStudentInput[] | Student_packageUncheckedCreateWithoutStudentInput[]
-    connectOrCreate?: Student_packageCreateOrConnectWithoutStudentInput | Student_packageCreateOrConnectWithoutStudentInput[]
-    createMany?: Student_packageCreateManyStudentInputEnvelope
-    connect?: Student_packageWhereUniqueInput | Student_packageWhereUniqueInput[]
-  }
-
-  export type PortfolioUncheckedCreateNestedManyWithoutStudentInput = {
-    create?: XOR<PortfolioCreateWithoutStudentInput, PortfolioUncheckedCreateWithoutStudentInput> | PortfolioCreateWithoutStudentInput[] | PortfolioUncheckedCreateWithoutStudentInput[]
-    connectOrCreate?: PortfolioCreateOrConnectWithoutStudentInput | PortfolioCreateOrConnectWithoutStudentInput[]
-    createMany?: PortfolioCreateManyStudentInputEnvelope
-    connect?: PortfolioWhereUniqueInput | PortfolioWhereUniqueInput[]
-  }
-
-  export type Student_packageUncheckedCreateNestedManyWithoutStudentInput = {
-    create?: XOR<Student_packageCreateWithoutStudentInput, Student_packageUncheckedCreateWithoutStudentInput> | Student_packageCreateWithoutStudentInput[] | Student_packageUncheckedCreateWithoutStudentInput[]
-    connectOrCreate?: Student_packageCreateOrConnectWithoutStudentInput | Student_packageCreateOrConnectWithoutStudentInput[]
-    createMany?: Student_packageCreateManyStudentInputEnvelope
-    connect?: Student_packageWhereUniqueInput | Student_packageWhereUniqueInput[]
+  export type StudentUncheckedCreateNestedManyWithoutParentInput = {
+    create?: XOR<StudentCreateWithoutParentInput, StudentUncheckedCreateWithoutParentInput> | StudentCreateWithoutParentInput[] | StudentUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: StudentCreateOrConnectWithoutParentInput | StudentCreateOrConnectWithoutParentInput[]
+    createMany?: StudentCreateManyParentInputEnvelope
+    connect?: StudentWhereUniqueInput | StudentWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -13365,6 +14878,68 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type StudentUpdateManyWithoutParentNestedInput = {
+    create?: XOR<StudentCreateWithoutParentInput, StudentUncheckedCreateWithoutParentInput> | StudentCreateWithoutParentInput[] | StudentUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: StudentCreateOrConnectWithoutParentInput | StudentCreateOrConnectWithoutParentInput[]
+    upsert?: StudentUpsertWithWhereUniqueWithoutParentInput | StudentUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: StudentCreateManyParentInputEnvelope
+    set?: StudentWhereUniqueInput | StudentWhereUniqueInput[]
+    disconnect?: StudentWhereUniqueInput | StudentWhereUniqueInput[]
+    delete?: StudentWhereUniqueInput | StudentWhereUniqueInput[]
+    connect?: StudentWhereUniqueInput | StudentWhereUniqueInput[]
+    update?: StudentUpdateWithWhereUniqueWithoutParentInput | StudentUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: StudentUpdateManyWithWhereWithoutParentInput | StudentUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: StudentScalarWhereInput | StudentScalarWhereInput[]
+  }
+
+  export type StudentUncheckedUpdateManyWithoutParentNestedInput = {
+    create?: XOR<StudentCreateWithoutParentInput, StudentUncheckedCreateWithoutParentInput> | StudentCreateWithoutParentInput[] | StudentUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: StudentCreateOrConnectWithoutParentInput | StudentCreateOrConnectWithoutParentInput[]
+    upsert?: StudentUpsertWithWhereUniqueWithoutParentInput | StudentUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: StudentCreateManyParentInputEnvelope
+    set?: StudentWhereUniqueInput | StudentWhereUniqueInput[]
+    disconnect?: StudentWhereUniqueInput | StudentWhereUniqueInput[]
+    delete?: StudentWhereUniqueInput | StudentWhereUniqueInput[]
+    connect?: StudentWhereUniqueInput | StudentWhereUniqueInput[]
+    update?: StudentUpdateWithWhereUniqueWithoutParentInput | StudentUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: StudentUpdateManyWithWhereWithoutParentInput | StudentUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: StudentScalarWhereInput | StudentScalarWhereInput[]
+  }
+
+  export type PortfolioCreateNestedManyWithoutStudentInput = {
+    create?: XOR<PortfolioCreateWithoutStudentInput, PortfolioUncheckedCreateWithoutStudentInput> | PortfolioCreateWithoutStudentInput[] | PortfolioUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: PortfolioCreateOrConnectWithoutStudentInput | PortfolioCreateOrConnectWithoutStudentInput[]
+    createMany?: PortfolioCreateManyStudentInputEnvelope
+    connect?: PortfolioWhereUniqueInput | PortfolioWhereUniqueInput[]
+  }
+
+  export type Student_packageCreateNestedManyWithoutStudentInput = {
+    create?: XOR<Student_packageCreateWithoutStudentInput, Student_packageUncheckedCreateWithoutStudentInput> | Student_packageCreateWithoutStudentInput[] | Student_packageUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: Student_packageCreateOrConnectWithoutStudentInput | Student_packageCreateOrConnectWithoutStudentInput[]
+    createMany?: Student_packageCreateManyStudentInputEnvelope
+    connect?: Student_packageWhereUniqueInput | Student_packageWhereUniqueInput[]
+  }
+
+  export type ParentCreateNestedOneWithoutStudentInput = {
+    create?: XOR<ParentCreateWithoutStudentInput, ParentUncheckedCreateWithoutStudentInput>
+    connectOrCreate?: ParentCreateOrConnectWithoutStudentInput
+    connect?: ParentWhereUniqueInput
+  }
+
+  export type PortfolioUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<PortfolioCreateWithoutStudentInput, PortfolioUncheckedCreateWithoutStudentInput> | PortfolioCreateWithoutStudentInput[] | PortfolioUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: PortfolioCreateOrConnectWithoutStudentInput | PortfolioCreateOrConnectWithoutStudentInput[]
+    createMany?: PortfolioCreateManyStudentInputEnvelope
+    connect?: PortfolioWhereUniqueInput | PortfolioWhereUniqueInput[]
+  }
+
+  export type Student_packageUncheckedCreateNestedManyWithoutStudentInput = {
+    create?: XOR<Student_packageCreateWithoutStudentInput, Student_packageUncheckedCreateWithoutStudentInput> | Student_packageCreateWithoutStudentInput[] | Student_packageUncheckedCreateWithoutStudentInput[]
+    connectOrCreate?: Student_packageCreateOrConnectWithoutStudentInput | Student_packageCreateOrConnectWithoutStudentInput[]
+    createMany?: Student_packageCreateManyStudentInputEnvelope
+    connect?: Student_packageWhereUniqueInput | Student_packageWhereUniqueInput[]
   }
 
   export type PortfolioUpdateManyWithoutStudentNestedInput = {
@@ -13393,6 +14968,16 @@ export namespace Prisma {
     update?: Student_packageUpdateWithWhereUniqueWithoutStudentInput | Student_packageUpdateWithWhereUniqueWithoutStudentInput[]
     updateMany?: Student_packageUpdateManyWithWhereWithoutStudentInput | Student_packageUpdateManyWithWhereWithoutStudentInput[]
     deleteMany?: Student_packageScalarWhereInput | Student_packageScalarWhereInput[]
+  }
+
+  export type ParentUpdateOneWithoutStudentNestedInput = {
+    create?: XOR<ParentCreateWithoutStudentInput, ParentUncheckedCreateWithoutStudentInput>
+    connectOrCreate?: ParentCreateOrConnectWithoutStudentInput
+    upsert?: ParentUpsertWithoutStudentInput
+    disconnect?: ParentWhereInput | boolean
+    delete?: ParentWhereInput | boolean
+    connect?: ParentWhereUniqueInput
+    update?: XOR<XOR<ParentUpdateToOneWithWhereWithoutStudentInput, ParentUpdateWithoutStudentInput>, ParentUncheckedUpdateWithoutStudentInput>
   }
 
   export type PortfolioUncheckedUpdateManyWithoutStudentNestedInput = {
@@ -13874,6 +15459,31 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
+  export type NestedUuidNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -14022,6 +15632,91 @@ export namespace Prisma {
     _max?: NestedEnumClassroomFilter<$PrismaModel>
   }
 
+  export type StudentCreateWithoutParentInput = {
+    id?: string
+    first_name: string
+    last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
+    school_name: string
+    grade: string
+    phone_number?: string | null
+    wechat_id?: string | null
+    birthdate: number
+    parent_email: string
+    created_at?: number
+    created_at_hk?: string
+    gender: $Enums.Gender
+    Portfolio?: PortfolioCreateNestedManyWithoutStudentInput
+    Student_package?: Student_packageCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentUncheckedCreateWithoutParentInput = {
+    id?: string
+    first_name: string
+    last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
+    school_name: string
+    grade: string
+    phone_number?: string | null
+    wechat_id?: string | null
+    birthdate: number
+    parent_email: string
+    created_at?: number
+    created_at_hk?: string
+    gender: $Enums.Gender
+    Portfolio?: PortfolioUncheckedCreateNestedManyWithoutStudentInput
+    Student_package?: Student_packageUncheckedCreateNestedManyWithoutStudentInput
+  }
+
+  export type StudentCreateOrConnectWithoutParentInput = {
+    where: StudentWhereUniqueInput
+    create: XOR<StudentCreateWithoutParentInput, StudentUncheckedCreateWithoutParentInput>
+  }
+
+  export type StudentCreateManyParentInputEnvelope = {
+    data: StudentCreateManyParentInput | StudentCreateManyParentInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type StudentUpsertWithWhereUniqueWithoutParentInput = {
+    where: StudentWhereUniqueInput
+    update: XOR<StudentUpdateWithoutParentInput, StudentUncheckedUpdateWithoutParentInput>
+    create: XOR<StudentCreateWithoutParentInput, StudentUncheckedCreateWithoutParentInput>
+  }
+
+  export type StudentUpdateWithWhereUniqueWithoutParentInput = {
+    where: StudentWhereUniqueInput
+    data: XOR<StudentUpdateWithoutParentInput, StudentUncheckedUpdateWithoutParentInput>
+  }
+
+  export type StudentUpdateManyWithWhereWithoutParentInput = {
+    where: StudentScalarWhereInput
+    data: XOR<StudentUpdateManyMutationInput, StudentUncheckedUpdateManyWithoutParentInput>
+  }
+
+  export type StudentScalarWhereInput = {
+    AND?: StudentScalarWhereInput | StudentScalarWhereInput[]
+    OR?: StudentScalarWhereInput[]
+    NOT?: StudentScalarWhereInput | StudentScalarWhereInput[]
+    id?: UuidFilter<"Student"> | string
+    first_name?: StringFilter<"Student"> | string
+    last_name?: StringFilter<"Student"> | string
+    chinese_first_name?: StringNullableFilter<"Student"> | string | null
+    chinese_last_name?: StringNullableFilter<"Student"> | string | null
+    school_name?: StringFilter<"Student"> | string
+    grade?: StringFilter<"Student"> | string
+    phone_number?: StringNullableFilter<"Student"> | string | null
+    wechat_id?: StringNullableFilter<"Student"> | string | null
+    birthdate?: FloatFilter<"Student"> | number
+    parent_email?: StringFilter<"Student"> | string
+    created_at?: FloatFilter<"Student"> | number
+    created_at_hk?: StringFilter<"Student"> | string
+    parent_id?: UuidNullableFilter<"Student"> | string | null
+    gender?: EnumGenderFilter<"Student"> | $Enums.Gender
+  }
+
   export type PortfolioCreateWithoutStudentInput = {
     id?: string
     name: string
@@ -14087,6 +15782,33 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ParentCreateWithoutStudentInput = {
+    id?: string
+    first_name: string
+    last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
+    gender: $Enums.Gender
+    created_at?: number
+    created_at_hk?: string
+  }
+
+  export type ParentUncheckedCreateWithoutStudentInput = {
+    id?: string
+    first_name: string
+    last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
+    gender: $Enums.Gender
+    created_at?: number
+    created_at_hk?: string
+  }
+
+  export type ParentCreateOrConnectWithoutStudentInput = {
+    where: ParentWhereUniqueInput
+    create: XOR<ParentCreateWithoutStudentInput, ParentUncheckedCreateWithoutStudentInput>
+  }
+
   export type PortfolioUpsertWithWhereUniqueWithoutStudentInput = {
     where: PortfolioWhereUniqueInput
     update: XOR<PortfolioUpdateWithoutStudentInput, PortfolioUncheckedUpdateWithoutStudentInput>
@@ -14148,12 +15870,45 @@ export namespace Prisma {
     default_classroom?: EnumClassroomFilter<"Student_package"> | $Enums.Classroom
   }
 
+  export type ParentUpsertWithoutStudentInput = {
+    update: XOR<ParentUpdateWithoutStudentInput, ParentUncheckedUpdateWithoutStudentInput>
+    create: XOR<ParentCreateWithoutStudentInput, ParentUncheckedCreateWithoutStudentInput>
+    where?: ParentWhereInput
+  }
+
+  export type ParentUpdateToOneWithWhereWithoutStudentInput = {
+    where?: ParentWhereInput
+    data: XOR<ParentUpdateWithoutStudentInput, ParentUncheckedUpdateWithoutStudentInput>
+  }
+
+  export type ParentUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ParentUncheckedUpdateWithoutStudentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
+  }
+
   export type StudentCreateWithoutPortfolioInput = {
     id?: string
     first_name: string
     last_name: string
-    chinese_name?: string | null
-    gender: $Enums.Gender
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     school_name: string
     grade: string
     phone_number?: string | null
@@ -14162,15 +15917,17 @@ export namespace Prisma {
     parent_email: string
     created_at?: number
     created_at_hk?: string
+    gender: $Enums.Gender
     Student_package?: Student_packageCreateNestedManyWithoutStudentInput
+    Parent?: ParentCreateNestedOneWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutPortfolioInput = {
     id?: string
     first_name: string
     last_name: string
-    chinese_name?: string | null
-    gender: $Enums.Gender
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     school_name: string
     grade: string
     phone_number?: string | null
@@ -14179,6 +15936,8 @@ export namespace Prisma {
     parent_email: string
     created_at?: number
     created_at_hk?: string
+    parent_id?: string | null
+    gender: $Enums.Gender
     Student_package?: Student_packageUncheckedCreateNestedManyWithoutStudentInput
   }
 
@@ -14223,8 +15982,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
-    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14233,15 +15992,17 @@ export namespace Prisma {
     parent_email?: StringFieldUpdateOperationsInput | string
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     Student_package?: Student_packageUpdateManyWithoutStudentNestedInput
+    Parent?: ParentUpdateOneWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutPortfolioInput = {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
-    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14250,6 +16011,8 @@ export namespace Prisma {
     parent_email?: StringFieldUpdateOperationsInput | string
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     Student_package?: Student_packageUncheckedUpdateManyWithoutStudentNestedInput
   }
 
@@ -14547,8 +16310,8 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
-    chinese_name?: string | null
-    gender: $Enums.Gender
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     school_name: string
     grade: string
     phone_number?: string | null
@@ -14557,15 +16320,17 @@ export namespace Prisma {
     parent_email: string
     created_at?: number
     created_at_hk?: string
+    gender: $Enums.Gender
     Portfolio?: PortfolioCreateNestedManyWithoutStudentInput
+    Parent?: ParentCreateNestedOneWithoutStudentInput
   }
 
   export type StudentUncheckedCreateWithoutStudent_packageInput = {
     id?: string
     first_name: string
     last_name: string
-    chinese_name?: string | null
-    gender: $Enums.Gender
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     school_name: string
     grade: string
     phone_number?: string | null
@@ -14574,6 +16339,8 @@ export namespace Prisma {
     parent_email: string
     created_at?: number
     created_at_hk?: string
+    parent_id?: string | null
+    gender: $Enums.Gender
     Portfolio?: PortfolioUncheckedCreateNestedManyWithoutStudentInput
   }
 
@@ -14655,8 +16422,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
-    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14665,15 +16432,17 @@ export namespace Prisma {
     parent_email?: StringFieldUpdateOperationsInput | string
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     Portfolio?: PortfolioUpdateManyWithoutStudentNestedInput
+    Parent?: ParentUpdateOneWithoutStudentNestedInput
   }
 
   export type StudentUncheckedUpdateWithoutStudent_packageInput = {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
-    chinese_name?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14682,6 +16451,8 @@ export namespace Prisma {
     parent_email?: StringFieldUpdateOperationsInput | string
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
+    parent_id?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
     Portfolio?: PortfolioUncheckedUpdateManyWithoutStudentNestedInput
   }
 
@@ -14736,6 +16507,78 @@ export namespace Prisma {
   export type ClassUpdateManyWithWhereWithoutClass_group_of_ClassesInput = {
     where: ClassScalarWhereInput
     data: XOR<ClassUpdateManyMutationInput, ClassUncheckedUpdateManyWithoutClass_group_of_ClassesInput>
+  }
+
+  export type StudentCreateManyParentInput = {
+    id?: string
+    first_name: string
+    last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
+    school_name: string
+    grade: string
+    phone_number?: string | null
+    wechat_id?: string | null
+    birthdate: number
+    parent_email: string
+    created_at?: number
+    created_at_hk?: string
+    gender: $Enums.Gender
+  }
+
+  export type StudentUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    school_name?: StringFieldUpdateOperationsInput | string
+    grade?: StringFieldUpdateOperationsInput | string
+    phone_number?: NullableStringFieldUpdateOperationsInput | string | null
+    wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
+    birthdate?: FloatFieldUpdateOperationsInput | number
+    parent_email?: StringFieldUpdateOperationsInput | string
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    Portfolio?: PortfolioUpdateManyWithoutStudentNestedInput
+    Student_package?: Student_packageUpdateManyWithoutStudentNestedInput
+  }
+
+  export type StudentUncheckedUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    school_name?: StringFieldUpdateOperationsInput | string
+    grade?: StringFieldUpdateOperationsInput | string
+    phone_number?: NullableStringFieldUpdateOperationsInput | string | null
+    wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
+    birthdate?: FloatFieldUpdateOperationsInput | number
+    parent_email?: StringFieldUpdateOperationsInput | string
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+    Portfolio?: PortfolioUncheckedUpdateManyWithoutStudentNestedInput
+    Student_package?: Student_packageUncheckedUpdateManyWithoutStudentNestedInput
+  }
+
+  export type StudentUncheckedUpdateManyWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    first_name?: StringFieldUpdateOperationsInput | string
+    last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    school_name?: StringFieldUpdateOperationsInput | string
+    grade?: StringFieldUpdateOperationsInput | string
+    phone_number?: NullableStringFieldUpdateOperationsInput | string | null
+    wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
+    birthdate?: FloatFieldUpdateOperationsInput | number
+    parent_email?: StringFieldUpdateOperationsInput | string
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
+    gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   }
 
   export type PortfolioCreateManyStudentInput = {
@@ -15021,6 +16864,10 @@ export namespace Prisma {
    * Aliases for legacy arg types
    */
     /**
+     * @deprecated Use ParentCountOutputTypeDefaultArgs instead
+     */
+    export type ParentCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ParentCountOutputTypeDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use StudentCountOutputTypeDefaultArgs instead
      */
     export type StudentCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = StudentCountOutputTypeDefaultArgs<ExtArgs>
@@ -15040,6 +16887,10 @@ export namespace Prisma {
      * @deprecated Use Class_groupCountOutputTypeDefaultArgs instead
      */
     export type Class_groupCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = Class_groupCountOutputTypeDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use ParentDefaultArgs instead
+     */
+    export type ParentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ParentDefaultArgs<ExtArgs>
     /**
      * @deprecated Use StudentDefaultArgs instead
      */

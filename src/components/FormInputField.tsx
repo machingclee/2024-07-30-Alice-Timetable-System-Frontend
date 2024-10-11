@@ -6,6 +6,7 @@ import FormInputTitle from "./FormInputTitle";
 const FormInputField = (props: {
     title: string;
     value?: string;
+    defaultValue?: string;
     onChange: (text: string) => void;
     error?: string;
     inputProps?: HTMLAttributes<HTMLInputElement>;
@@ -26,6 +27,7 @@ const FormInputField = (props: {
                         onEnter?.();
                     }
                 }}
+                defaultValue={props.defaultValue}
                 placeholder={`Please input ${title}`}
                 onChange={(e) => onChange(e.target.value)}
                 {...(value ? { value } : {})}

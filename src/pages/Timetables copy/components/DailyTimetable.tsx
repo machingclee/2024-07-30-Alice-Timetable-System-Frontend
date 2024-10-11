@@ -1,18 +1,17 @@
 import { Button } from "antd";
-import CustomScrollbarContainer from "../components/CustomScrollbarContainer";
+import CustomScrollbarContainer from "../../../components/CustomScrollbarContainer";
 import { Box } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import SectionTitle from "../components/SectionTitle";
-import Spacer from "../components/Spacer";
+import SectionTitle from "../../../components/SectionTitle";
+import Spacer from "../../../components/Spacer";
 import lodash from "lodash";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import studentSlice, { StudentThunkAction } from "../redux/slices/studentSlice";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import studentSlice, { StudentThunkAction } from "../../../redux/slices/studentSlice";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import timeUtil from "../utils/timeUtil";
+import timeUtil from "../../../utils/timeUtil";
 import StudentClassForDailyTimetable from "./StudentClassForDailyTimetable";
-import { TimetableType } from "../dto/dto";
 
 export type DailyCoordinate = {
     [studentId: string]: {
@@ -20,7 +19,7 @@ export type DailyCoordinate = {
     };
 };
 
-export default ({ timetableType }: { timetableType: TimetableType }) => {
+export default (props: { date?: Date }) => {
     const dispatch = useAppDispatch();
     const idToStduent = useAppSelector((s) => s.student.students.idToStudent);
     const hrUnixTimestamps = useAppSelector((s) => s.student.studentDetail.dailyTimetable.hrUnixTimestamps) || [];
@@ -74,13 +73,7 @@ export default ({ timetableType }: { timetableType: TimetableType }) => {
     }, [adjustWidth]);
 
     useEffect(() => {
-        console.log("timetableType:", timetableType);
-        dispatch(
-            StudentThunkAction.getStudentClassesForDailyTimetable({
-                dateUnixTimestamp: timeUtil.getDayUnixTimestamp(selectedDate.getTime()).toString(),
-                timetableType: timetableType,
-            })
-        );
+        dispatch(StudentThunkAction.getStudentClassesForDailyTimetable({ dateUnixTimestamp: timeUtil.getDayUnixTimestamp(selectedDate.getTime()).toString() }));
         dispatch(StudentThunkAction.getStudents());
     }, []);
 
@@ -138,7 +131,6 @@ export default ({ timetableType }: { timetableType: TimetableType }) => {
                             dispatch(
                                 StudentThunkAction.getStudentClassesForDailyTimetable({
                                     dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).subtract(1, "day").toDate().getTime()).toString(),
-                                    timetableType: timetableType,
                                 })
                             );
                         }}
@@ -156,7 +148,6 @@ export default ({ timetableType }: { timetableType: TimetableType }) => {
                             dispatch(
                                 StudentThunkAction.getStudentClassesForDailyTimetable({
                                     dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).add(1, "day").toDate().getTime()).toString(),
-                                    timetableType: timetableType,
                                 })
                             );
                         }}
@@ -244,7 +235,6 @@ export default ({ timetableType }: { timetableType: TimetableType }) => {
                                                                                     dayUnixTimestamp={timeUtil.getDayUnixTimestamp(selectedDate.getTime())}
                                                                                     hourUnixTimestamp={parseInt(hourUnixTimestamp)}
                                                                                     activeDraggableId={activeDraggableId}
-                                                                                    timetableType={timetableType}
                                                                                 />
                                                                                 {activeDraggableId === hourUnixTimestamp && provided.placeholder}
                                                                             </React.Fragment>

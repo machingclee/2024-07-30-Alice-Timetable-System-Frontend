@@ -1,26 +1,22 @@
 import { Alert, Box } from "@mui/material";
-import SectionTitle from "./SectionTitle";
-import Label from "./Label";
-import Spacer from "./Spacer";
+import SectionTitle from "../../../components/SectionTitle";
+import Label from "../../../components/Label";
+import Spacer from "../../../components/Spacer";
 import { useEffect, useRef } from "react";
 import { Button } from "antd";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { StudentThunkAction } from "../redux/slices/studentSlice";
-import DeleteClassDialog from "./DeleteClassDialog";
-import { Class, Course, Student_package } from "../prismaTypes/types";
-import colors from "../constant/colors";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { StudentThunkAction } from "../../../redux/slices/studentSlice";
+import DeleteClassDialog from "../../../components/DeleteClassDialog";
+import { Class, Course, Student_package } from "../../../prismaTypes/types";
+import colors from "../../../constant/colors";
 import dayjs from "dayjs";
-import { TimetableType } from "../dto/dto";
+import { TimetableType } from "../../../dto/dto";
 
-export default (props: { classEvent: Class & Course & Student_package & { hide: boolean }; timetableType?: TimetableType }) => {
-    const { classEvent } = props;
-    const { id, student_id, class_status, class_group_id, course_id, hour_unix_timestamp, day_unix_timestamp } = classEvent;
-    const courseName = useAppSelector((s) => s.class.courses.idToCourse?.[course_id || 0])?.course_name;
-    const classAt = dayjs(hour_unix_timestamp).format("HH:mm");
-    const classOn = dayjs(day_unix_timestamp).format("dddd");
-    const status = class_status.toString();
-    const dispatch = useAppDispatch();
-    const hasDuplicationGroup = class_group_id != null;
+export default (props: { studentId: string }) => {
+    const { studentId } = props;
+    const { first_name, last_name, chinese_first_name, chinese_last_name, gender, birthdate, parent_email, school_name, grade, phone_number, wechat_id } = useAppSelector(
+        (s) => s.student.students.idToStudent?.[studentId]
+    );
 
     useEffect(() => {
         console.log(DeleteClassDialog);
@@ -60,7 +56,7 @@ export default (props: { classEvent: Class & Course & Student_package & { hide: 
                             classId: id,
                         })
                     ).unwrap();
-                    // dispatch(StudentThunkAction.getStudentClassesForDailyTimetable({ dateUnixTimestamp: day_unix_timestamp.toString(), timetableType: props.timetableType }));
+                    dispatch(StudentThunkAction.getStudentClassesForDailyTimetable({ dateUnixTimestamp: day_unix_timestamp.toString(), timetableType: props.timetableType }));
                     dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: student_id }));
                     dispatch(StudentThunkAction.getStudentPackages({ studentId: student_id }));
                     DeleteClassDialog.setOpen(false);

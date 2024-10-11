@@ -10,12 +10,14 @@ import StudentRow from "./components/StudentRow";
 import { StudentThunkAction } from "../../redux/slices/studentSlice";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import EditStudentDialog from "./components/EditStudentDialog";
+import DeleteStudentDialog from "./components/DeleteStudentDialog";
 
 export default () => {
     const dispatch = useAppDispatch();
     const ids = useAppSelector((s) => s.student.students.ids) || [];
     const [idSelected, setIdSelected] = useState<string[]>([]);
-    const idToStduent = useAppSelector((s) => s.student.students.idToStuduent);
+    const idToStduent = useAppSelector((s) => s.student.students.idToStudent);
     const openAddUserDialog = () => {
         AddStudentDialog.setContent(() => () => <AddStudentForm />);
         AddStudentDialog.setOpen(true);
@@ -43,10 +45,12 @@ export default () => {
             <SectionTitle style={{ marginBottom: 20 }}>Students</SectionTitle>
             <Autocomplete
                 freeSolo // Allows arbitrary input not limited to the options
-                options={ids.map((id) => idToStduent?.[id].first_name + " " + idToStduent?.[id].last_name)}
+                options={ids.map(
+                    (id) =>
+                        idToStduent?.[id].first_name + " " + idToStduent?.[id].last_name + " " + idToStduent?.[id].chinese_first_name + " " + idToStduent?.[id].chinese_last_name
+                )}
                 onChange={(event, newValue) => {
                     handleAutcompleteOnChange(newValue);
-                    console.log("Selected value:", newValue);
                 }}
                 renderInput={(params) => <TextField {...params} label="Find the student" variant="outlined" />}
             />
@@ -67,6 +71,8 @@ export default () => {
                       })}
             </Box>
             <AddStudentDialog.render />
+            <EditStudentDialog.render />
+            <DeleteStudentDialog.render />
         </div>
     );
 };

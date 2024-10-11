@@ -103,7 +103,7 @@ export default (props: { id: string }) => {
                 <Label label="UserRow.tsx" offsetTop={-20} />
                 <tbody>
                     <tr>
-                        <td>Name:</td>
+                        <td>English Name:</td>
                         {!startEdit && <td>{`${first_name} ${last_name}`}</td>}
                         {startEdit && (
                             <>
