@@ -114,6 +114,15 @@ export type CreateClassRequest = {
     actual_classroom: Classroom;
 };
 
+export type FilterToGetClassesForDailyTimetable = {
+    present: boolean;
+    suspicious_absence: boolean;
+    illegit_absence: boolean;
+    legit_absence: boolean;
+    makeup: boolean;
+    changeOfClassroom: boolean;
+};
+
 export type TimetableType = "Prince_Edward_Timetable" | "Causeway_Bay_Timetable";
 
 export type DeleteClassRequest = {
@@ -165,8 +174,7 @@ export type Augmented_Student_package = Student_package & { scheduled_minutes: {
 
 export type Augmented_Class = Class & { course_name: string; student_id: string };
 
-export type WeeklyTimetableClass = Omit<Student_package, "id"> & { student_package_id: number } &
-    Class & Omit<Course, "id"> & { course_id: number }
+export type WeeklyTimetableClass = Omit<Student_package, "id"> & { student_package_id: number } & Class & Omit<Course, "id"> & { course_id: number };
 
 export type SummaryOfClassStatues = {
     present: number;

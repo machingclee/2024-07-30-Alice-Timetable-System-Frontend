@@ -23,7 +23,6 @@ import CollapseButton from "../../../../src/assets/collapse-button.png";
 
 export default () => {
     const { studentId } = useParams<{ studentId: string }>();
-    const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
