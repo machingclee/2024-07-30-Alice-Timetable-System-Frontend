@@ -21,6 +21,7 @@ import Checkbox from "@mui/material/Checkbox";
 import colors from "../constant/colors";
 
 export default () => {
+    const filter = useAppSelector((s) => s.student.studentDetail.dailyTimetable.filter);
     const timetableType = useAppSelector((s) => s.student.studentDetail.dailyTimetable.timetableType);
     const selectedDate = useAppSelector((s) => s.student.studentDetail.dailyTimetable.selectedDate);
     const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
@@ -85,27 +86,27 @@ export default () => {
                 <div style={{ display: "flex", justifyContent: "flex-start", alignContent: "center", gap: "15px" }}>
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Checkbox {...label} />
+                            <Checkbox defaultChecked={filter.present} {...label} />
                             Present
                         </div>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Checkbox {...label} />
+                            <Checkbox defaultChecked={filter.suspicious_absence} {...label} />
                             Suspicious Absence
                         </div>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Checkbox {...label} />
+                            <Checkbox defaultChecked={filter.illegit_absence} {...label} />
                             Illegit Absence
                         </div>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Checkbox {...label} />
+                            <Checkbox defaultChecked={filter.legit_absence} {...label} />
                             Legit Absence
                         </div>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Checkbox {...label} />
+                            <Checkbox defaultChecked={filter.makeup} {...label} />
                             Makeup
                         </div>
                         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Checkbox {...label} />
+                            <Checkbox defaultChecked={filter.changeOfClassroom} {...label} />
                             Change of Classroom
                         </div>
                     </div>
@@ -133,7 +134,6 @@ export default () => {
                     <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "9px", marginTop: "12px" }}>
                         <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.present})</div>
                         <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.suspiciousAbsence})</div>
-
                         <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.illegitAbsence})</div>
                         <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.legitAbsence})</div>
                         <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.makeup})</div>

@@ -12,6 +12,7 @@ import appSlice from "../../../redux/slices/appSlice";
 import Label from "../../../components/Label";
 import colors from "../../../constant/colors";
 import CollapseButton from "../../../assets/collapse-button.png";
+import studentSlice from "../../../redux/slices/studentSlice";
 
 const pathRegex = {
     STUDENTS: /\/dashboard\/students/,
@@ -41,6 +42,8 @@ export default () => {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE));
             } else if (pathRegex.COURSES.test(pathname)) {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_COURSES));
+            } else if (pathRegex.CWB_TIMETABLE.test(pathname)) {
+                dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_CWB_TIMETABLE));
             } else {
                 dispatch(appSlice.actions.setActivePath(pathname));
             }

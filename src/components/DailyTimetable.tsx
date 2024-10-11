@@ -60,15 +60,20 @@ export default () => {
     const gridHeight = 40;
 
     useEffect(() => {
-        console.log("timetableType:", timetableType);
-        dispatch(
-            StudentThunkAction.getStudentClassesForDailyTimetable({
-                dateUnixTimestamp: timeUtil.getDayUnixTimestamp(selectedDate.getTime()).toString(),
-                timetableType: timetableType,
-            })
-        );
         dispatch(StudentThunkAction.getStudents());
     }, []);
+
+    useEffect(() => {
+        if (timetableType) {
+            console.log("timetableType:", timetableType);
+            dispatch(
+                StudentThunkAction.getStudentClassesForDailyTimetable({
+                    dateUnixTimestamp: timeUtil.getDayUnixTimestamp(selectedDate.getTime()).toString(),
+                    timetableType: timetableType,
+                })
+            );
+        }
+    }, [timetableType]);
 
     return (
         <Box

@@ -15,13 +15,15 @@ import studentSlice, { StudentThunkAction } from "../../redux/slices/studentSlic
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { CourseThunkAction } from "../../redux/slices/courseSlice";
 import appSlice from "../../redux/slices/appSlice";
+import timeUtil from "../../utils/timeUtil";
 
 export default () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const selectedDate = useAppSelector((s) => s.student.studentDetail.dailyTimetable.selectedDate);
 
     useEffect(() => {
-        dispatch(studentSlice.actions.setTimetableType("Causeway_Bay_Timetable"));
+        dispatch(studentSlice.actions.setTimetableType("Prince_Edward_Timetable"));
         dispatch(CourseThunkAction.getCourses());
     }, []);
     return (
