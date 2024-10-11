@@ -57,7 +57,7 @@ export default ({
         } else {
             toastUtil.success("Event Created");
             AddClassEventDialog.setOpen(false);
-            dispatch(StudentThunkAction.getStudentClasses({ studentId }));
+            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
         }
     };
 

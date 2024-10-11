@@ -1,115 +1,102 @@
-import { Box } from "@mui/material";
-import { startOfWeek, endOfWeek, eachDayOfInterval } from "date-fns";
-import dayjs, { Dayjs } from "dayjs";
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import SectionTitle from "../../../components/SectionTitle";
-import Spacer from "../../../components/Spacer";
-import lodash from "lodash";
-import StudentClass from "./StudentClassForWeeklyTimetable";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import studentSlice, { StudentThunkAction } from "../../../redux/slices/studentSlice";
-import { PiArrowRightBold } from "react-icons/pi";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { Button } from "antd";
-import { store } from "../../../redux/store";
-import MoveConfirmationDialog from "./MoveConfirmationDialog";
-import MoveConfirmationForm from "./MoveConfirmationForm";
-import CustomScrollbarContainer from "../../../components/CustomScrollbarContainer";
+import CustomScrollbarContainer from "../components/CustomScrollbarContainer";
+import { Box } from "@mui/material";
+import dayjs, { Dayjs } from "dayjs";
+import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import SectionTitle from "../components/SectionTitle";
+import Spacer from "../components/Spacer";
+import lodash from "lodash";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import studentSlice, { StudentThunkAction } from "../redux/slices/studentSlice";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import timeUtil from "../utils/timeUtil";
+import StudentClassForDailyTimetable from "./StudentClassForDailyTimetable";
+import { TimetableType } from "../dto/dto";
 
-export type WeeklyCoordinate = {
-    [dateUnixTimestamp: string]: {
+export type DailyCoordinate = {
+    [studentId: string]: {
         [halfHourUnixTimestamp: string]: null;
     };
 };
 
-export default (props: { date?: Date }) => {
+export default ({ timetableType }: { timetableType: TimetableType }) => {
     const dispatch = useAppDispatch();
-    const studentId = useAppSelector((s) => s.student.studentDetail.detail?.id) || "";
-    const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
-    const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
-    const courseStartDate = useAppSelector((s) => s.student.studentDetail.weeklyTimetable.selectedDate);
+    const idToStduent = useAppSelector((s) => s.student.students.idToStuduent);
+    const hrUnixTimestamps = useAppSelector((s) => s.student.studentDetail.dailyTimetable.hrUnixTimestamps) || [];
+    const hrUnixTimestampToClass = useAppSelector((s) => s.student.studentDetail.dailyTimetable.hrUnixTimestampToClass) || {};
     const currDraggingId = useRef("");
     const [activeDraggableId, setActiveDraggableId] = useState("");
-    const [offset, setOffset] = useState(0);
+    const selectedDate = useAppSelector((s) => s.student.studentDetail.dailyTimetable.selectedDate);
+    const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
+    const [timeGrid, setTimegrid] = useState<DailyCoordinate>({});
 
-    const getHalfHourTimeIntervalsForDay = useCallback((date: Date) => {
-        const dayJS = dayjs(date);
-        const start = dayJS.startOf("day").add(9, "hour");
+    // Memoize the half-hour intervals to prevent recalculation on every render
+    const halfHourIntervals = useMemo(() => {
+        const dayJS = dayjs(selectedDate).startOf("day").add(9, "hour"); // Start from 9 AM
         const intervals: Dayjs[] = [];
         for (let offset = 0; offset < 21; offset++) {
-            const time = start.add(offset * 0.5, "hour");
-            intervals.push(time);
+            intervals.push(dayJS.add(offset * 0.5, "hour"));
         }
         return intervals;
-    }, []);
+    }, [selectedDate]);
 
-    const weekStart = dayjs(startOfWeek(courseStartDate, { weekStartsOn: 1 }))
-        .add(offset, "day")
-        .toDate();
-    const weekEnd = dayjs(endOfWeek(courseStartDate, { weekStartsOn: 1 }))
-        .add(offset, "day")
-        .toDate();
-    const daysOfWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
-    const [timeGrid, setTimegrid] = useState<WeeklyCoordinate>({});
-
+    // Initialize the time grid based on `hrUnixTimestamps`
     useEffect(() => {
-        const timetable_: WeeklyCoordinate = {};
-        daysOfWeek.forEach((dateObj) => {
-            const timeOfTheDay = dateObj.getTime();
-            const hoursOfTheDay = getHalfHourTimeIntervalsForDay(dateObj).map((dayJS) => dayJS.valueOf());
+        const timetable_: DailyCoordinate = {};
+        const hoursOfTheDay = halfHourIntervals.map((dayJS) => dayJS.valueOf());
+        hrUnixTimestamps.forEach((hrUnixTimestamp) => {
+            const existingClass = hrUnixTimestampToClass[hrUnixTimestamp];
             hoursOfTheDay.forEach((hr) => {
-                lodash.setWith(timetable_, `["${timeOfTheDay}"]["${hr}"]`, { data: null }, Object);
+                lodash.setWith(timetable_, `["${existingClass.student_id}"]["${hr}"]`, { data: null }, Object);
             });
         });
-        setTimegrid(timetable_);
-    }, [offset, courseStartDate, selectedPackageId]);
 
-    useEffect(() => {
-        setOffset(0);
-    }, [selectedPackageId]);
+        setTimegrid(timetable_);
+        // Add another thing to listen to: change of the date (like next day and previous day)
+    }, [hrUnixTimestamps, halfHourIntervals, selectedDate]);
 
     const timetableContainerRef = useRef<HTMLDivElement | null>(null);
-
     const gridHeight = 40;
 
     const adjustWidth = useCallback(() => {
         const width = window.innerWidth;
-        const columnWidth = Math.min((width - 660) / 7, 200);
+        const columnWidth = Math.min((width - 660) / hrUnixTimestamps.length, 200); // Adjust based on the number of hrUnixTimestamps
         setTimetableAvailableWidth(columnWidth);
-    }, []);
-
-    const adjustWidthDefined = useRef(false);
+    }, [hrUnixTimestamps]);
 
     useEffect(() => {
         adjustWidth();
-        if (!adjustWidthDefined.current) {
-            window.addEventListener("resize", adjustWidth);
-            adjustWidthDefined.current = true;
-        }
+        window.addEventListener("resize", adjustWidth);
         return () => {
             window.removeEventListener("resize", adjustWidth);
-            adjustWidthDefined.current = false;
         };
+    }, [adjustWidth]);
+
+    useEffect(() => {
+        console.log("timetableType:", timetableType);
+        dispatch(
+            StudentThunkAction.getStudentClassesForDailyTimetable({
+                dateUnixTimestamp: timeUtil.getDayUnixTimestamp(selectedDate.getTime()).toString(),
+                timetableType: timetableType,
+            })
+        );
+        dispatch(StudentThunkAction.getStudents());
     }, []);
 
     return (
         <Box
             ref={timetableContainerRef}
-            style={{ width: "100%" }}
             sx={{
                 overflowY: "hidden",
                 height: "1000px",
                 "& .draggable-container": {
                     borderTop: "1px solid rgba(0,0,0,0.1)",
-                    borderLeft: "2px solid rgba(0, 0, 0, 0.1)",
+                    borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
                 },
-                "& .draggable-container:nth-child(n+1)": {
-                    borderTop: "2px dashed rgba(0,0,0,0.15)",
-                },
-                "& .day-column:last-child": {
+                "& .droppable:last-child": {
                     "& .draggable-container": {
-                        borderRight: "2px solid rgba(0, 0, 0, 0.1)",
+                        borderRight: "1px solid rgba(0,0,0,0.1)",
                     },
                 },
                 "& .draggable-container:last-child": {
@@ -119,77 +106,69 @@ export default (props: { date?: Date }) => {
                     transform: "translate(0px,0px) !important",
                 },
                 "& .grid-time: nth-child(n+2)": {
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
                     paddingRight: "14px",
-                    height: `${gridHeight + 1}px`,
+                    height: `${gridHeight}px`,
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
+                    overflow: "hidden",
                 },
                 "& .grid-hour: nth-child(n+1)": {
-                    width: `${timetableAvailableWidth}px`,
+                    width: "120px",
                     height: `${gridHeight - 1}px`,
-                },
-                "& .grid-hour.header": {
-                    top: 0,
-                    position: "sticky",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    padding: 0,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: 0,
-                    backgroundColor: "white",
-                    zIndex: 10 ** 7,
                 },
                 "& .droppable": {
                     "& .grid-hour": {
                         "&.disbaletransform": { transform: "none !important" },
                         "&:hover": {
                             cursor: "pointer",
-                            // backgroundColor: "rgba(22,119,255,0.2)",
+                            backgroundColor: "rgba(22,119,255,0.2)",
                         },
                     },
                 },
             }}
         >
-            <SectionTitle>
+            <SectionTitle style={{ justifyContent: "center" }}>
                 <div style={{ display: "flex", alignItems: "center", padding: 10 }}>
                     <Button
                         onClick={() => {
-                            setOffset((v) => v - 7);
+                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: dayjs(selectedDate).subtract(1, "day").toDate() }));
+                            dispatch(
+                                StudentThunkAction.getStudentClassesForDailyTimetable({
+                                    dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).subtract(1, "day").toDate().getTime()).toString(),
+                                    timetableType: timetableType,
+                                })
+                            );
                         }}
                     >
                         <div style={{ display: "flex", alignItems: "center", fontSize: 14 }}>
-                            <FaChevronLeft /> <Spacer width={5} />
-                            Previous Week{" "}
+                            <FaChevronLeft /> <Spacer width={5} /> Previous Day
                         </div>
                     </Button>
                     <Spacer width={20} />
-                    <div>{dayjs(weekStart).format("YYYY-MM-DD (ddd)")}</div>
-                    <Spacer width={10} />
-                    <PiArrowRightBold />
-                    <Spacer width={10} />
-                    <div>{dayjs(weekEnd).format("YYYY-MM-DD (ddd)")}</div>
+                    <div>{dayjs(selectedDate).format("YYYY-MM-DD (ddd)")}</div>
                     <Spacer width={20} />
                     <Button
                         onClick={() => {
-                            setOffset((v) => v + 7);
+                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: dayjs(selectedDate).add(1, "day").toDate() }));
+                            dispatch(
+                                StudentThunkAction.getStudentClassesForDailyTimetable({
+                                    dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).add(1, "day").toDate().getTime()).toString(),
+                                    timetableType: timetableType,
+                                })
+                            );
                         }}
                     >
                         <div style={{ display: "flex", alignItems: "center", fontSize: 14 }}>
-                            Next Week <Spacer width={5} />
-                            <FaChevronRight />
+                            Next Day <Spacer width={5} /> <FaChevronRight />
                         </div>
                     </Button>
                 </div>
             </SectionTitle>
 
-            <CustomScrollbarContainer style={{ height: "calc(100vh - 120px)", width: "100%" }}>
+            <CustomScrollbarContainer style={{ height: "calc(100vh - 120px)" }}>
                 <Spacer />
                 <DragDropContext
                     onBeforeCapture={(e) => {
@@ -199,9 +178,9 @@ export default (props: { date?: Date }) => {
                     }}
                     onDragEnd={async (result) => {
                         const { destination } = result;
-                        const { droppableId: toDayUnixTimestamp, index: toIndex } = destination!;
-                        const toHourUnixTimestamp = Object.keys(timeGrid?.[toDayUnixTimestamp]).sort()[toIndex];
-                        const fromClz = store.getState().student.studentDetail.weeklyTimetable.hrUnixTimestampToClass?.[currDraggingId.current];
+                        const { droppableId: toHrUnixTimestamp, index: toIndex } = destination!;
+                        const toHourUnixTimestamp = Object.keys(timeGrid?.[toHrUnixTimestamp]).sort()[toIndex];
+                        const fromClz = hrUnixTimestampToClass[currDraggingId.current];
                         if (!fromClz) {
                             return;
                         }
@@ -209,33 +188,22 @@ export default (props: { date?: Date }) => {
                             await dispatch(
                                 StudentThunkAction.moveStudentEvent({
                                     fromHourTimestamp: currDraggingId.current,
-                                    toDayTimestamp: toDayUnixTimestamp,
+                                    toDayTimestamp: toHrUnixTimestamp,
                                     toHourTimestamp: toHourUnixTimestamp,
                                 })
                             ).unwrap();
                             dispatch(studentSlice.actions.unHideClass({ hrTimestamp: currDraggingId.current }));
-                            if (fromClz.class_group_id) {
-                                setTimeout(() => {
-                                    dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
-                                }, 1000);
-                            }
                         };
-                        if (fromClz.class_group_id) {
-                            dispatch(studentSlice.actions.hideClass({ hrTimestamp: currDraggingId.current }));
-                            MoveConfirmationDialog.setContent(() => () => <MoveConfirmationForm moveClassesAction={move} />);
-                            MoveConfirmationDialog.setOpen(true);
-                        } else {
-                            await move();
-                        }
+                        await move();
                         setActiveDraggableId("");
                     }}
                 >
                     <div style={{ display: "flex" }}>
                         <div style={{ flex: 1 }}>
-                            <div style={{ display: "flex", alignItems: "flex-end" }}>
+                            <div style={{ display: "flex" }}>
                                 <div>
                                     <Spacer height={30} style={{ position: "sticky", top: 0, background: "white", width: "100%" }} />
-                                    {getHalfHourTimeIntervalsForDay(weekStart).map((dayJS) => {
+                                    {halfHourIntervals.map((dayJS) => {
                                         return (
                                             <div style={{ fontSize: 13 }} className="grid-time" key={dayJS.valueOf().toString()}>
                                                 {dayJS.format("HH:mm")}
@@ -245,33 +213,35 @@ export default (props: { date?: Date }) => {
                                 </div>
                                 {Object.keys(timeGrid)
                                     .sort()
-                                    .map((dayUnixTimestamp) => {
-                                        const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
+                                    .map((studentId) => {
                                         return (
-                                            <div key={dayUnixTimestamp} className="day-column">
+                                            <div key={studentId} style={{ flex: 1 }} className="time-column">
                                                 <div
-                                                    className="grid-hour header"
+                                                    className="grid-hour"
                                                     style={{
                                                         fontWeight: 400,
+                                                        marginBottom: "20px",
+                                                        height: 0,
+                                                        width: "100%",
                                                         textAlign: "center",
                                                     }}
                                                 >
-                                                    {timetableAvailableWidth >= 85 && dayDayJS.format("ddd, MMM D")}
-                                                    {timetableAvailableWidth < 85 && dayDayJS.format("ddd")}
+                                                    {idToStduent?.[studentId].first_name + " " + idToStduent?.[studentId].last_name}
                                                 </div>
                                                 <Spacer height={5} />
-                                                <Droppable droppableId={dayUnixTimestamp} mode="virtual">
+                                                <Droppable droppableId={studentId} mode="virtual">
                                                     {(provided) => {
                                                         return (
                                                             <div ref={provided.innerRef} {...provided.droppableProps} className="droppable">
-                                                                {Object.keys(timeGrid[dayUnixTimestamp])
+                                                                {Object.keys(timeGrid[studentId])
                                                                     .sort()
                                                                     .map((hourUnixTimestamp, index) => {
                                                                         return (
                                                                             <React.Fragment key={hourUnixTimestamp}>
-                                                                                <StudentClass
+                                                                                <StudentClassForDailyTimetable
+                                                                                    studentId={studentId}
                                                                                     colIndex={index}
-                                                                                    dayUnixTimestamp={parseInt(dayUnixTimestamp)}
+                                                                                    dayUnixTimestamp={timeUtil.getDayUnixTimestamp(selectedDate.getTime())}
                                                                                     hourUnixTimestamp={parseInt(hourUnixTimestamp)}
                                                                                     activeDraggableId={activeDraggableId}
                                                                                 />

@@ -2,46 +2,45 @@ import { Draggable } from "react-beautiful-dnd";
 import classnames from "classnames";
 import dayjs from "dayjs";
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu";
-import boxShadow from "../../../constant/boxShadow";
+import boxShadow from "../constant/boxShadow";
 import { Box } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { useParams } from "react-router-dom";
-import AddClassEventDialog from "./AddClassEventDialog";
-import AddClassEventForm from "./AddClassEventForm";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
-import DeleteClassForm from "./DeleteClassForm";
-import DeleteClassDialog from "./DeleteClassDialog";
-import DuplicateClassDialog from "./DuplicateClassDialog";
-import DuplicateClassForm from "./DuplicateClassForm";
-import { StudentThunkAction } from "../../../redux/slices/studentSlice";
-import FadeIn from "../../../components/FadeIn";
-import colors from "../../../constant/colors";
-import Label from "../../../components/Label";
-import ViewClassDialog from "./ViewClassDialog";
-import ViewClassForm from "./ViewClassForm";
+import { StudentThunkAction } from "../redux/slices/studentSlice";
+import FadeIn from "../components/FadeIn";
+import colors from "../constant/colors";
+import Label from "../components/Label";
+import AddClassEventDialog from "../components/AddClassEventDialog";
+import AddClassEventForm from "../components/AddClassEventForm";
+import DeleteClassForm from "../components/DeleteClassForm";
+import DeleteClassDialog from "../components/DeleteClassDialog";
+import DuplicateClassDialog from "../components/DuplicateClassDialog";
+import DuplicateClassForm from "../components/DuplicateClassForm";
+import ViewClassForm from "../components/ViewClassForm";
+import ViewClassDialog from "../components/ViewClassDialog";
 
-export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number }) => {
+export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number; studentId: string }) => {
     const dispatch = useAppDispatch();
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
-    const { studentId } = useParams<{ studentId: string }>();
-    const studentClass = useAppSelector((s) => s.student.studentDetail.timetable?.hrUnixTimestampToClass?.[hourUnixTimestamp]);
-    const timetable = useAppSelector((s) => s.student.studentDetail.timetable);
+    const studentClass = useAppSelector((s) => s.student.studentDetail.dailyTimetable?.hrUnixTimestampToClass?.[hourUnixTimestamp]);
+    const timetable = useAppSelector((s) => s.student.studentDetail.dailyTimetable);
     const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
-    const showAllClassesForOneStudent = useAppSelector((s) => s.student.showAllClassesForOneStudent);
 
     const { day_unix_timestamp = 0, hour_unix_timestamp = 0, class_group_id } = studentClass || {};
     const hasDuplicationGroup = class_group_id != null;
     const disableDraggable = !(studentClass != null);
     const createEvent = () => {
-        AddClassEventDialog.setContent(() => () => <AddClassEventForm dayUnixTimestamp={dayUnixTimestamp} hourUnixTimestamp={hourUnixTimestamp} studentId={studentId || ""} />);
+        AddClassEventDialog.setContent(() => () => (
+            <AddClassEventForm dayUnixTimestamp={dayUnixTimestamp} hourUnixTimestamp={hourUnixTimestamp} studentId={props.studentId || ""} />
+        ));
         AddClassEventDialog.setOpen(true);
     };
 
     const invalidData = day_unix_timestamp >= hour_unix_timestamp;
-
-    const contextMenuId = `${studentClass?.student_id || ""}-${studentClass?.hour_unix_timestamp || ""}`;
+    const contextMenuId = `${props.studentId || ""}-${studentClass?.hour_unix_timestamp || ""}`;
     const rightClickable = !(studentClass != null);
     const dayAndTime = dayjs(hourUnixTimestamp).format("ddd, HH:mm");
     const disableDuplicate = studentClass?.class_group_id != null;
@@ -151,11 +150,13 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                     const { dragHandleProps, draggableProps, innerRef } = provided_;
                     const { style, ..._draggableProps } = draggableProps;
                     const course_name = studentClass?.course_name;
+                    const student_id = studentClass?.student_id;
+                    console.log("studentClass:", studentClass);
+                    console.log("course_name:", course_name);
                     const shouldFreeze = parseInt(activeDraggableId) !== hourUnixTimestamp;
 
                     return (
                         <div className="draggable-container" style={{ opacity: studentClass?.hide ? 0 : 1, position: "relative" }}>
-                            {showLabel && <Label label="StudentClass.tsx" />}
                             {/* @ts-ignore */}
                             <TimeslotWrapper>
                                 <div
@@ -175,8 +176,9 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                         }}
                                     >
                                         {/* Control what to show on the entire timetable */}
-                                        {course_name && (showAllClassesForOneStudent || selectedByPackageId) && (
+                                        {course_name && student_id === props.studentId && (
                                             <FadeIn>
+                                                {showLabel && <Label label="StudentClassForDailyTimetable.tsx" />}
                                                 {/* @ts-ignore */}
                                                 <ContextMenuTrigger id={contextMenuId}>
                                                     <Box
@@ -212,6 +214,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                             return colors.grey;
                                                                         case "MAKEUP":
                                                                             return colors.green;
+                                                                        case "CHANGE_OF_CLASSROOM":
+                                                                            return colors.purple;
                                                                     }
                                                                 }
                                                             })(),
@@ -225,7 +229,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                     >
                                                         {showLabel && groupedLabel()}
                                                         <div style={{ padding: 4 }}>{studentClass.course_name}</div>
-                                                        {classNumber !== 0 && (
+                                                        {/* {classNumber !== 0 && (
                                                             <div
                                                                 style={{
                                                                     marginTop: 5,
@@ -243,7 +247,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                             >
                                                                 Class: {classNumber}
                                                             </div>
-                                                        )}
+                                                        )} */}
                                                     </Box>
                                                 </ContextMenuTrigger>
                                                 {/* @ts-ignore */}
@@ -270,7 +274,14 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         <MenuItem
                                                             className="menu-item"
                                                             onClick={() => {
-                                                                ViewClassDialog.setContent(() => () => <ViewClassForm classEvent={studentClass} classNumber={classNumber} />);
+                                                                ViewClassDialog.setContent(() => () => (
+                                                                    <ViewClassForm
+                                                                        classEvent={studentClass}
+                                                                        classNumber={classNumber}
+                                                                        course_id={studentClass?.course_id || 0}
+                                                                        student_id={studentClass?.student_id || ""}
+                                                                    />
+                                                                ));
                                                                 ViewClassDialog.setOpen(true);
                                                             }}
                                                         >

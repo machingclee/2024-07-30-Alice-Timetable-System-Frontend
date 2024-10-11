@@ -8,15 +8,15 @@ import { IoMdArrowBack } from "react-icons/io";
 import { Button } from "antd";
 import WeeklyTimetable from "../components/WeeklyTimetable";
 import Label from "../../../components/Label";
-import AddClassEventDialog from "../components/AddClassEventDialog";
+import AddClassEventDialog from "../../../components/AddClassEventDialog";
 import { CourseThunkAction } from "../../../redux/slices/courseSlice";
-import DuplicateClassDialog from "../components/DuplicateClassDialog";
+import DuplicateClassDialog from "../../../components/DuplicateClassDialog";
 import MoveConfirmationDialog from "../components/MoveConfirmationDialog";
 import AddPackageDialog from "../components/AddPackageDialog";
 import StudentPackageColumn from "./components/StudentPackageColumn";
-import DeleteClassDialog from "../components/DeleteClassDialog";
+import DeleteClassDialog from "../../../components/DeleteClassDialog";
 import AddPaymentDetailDialog from "./components/AddPaymentDetailDialog";
-import ViewClassDialog from "../components/ViewClassDialog";
+import ViewClassDialog from "../../../components/ViewClassDialog";
 import EditPackageDialog from "./components/EditPackageDialog";
 
 export default () => {
@@ -30,22 +30,14 @@ export default () => {
     useEffect(() => {
         if (studentId) {
             dispatch(StudentThunkAction.getStudentDetail({ studentId }));
-            dispatch(StudentThunkAction.getStudentClasses({ studentId }));
+            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
+            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
         }
     }, [studentId]);
 
     // To get courses in case the user wants to add a course to the timetable
     useEffect(() => {
         dispatch(CourseThunkAction.getCourses());
-    }, []);
-
-    useEffect(() => {
-        if (studentId) {
-            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
-        }
-    }, [studentId]);
-
-    useEffect(() => {
         return () => {
             dispatch(studentSlice.actions.reset());
         };
@@ -57,8 +49,8 @@ export default () => {
 
     return (
         <div style={{ marginLeft: "10px", marginRight: "50px", height: "100%", display: "flex", flexDirection: "column" }}>
-            <div style={{ width: "100%", display: "flex" }}>
-                <div>
+            <div style={{ display: "flex" }}>
+                <div style={{ width: "100%" }}>
                     <SectionTitle>
                         <Label label="StudenDetail.tsx" offsetTop={-20} />
                         <Button
@@ -73,7 +65,7 @@ export default () => {
                         {`${first_name} ${last_name}`}
                     </SectionTitle>
 
-                    <div style={{ height: "calc(100vh - 70px)", overflow: "hidden" }}>
+                    <div style={{ height: "calc(100vh - 70px)", width: "100%", overflow: "hidden" }}>
                         <WeeklyTimetable />
                     </div>
                 </div>

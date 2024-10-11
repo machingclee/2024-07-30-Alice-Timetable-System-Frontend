@@ -43,7 +43,7 @@ const Calendar: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const { studentId } = useParams<{ studentId: string }>();
-    const hrUnixTimestampdToObject = useAppSelector((s) => s.student.studentDetail.timetable.hrUnixTimestampToClass);
+    const hrUnixTimestampdToObject = useAppSelector((s) => s.student.studentDetail.weeklyTimetable.hrUnixTimestampToClass);
 
     // Clicking behavior
     const handleMouseDown = (e: MouseEvent, day: number, time: number) => {

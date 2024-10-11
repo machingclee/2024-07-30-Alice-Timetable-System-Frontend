@@ -1,3 +1,5 @@
+import { TimetableType } from "../dto/dto";
+
 export default {
     POST_REFRESH_TOKEN: "/auth/refresh-token",
     POST_LOGIN: "/auth/login",
@@ -12,7 +14,9 @@ export default {
     GET_STUDENTS: "/student/students",
     GET_COURSES: "/course/courses",
     GET_STUDENT_DETAIL: (studentId: string) => `/student/student-detail/${studentId}`,
-    GET_STUDENT_CLASSES: (studentId: string) => `/student/student-classes/${studentId}`,
+    GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE: (studentId: string) => `/student/student-classes-for-weekly-timteable/${studentId}`,
+    GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: (dateUnixTimestamp: string, timetableType: TimetableType) =>
+        `/student/student-classes-for-daily-timteable/${dateUnixTimestamp}/${timetableType}`,
     GET_STUDENT_PACKAGES: (studentId: string) => `/student/student-packages/${studentId}`,
 
     PUT_UPDATE_USER: "/user/update-user",
@@ -25,7 +29,6 @@ export default {
     PUT_MARK_PACAKGE_AS_UNPAID: "/student/mark-package-as-unpaid",
     PUT_UPDATE_PACKAGE: "/student/update-package",
 
-    DELETE_PACKAGE: (studentId: string, packageId: number) =>
-        `/student/delete-package?studentId=${studentId}&packageId=${packageId}`,
+    DELETE_PACKAGE: (studentId: string, packageId: number) => `/student/delete-package?studentId=${studentId}&packageId=${packageId}`,
     DELETE_CLASS: (classId: number) => `/student/delete-class/${classId}`,
 };

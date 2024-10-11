@@ -12,6 +12,7 @@ import { TimePicker } from "antd";
 import { CreateStudentPackageRequest } from "../../../dto/dto";
 import dayjs from "dayjs";
 import AddPackageDialog from "./AddPackageDialog";
+import { Classroom } from "../../../prismaTypes/types";
 
 // Function to convert timestamp to the start of the day (midnight)
 const toMidnight = (timestamp: number): number => {
@@ -36,8 +37,8 @@ export default (props: { studentId: string; studentName: string }) => {
     };
 
     const submit = async () => {
-        const { course_id, min, start_date, num_of_classes, start_time } = formData.current || {};
-        if (!(course_id != null && min != null && num_of_classes != null)) {
+        const { course_id, min, start_date, num_of_classes, start_time, default_classroom } = formData.current || {};
+        if (!(course_id != null && min != null && num_of_classes != null && default_classroom != null)) {
             return;
         }
 
@@ -53,6 +54,7 @@ export default (props: { studentId: string; studentName: string }) => {
             min,
             start_date: chosenStartDateResolvingUndefinedIssue,
             start_time: realStartTime,
+            default_classroom,
             expiry_date: dayjs(start_date).add(4, "months").valueOf(),
             student_id: studentId,
         };
@@ -60,7 +62,7 @@ export default (props: { studentId: string; studentName: string }) => {
         AddPackageDialog.setOpen(false);
         await dispatch(StudentThunkAction.createStudentPackage(reqBody)).unwrap();
         dispatch(StudentThunkAction.getStudentPackages({ studentId })).unwrap();
-        dispatch(StudentThunkAction.getStudentClasses({ studentId })).unwrap();
+        dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId })).unwrap();
     };
 
     const disabledHours = () => {
@@ -75,10 +77,12 @@ export default (props: { studentId: string; studentName: string }) => {
 
     const allowedOptionsForNumberOfClasses = [1, 7, 15, 30, 50];
 
+    const classroomOptions: Classroom[] = ["PRINCE_EDWARD", "CAUSEWAY_BAY"];
+
     return (
         <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
             <Label label="AddPackageForm.tsx" offsetTop={0} offsetLeft={180} />
-            <SectionTitle>Add Student Package to {studentName}</SectionTitle>
+            <SectionTitle>Add Student Package for {studentName}</SectionTitle>
             <Spacer />
             <div style={{ display: "flex" }}>
                 <FormInputTitle>Select a Course</FormInputTitle>
@@ -154,6 +158,19 @@ export default (props: { studentId: string; studentName: string }) => {
                     updateFormData({ num_of_classes: value });
                 }}
                 options={allowedOptionsForNumberOfClasses.map((value) => ({ value: value, label: `${value}` }))} // Map allowed options to Select options
+            />
+            <Spacer />
+            <div style={{ display: "flex" }}>
+                <FormInputTitle>Select Default Classroom</FormInputTitle>
+            </div>
+            <Spacer height={5} />
+            <Select
+                dropdownStyle={{ zIndex: 10 ** 4 }}
+                style={{ width: "100%" }}
+                onChange={(value) => {
+                    updateFormData({ num_of_classes: value });
+                }}
+                options={classroomOptions.map((value) => ({ value: value, label: `${value}` }))} // Map allowed options to Select options
             />
             <Spacer />
             <Spacer />

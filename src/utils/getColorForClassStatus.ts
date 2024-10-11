@@ -1,7 +1,7 @@
 import colors from "../constant/colors";
-import { classStatus } from "../dto/dto";
+import { Class_status } from "../prismaTypes/types";
 
-export default (class_status: classStatus) => {
+export default (class_status: Class_status) => {
     switch (class_status) {
         case "PRESENT":
             return colors.blue;

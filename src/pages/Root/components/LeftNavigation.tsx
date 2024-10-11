@@ -10,18 +10,22 @@ import { useEffect } from "react";
 import NavButton from "./NavButton";
 import appSlice from "../../../redux/slices/appSlice";
 import Label from "../../../components/Label";
+import colors from "../../../constant/colors";
+import CollapseButton from "../../../assets/collapse-button.png";
 
 const pathRegex = {
     STUDENTS: /\/dashboard\/students/,
     COURSES: /\/dashboard\/courses/,
     USERS: /\/dashboard\/users/,
-    TIMET_TABLES: /\/dashboard\/timetables/,
+    PRINCE_EDWARD_TIMETABLE: /\/dashboard\/PE-timetable/,
+    CWB_TIMETABLE: /\/dashboard\/CWB-timetable/,
 };
 
 export default () => {
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
     const authData = useAppSelector((s) => s.auth.user);
+    const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
     const { first_name, last_name, role_in_system } = authData;
     const logout = () => {
         dispatch(authSlice.actions.reset());
@@ -33,8 +37,8 @@ export default () => {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_STUDENTS));
             } else if (pathRegex.USERS.test(pathname)) {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_USERS));
-            } else if (pathRegex.TIMET_TABLES.test(pathname)) {
-                dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_TIMETABLE));
+            } else if (pathRegex.PRINCE_EDWARD_TIMETABLE.test(pathname)) {
+                dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE));
             } else if (pathRegex.COURSES.test(pathname)) {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_COURSES));
             } else {
@@ -51,14 +55,20 @@ export default () => {
 
     return (
         <Box
-            style={{ width: 150, height: "100%", marginTop: "20px", marginLeft: "30px" }}
+            style={{
+                width: leftNavigatorCollapsed ? 0 : 160,
+                height: "100%",
+                marginTop: "20px",
+                marginLeft: "30px",
+                transition: "width 0.3s ease",
+            }}
             sx={{
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
             }}
         >
-            <div>
+            <div style={{ transition: "opacity 0.3s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
                 <Spacer />
                 <Label label="LeftNavigation.tsx" offsetTop={-10} />
                 <NavButton activeNavigationRegex={pathRegex.STUDENTS} routeEnum={RouteEnum.DASHBOARD_STUDENTS} title="Students" />
@@ -67,9 +77,43 @@ export default () => {
                 <Spacer height={10} />
                 <NavButton activeNavigationRegex={pathRegex.USERS} routeEnum={RouteEnum.DASHBOARD_USERS} title="Users" />
                 <Spacer height={10} />
-                <NavButton activeNavigationRegex={pathRegex.TIMET_TABLES} routeEnum={RouteEnum.DASHBOARD_TIMETABLE} title="Timetables" />
+                <NavButton activeNavigationRegex={pathRegex.PRINCE_EDWARD_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE} title="Prince Ed. Timetable" />
+                <Spacer height={10} />
+                <NavButton activeNavigationRegex={pathRegex.CWB_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_CWB_TIMETABLE} title="CWB Timetable" />
             </div>
-            <div>
+            <div style={{ transition: "opacity 0.3s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                    <div>
+                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Present</div>
+                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Sus. Absence</div>
+                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Illegit Absence</div>
+                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Legit Absence</div>
+                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Makeup</div>
+                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Change of Classroom</div>
+                    </div>
+                    <div style={{ marginLeft: "30px" }}>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.blue, width: "15px", height: "15px" }} />
+                        </div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.amber, width: "15px", height: "15px" }} />
+                        </div>
+
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.red, width: "15px", height: "15px" }} />
+                        </div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.grey, width: "15px", height: "15px" }} />
+                        </div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.green, width: "15px", height: "15px" }} />
+                        </div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.purple, width: "15px", height: "15px" }} />
+                        </div>
+                    </div>
+                </div>
+                <Spacer height={30} />
                 <div style={{ boxShadow: boxShadow.SHADOW_61, borderRadius: 4, padding: 10, position: "relative" }}>
                     <div style={{ display: "flex" }}>
                         <div
@@ -107,6 +151,22 @@ export default () => {
                 <Spacer />
                 <Spacer />
             </div>
+            <img
+                onClick={() => {
+                    dispatch(appSlice.actions.setleftNavigatorCollapsed(!leftNavigatorCollapsed));
+                }}
+                style={{
+                    position: "absolute",
+                    bottom: "50%",
+                    right: "0",
+                    width: 30,
+                    height: 30,
+                    cursor: "pointer",
+                    transition: "rotate 1s ease-out-in",
+                    transform: leftNavigatorCollapsed ? "rotate(180deg)" : "rotate(0deg)",
+                }}
+                src={CollapseButton}
+            />
         </Box>
     );
 };

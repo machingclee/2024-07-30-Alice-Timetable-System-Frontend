@@ -6,6 +6,7 @@ export type AppSliceState = {
     // Used to control when to open a dialog component
     timetableAction: TimetableAction;
     createClassPopperFromHourTimestampOnShow: string;
+    leftNavigatorCollapsed: boolean;
 };
 
 type TimetableAction = "Create Class" | "Move Class" | "Resize Class" | null;
@@ -15,12 +16,16 @@ const initialState: AppSliceState = {
     activePath: null,
     timetableAction: null,
     createClassPopperFromHourTimestampOnShow: "",
+    leftNavigatorCollapsed: false,
 };
 
 const appSlice = createSlice({
     name: "app",
     initialState,
     reducers: {
+        setleftNavigatorCollapsed: (state, action: PayloadAction<boolean>) => {
+            state.leftNavigatorCollapsed = action.payload;
+        },
         setLoading: (state, action: PayloadAction<boolean>) => {
             state.loading = action.payload;
         },

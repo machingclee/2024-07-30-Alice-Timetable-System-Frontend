@@ -11,6 +11,7 @@ import FormInputTitle from "../../../../components/FormInputTitle";
 import { UpdateStudentPackageRequest } from "../../../../dto/dto";
 import { CourseThunkAction } from "../../../../redux/slices/courseSlice";
 import range from "../../../../utils/range";
+import { Classroom } from "../../../../prismaTypes/types";
 
 export default (props: { packageId: string }) => {
     const { packageId } = props;
@@ -34,6 +35,7 @@ export default (props: { packageId: string }) => {
             start_date: formData.current.start_date || currentPackage.start_date,
             num_of_classes: formData.current.num_of_classes || currentPackage.num_of_classes,
             min: formData.current.min || currentPackage.min,
+            default_classroom: formData.current.default_classroom || currentPackage.default_classroom,
             student_id: currentPackage.student_id,
             expiry_date: currentPackage.expiry_date,
         };
@@ -44,6 +46,8 @@ export default (props: { packageId: string }) => {
     useEffect(() => {
         dispatch(CourseThunkAction.getCourses());
     }, []);
+
+    const classroomOptions: Classroom[] = ["PRINCE_EDWARD", "CAUSEWAY_BAY"];
 
     return (
         <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
@@ -116,6 +120,20 @@ export default (props: { packageId: string }) => {
                     updateFormData({ num_of_classes: value });
                 }}
                 options={range({ from: 1, to: 100 }).map((value) => ({ value, label: value + "" }))}
+            />
+
+            <div style={{ display: "flex" }}>
+                <FormInputTitle>Select Classroom</FormInputTitle>
+            </div>
+            <Spacer height={5} />
+            <Select
+                dropdownStyle={{ zIndex: 10 ** 4 }}
+                style={{ width: "100%" }}
+                defaultValue={currentPackage?.default_classroom}
+                onChange={(value) => {
+                    updateFormData({ default_classroom: value });
+                }}
+                options={classroomOptions.map((value) => ({ value, label: value }))}
             />
 
             <Spacer />

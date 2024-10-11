@@ -1,8 +1,7 @@
-import { Class, Student_package } from "../prismaTypes/types";
+import { Class, Classroom, Student_package } from "../prismaTypes/types";
 
 export type Gender = "MALE" | "FEMALE";
 export type RoleInSystem = "SUPER_ADMIN" | "ADMIN" | "STAFF" | "STUDENT";
-export type classStatus = "PRESENT" | "ILLEGIT_ABSENCE" | "SUSPICIOUS_ABSENCE" | "LEGIT_ABSENCE" | "MAKEUP";
 
 export type TokenPayload = {
     first_name: string;
@@ -49,17 +48,17 @@ export type User = {
     id: string;
 };
 
-export type Student = {
+export type LimitedStudentInfo = {
     id: string;
     first_name: string;
     last_name: string;
-    gender: Gender;
-    birthdate: number;
-    parent_email: string;
-    school_name: string;
-    grade: string;
-    phone_number?: string;
-    wechat_id?: string;
+    // gender: Gender;
+    // birthdate: number;
+    // parent_email: string;
+    // school_name: string;
+    // grade: string;
+    // phone_number?: string;
+    // wechat_id?: string;
 };
 
 export type StudentDetail = {
@@ -103,7 +102,10 @@ export type CreateClassRequest = {
     hour_unix_timestamp: number;
     min: number;
     student_package_id: number;
+    actual_classroom: Classroom;
 };
+
+export type TimetableType = "Prince_Edward_Timetable" | "Causeway_Bay_Timetable";
 
 export type DeleteClassRequest = {
     classId: number;
@@ -124,6 +126,8 @@ export type UpdateClassRequest = {
     class_status: string;
     reason_for_absence: string;
     remark: string;
+    actual_classroom: Classroom;
+    student_package_id: string;
 };
 
 export type CreateStudentPackageRequest = {
@@ -134,11 +138,13 @@ export type CreateStudentPackageRequest = {
     min: number;
     course_id: number;
     student_id: string;
+    default_classroom: Classroom;
 };
 
 export type UpdateStudentPackageRequest = {
     id: number;
     num_of_classes: number;
+    default_classroom: Classroom;
     start_date: number;
     expiry_date: number;
     min: number;
