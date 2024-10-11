@@ -11,7 +11,7 @@ import colors from "../constant/colors";
 import dayjs from "dayjs";
 import { TimetableType, WeeklyTimetableClass } from "../dto/dto";
 
-export default (props: { classEvent: WeeklyTimetableClass; timetableType?: TimetableType }) => {
+export default (props: { classEvent: WeeklyTimetableClass }) => {
     const { classEvent } = props;
     const { id, student_id, class_group_id, course_id, hour_unix_timestamp, day_unix_timestamp } = classEvent;
     const courseName = useAppSelector((s) => s.class.courses.idToCourse?.[course_id || 0])?.course_name;

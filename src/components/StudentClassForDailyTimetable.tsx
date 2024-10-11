@@ -21,7 +21,6 @@ import ViewClassDialog from "../components/ViewClassDialog";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number; studentId: string }) => {
     const dispatch = useAppDispatch();
-    const timetableType = useAppSelector((s) => s.app.timetableType);
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const studentClass = useAppSelector((s) => s.student.studentDetail.dailyTimetable?.hrUnixTimestampToClass?.[hourUnixTimestamp]);
@@ -316,9 +315,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         <MenuItem
                                                             className={classnames("menu-item")}
                                                             onClick={() => {
-                                                                DeleteClassDialog.setContent(() => () => (
-                                                                    <DeleteClassForm classEvent={studentClass} timetableType={timetableType} />
-                                                                ));
+                                                                DeleteClassDialog.setContent(() => () => <DeleteClassForm classEvent={studentClass} />);
                                                                 DeleteClassDialog.setOpen(true);
                                                             }}
                                                         >
