@@ -20,15 +20,15 @@ export type DailyCoordinate = {
     };
 };
 
-export default ({ timetableType }: { timetableType: TimetableType }) => {
+export default () => {
     const dispatch = useAppDispatch();
-    const idToStduent = useAppSelector((s) => s.student.students.idToStuduent);
+    const timetableType = useAppSelector((s) => s.student.studentDetail.dailyTimetable.timetableType);
+    const idToStduent = useAppSelector((s) => s.student.students.idToStudent);
     const hrUnixTimestamps = useAppSelector((s) => s.student.studentDetail.dailyTimetable.hrUnixTimestamps) || [];
     const hrUnixTimestampToClass = useAppSelector((s) => s.student.studentDetail.dailyTimetable.hrUnixTimestampToClass) || {};
     const currDraggingId = useRef("");
     const [activeDraggableId, setActiveDraggableId] = useState("");
     const selectedDate = useAppSelector((s) => s.student.studentDetail.dailyTimetable.selectedDate);
-    const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
     const [timeGrid, setTimegrid] = useState<DailyCoordinate>({});
 
     // Memoize the half-hour intervals to prevent recalculation on every render
@@ -58,20 +58,6 @@ export default ({ timetableType }: { timetableType: TimetableType }) => {
 
     const timetableContainerRef = useRef<HTMLDivElement | null>(null);
     const gridHeight = 40;
-
-    const adjustWidth = useCallback(() => {
-        const width = window.innerWidth;
-        const columnWidth = Math.min((width - 660) / hrUnixTimestamps.length, 200); // Adjust based on the number of hrUnixTimestamps
-        setTimetableAvailableWidth(columnWidth);
-    }, [hrUnixTimestamps]);
-
-    useEffect(() => {
-        adjustWidth();
-        window.addEventListener("resize", adjustWidth);
-        return () => {
-            window.removeEventListener("resize", adjustWidth);
-        };
-    }, [adjustWidth]);
 
     useEffect(() => {
         console.log("timetableType:", timetableType);

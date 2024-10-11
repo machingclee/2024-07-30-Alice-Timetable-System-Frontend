@@ -5,7 +5,6 @@ import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu";
 import boxShadow from "../constant/boxShadow";
 import { Box } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { useParams } from "react-router-dom";
 import { PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { StudentThunkAction } from "../redux/slices/studentSlice";
 import FadeIn from "../components/FadeIn";
@@ -22,6 +21,7 @@ import ViewClassDialog from "../components/ViewClassDialog";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number; studentId: string }) => {
     const dispatch = useAppDispatch();
+    const timetableType = useAppSelector((s) => s.app.timetableType);
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const studentClass = useAppSelector((s) => s.student.studentDetail.dailyTimetable?.hrUnixTimestampToClass?.[hourUnixTimestamp]);
@@ -64,49 +64,49 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const TimeslotWrapper = useCallback(
         rightClickable
             ? ({ children }: PropsWithChildren) => {
-                  return (
-                      <>
-                          {/* @ts-ignore */}
-                          <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
-                          {/* @ts-ignore */}
-                          <ContextMenu
-                              id={hourUnixTimestamp.toString()}
-                              style={{
-                                  zIndex: 10 ** 7,
-                                  borderRadius: 8,
-                                  backgroundColor: "white",
-                                  boxShadow: boxShadow.SHADOW_62,
-                              }}
-                          >
-                              <Box
-                                  sx={{
-                                      "& .menu-item": {
-                                          padding: "10px",
-                                          cursor: "pointer",
-                                          color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
-                                          "&:hover": {
-                                              "&:hover": {
-                                                  color: "rgb(64, 150, 255)",
-                                              },
-                                          },
-                                      },
-                                  }}
-                              >
-                                  {/* @ts-ignore */}
-                                  <MenuItem
-                                      className="menu-item"
-                                      disabled={!selectedPackageId}
-                                      onClick={() => {
-                                          createEvent();
-                                      }}
-                                  >
-                                      {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
-                                  </MenuItem>
-                              </Box>
-                          </ContextMenu>
-                      </>
-                  );
-              }
+                return (
+                    <>
+                        {/* @ts-ignore */}
+                        <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
+                        {/* @ts-ignore */}
+                        <ContextMenu
+                            id={hourUnixTimestamp.toString()}
+                            style={{
+                                zIndex: 10 ** 7,
+                                borderRadius: 8,
+                                backgroundColor: "white",
+                                boxShadow: boxShadow.SHADOW_62,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    "& .menu-item": {
+                                        padding: "10px",
+                                        cursor: "pointer",
+                                        color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
+                                        "&:hover": {
+                                            "&:hover": {
+                                                color: "rgb(64, 150, 255)",
+                                            },
+                                        },
+                                    },
+                                }}
+                            >
+                                {/* @ts-ignore */}
+                                <MenuItem
+                                    className="menu-item"
+                                    disabled={!selectedPackageId}
+                                    onClick={() => {
+                                        createEvent();
+                                    }}
+                                >
+                                    {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
+                                </MenuItem>
+                            </Box>
+                        </ContextMenu>
+                    </>
+                );
+            }
             : ({ children }: PropsWithChildren) => children,
         [studentClass, selectedPackageId]
     );
@@ -316,7 +316,9 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         <MenuItem
                                                             className={classnames("menu-item")}
                                                             onClick={() => {
-                                                                DeleteClassDialog.setContent(() => () => <DeleteClassForm classEvent={studentClass} />);
+                                                                DeleteClassDialog.setContent(() => () => (
+                                                                    <DeleteClassForm classEvent={studentClass} timetableType={timetableType} />
+                                                                ));
                                                                 DeleteClassDialog.setOpen(true);
                                                             }}
                                                         >

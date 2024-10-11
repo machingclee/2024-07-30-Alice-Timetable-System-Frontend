@@ -60,7 +60,7 @@ export default () => {
                 height: "100%",
                 marginTop: "20px",
                 marginLeft: "30px",
-                transition: "width 0.3s ease",
+                transition: "width 0.5s ease-out",
             }}
             sx={{
                 display: "flex",
@@ -68,7 +68,7 @@ export default () => {
                 justifyContent: "space-between",
             }}
         >
-            <div style={{ transition: "opacity 0.3s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
+            <div style={{ transition: "opacity 0.4s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
                 <Spacer />
                 <Label label="LeftNavigation.tsx" offsetTop={-10} />
                 <NavButton activeNavigationRegex={pathRegex.STUDENTS} routeEnum={RouteEnum.DASHBOARD_STUDENTS} title="Students" />
@@ -81,8 +81,8 @@ export default () => {
                 <Spacer height={10} />
                 <NavButton activeNavigationRegex={pathRegex.CWB_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_CWB_TIMETABLE} title="CWB Timetable" />
             </div>
-            <div style={{ transition: "opacity 0.3s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
-                <div style={{ display: "flex", flexDirection: "row" }}>
+            <div style={{ transition: "opacity 0.4s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
+                {/* <div style={{ display: "flex", flexDirection: "row" }}>
                     <div>
                         <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Present</div>
                         <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Sus. Absence</div>
@@ -112,7 +112,7 @@ export default () => {
                             <div style={{ background: colors.purple, width: "15px", height: "15px" }} />
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <Spacer height={30} />
                 <div style={{ boxShadow: boxShadow.SHADOW_61, borderRadius: 4, padding: 10, position: "relative" }}>
                     <div style={{ display: "flex" }}>
@@ -158,11 +158,12 @@ export default () => {
                 style={{
                     position: "absolute",
                     bottom: "50%",
-                    right: "0",
+                    right: leftNavigatorCollapsed ? "0%" : "-8%",
                     width: 30,
                     height: 30,
                     cursor: "pointer",
-                    transition: "rotate 1s ease-out-in",
+                    transition: "rotate 1s ease-out-in,right 0.5s ease-out,",
+                    zIndex: 10 ** 100,
                     transform: leftNavigatorCollapsed ? "rotate(180deg)" : "rotate(0deg)",
                 }}
                 src={CollapseButton}

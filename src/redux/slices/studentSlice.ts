@@ -5,8 +5,7 @@ import { CustomResponse } from "../../axios/responseTypes";
 import apiRoutes from "../../axios/apiRoutes";
 import { processRes } from "../../utils/processRes";
 import {
-    LimitedStudentInfo,
-    StudentDetail,
+    Student,
     CreateClassRequest,
     MoveClassRequest,
     DuplicateClassRequest,
@@ -18,6 +17,9 @@ import {
     DeleteClassRequest,
     UpdateStudentPackageRequest,
     TimetableType,
+    CreateStudentRequest,
+    UpdateStudentRequest,
+    SummaryOfClassStatues,
     WeeklyTimetableClass,
 } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
@@ -25,16 +27,18 @@ import { loadingActions } from "../../utils/loadingActions";
 import { RootState } from "../store";
 import lodash from "lodash";
 import { Class, Class_status, Classroom, Course, Student_package } from "../../prismaTypes/types";
+import { act } from "react";
+import StudentDetail from "../../pages/Students/StudentDetail/StudentDetail";
 
 export type StudentSliceState = {
     students: {
         ids?: string[];
-        idToStuduent?: {
-            [key: string]: LimitedStudentInfo;
+        idToStudent?: {
+            [key: string]: Student;
         };
     };
     studentDetail: {
-        detail: StudentDetail | null;
+        detail: Student | null;
         selectedPackageId: string;
         packages: {
             ids?: string[];
@@ -46,9 +50,18 @@ export type StudentSliceState = {
             hrUnixTimestampToClass?: { [id: string]: WeeklyTimetableClass & { hide: boolean } };
         };
         dailyTimetable: {
+            timetableType: TimetableType;
             selectedDate: Date;
             hrUnixTimestamps?: string[];
             hrUnixTimestampToClass?: { [id: string]: Class & Course & Student_package & { student_id: string } & { hide: boolean } };
+            summaryOfClassStatues: {
+                present: number;
+                suspiciousAbsence: number;
+                illegitAbsence: number;
+                legitAbsence: number;
+                makeup: number;
+                changeOfClassroom: number;
+            };
         };
     };
     showAllClassesForOneStudent: boolean;
@@ -65,6 +78,15 @@ const initialState: StudentSliceState = {
         },
         dailyTimetable: {
             selectedDate: new Date(),
+            timetableType: "Prince_Edward_Timetable",
+            summaryOfClassStatues: {
+                present: 0,
+                suspiciousAbsence: 0,
+                illegitAbsence: 0,
+                legitAbsence: 0,
+                makeup: 0,
+                changeOfClassroom: 0,
+            },
         },
     },
     showAllClassesForOneStudent: true,
@@ -74,6 +96,9 @@ const studentSlice = createSlice({
     name: "student",
     initialState,
     reducers: {
+        setTimetableType: (state, action: PayloadAction<TimetableType>) => {
+            state.studentDetail.dailyTimetable.timetableType = action.payload;
+        },
         setSelectedPackageId: (state, action: PayloadAction<string>) => {
             const packageId = action.payload;
             state.studentDetail.selectedPackageId = packageId;
@@ -106,6 +131,12 @@ const studentSlice = createSlice({
                 state.studentDetail.weeklyTimetable.hrUnixTimestampToClass[hrTimestamp].hide = false;
             }
         },
+        updateStudent: (state, action: PayloadAction<{ student: Student }>) => {
+            const { student } = action.payload;
+            if (state.students.idToStudent && student.id) {
+                state.students.idToStudent[student.id] = student;
+            }
+        },
         resetStudentDetail: (state) => {
             state.studentDetail = initialState.studentDetail;
         },
@@ -122,12 +153,12 @@ const studentSlice = createSlice({
                 const students = action.payload;
                 const { idToObject, ids } = normalizeUtil.normalize({ idAttribute: "id", targetArr: students });
                 state.students.ids = ids;
-                state.students.idToStuduent = idToObject;
+                state.students.idToStudent = idToObject;
             })
             .addCase(StudentThunkAction.updateStudent.fulfilled, (state, action) => {
                 const student = action.payload.student;
-                if (state.students.idToStuduent?.[student.id]) {
-                    state.students.idToStuduent[student.id] = student;
+                if (state.students.idToStudent?.[student.id]) {
+                    state.students.idToStudent[student.id] = student;
                 }
             })
             .addCase(StudentThunkAction.getStudentDetail.fulfilled, (state, action) => {
@@ -180,8 +211,50 @@ const studentSlice = createSlice({
                 state.studentDetail.packages.idToPackage = idToObject;
             })
             .addCase(StudentThunkAction.getStudentClassesForDailyTimetable.fulfilled, (state, action) => {
-                console.log("action.payload:", action.payload);
                 const classes = action.payload.classes.map((clz) => ({ ...clz, hide: false }));
+                const timetableType = state.studentDetail.dailyTimetable.timetableType.replace("_Timetable", "");
+                let presentClasses = 0;
+                let suspiciousAbsenceClasses = 0;
+                let illegitAbsenceClasses = 0;
+                let legitAbsenceClasses = 0;
+                let makeupClasses = 0;
+                let changeOfClassroomClasses = 0;
+                classes.forEach((classDetail) => {
+                    console.log("timetableType:", timetableType);
+                    console.log("classDetail.actual_classroom:", classDetail.actual_classroom);
+                    if (classDetail.actual_classroom === timetableType)
+                        switch (classDetail.class_status) {
+                            case "PRESENT":
+                                presentClasses++;
+                                break;
+                            case "SUSPICIOUS_ABSENCE":
+                                suspiciousAbsenceClasses++;
+                                break;
+                            case "ILLEGIT_ABSENCE":
+                                illegitAbsenceClasses++;
+                                break;
+                            case "LEGIT_ABSENCE":
+                                legitAbsenceClasses++;
+                                break;
+                            case "MAKEUP":
+                                makeupClasses++;
+                                break;
+                            case "CHANGE_OF_CLASSROOM":
+                                changeOfClassroomClasses++;
+                                break;
+                        }
+                    else if (classDetail.class_status === "CHANGE_OF_CLASSROOM") {
+                        changeOfClassroomClasses++;
+                    }
+                });
+                state.studentDetail.dailyTimetable.summaryOfClassStatues = {
+                    present: presentClasses,
+                    suspiciousAbsence: suspiciousAbsenceClasses,
+                    illegitAbsence: illegitAbsenceClasses,
+                    legitAbsence: legitAbsenceClasses,
+                    makeup: makeupClasses,
+                    changeOfClassroom: changeOfClassroomClasses,
+                };
                 const { ids, idToObject } = normalizeUtil.normalize({ idAttribute: "hour_unix_timestamp", targetArr: classes });
                 state.studentDetail.dailyTimetable.hrUnixTimestamps = ids;
                 state.studentDetail.dailyTimetable.hrUnixTimestampToClass = idToObject;
@@ -197,14 +270,14 @@ const studentSlice = createSlice({
 
 export class StudentThunkAction {
     public static getStudents = createAsyncThunk("studentSlice/getStudents", async (_: undefined, api) => {
-        const res = await apiClient.get<CustomResponse<LimitedStudentInfo[]>>(apiRoutes.GET_STUDENTS);
+        const res = await apiClient.get<CustomResponse<Student[]>>(apiRoutes.GET_STUDENTS);
         return processRes(res, api);
     });
     public static updatePackage = createAsyncThunk("studentSlice/updatePackage", async (props: UpdateStudentPackageRequest, api) => {
         await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_UPDATE_PACKAGE, props);
     });
-    public static createStudent = createAsyncThunk("studentSlice/createStudent", async (props: LimitedStudentInfo, api) => {
-        const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_STUDNET, props);
+    public static createUser = createAsyncThunk("studentSlice/createStudent", async (props: CreateStudentRequest, api) => {
+        const res = await apiClient.post<CustomResponse<Student>>(apiRoutes.POST_CREATE_STUDNET, props);
         return processRes(res, api);
     });
 
@@ -218,7 +291,7 @@ export class StudentThunkAction {
         });
     public static getStudentDetail = createAsyncThunk("studentSlice/getStudentDetail", async (props: { studentId: string }, api) => {
         const { studentId } = props;
-        const res = await apiClient.get<CustomResponse<StudentDetail>>(apiRoutes.GET_STUDENT_DETAIL(studentId));
+        const res = await apiClient.get<CustomResponse<Student>>(apiRoutes.GET_STUDENT_DETAIL(studentId));
         return processRes(res, api);
     });
     public static createStudentEvent = createAsyncThunk("studentSlice/createStudentEvent", async (props: CreateClassRequest, api) => {
@@ -267,9 +340,8 @@ export class StudentThunkAction {
             }
         }
     );
-
-    public static updateStudent = createAsyncThunk("studentSlice/updateStudent", async (props: LimitedStudentInfo, api) => {
-        const res = await apiClient.put<CustomResponse<{ student: LimitedStudentInfo }>>(apiRoutes.PUT_UPDATE_STUDENT, props);
+    public static updateStudent = createAsyncThunk("studentSlice/updateStudent", async (props: Partial<UpdateStudentRequest>, api) => {
+        const res = await apiClient.put<CustomResponse<{ student: Student }>>(apiRoutes.PUT_UPDATE_STUDENT, props);
         return processRes(res, api);
     });
 
@@ -282,6 +354,10 @@ export class StudentThunkAction {
             return processRes(res, api);
         }
     );
+    // public static deleteStudent = createAsyncThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
+    //     const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.studentId));
+    //     return processRes(res, api);
+    // });
     public static deleteClass = createAsyncThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
         const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.classId));
         return processRes(res, api);

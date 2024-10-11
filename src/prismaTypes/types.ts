@@ -7002,6 +7002,8 @@ export namespace Prisma {
     id: string | null
     first_name: string | null
     last_name: string | null
+    chinese_first_name: string | null
+    chinese_last_name: string | null
     is_blocked: boolean | null
     company_email: string | null
     password_hash: string | null
@@ -7017,6 +7019,8 @@ export namespace Prisma {
     id: string | null
     first_name: string | null
     last_name: string | null
+    chinese_first_name: string | null
+    chinese_last_name: string | null
     is_blocked: boolean | null
     company_email: string | null
     password_hash: string | null
@@ -7032,6 +7036,8 @@ export namespace Prisma {
     id: number
     first_name: number
     last_name: number
+    chinese_first_name: number
+    chinese_last_name: number
     is_blocked: number
     company_email: number
     password_hash: number
@@ -7057,6 +7063,8 @@ export namespace Prisma {
     id?: true
     first_name?: true
     last_name?: true
+    chinese_first_name?: true
+    chinese_last_name?: true
     is_blocked?: true
     company_email?: true
     password_hash?: true
@@ -7072,6 +7080,8 @@ export namespace Prisma {
     id?: true
     first_name?: true
     last_name?: true
+    chinese_first_name?: true
+    chinese_last_name?: true
     is_blocked?: true
     company_email?: true
     password_hash?: true
@@ -7087,6 +7097,8 @@ export namespace Prisma {
     id?: true
     first_name?: true
     last_name?: true
+    chinese_first_name?: true
+    chinese_last_name?: true
     is_blocked?: true
     company_email?: true
     password_hash?: true
@@ -7189,6 +7201,8 @@ export namespace Prisma {
     id: string
     first_name: string
     last_name: string
+    chinese_first_name: string | null
+    chinese_last_name: string | null
     is_blocked: boolean
     company_email: string
     password_hash: string
@@ -7223,6 +7237,8 @@ export namespace Prisma {
     id?: boolean
     first_name?: boolean
     last_name?: boolean
+    chinese_first_name?: boolean
+    chinese_last_name?: boolean
     is_blocked?: boolean
     company_email?: boolean
     password_hash?: boolean
@@ -7238,6 +7254,8 @@ export namespace Prisma {
     id?: boolean
     first_name?: boolean
     last_name?: boolean
+    chinese_first_name?: boolean
+    chinese_last_name?: boolean
     is_blocked?: boolean
     company_email?: boolean
     password_hash?: boolean
@@ -7253,6 +7271,8 @@ export namespace Prisma {
     id?: boolean
     first_name?: boolean
     last_name?: boolean
+    chinese_first_name?: boolean
+    chinese_last_name?: boolean
     is_blocked?: boolean
     company_email?: boolean
     password_hash?: boolean
@@ -7272,6 +7292,8 @@ export namespace Prisma {
       id: string
       first_name: string
       last_name: string
+      chinese_first_name: string | null
+      chinese_last_name: string | null
       is_blocked: boolean
       company_email: string
       password_hash: string
@@ -7677,6 +7699,8 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'String'>
     readonly first_name: FieldRef<"User", 'String'>
     readonly last_name: FieldRef<"User", 'String'>
+    readonly chinese_first_name: FieldRef<"User", 'String'>
+    readonly chinese_last_name: FieldRef<"User", 'String'>
     readonly is_blocked: FieldRef<"User", 'Boolean'>
     readonly company_email: FieldRef<"User", 'String'>
     readonly password_hash: FieldRef<"User", 'String'>
@@ -12181,6 +12205,8 @@ export namespace Prisma {
     id: 'id',
     first_name: 'first_name',
     last_name: 'last_name',
+    chinese_first_name: 'chinese_first_name',
+    chinese_last_name: 'chinese_last_name',
     is_blocked: 'is_blocked',
     company_email: 'company_email',
     password_hash: 'password_hash',
@@ -12772,6 +12798,8 @@ export namespace Prisma {
     id?: UuidFilter<"User"> | string
     first_name?: StringFilter<"User"> | string
     last_name?: StringFilter<"User"> | string
+    chinese_first_name?: StringNullableFilter<"User"> | string | null
+    chinese_last_name?: StringNullableFilter<"User"> | string | null
     is_blocked?: BoolFilter<"User"> | boolean
     company_email?: StringFilter<"User"> | string
     password_hash?: StringFilter<"User"> | string
@@ -12787,6 +12815,8 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_first_name?: SortOrderInput | SortOrder
+    chinese_last_name?: SortOrderInput | SortOrder
     is_blocked?: SortOrder
     company_email?: SortOrder
     password_hash?: SortOrder
@@ -12806,6 +12836,8 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     first_name?: StringFilter<"User"> | string
     last_name?: StringFilter<"User"> | string
+    chinese_first_name?: StringNullableFilter<"User"> | string | null
+    chinese_last_name?: StringNullableFilter<"User"> | string | null
     is_blocked?: BoolFilter<"User"> | boolean
     password_hash?: StringFilter<"User"> | string
     avatar_file_url?: StringFilter<"User"> | string
@@ -12820,6 +12852,8 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_first_name?: SortOrderInput | SortOrder
+    chinese_last_name?: SortOrderInput | SortOrder
     is_blocked?: SortOrder
     company_email?: SortOrder
     password_hash?: SortOrder
@@ -12843,6 +12877,8 @@ export namespace Prisma {
     id?: UuidWithAggregatesFilter<"User"> | string
     first_name?: StringWithAggregatesFilter<"User"> | string
     last_name?: StringWithAggregatesFilter<"User"> | string
+    chinese_first_name?: StringNullableWithAggregatesFilter<"User"> | string | null
+    chinese_last_name?: StringNullableWithAggregatesFilter<"User"> | string | null
     is_blocked?: BoolWithAggregatesFilter<"User"> | boolean
     company_email?: StringWithAggregatesFilter<"User"> | string
     password_hash?: StringWithAggregatesFilter<"User"> | string
@@ -13536,6 +13572,8 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     is_blocked: boolean
     company_email: string
     password_hash: string
@@ -13551,6 +13589,8 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     is_blocked: boolean
     company_email: string
     password_hash: string
@@ -13566,6 +13606,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     is_blocked?: BoolFieldUpdateOperationsInput | boolean
     company_email?: StringFieldUpdateOperationsInput | string
     password_hash?: StringFieldUpdateOperationsInput | string
@@ -13581,6 +13623,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     is_blocked?: BoolFieldUpdateOperationsInput | boolean
     company_email?: StringFieldUpdateOperationsInput | string
     password_hash?: StringFieldUpdateOperationsInput | string
@@ -13596,6 +13640,8 @@ export namespace Prisma {
     id?: string
     first_name: string
     last_name: string
+    chinese_first_name?: string | null
+    chinese_last_name?: string | null
     is_blocked: boolean
     company_email: string
     password_hash: string
@@ -13611,6 +13657,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     is_blocked?: BoolFieldUpdateOperationsInput | boolean
     company_email?: StringFieldUpdateOperationsInput | string
     password_hash?: StringFieldUpdateOperationsInput | string
@@ -13626,6 +13674,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     first_name?: StringFieldUpdateOperationsInput | string
     last_name?: StringFieldUpdateOperationsInput | string
+    chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     is_blocked?: BoolFieldUpdateOperationsInput | boolean
     company_email?: StringFieldUpdateOperationsInput | string
     password_hash?: StringFieldUpdateOperationsInput | string
@@ -14428,6 +14478,8 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_first_name?: SortOrder
+    chinese_last_name?: SortOrder
     is_blocked?: SortOrder
     company_email?: SortOrder
     password_hash?: SortOrder
@@ -14447,6 +14499,8 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_first_name?: SortOrder
+    chinese_last_name?: SortOrder
     is_blocked?: SortOrder
     company_email?: SortOrder
     password_hash?: SortOrder
@@ -14462,6 +14516,8 @@ export namespace Prisma {
     id?: SortOrder
     first_name?: SortOrder
     last_name?: SortOrder
+    chinese_first_name?: SortOrder
+    chinese_last_name?: SortOrder
     is_blocked?: SortOrder
     company_email?: SortOrder
     password_hash?: SortOrder

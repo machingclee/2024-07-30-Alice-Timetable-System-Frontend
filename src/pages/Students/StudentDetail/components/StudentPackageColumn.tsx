@@ -14,9 +14,12 @@ import StudentPackage from "./StudentPackage";
 import Label from "../../../../components/Label";
 import { useDispatch } from "react-redux";
 import studentSlice from "../../../../redux/slices/studentSlice";
+import appSlice from "../../../../redux/slices/appSlice";
+import CollapseButton from "../../../../../src/assets/collapse-button.png";
 
 export default (props: { packagesOffsetY: number }) => {
     const { packagesOffsetY } = props;
+    const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
     const packages = useAppSelector((s) => s.student.studentDetail.packages);
     const dispatch = useDispatch();
     const { studentId } = useParams<{ studentId: string }>();
@@ -28,8 +31,25 @@ export default (props: { packagesOffsetY: number }) => {
     };
 
     return (
-        <div style={{ width: "280px", display: "flex", flexDirection: "column" }}>
-            <div style={{ height: "calc(100vh - 40px)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        <div
+            style={{
+                width: rightColumnCollapsed ? "0px" : "300px",
+                display: "flex",
+                flexDirection: "column",
+                position: "relative",
+                transition: "width 0.3s ease-in-out",
+            }}
+        >
+            <div
+                style={{
+                    height: "calc(100vh - 40px)",
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    transition: "opacity 0.5s eas-in-out",
+                    opacity: rightColumnCollapsed ? 0 : 1,
+                }}
+            >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <Label label="StudentPackageColumn.tsx" offsetTop={-15} offsetLeft={20} />
                     <Title>Student Packages</Title>
@@ -94,6 +114,23 @@ export default (props: { packagesOffsetY: number }) => {
                     </div>
                 </CustomScrollbarContainer>
             </div>
+            <img
+                onClick={() => {
+                    dispatch(appSlice.actions.setRightColumnCollapsed(!rightColumnCollapsed));
+                }}
+                style={{
+                    position: "absolute",
+                    bottom: "50%",
+                    left: rightColumnCollapsed ? "0%" : "-13%",
+                    width: 30,
+                    height: 30,
+                    cursor: "pointer",
+                    transition: "left 0.5s ease-out, transform 1s ease-out",
+                    zIndex: 10 ** 100,
+                    transform: rightColumnCollapsed ? "rotate(0deg)" : "rotate(180deg)",
+                }}
+                src={CollapseButton}
+            />
         </div>
     );
 };

@@ -107,6 +107,9 @@ export default (props: { date?: Date }) => {
                 "& .draggable-container:nth-child(n+1)": {
                     borderTop: "2px dashed rgba(0,0,0,0.15)",
                 },
+                "& .day-column": {
+                    flex: 1,
+                },
                 "& .day-column:last-child": {
                     "& .draggable-container": {
                         borderRight: "2px solid rgba(0, 0, 0, 0.1)",

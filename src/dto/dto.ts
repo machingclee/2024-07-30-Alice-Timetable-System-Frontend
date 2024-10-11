@@ -16,9 +16,25 @@ export type TokenPayload = {
 };
 
 export type CreateStudentRequest = {
+    first_name: string;
+    last_name: string;
+    chinese_first_name: string;
+    chinese_last_name: string;
+    gender: Gender;
+    birthdate: number;
+    parent_email: string;
+    school_name: string;
+    grade: string;
+    phone_number: string;
+    wechat_id?: string;
+};
+
+export type UpdateStudentRequest = {
     id: string;
     first_name: string;
     last_name: string;
+    chinese_first_name: string;
+    chinese_last_name: string;
     gender: Gender;
     birthdate: number;
     parent_email: string;
@@ -29,6 +45,8 @@ export type CreateStudentRequest = {
 };
 
 export type CreateUserRequest = {
+    chinese_first_name: string;
+    chinese_last_name: string;
     first_name: string;
     last_name: string;
     company_email: string;
@@ -41,6 +59,8 @@ export type CreateUserRequest = {
 export type User = {
     first_name: string;
     last_name: string;
+    chinese_first_name: string;
+    chinese_last_name: string;
     company_email: string;
     mobile_number: string;
     role_in_system: RoleInSystem;
@@ -48,30 +68,19 @@ export type User = {
     id: string;
 };
 
-export type LimitedStudentInfo = {
+export type Student = {
     id: string;
     first_name: string;
     last_name: string;
-    // gender: Gender;
-    // birthdate: number;
-    // parent_email: string;
-    // school_name: string;
-    // grade: string;
-    // phone_number?: string;
-    // wechat_id?: string;
-};
-
-export type StudentDetail = {
-    first_name: string;
-    last_name: string;
-    id: string;
+    chinese_first_name: string;
+    chinese_last_name: string;
     gender: Gender;
     birthdate: number;
+    parent_email: string;
     school_name: string;
     grade: string;
-    phone_number: string;
-    wechat_id: string;
-    parent_email: string;
+    phone_number?: string;
+    wechat_id?: string;
 };
 
 export type CreateCourseRequest = {
@@ -152,9 +161,17 @@ export type UpdateStudentPackageRequest = {
     student_id: string;
 };
 
-export type Augmented_Student_package = Student_package & { consumed_minutes: { count: number } };
-export type Augmented_Class = Class & { course_name: string, student_id: string };
+export type Augmented_Student_package = Student_package & { scheduled_minutes: { count: number } & { consumed_minutes: { count: number } } };
 
+export type Augmented_Class = Class & { course_name: string; student_id: string };
 
 export type WeeklyTimetableClass = Omit<Student_package, "id"> & { student_package_id: number } &
     Class & Omit<Course, "id"> & { course_id: number }
+
+export type SummaryOfClassStatues = {
+    present: number;
+    illegitAbsence: number;
+    legitAbsence: number;
+    makeup: number;
+    changeOfClassroom: number;
+};
