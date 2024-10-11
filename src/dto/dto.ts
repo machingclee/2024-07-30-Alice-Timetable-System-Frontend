@@ -164,3 +164,11 @@ export type UpdateStudentPackageRequest = {
 export type Augmented_Student_package = Student_package & { scheduled_minutes: { count: number } & { consumed_minutes: { count: number } } };
 
 export type Augmented_Class = Class & { course_name: string; student_id: string };
+
+export type SummaryOfClassStatues = {
+    present: number;
+    illegitAbsence: number;
+    legitAbsence: number;
+    makeup: number;
+    changeOfClassroom: number;
+};

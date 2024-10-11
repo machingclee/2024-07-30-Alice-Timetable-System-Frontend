@@ -11,15 +11,17 @@ import ViewClassDialog from "../../components/ViewClassDialog";
 import DeleteClassDialog from "../../components/DeleteClassDialog";
 import AddClassEventDialog from "../../components/AddClassEventDialog";
 import { useEffect } from "react";
-import { StudentThunkAction } from "../../redux/slices/studentSlice";
+import studentSlice, { StudentThunkAction } from "../../redux/slices/studentSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { CourseThunkAction } from "../../redux/slices/courseSlice";
+import appSlice from "../../redux/slices/appSlice";
 
 export default () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
+        dispatch(studentSlice.actions.setTimetableType("Causeway_Bay_Timetable"));
         dispatch(CourseThunkAction.getCourses());
     }, []);
     return (
@@ -40,11 +42,11 @@ export default () => {
                         Causeway Bay Daily Timetable
                     </SectionTitle>
                     <div style={{ height: "calc(100vh - 70px)", overflow: "hidden" }}>
-                        <DailyTimetable timetableType="Causeway_Bay_Timetable" />
+                        <DailyTimetable />
                     </div>
                 </div>
                 <Spacer />
-                <RightColumn timetableType="Causeway_Bay_Timetable" />
+                <RightColumn />
             </div>
             {/* <MoveConfirmationDialog.render /> */}
             <DuplicateClassDialog.render />

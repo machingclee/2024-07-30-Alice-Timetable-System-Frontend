@@ -13,22 +13,25 @@ import dayjs, { Dayjs } from "dayjs";
 import studentSlice, { StudentThunkAction } from "../redux/slices/studentSlice";
 import timeUtil from "../utils/timeUtil";
 import { AppDispatch } from "../redux/store";
-import { Box } from "@mui/material";
-import { FaAngleDoubleRight } from "react-icons/fa";
 import { TimetableType } from "../dto/dto";
 import appSlice from "../redux/slices/appSlice";
 import CollapseButton from "../assets/collapse-button.png";
+import { FaFilter } from "react-icons/fa";
+import Checkbox from "@mui/material/Checkbox";
+import colors from "../constant/colors";
 
-export default ({ timetableType }: { timetableType: TimetableType }) => {
+export default () => {
+    const timetableType = useAppSelector((s) => s.app.timetableType);
     const selectedDate = useAppSelector((s) => s.student.studentDetail.dailyTimetable.selectedDate);
     const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
+    const summaryOfClassStatues = useAppSelector((s) => s.student.studentDetail.dailyTimetable.summaryOfClassStatues);
     const dispatch = useDispatch<AppDispatch>();
 
     const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>["mode"]) => {
-        console.log(value.format("YYYY-MM-DD"), mode);
-        console.log("mode:", mode);
         dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: value.toDate() }));
     };
+
+    const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
     return (
         <div style={{ width: rightColumnCollapsed ? "0px" : "300px", marginRight: "50px", transition: "width 0.3s ease-in-out" }}>
@@ -63,34 +66,82 @@ export default ({ timetableType }: { timetableType: TimetableType }) => {
                 />
                 <Spacer height={5} />
                 <Sep />
-                <Spacer />
-                <Box
-                    sx={{
-                        flex: 1,
-                        "& td": {
-                            "& div": {
-                                display: "flex",
-                                alignItems: "center",
-                                width: "100%",
-                                height: "100%",
-                            },
-                        },
+                <Spacer height={60} />
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        marginBottom: "30px",
+                        marginLeft: "10px",
+                        marginTop: "20px",
+                        fontSize: 19,
+                        fontWeight: "bold",
                     }}
                 >
-                    {/* <table>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div>
-                                        <FaAngleDoubleRight />
-                                        <Spacer width={5} /> Filter
-                                    </div>
-                                </td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table> */}
-                </Box>
+                    <FaFilter />
+                    <Spacer width={5} /> Filter By Class Status
+                </div>
+                <div style={{ display: "flex", justifyContent: "flex-start", alignContent: "center", gap: "15px" }}>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            <Checkbox {...label} />
+                            Present
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            <Checkbox {...label} />
+                            Suspicious Absence
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            <Checkbox {...label} />
+                            Illegit Absence
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            <Checkbox {...label} />
+                            Legit Absence
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            <Checkbox {...label} />
+                            Makeup
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            <Checkbox {...label} />
+                            Change of Classroom
+                        </div>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "9px", marginTop: "12px" }}>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.blue, width: "15px", height: "15px" }} />
+                        </div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.amber, width: "15px", height: "15px" }} />
+                        </div>
+
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.red, width: "15px", height: "15px" }} />
+                        </div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.grey, width: "15px", height: "15px" }} />
+                        </div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.green, width: "15px", height: "15px" }} />
+                        </div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "10px" }}>
+                            <div style={{ background: colors.purple, width: "15px", height: "15px" }} />
+                        </div>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "9px", marginTop: "12px" }}>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.present})</div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.suspiciousAbsence})</div>
+
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.illegitAbsence})</div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.legitAbsence})</div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.makeup})</div>
+                        <div style={{ height: "32px", display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "10px" }}>
+                            ({summaryOfClassStatues.changeOfClassroom})
+                        </div>
+                    </div>
+                </div>
             </div>
             <img
                 onClick={() => {
@@ -110,6 +161,5 @@ export default ({ timetableType }: { timetableType: TimetableType }) => {
                 src={CollapseButton}
             />
         </div>
-        // </LocalizationProvider>
     );
 };

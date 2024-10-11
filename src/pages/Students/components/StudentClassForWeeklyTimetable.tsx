@@ -19,7 +19,6 @@ import colors from "../../../constant/colors";
 import Label from "../../../components/Label";
 import ViewClassDialog from "../../../components/ViewClassDialog";
 import ViewClassForm from "../../../components/ViewClassForm";
-import { TimetableType } from "../../../dto/dto";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number }) => {
     const dispatch = useAppDispatch();

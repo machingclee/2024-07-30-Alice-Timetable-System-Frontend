@@ -19,12 +19,15 @@ import {
     TimetableType,
     CreateStudentRequest,
     UpdateStudentRequest,
+    SummaryOfClassStatues,
 } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
 import { RootState } from "../store";
 import lodash from "lodash";
 import { Class, Class_status, Classroom, Course, Student_package } from "../../prismaTypes/types";
+import { act } from "react";
+import StudentDetail from "../../pages/Students/StudentDetail/StudentDetail";
 
 export type StudentSliceState = {
     students: {
@@ -46,9 +49,18 @@ export type StudentSliceState = {
             hrUnixTimestampToClass?: { [id: string]: Class & Course & Student_package & { hide: boolean } };
         };
         dailyTimetable: {
+            timetableType: TimetableType;
             selectedDate: Date;
             hrUnixTimestamps?: string[];
             hrUnixTimestampToClass?: { [id: string]: Class & Course & Student_package & { student_id: string } & { hide: boolean } };
+            summaryOfClassStatues: {
+                present: number;
+                suspiciousAbsence: number;
+                illegitAbsence: number;
+                legitAbsence: number;
+                makeup: number;
+                changeOfClassroom: number;
+            };
         };
     };
     showAllClassesForOneStudent: boolean;
@@ -65,6 +77,15 @@ const initialState: StudentSliceState = {
         },
         dailyTimetable: {
             selectedDate: new Date(),
+            timetableType: "Prince_Edward_Timetable",
+            summaryOfClassStatues: {
+                present: 0,
+                suspiciousAbsence: 0,
+                illegitAbsence: 0,
+                legitAbsence: 0,
+                makeup: 0,
+                changeOfClassroom: 0,
+            },
         },
     },
     showAllClassesForOneStudent: true,
@@ -74,6 +95,9 @@ const studentSlice = createSlice({
     name: "student",
     initialState,
     reducers: {
+        setTimetableType: (state, action: PayloadAction<TimetableType>) => {
+            state.studentDetail.dailyTimetable.timetableType = action.payload;
+        },
         setSelectedPackageId: (state, action: PayloadAction<string>) => {
             const packageId = action.payload;
             state.studentDetail.selectedPackageId = packageId;
@@ -215,6 +239,50 @@ const studentSlice = createSlice({
             .addCase(StudentThunkAction.getStudentClassesForDailyTimetable.fulfilled, (state, action) => {
                 console.log("action.payload:", action.payload);
                 const classes = action.payload.classes.map((clz) => ({ ...clz, hide: false }));
+                const timetableType = state.studentDetail.dailyTimetable.timetableType.replace("_Timetable", "");
+                let presentClasses = 0;
+                let suspiciousAbsenceClasses = 0;
+                let illegitAbsenceClasses = 0;
+                let legitAbsenceClasses = 0;
+                let makeupClasses = 0;
+                let changeOfClassroomClasses = 0;
+                console.log("classes:", classes);
+                classes.forEach((classDetail) => {
+                    console.log("timetableType:", timetableType);
+                    console.log("classDetail.actual_classroom:", classDetail.actual_classroom);
+                    if (classDetail.actual_classroom === timetableType)
+                        switch (classDetail.class_status) {
+                            case "PRESENT":
+                                presentClasses++;
+                                break;
+                            case "SUSPICIOUS_ABSENCE":
+                                suspiciousAbsenceClasses++;
+                                break;
+                            case "ILLEGIT_ABSENCE":
+                                illegitAbsenceClasses++;
+                                break;
+                            case "LEGIT_ABSENCE":
+                                legitAbsenceClasses++;
+                                break;
+                            case "MAKEUP":
+                                makeupClasses++;
+                                break;
+                            case "CHANGE_OF_CLASSROOM":
+                                changeOfClassroomClasses++;
+                                break;
+                        }
+                    else if (classDetail.class_status === "CHANGE_OF_CLASSROOM") {
+                        changeOfClassroomClasses++;
+                    }
+                });
+                state.studentDetail.dailyTimetable.summaryOfClassStatues = {
+                    present: presentClasses,
+                    suspiciousAbsence: suspiciousAbsenceClasses,
+                    illegitAbsence: illegitAbsenceClasses,
+                    legitAbsence: legitAbsenceClasses,
+                    makeup: makeupClasses,
+                    changeOfClassroom: changeOfClassroomClasses,
+                };
                 const { ids, idToObject } = normalizeUtil.normalize({ idAttribute: "hour_unix_timestamp", targetArr: classes });
                 state.studentDetail.dailyTimetable.hrUnixTimestamps = ids;
                 state.studentDetail.dailyTimetable.hrUnixTimestampToClass = idToObject;

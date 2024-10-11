@@ -82,7 +82,7 @@ export default () => {
                 <NavButton activeNavigationRegex={pathRegex.CWB_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_CWB_TIMETABLE} title="CWB Timetable" />
             </div>
             <div style={{ transition: "opacity 0.4s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
-                <div style={{ display: "flex", flexDirection: "row" }}>
+                {/* <div style={{ display: "flex", flexDirection: "row" }}>
                     <div>
                         <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Present</div>
                         <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Sus. Absence</div>
@@ -112,7 +112,7 @@ export default () => {
                             <div style={{ background: colors.purple, width: "15px", height: "15px" }} />
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <Spacer height={30} />
                 <div style={{ boxShadow: boxShadow.SHADOW_61, borderRadius: 4, padding: 10, position: "relative" }}>
                     <div style={{ display: "flex" }}>

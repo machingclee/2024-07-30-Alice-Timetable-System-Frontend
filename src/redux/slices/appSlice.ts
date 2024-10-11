@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { TimetableType } from "../../dto/dto";
 
 export type AppSliceState = {
     loading: boolean;
