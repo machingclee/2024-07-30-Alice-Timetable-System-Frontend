@@ -314,6 +314,10 @@ export class StudentThunkAction {
             return processRes(res, api);
         }
     );
+    // public static deleteStudent = createAsyncThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
+    //     const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.studentId));
+    //     return processRes(res, api);
+    // });
     public static deleteClass = createAsyncThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
         const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.classId));
         return processRes(res, api);

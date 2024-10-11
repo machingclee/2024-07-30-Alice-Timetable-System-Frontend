@@ -16,9 +16,12 @@ import { AppDispatch } from "../redux/store";
 import { Box } from "@mui/material";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import { TimetableType } from "../dto/dto";
+import appSlice from "../redux/slices/appSlice";
+import CollapseButton from "../assets/collapse-button.png";
 
 export default ({ timetableType }: { timetableType: TimetableType }) => {
     const selectedDate = useAppSelector((s) => s.student.studentDetail.dailyTimetable.selectedDate);
+    const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
     const dispatch = useDispatch<AppDispatch>();
 
     const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>["mode"]) => {
@@ -28,8 +31,17 @@ export default ({ timetableType }: { timetableType: TimetableType }) => {
     };
 
     return (
-        <div style={{ width: "300px", marginRight: "50px" }}>
-            <div style={{ height: "calc(100vh - 40px)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        <div style={{ width: rightColumnCollapsed ? "0px" : "300px", marginRight: "50px", transition: "width 0.3s ease-in-out" }}>
+            <div
+                style={{
+                    height: "calc(100vh - 40px)",
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    transition: "opacity 0.3s ease-in-out",
+                    opacity: rightColumnCollapsed ? 0 : 1,
+                }}
+            >
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <Label label="RightColumn.tsx" offsetTop={0} offsetLeft={-70} />
                     <Title>Calendar</Title>
@@ -65,7 +77,7 @@ export default ({ timetableType }: { timetableType: TimetableType }) => {
                         },
                     }}
                 >
-                    <table>
+                    {/* <table>
                         <tbody>
                             <tr>
                                 <td>
@@ -77,10 +89,26 @@ export default ({ timetableType }: { timetableType: TimetableType }) => {
                                 <td></td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table> */}
                 </Box>
-                {/* Calendar */}
             </div>
+            <img
+                onClick={() => {
+                    dispatch(appSlice.actions.setRightColumnCollapsed(!rightColumnCollapsed));
+                }}
+                style={{
+                    position: "absolute",
+                    bottom: "50%",
+                    right: rightColumnCollapsed ? "0%" : "25%",
+                    width: 30,
+                    height: 30,
+                    cursor: "pointer",
+                    transition: "right 0.5s ease-out, transform 1s ease-out",
+                    zIndex: 10 ** 100,
+                    transform: rightColumnCollapsed ? "rotate(0deg)" : "rotate(180deg)",
+                }}
+                src={CollapseButton}
+            />
         </div>
         // </LocalizationProvider>
     );

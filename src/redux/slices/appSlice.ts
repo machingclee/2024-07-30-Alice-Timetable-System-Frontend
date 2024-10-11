@@ -7,6 +7,7 @@ export type AppSliceState = {
     timetableAction: TimetableAction;
     createClassPopperFromHourTimestampOnShow: string;
     leftNavigatorCollapsed: boolean;
+    rightColumnCollapsed: boolean;
 };
 
 type TimetableAction = "Create Class" | "Move Class" | "Resize Class" | null;
@@ -17,12 +18,16 @@ const initialState: AppSliceState = {
     timetableAction: null,
     createClassPopperFromHourTimestampOnShow: "",
     leftNavigatorCollapsed: false,
+    rightColumnCollapsed: false,
 };
 
 const appSlice = createSlice({
     name: "app",
     initialState,
     reducers: {
+        setRightColumnCollapsed: (state, action: PayloadAction<boolean>) => {
+            state.rightColumnCollapsed = action.payload;
+        },
         setleftNavigatorCollapsed: (state, action: PayloadAction<boolean>) => {
             state.leftNavigatorCollapsed = action.payload;
         },

@@ -11,7 +11,6 @@ import { StudentThunkAction } from "../../redux/slices/studentSlice";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import EditStudentDialog from "./components/EditStudentDialog";
-import DeleteStudentDialog from "./components/DeleteStudentDialog";
 
 export default () => {
     const dispatch = useAppDispatch();
@@ -80,7 +79,6 @@ export default () => {
 
             <AddStudentDialog.render />
             <EditStudentDialog.render />
-            <DeleteStudentDialog.render />
         </div>
     );
 };

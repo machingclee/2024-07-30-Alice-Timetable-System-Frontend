@@ -18,11 +18,15 @@ import DeleteClassDialog from "../../../components/DeleteClassDialog";
 import AddPaymentDetailDialog from "./components/AddPaymentDetailDialog";
 import ViewClassDialog from "../../../components/ViewClassDialog";
 import EditPackageDialog from "./components/EditPackageDialog";
+import appSlice from "../../../redux/slices/appSlice";
+import CollapseButton from "../../../../src/assets/collapse-button.png";
 
 export default () => {
     const { studentId } = useParams<{ studentId: string }>();
+    const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
 
     const studentDetail = useAppSelector((s) => s.student.studentDetail.detail);
     const { first_name, last_name } = studentDetail || {};
@@ -69,7 +73,7 @@ export default () => {
                         <WeeklyTimetable />
                     </div>
                 </div>
-                <Spacer />
+                <Spacer style={{ position: "relative" }} width={rightColumnCollapsed ? 0 : 60} />
                 <StudentPackageColumn packagesOffsetY={200} />
             </div>
 

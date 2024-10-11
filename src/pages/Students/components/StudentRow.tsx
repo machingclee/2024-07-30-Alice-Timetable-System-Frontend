@@ -9,8 +9,6 @@ import Spacer from "../../../components/Spacer";
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu";
 import EditStudentDialog from "./EditStudentDialog";
 import EditStudentForm from "./EditStudentForm";
-import DeleteStudentForm from "./DeleteStudentForm";
-import DeleteStudentDialog from "./DeleteStudentDialog";
 
 export default (props: { id: string }) => {
     const { id } = props;
@@ -71,7 +69,7 @@ export default (props: { id: string }) => {
                                 <Label label="StudentRow.tsx" offsetTop={-20} />
                                 <tr>
                                     <td>Chinese Name:</td>
-                                    <td>{`${chinese_first_name} ${chinese_last_name}`}</td>
+                                    <td>{`${chinese_first_name}${chinese_last_name}`}</td>
                                 </tr>
                                 <tr>
                                     <td>English Name:</td>
@@ -156,7 +154,7 @@ export default (props: { id: string }) => {
                         Edit Student
                     </MenuItem>
                     {/* @ts-ignore */}
-                    <MenuItem
+                    {/* <MenuItem
                         className="menu-item"
                         onClick={() => {
                             DeleteStudentDialog.setContent(() => () => <DeleteStudentForm studentId={student.id} />);
@@ -164,7 +162,7 @@ export default (props: { id: string }) => {
                         }}
                     >
                         <span style={{ color: "red" }}>Delete Student</span>
-                    </MenuItem>
+                    </MenuItem> */}
                 </Box>
             </ContextMenu>
         </div>
