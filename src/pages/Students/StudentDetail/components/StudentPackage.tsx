@@ -22,8 +22,9 @@ export default (props: { packageId: string }) => {
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { studentId } = useParams<{ studentId: string }>();
     const package_ = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[packageId]);
-    const { course_id, min, official_end_date, expiry_date, start_date, num_of_classes, consumed_minutes, paid_at, default_classroom } = package_ || {};
-    const assignedClasses = Math.floor(((consumed_minutes?.count || 0) / (package_?.min || 1)) * 10) / 10;
+    const { course_id, min, official_end_date, expiry_date, start_date, num_of_classes, scheduled_minutes, paid_at, default_classroom, consumed_minutes } = package_ || {};
+    const assignedClasses = Math.floor(((scheduled_minutes?.count || 0) / (package_?.min || 1)) * 10) / 10;
+    const finishedClasses = Math.floor(((consumed_minutes?.count || 0) / (package_?.min || 1)) * 10) / 10;
     if (!course_id) {
         return null;
     }
@@ -150,8 +151,12 @@ export default (props: { packageId: string }) => {
                                 <td>{dayjs(expiry_date).format("YYYY-MM-DD")}</td>
                             </tr>
                             <tr>
-                                <td>Classes</td>
+                                <td>Scheduled Classes</td>
                                 <td>{`${assignedClasses}/${num_of_classes}`}</td>
+                            </tr>
+                            <tr>
+                                <td>Consumed Classes</td>
+                                <td>{`${finishedClasses}/${num_of_classes}`}</td>
                             </tr>
                             <tr>
                                 <td>Payment Status</td>

@@ -158,11 +158,12 @@ export default () => {
                 style={{
                     position: "absolute",
                     bottom: "50%",
-                    right: "0",
+                    right: "-8%",
                     width: 30,
                     height: 30,
                     cursor: "pointer",
                     transition: "rotate 1s ease-out-in",
+                    zIndex: 10 ** 100,
                     transform: leftNavigatorCollapsed ? "rotate(180deg)" : "rotate(0deg)",
                 }}
                 src={CollapseButton}

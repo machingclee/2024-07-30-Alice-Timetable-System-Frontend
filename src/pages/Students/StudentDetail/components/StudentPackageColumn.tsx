@@ -28,7 +28,7 @@ export default (props: { packagesOffsetY: number }) => {
     };
 
     return (
-        <div style={{ width: "280px", display: "flex", flexDirection: "column" }}>
+        <div style={{ width: "290px", display: "flex", flexDirection: "column" }}>
             <div style={{ height: "calc(100vh - 40px)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <Label label="StudentPackageColumn.tsx" offsetTop={-15} offsetLeft={20} />
