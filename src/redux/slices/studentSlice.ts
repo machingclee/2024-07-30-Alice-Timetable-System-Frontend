@@ -106,6 +106,9 @@ const studentSlice = createSlice({
     name: "student",
     initialState,
     reducers: {
+        setFilter: (state, action: PayloadAction<FilterToGetClassesForDailyTimetable>) => {
+            state.studentDetail.dailyTimetable.filter = action.payload;
+        },
         setTimetableType: (state, action: PayloadAction<TimetableType>) => {
             state.studentDetail.dailyTimetable.timetableType = action.payload;
         },
@@ -220,7 +223,7 @@ const studentSlice = createSlice({
                 state.studentDetail.packages.ids = ids.sort((id1, id2) => idToObject[id1].start_date - idToObject[id2].start_date);
                 state.studentDetail.packages.idToPackage = idToObject;
             })
-            .addCase(StudentThunkAction.getStudentClassesForDailyTimetable.fulfilled, (state, action) => {
+            .addCase(StudentThunkAction.getFilteredStudentClassesForDailyTimetable.fulfilled, (state, action) => {
                 const classes = action.payload.classes.map((clz) => ({ ...clz, hide: false }));
                 const timetableType = state.studentDetail.dailyTimetable.timetableType.replace("_Timetable", "");
                 let presentClasses = 0;
@@ -352,15 +355,6 @@ export class StudentThunkAction {
         return processRes(res, api);
     });
 
-    public static getStudentClassesForDailyTimetable = createAsyncThunk(
-        "studentSlice/getStudentClassesForDailyTimetable",
-        async (props: { dateUnixTimestamp: string; timetableType: TimetableType }, api) => {
-            const res = await apiClient.get<CustomResponse<{ classes: (Student_package & Class & Course)[] }>>(
-                apiRoutes.GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE(props.dateUnixTimestamp, props.timetableType)
-            );
-            return processRes(res, api);
-        }
-    );
     public static getFilteredStudentClassesForDailyTimetable = createAsyncThunk(
         "studentSlice/getFilteredStudentClassesForDailyTimetable",
         async (props: { dateUnixTimestamp: string; timetableType: TimetableType; filter: FilterToGetClassesForDailyTimetable }, api) => {
