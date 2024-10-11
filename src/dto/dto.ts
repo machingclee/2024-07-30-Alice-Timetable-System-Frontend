@@ -127,7 +127,7 @@ export type UpdateClassRequest = {
     reason_for_absence: string;
     remark: string;
     actual_classroom: Classroom;
-    student_package_id: string;
+    student_package_id: number;
 };
 
 export type CreateStudentPackageRequest = {
@@ -154,3 +154,7 @@ export type UpdateStudentPackageRequest = {
 
 export type Augmented_Student_package = Student_package & { consumed_minutes: { count: number } };
 export type Augmented_Class = Class & { course_name: string, student_id: string };
+
+
+export type WeeklyTimetableClass = Omit<Student_package, "id"> & { student_package_id: number } &
+    Class & Omit<Course, "id"> & { course_id: number }

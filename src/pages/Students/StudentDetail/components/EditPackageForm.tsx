@@ -12,9 +12,11 @@ import { UpdateStudentPackageRequest } from "../../../../dto/dto";
 import { CourseThunkAction } from "../../../../redux/slices/courseSlice";
 import range from "../../../../utils/range";
 import { Classroom } from "../../../../prismaTypes/types";
+import { useParams } from "react-router-dom";
 
 export default (props: { packageId: string }) => {
     const { packageId } = props;
+    const { studentId } = useParams<{ studentId: string }>();
     const currentPackage = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[packageId]);
 
     const [error, _] = useState<Partial<UpdateStudentPackageRequest>>({});
@@ -40,7 +42,8 @@ export default (props: { packageId: string }) => {
             expiry_date: currentPackage.expiry_date,
         };
         EditPackageDialog.setOpen(false);
-        await dispatch(StudentThunkAction.updatePackage(reqBody));
+        await dispatch(StudentThunkAction.updatePackage(reqBody)).unwrap();
+        await dispatch(StudentThunkAction.getStudentPackages({ studentId: studentId || "" }))
     };
 
     useEffect(() => {
