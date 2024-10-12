@@ -114,8 +114,6 @@ export type CreateClassRequest = {
     actual_classroom: Classroom;
 };
 
-export type TimetableType = "Prince_Edward_Timetable" | "Causeway_Bay_Timetable";
-
 export type DeleteClassRequest = {
     classId: number;
 };
@@ -135,8 +133,7 @@ export type UpdateClassRequest = {
     class_status: string;
     reason_for_absence: string;
     remark: string;
-    actual_classroom: Classroom;
-    student_package_id: number;
+    actual_classroom: Classroom
 };
 
 export type CreateStudentPackageRequest = {
@@ -165,8 +162,13 @@ export type Augmented_Student_package = Student_package & { scheduled_minutes: {
 
 export type Augmented_Class = Class & { course_name: string; student_id: string };
 
-export type WeeklyTimetableClass = Omit<Student_package, "id"> & { student_package_id: number } &
-    Class & Omit<Course, "id"> & { course_id: number }
+export type TimetableClass = Class & {
+    student_package_id: number,
+    course_id: number,
+    course_name: string,
+    student_id: string,
+    default_classroom: Classroom
+}
 
 export type SummaryOfClassStatues = {
     present: number;

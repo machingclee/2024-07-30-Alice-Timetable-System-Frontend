@@ -6,23 +6,21 @@ import { Button, Select, Input } from "antd";
 import durations from "../constant/durations";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { StudentThunkAction } from "../redux/slices/studentSlice";
-import { $Enums, Class, Classroom, Course, Student_package } from "../prismaTypes/types";
+import { $Enums, Classroom } from "../prismaTypes/types";
 import { MdEdit } from "react-icons/md";
 import classStatuses from "../constant/classStatuses";
 import ViewClassDialog from "./ViewClassDialog";
 import getColorForClassStatus from "../utils/getColorForClassStatus";
 import getNumberSuffix from "../utils/getNumberSuffix";
-import useGetStudentIdFromParam from "../hooks/useGetStudentIdFromParam";
+import { TimetableClass } from "../dto/dto";
 
-export default (props: { classEvent: Class & Course & Student_package & { hide: boolean }; classNumber: number; course_id: number; student_id: string }) => {
+export default (props: { classEvent: TimetableClass, classNumber: number }) => {
     const [editing, setEditing] = useState(false);
-    const { studentId } = useGetStudentIdFromParam();
     const { classEvent, classNumber } = props;
     const { id, min, class_status, reason_for_absence, remark, actual_classroom, default_classroom } = classEvent;
-    const courseInfo = useAppSelector((s) => s.class.courses?.idToCourse?.[props.course_id || 0]);
-    const status = class_status.toString();
-    const formData = useRef({ min: min, class_status: status, reason_for_absence: reason_for_absence, remark: remark, actual_classroom: actual_classroom });
-    const [hasAbsence, setHasAbsence] = useState<boolean>(class_status === "PRESENT" || class_status === "CHANGE_OF_CLASSROOM" ? false : true);
+    const courseInfo = useAppSelector((s) => s.class.courses?.idToCourse?.[classEvent.course_id || 0]);
+    const formData = useRef({ min: min, class_status: class_status, reason_for_absence: reason_for_absence, remark: remark, actual_classroom: actual_classroom });
+    const [hasAbsence, setHasAbsence] = useState<boolean>(["PRESENT", "CHANGE_OF_CLASSROOM"].includes(class_status) ? false : true);
     const dispatch = useAppDispatch();
 
     useEffect(() => { }, []);
@@ -94,7 +92,7 @@ export default (props: { classEvent: Class & Course & Student_package & { hide: 
                 <div style={{ marginBottom: "10px", marginTop: "5px", fontSize: "16px", fontWeight: "bold" }}>Class Status:</div>
                 {!editing && (
                     <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>
-                        {status}
+                        {class_status}
                         <div style={{ display: "flex", justifyContent: "center", marginLeft: "10px" }}>
                             <div style={{ background: getColorForClassStatus(class_status), width: "15px", height: "15px" }} />
                         </div>
@@ -104,7 +102,7 @@ export default (props: { classEvent: Class & Course & Student_package & { hide: 
                     <Select
                         dropdownStyle={{ zIndex: 10 ** 4 }}
                         style={{ width: "100%" }}
-                        defaultValue={status}
+                        defaultValue={class_status}
                         onChange={(value) => {
                             setHasAbsence(!(value === "PRESENT" || value === "MAKEUP"));
                             formData.current = { ...formData.current, class_status: value };
@@ -159,8 +157,8 @@ export default (props: { classEvent: Class & Course & Student_package & { hide: 
                                 student_package_id: classEvent.student_package_id,
                             })
                             ).unwrap();
-                            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: studentId }))
-                            dispatch(StudentThunkAction.getStudentPackages({ studentId: studentId }));
+                            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: classEvent.student_id }))
+                            dispatch(StudentThunkAction.getStudentPackages({ studentId: classEvent.student_id }));
                             ViewClassDialog.setOpen(false);
                         }}
                     >

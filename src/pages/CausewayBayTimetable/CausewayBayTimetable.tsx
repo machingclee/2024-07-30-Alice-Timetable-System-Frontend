@@ -21,7 +21,7 @@ export default () => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(studentSlice.actions.setTimetableType("Causeway_Bay_Timetable"));
+        dispatch(studentSlice.actions.setClassroom("Causeway_Bay_Timetable"));
         dispatch(CourseThunkAction.getCourses());
     }, []);
     return (

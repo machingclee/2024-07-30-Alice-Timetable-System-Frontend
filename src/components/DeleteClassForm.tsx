@@ -9,11 +9,13 @@ import { StudentThunkAction } from "../redux/slices/studentSlice";
 import DeleteClassDialog from "./DeleteClassDialog";
 import colors from "../constant/colors";
 import dayjs from "dayjs";
-import { TimetableType, WeeklyTimetableClass } from "../dto/dto";
+import { TimetableClass } from "../dto/dto";
+import useGetStudentIdFromParam from "../hooks/useGetStudentIdFromParam";
 
-export default (props: { classEvent: WeeklyTimetableClass }) => {
+export default (props: { classEvent: TimetableClass }) => {
     const { classEvent } = props;
-    const { id, student_id, class_group_id, course_id, hour_unix_timestamp, day_unix_timestamp } = classEvent;
+    const { studentId: student_id } = useGetStudentIdFromParam();
+    const { id, class_group_id, course_id, hour_unix_timestamp, day_unix_timestamp } = classEvent;
     const courseName = useAppSelector((s) => s.class.courses.idToCourse?.[course_id || 0])?.course_name;
     const classAt = dayjs(hour_unix_timestamp).format("HH:mm");
     const classOn = dayjs(day_unix_timestamp).format("dddd");

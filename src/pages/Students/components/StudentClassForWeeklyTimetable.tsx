@@ -277,8 +277,6 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                     <ViewClassForm
                                                                         classEvent={studentClass}
                                                                         classNumber={classNumber}
-                                                                        course_id={studentClass?.course_id || 0}
-                                                                        student_id={studentClass?.student_id || ""}
                                                                     />
                                                                 ));
                                                                 ViewClassDialog.setOpen(true);

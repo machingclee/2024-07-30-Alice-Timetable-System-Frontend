@@ -72,15 +72,15 @@ export default ({ studentId }: { studentId: string }) => {
             <FormInputField title="First Name" defaultValue={student.first_name} onChange={(t) => update({ first_name: t })} error={error?.["first_name"]} />
             <FormInputField title="Last Name" defaultValue={student.last_name} onChange={(t) => update({ last_name: t })} error={error?.["last_name"]} />
             <FormInputField
-                title="Chinese First Name"
-                defaultValue={student.chinese_first_name}
-                onChange={(t) => update({ chinese_first_name: t })}
+                title="Chinese Last Name"
+                defaultValue={student.chinese_last_name}
+                onChange={(t) => update({ chinese_last_name: t })}
                 error={error?.["chinese_first_name"]}
             />
             <FormInputField
                 title="Chinese First Name"
-                defaultValue={student.chinese_last_name}
-                onChange={(t) => update({ chinese_last_name: t })}
+                defaultValue={student.chinese_first_name}
+                onChange={(t) => update({ chinese_first_name: t })}
                 error={error?.["chinese_last_name"]}
             />
             <div style={{ display: "flex" }}>

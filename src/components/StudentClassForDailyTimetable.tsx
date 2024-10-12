@@ -109,8 +109,6 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
             : ({ children }: PropsWithChildren) => children,
         [studentClass, selectedPackageId]
     );
-
-    const selectedByPackageId = selectedPackageId === String(studentClass?.student_package_id || "0");
     const showLabel = studentClass?.hide != null;
 
     // To account for the numbering of classes
@@ -277,8 +275,6 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                     <ViewClassForm
                                                                         classEvent={studentClass}
                                                                         classNumber={classNumber}
-                                                                        course_id={studentClass?.course_id || 0}
-                                                                        student_id={studentClass?.student_id || ""}
                                                                     />
                                                                 ));
                                                                 ViewClassDialog.setOpen(true);

@@ -2,7 +2,7 @@ import { Button } from "antd";
 import CustomScrollbarContainer from "../components/CustomScrollbarContainer";
 import { Box } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
-import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import SectionTitle from "../components/SectionTitle";
 import Spacer from "../components/Spacer";
@@ -12,7 +12,6 @@ import studentSlice, { StudentThunkAction } from "../redux/slices/studentSlice";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import timeUtil from "../utils/timeUtil";
 import StudentClassForDailyTimetable from "./StudentClassForDailyTimetable";
-import { TimetableType } from "../dto/dto";
 
 export type DailyCoordinate = {
     [studentId: string]: {
@@ -22,7 +21,8 @@ export type DailyCoordinate = {
 
 export default () => {
     const dispatch = useAppDispatch();
-    const timetableType = useAppSelector((s) => s.student.studentDetail.dailyTimetable.timetableType);
+
+    const timetableType = useAppSelector((s) => s.student.studentDetail.dailyTimetable.classRoom);
     const idToStduent = useAppSelector((s) => s.student.students.idToStudent);
     const hrUnixTimestamps = useAppSelector((s) => s.student.studentDetail.dailyTimetable.hrUnixTimestamps) || [];
     const hrUnixTimestampToClass = useAppSelector((s) => s.student.studentDetail.dailyTimetable.hrUnixTimestampToClass) || {};
@@ -64,7 +64,7 @@ export default () => {
         dispatch(
             StudentThunkAction.getStudentClassesForDailyTimetable({
                 dateUnixTimestamp: timeUtil.getDayUnixTimestamp(selectedDate.getTime()).toString(),
-                timetableType: timetableType,
+                classRoom: timetableType,
             })
         );
         dispatch(StudentThunkAction.getStudents());
@@ -124,7 +124,7 @@ export default () => {
                             dispatch(
                                 StudentThunkAction.getStudentClassesForDailyTimetable({
                                     dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).subtract(1, "day").toDate().getTime()).toString(),
-                                    timetableType: timetableType,
+                                    classRoom: timetableType,
                                 })
                             );
                         }}
@@ -142,7 +142,7 @@ export default () => {
                             dispatch(
                                 StudentThunkAction.getStudentClassesForDailyTimetable({
                                     dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).add(1, "day").toDate().getTime()).toString(),
-                                    timetableType: timetableType,
+                                    classRoom: timetableType,
                                 })
                             );
                         }}

@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { RouteEnum } from "../../../router/router";
 import { FaChevronRight } from "react-icons/fa";
 import Label from "../../../components/Label";
-import Spacer from "../../../components/Spacer";
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu";
 import EditStudentDialog from "./EditStudentDialog";
 import EditStudentForm from "./EditStudentForm";
@@ -22,7 +21,29 @@ export default (props: { id: string }) => {
     if (!student) {
         return null;
     }
-    const { first_name, parent_email, last_name, chinese_first_name, chinese_last_name, gender, birthdate, grade, school_name, phone_number, wechat_id } = student;
+    const {
+        first_name = "",
+        parent_email = "",
+        last_name = "",
+        chinese_first_name = "",
+        chinese_last_name = "",
+        gender = "",
+        birthdate = "",
+        grade = "",
+        school_name = "",
+        phone_number = "",
+        wechat_id = "" } = student;
+
+    const chineseName = (() => {
+        let name = "";
+        if (chinese_last_name) {
+            name += chinese_last_name
+        }
+        if (chinese_first_name) {
+            name += chinese_first_name
+        }
+        return name;
+    })()
 
     return (
         <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
@@ -47,14 +68,19 @@ export default (props: { id: string }) => {
                         border: "none",
                         outline: "none",
                     },
+                    "& td": {
+                        marginBottom: "4px"
+                    },
                     "& td:nth-child(1)": {
-                        verticalAlign: "middle",
-                        width: "100px",
+                        verticalAlign: "top",
+                        width: "120px",
                         color: "rgb(150,150,150)",
                     },
                     "& td:nth-child(2), & td:nth-child(3)": {
                         display: "flex",
                         width: "300px",
+                        minHeight: "16px",
+
                         borderRadius: "4px",
                         background: "rgb(240,240,240)",
                         padding: "5px",
@@ -69,7 +95,7 @@ export default (props: { id: string }) => {
                                 <Label label="StudentRow.tsx" offsetTop={-20} />
                                 <tr>
                                     <td>Chinese Name:</td>
-                                    <td>{`${chinese_first_name}${chinese_last_name}`}</td>
+                                    <td>{chineseName}</td>
                                 </tr>
                                 <tr>
                                     <td>English Name:</td>
@@ -80,7 +106,7 @@ export default (props: { id: string }) => {
                                     <td>{`${gender}`}</td>
                                 </tr>
                                 <tr>
-                                    <td>school_name:</td>
+                                    <td>school Name:</td>
                                     <td>{`${school_name}`}</td>
                                 </tr>
                                 <tr>
@@ -88,16 +114,12 @@ export default (props: { id: string }) => {
                                     <td>{`${grade}`}</td>
                                 </tr>
                                 <tr>
-                                    <td>Wechat ID:</td>
-                                    <td>{`${wechat_id}`}</td>
-                                </tr>
-                                <tr>
                                     <td>phone number:</td>
                                     <td>{`${phone_number}`}</td>
                                 </tr>
                                 <tr>
                                     <td>Wechat ID:</td>
-                                    <td>{`${wechat_id}`}</td>
+                                    <td>{`${wechat_id || ""}`}</td>
                                 </tr>
                                 <tr>
                                     <td>Parent Email:</td>
@@ -110,6 +132,11 @@ export default (props: { id: string }) => {
                             </tbody>
                         </table>
                         <Button
+                            TouchRippleProps={{
+                                style: {
+                                    color: "rgba(0,0,0,0.5)"
+                                }
+                            }}
                             onClick={goDetailPage}
                             style={{
                                 width: "100%",
