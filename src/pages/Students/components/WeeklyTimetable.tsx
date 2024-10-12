@@ -235,7 +235,7 @@ export default (props: { date?: Date }) => {
                 >
                     <div style={{ display: "flex" }}>
                         <div style={{ flex: 1 }}>
-                            <div style={{ display: "flex", alignItems: "flex-end" }}>
+                            <div style={{ display: "flex" }}>
                                 <div>
                                     <Spacer height={30} style={{ position: "sticky", top: 0, background: "white", width: "100%" }} />
                                     {getHalfHourTimeIntervalsForDay(weekStart).map((dayJS) => {
