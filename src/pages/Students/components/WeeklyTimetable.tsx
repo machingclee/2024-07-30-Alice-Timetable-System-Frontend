@@ -23,7 +23,7 @@ export type WeeklyCoordinate = {
     };
 };
 
-export default (props: { date?: Date }) => {
+export default () => {
     const dispatch = useAppDispatch();
     const studentId = useAppSelector((s) => s.student.studentDetail.detail?.id) || "";
     const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
@@ -37,8 +37,8 @@ export default (props: { date?: Date }) => {
         const dayJS = dayjs(date);
         const start = dayJS.startOf("day").add(9, "hour");
         const intervals: Dayjs[] = [];
-        for (let offset = 0; offset < 21; offset++) {
-            const time = start.add(offset * 0.5, "hour");
+        for (let offset = 0; offset < 44; offset++) {
+            const time = start.add(offset * 0.25, "hour");
             intervals.push(time);
         }
         return intervals;
@@ -71,7 +71,8 @@ export default (props: { date?: Date }) => {
 
     const timetableContainerRef = useRef<HTMLDivElement | null>(null);
 
-    const gridHeight = 40;
+    const gridHeight = 18;
+    const gridTimeColTop = 18;
 
     const adjustWidth = useCallback(() => {
         const width = window.innerWidth;
@@ -125,7 +126,7 @@ export default (props: { date?: Date }) => {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     paddingRight: "14px",
-                    height: `${gridHeight + 1}px`,
+                    height: `${gridHeight + 0.8}px`,
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -237,10 +238,10 @@ export default (props: { date?: Date }) => {
                         <div style={{ flex: 1 }}>
                             <div style={{ display: "flex" }}>
                                 <div>
-                                    <Spacer height={30} style={{ position: "sticky", top: 0, background: "white", width: "100%" }} />
-                                    {getHalfHourTimeIntervalsForDay(weekStart).map((dayJS) => {
+                                    <Spacer height={gridTimeColTop} style={{ position: "sticky", top: 0, background: "white", width: "100%" }} />
+                                    {getHalfHourTimeIntervalsForDay(weekStart).map((dayJS, index) => {
                                         return (
-                                            <div style={{ fontSize: 13 }} className="grid-time" key={dayJS.valueOf().toString()}>
+                                            <div style={{ fontSize: 13, opacity: index % 2 === 0 ? 1 : 0 }} className="grid-time" key={dayJS.valueOf().toString()}>
                                                 {dayJS.format("HH:mm")}
                                             </div>
                                         );

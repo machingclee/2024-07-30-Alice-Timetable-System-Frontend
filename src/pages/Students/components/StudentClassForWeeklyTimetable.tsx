@@ -25,7 +25,15 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const { studentId } = useParams<{ studentId: string }>();
-    const studentClass = useAppSelector((s) => s.student.studentDetail.weeklyTimetable?.hrUnixTimestampToClass?.[hourUnixTimestamp]);
+    const hours = useAppSelector((s) => s.student.studentDetail.weeklyTimetable?.hrUnixTimestamps);
+    const targetHit = hours?.includes(String(hourUnixTimestamp));
+    if (targetHit) {
+        console.log("targetHit", hourUnixTimestamp, hours)
+    }
+    const studentClass = useAppSelector((s) => s.student.studentDetail.weeklyTimetable?.hrUnixTimestampToClass?.[String(hourUnixTimestamp)]);
+    if (studentClass) {
+        console.log("studentClassstudentClass", studentClass);
+    }
     const timetable = useAppSelector((s) => s.student.studentDetail.weeklyTimetable);
     const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
