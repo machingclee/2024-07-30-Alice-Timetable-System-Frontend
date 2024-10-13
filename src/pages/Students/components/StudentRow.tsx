@@ -2,12 +2,12 @@ import { Box, Button } from "@mui/material";
 import boxShadow from "../../../constant/boxShadow";
 import { useAppSelector } from "../../../redux/hooks";
 import { useNavigate } from "react-router-dom";
-import { RouteEnum } from "../../../router/router";
 import { FaChevronRight } from "react-icons/fa";
 import Label from "../../../components/Label";
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu";
 import EditStudentDialog from "./EditStudentDialog";
 import EditStudentForm from "./EditStudentForm";
+import RouteEnum from "../../../enum/RouteEnum";
 
 export default (props: { id: string }) => {
     const { id } = props;

@@ -14,10 +14,10 @@ import getColorForClassStatus from "../utils/getColorForClassStatus";
 import getNumberSuffix from "../utils/getNumberSuffix";
 import { TimetableClass } from "../dto/dto";
 
-export default (props: { classEvent: TimetableClass, classNumber: number }) => {
+export default (props: { classEvent: TimetableClass }) => {
     const [editing, setEditing] = useState(false);
-    const { classEvent, classNumber } = props;
-    const { id, min, class_status, reason_for_absence, remark, actual_classroom, default_classroom } = classEvent;
+    const { classEvent } = props;
+    const { id, min, class_status, reason_for_absence, remark, actual_classroom, default_classroom, class_number } = classEvent;
     const courseInfo = useAppSelector((s) => s.class.courses?.idToCourse?.[classEvent.course_id || 0]);
     const formData = useRef({ min: min, class_status: class_status, reason_for_absence: reason_for_absence, remark: remark, actual_classroom: actual_classroom });
     const [hasAbsence, setHasAbsence] = useState<boolean>(["PRESENT", "CHANGE_OF_CLASSROOM"].includes(class_status) ? false : true);
@@ -33,7 +33,7 @@ export default (props: { classEvent: TimetableClass, classNumber: number }) => {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", width: "100%" }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                     <div style={{ fontWeight: "bold", fontSize: "23px" }}>{courseInfo?.course_name}</div>
-                    {classNumber !== 0 && <span style={{ fontWeight: "lighter", fontSize: "12px" }}>{getNumberSuffix(classNumber)}</span>}
+                    {class_number !== 0 && <span style={{ fontWeight: "lighter", fontSize: "12px" }}>{getNumberSuffix(class_number)}</span>}
                 </div>
                 <div
                     style={{
@@ -154,7 +154,6 @@ export default (props: { classEvent: TimetableClass, classNumber: number }) => {
                                 reason_for_absence: formData.current.reason_for_absence || "",
                                 remark: formData.current.remark || "",
                                 actual_classroom: formData.current.actual_classroom as $Enums.Classroom,
-                                student_package_id: classEvent.student_package_id,
                             })
                             ).unwrap();
                             dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: classEvent.student_id }))

@@ -17,10 +17,9 @@ import Checkbox from "@mui/material/Checkbox";
 import colors from "../constant/colors";
 
 export default () => {
-    const timetableType = useAppSelector((s) => s.student.studentDetail.dailyTimetable.classRoom);
-    const selectedDate = useAppSelector((s) => s.student.studentDetail.dailyTimetable.selectedDate);
+    const classRoom = useAppSelector((s) => s.student.allStudents.classRoom);
+    const selectedDate = useAppSelector((s) => s.student.allStudents.selectedDate);
     const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
-    const summaryOfClassStatues = useAppSelector((s) => s.student.studentDetail.dailyTimetable.summaryOfClassStatues);
     const dispatch = useDispatch<AppDispatch>();
 
     const onPanelChange = (value: Dayjs, _: CalendarProps<Dayjs>["mode"]) => {
@@ -50,11 +49,15 @@ export default () => {
                     onPanelChange={onPanelChange}
                     value={dayjs(selectedDate)}
                     onSelect={(date, _) => {
+                        if (!classRoom) {
+                            return;
+                        }
                         dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: date.toDate() }));
+                        console.log("I am being called");
                         dispatch(
                             StudentThunkAction.getStudentClassesForDailyTimetable({
                                 dateUnixTimestamp: timeUtil.getDayUnixTimestamp(date.toDate().getTime()).toString(),
-                                classRoom: timetableType,
+                                classRoom,
                             })
                         );
                     }}
@@ -126,7 +129,7 @@ export default () => {
                             <div style={{ background: colors.purple, width: "15px", height: "15px" }} />
                         </div>
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "9px", marginTop: "12px" }}>
+                    {/* <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "9px", marginTop: "12px" }}>
                         <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.present})</div>
                         <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.suspiciousAbsence})</div>
 
@@ -136,7 +139,7 @@ export default () => {
                         <div style={{ height: "32px", display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "10px" }}>
                             ({summaryOfClassStatues.changeOfClassroom})
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <img

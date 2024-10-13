@@ -23,7 +23,8 @@ import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
 import { RootState } from "../store";
 import lodash from "lodash";
-import { Class, Classroom, Course, Student_package } from "../../prismaTypes/types";
+import { Classroom, Student_package } from "../../prismaTypes/types";
+import MoveClassStatus from "../../enum/MoveClassStatus";
 
 export type StudentSliceState = {
     students: {
@@ -33,6 +34,7 @@ export type StudentSliceState = {
         };
     };
     studentDetail: {
+        showAllClassesForOneStudent: boolean;
         detail: Student | null;
         selectedPackageId: string;
         packages: {
@@ -44,22 +46,12 @@ export type StudentSliceState = {
             hrUnixTimestamps?: string[];
             hrUnixTimestampToClass?: { [id: string]: TimetableClass & { hide: boolean } };
         };
-        dailyTimetable: {
-            classRoom: Classroom;
-            selectedDate: Date;
-            hrUnixTimestamps?: string[];
-            hrUnixTimestampToClass?: { [id: string]: TimetableClass & { hide: boolean } };
-            summaryOfClassStatues: {
-                present: number;
-                suspiciousAbsence: number;
-                illegitAbsence: number;
-                legitAbsence: number;
-                makeup: number;
-                changeOfClassroom: number;
-            };
-        };
     };
-    showAllClassesForOneStudent: boolean;
+    allStudents: {
+        classRoom: Classroom | null;
+        selectedDate: Date;
+        hrUnixTimestampToClasses: { [id: string]: TimetableClass[] };
+    };
 };
 
 const initialState: StudentSliceState = {
@@ -71,20 +63,13 @@ const initialState: StudentSliceState = {
         weeklyTimetable: {
             selectedDate: new Date(),
         },
-        dailyTimetable: {
-            selectedDate: new Date(),
-            classRoom: "PRINCE_EDWARD",
-            summaryOfClassStatues: {
-                present: 0,
-                suspiciousAbsence: 0,
-                illegitAbsence: 0,
-                legitAbsence: 0,
-                makeup: 0,
-                changeOfClassroom: 0,
-            },
-        },
+        showAllClassesForOneStudent: true,
     },
-    showAllClassesForOneStudent: true,
+    allStudents: {
+        selectedDate: new Date(),
+        classRoom: null,
+        hrUnixTimestampToClasses: {}
+    },
 };
 
 const studentSlice = createSlice({
@@ -92,7 +77,7 @@ const studentSlice = createSlice({
     initialState,
     reducers: {
         setClassroom: (state, action: PayloadAction<Classroom>) => {
-            state.studentDetail.dailyTimetable.classRoom = action.payload;
+            state.allStudents.classRoom = action.payload;
         },
         setSelectedPackageId: (state, action: PayloadAction<string>) => {
             const packageId = action.payload;
@@ -108,7 +93,7 @@ const studentSlice = createSlice({
             }
         },
         setDailyTimetableSelectedDate: (state, action: PayloadAction<{ date: Date }>) => {
-            state.studentDetail.dailyTimetable.selectedDate = action.payload.date;
+            state.allStudents.selectedDate = action.payload.date;
         },
         unsetStudentEvent: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
@@ -139,7 +124,7 @@ const studentSlice = createSlice({
             return initialState;
         },
         setShowAllClassesForOneStudent: (state, action) => {
-            state.showAllClassesForOneStudent = action.payload;
+            state.studentDetail.showAllClassesForOneStudent = action.payload;
         },
     },
     extraReducers: (builder) => {
@@ -161,32 +146,17 @@ const studentSlice = createSlice({
                 state.studentDetail.detail = studentDetail;
             })
             .addCase(StudentThunkAction.moveStudentEvent.fulfilled, (state, action) => {
-                if (action.payload?.type === "proceed") {
+                if (action.payload?.type === MoveClassStatus.PROCEED) {
                     console.log("now proceed");
-                    const { fromTimestamp = "", result, newOfficialEndDate, packageIdToChangeOfficialEndDate } = action.payload;
-                    const { event } = result || {};
-                    const hour_unix_timestamp = event?.hour_unix_timestamp || "";
-                    const index = (state.studentDetail.weeklyTimetable.hrUnixTimestamps || []).indexOf(fromTimestamp);
+                    const { result, newOfficialEndDate, packageIdToChangeOfficialEndDate } = action.payload;
+                    const { event: classEvent } = result || {};
+                    const hour_unix_timestamp = classEvent?.hour_unix_timestamp || "";
 
                     if (newOfficialEndDate && packageIdToChangeOfficialEndDate && state.studentDetail.packages.idToPackage) {
                         state.studentDetail.packages.idToPackage[packageIdToChangeOfficialEndDate].official_end_date = newOfficialEndDate;
                     }
-
-                    if (index > -1 && state.studentDetail.weeklyTimetable.hrUnixTimestamps?.[index]) {
-                        console.log("index exists", index);
-                        state.studentDetail.weeklyTimetable.hrUnixTimestamps[index] = String(hour_unix_timestamp);
-                    }
                     if (state.studentDetail.weeklyTimetable.hrUnixTimestampToClass) {
-                        lodash.setWith(state.studentDetail.weeklyTimetable.hrUnixTimestampToClass, hour_unix_timestamp, event);
-                    }
-
-                    if (index > -1 && state.studentDetail.dailyTimetable.hrUnixTimestamps?.[index]) {
-                        console.log("index exists", index);
-                        state.studentDetail.dailyTimetable.hrUnixTimestamps[index] = String(hour_unix_timestamp);
-                    }
-
-                    if (state.studentDetail.dailyTimetable.hrUnixTimestampToClass) {
-                        lodash.setWith(state.studentDetail.dailyTimetable.hrUnixTimestampToClass, hour_unix_timestamp, event);
+                        lodash.setWith(state.studentDetail.weeklyTimetable.hrUnixTimestampToClass, hour_unix_timestamp, classEvent);
                     }
                 }
             })
@@ -194,9 +164,6 @@ const studentSlice = createSlice({
                 const hourTimeStamp = action.payload.hour_unix_timestamp;
                 if (state.studentDetail?.weeklyTimetable.hrUnixTimestampToClass?.[String(hourTimeStamp)]) {
                     state.studentDetail.weeklyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].class_group_id = null;
-                }
-                if (state.studentDetail?.dailyTimetable.hrUnixTimestampToClass?.[String(hourTimeStamp)]) {
-                    state.studentDetail.dailyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].class_group_id = null;
                 }
             })
             .addCase(StudentThunkAction.getStudentPackages.fulfilled, (state, action) => {
@@ -206,53 +173,23 @@ const studentSlice = createSlice({
                 state.studentDetail.packages.idToPackage = idToObject;
             })
             .addCase(StudentThunkAction.getStudentClassesForDailyTimetable.fulfilled, (state, action) => {
-                const classes = action.payload.classes.map((clz) => ({ ...clz, hide: false }));
-                const timetableType = state.studentDetail.dailyTimetable.classRoom.replace("_Timetable", "");
-                let presentClasses = 0;
-                let suspiciousAbsenceClasses = 0;
-                let illegitAbsenceClasses = 0;
-                let legitAbsenceClasses = 0;
-                let makeupClasses = 0;
-                let changeOfClassroomClasses = 0;
-                classes.forEach((classDetail) => {
-                    console.log("timetableType:", timetableType);
-                    console.log("classDetail.actual_classroom:", classDetail.actual_classroom);
-                    if (classDetail.actual_classroom === timetableType)
-                        switch (classDetail.class_status) {
-                            case "PRESENT":
-                                presentClasses++;
-                                break;
-                            case "SUSPICIOUS_ABSENCE":
-                                suspiciousAbsenceClasses++;
-                                break;
-                            case "ILLEGIT_ABSENCE":
-                                illegitAbsenceClasses++;
-                                break;
-                            case "LEGIT_ABSENCE":
-                                legitAbsenceClasses++;
-                                break;
-                            case "MAKEUP":
-                                makeupClasses++;
-                                break;
-                            case "CHANGE_OF_CLASSROOM":
-                                changeOfClassroomClasses++;
-                                break;
-                        }
-                    else if (classDetail.class_status === "CHANGE_OF_CLASSROOM") {
-                        changeOfClassroomClasses++;
+                const classes = action.payload.classes;
+                const hrTimestampToClasses: { [key: string]: TimetableClass[] } = {}
+                for (const class_ of classes) {
+                    const timestamp = class_.hour_unix_timestamp.toString();
+                    const classesForNow = hrTimestampToClasses?.[timestamp];
+                    if (!classesForNow) {
+                        lodash.setWith(hrTimestampToClasses, `["${timestamp}"]`, [class_], Object)
+                    } else {
+                        hrTimestampToClasses[timestamp].push(class_)
                     }
-                });
-                state.studentDetail.dailyTimetable.summaryOfClassStatues = {
-                    present: presentClasses,
-                    suspiciousAbsence: suspiciousAbsenceClasses,
-                    illegitAbsence: illegitAbsenceClasses,
-                    legitAbsence: legitAbsenceClasses,
-                    makeup: makeupClasses,
-                    changeOfClassroom: changeOfClassroomClasses,
-                };
-                const { ids, idToObject } = normalizeUtil.normalize({ idAttribute: "hour_unix_timestamp", targetArr: classes });
-                state.studentDetail.dailyTimetable.hrUnixTimestamps = ids;
-                state.studentDetail.dailyTimetable.hrUnixTimestampToClass = idToObject;
+                }
+                Object.entries(hrTimestampToClasses).forEach(([hrTimestamp, classes]) => {
+                    const existingClasses = state.allStudents.hrUnixTimestampToClasses?.[hrTimestamp] || []
+                    const newClasses = [...existingClasses, ...classes].sort((a, b) => a.first_name.localeCompare(b.first_name));
+                    lodash.setWith(state.allStudents.hrUnixTimestampToClasses, `["${hrTimestamp}"]`, newClasses, Object);
+                })
+
             })
             .addCase(StudentThunkAction.getStudentClassesForWeeklyTimetable.fulfilled, (state, action) => {
                 const classes = action.payload.classes.map((clz) => ({ ...clz, hide: false }));
@@ -329,10 +266,10 @@ export class StudentThunkAction {
             >(apiRoutes.PUT_MOVE_STUDNET_CLASS, requestBody);
             if (!res.data.success) {
                 api.dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: currStudentId }));
-                return { type: "proceed", fromTimestamp, result: { event: classEvent } };
+                return { type: MoveClassStatus.PROCEED, fromTimestamp, result: { event: classEvent } };
             } else {
                 const { packageIdToChangeOfficialEndDate, newOfficialEndDate } = res.data.result;
-                return { type: "proceed", fromTimestamp, result: { event: classEvent }, packageIdToChangeOfficialEndDate, newOfficialEndDate };
+                return { type: MoveClassStatus.PROCEED, fromTimestamp, result: { event: classEvent }, packageIdToChangeOfficialEndDate, newOfficialEndDate };
             }
         }
     );
@@ -344,7 +281,7 @@ export class StudentThunkAction {
     public static getStudentClassesForDailyTimetable = createAsyncThunk(
         "studentSlice/getStudentClassesForDailyTimetable",
         async (props: { dateUnixTimestamp: string; classRoom: Classroom }, api) => {
-            const res = await apiClient.get<CustomResponse<{ classes: (Student_package & Class & Course)[] }>>(
+            const res = await apiClient.get<CustomResponse<{ classes: TimetableClass[] }>>(
                 apiRoutes.GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE(props.dateUnixTimestamp, props.classRoom)
             );
             return processRes(res, api);

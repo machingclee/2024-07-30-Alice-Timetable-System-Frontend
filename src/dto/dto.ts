@@ -167,7 +167,13 @@ export type TimetableClass = Class & {
     course_id: number,
     course_name: string,
     student_id: string,
-    default_classroom: Classroom
+    default_classroom: Classroom,
+    first_name: string,
+    last_name: string,
+    chinese_first_name: string,
+    chinese_last_name: string,
+    id: number,
+
 }
 
 export type SummaryOfClassStatues = {

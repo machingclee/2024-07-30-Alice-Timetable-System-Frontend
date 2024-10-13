@@ -37,7 +37,6 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const timetable = useAppSelector((s) => s.student.studentDetail.weeklyTimetable);
     const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
-    const showAllClassesForOneStudent = useAppSelector((s) => s.student.showAllClassesForOneStudent);
 
     const { day_unix_timestamp = 0, hour_unix_timestamp = 0, class_group_id } = studentClass || {};
     const hasDuplicationGroup = class_group_id != null;
@@ -182,7 +181,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                         }}
                                     >
                                         {/* Control what to show on the entire timetable */}
-                                        {course_name && (showAllClassesForOneStudent || selectedByPackageId) && (
+                                        {course_name && (
                                             <FadeIn>
                                                 {/* @ts-ignore */}
                                                 <ContextMenuTrigger id={contextMenuId}>
@@ -284,7 +283,6 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                 ViewClassDialog.setContent(() => () => (
                                                                     <ViewClassForm
                                                                         classEvent={studentClass}
-                                                                        classNumber={classNumber}
                                                                     />
                                                                 ));
                                                                 ViewClassDialog.setOpen(true);

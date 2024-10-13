@@ -1,5 +1,4 @@
 import { useLocation } from "react-router-dom";
-import { RouteEnum } from "../../../router/router";
 import { Box } from "@mui/material";
 import Spacer from "../../../components/Spacer";
 import { Button } from "antd";
@@ -10,15 +9,16 @@ import { useEffect } from "react";
 import NavButton from "./NavButton";
 import appSlice from "../../../redux/slices/appSlice";
 import Label from "../../../components/Label";
-import colors from "../../../constant/colors";
 import CollapseButton from "../../../assets/collapse-button.png";
+import escapeStringRegexp from "escape-string-regexp";
+import RouteEnum from "../../../enum/RouteEnum";
 
 const pathRegex = {
-    STUDENTS: /\/dashboard\/students/,
-    COURSES: /\/dashboard\/courses/,
-    USERS: /\/dashboard\/users/,
-    PRINCE_EDWARD_TIMETABLE: /\/dashboard\/PE-timetable/,
-    CWB_TIMETABLE: /\/dashboard\/CWB-timetable/,
+    STUDENTS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_STUDENTS)),
+    COURSES: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_COURSES)),
+    USERS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_USERS)),
+    PRINCE_EDWARD_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE)),
+    CAUSEWAY_BAY_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE))
 };
 
 export default () => {
@@ -79,7 +79,7 @@ export default () => {
                 <Spacer height={10} />
                 <NavButton activeNavigationRegex={pathRegex.PRINCE_EDWARD_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE} title="Prince Ed. Timetable" />
                 <Spacer height={10} />
-                <NavButton activeNavigationRegex={pathRegex.CWB_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_CWB_TIMETABLE} title="CWB Timetable" />
+                <NavButton activeNavigationRegex={pathRegex.CAUSEWAY_BAY_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE} title="CWB Timetable" />
             </div>
             <div style={{ transition: "opacity 0.4s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
                 {/* <div style={{ display: "flex", flexDirection: "row" }}>

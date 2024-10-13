@@ -11,25 +11,28 @@ import ViewClassDialog from "../../components/ViewClassDialog";
 import DeleteClassDialog from "../../components/DeleteClassDialog";
 import AddClassEventDialog from "../../components/AddClassEventDialog";
 import { useEffect } from "react";
-import studentSlice, { StudentThunkAction } from "../../redux/slices/studentSlice";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import studentSlice from "../../redux/slices/studentSlice";
+import { useAppDispatch } from "../../redux/hooks";
 import { CourseThunkAction } from "../../redux/slices/courseSlice";
-import appSlice from "../../redux/slices/appSlice";
-
 export default () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(studentSlice.actions.setClassroom("Causeway_Bay_Timetable"));
+        dispatch(studentSlice.actions.setClassroom("CAUSEWAY_BAY"));
         dispatch(CourseThunkAction.getCourses());
     }, []);
+
+    useEffect(() => {
+        return () => { dispatch(studentSlice.actions.reset()); }
+    }, [])
+
     return (
         <div style={{ marginLeft: "10px", marginRight: "50px", height: "100%", width: "100%", display: "flex", flexDirection: "column" }}>
             <div style={{ width: "100%", display: "flex" }}>
                 <div style={{ width: "100%" }}>
                     <SectionTitle>
-                        <Label label="Timetables.tsx" offsetTop={-20} />
+                        <Label label="CausewayBayTimetable.tsx" offsetTop={-20} />
                         <Button
                             shape="circle"
                             onClick={() => {

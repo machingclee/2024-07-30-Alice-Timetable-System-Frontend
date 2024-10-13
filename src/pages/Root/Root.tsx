@@ -2,11 +2,11 @@ import { Container } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { RouteEnum } from "../../router/router";
 import LeftNavigation from "./components/LeftNavigation";
 import { OverlayScrollbarsComponent, OverlayScrollbarsComponentRef } from "overlayscrollbars-react";
 import appSlice from "../../redux/slices/appSlice";
 import AppLoading from "../../components/AppLoading";
+import RouteEnum from "../../enum/RouteEnum";
 
 export default () => {
     const dispatch = useAppDispatch();

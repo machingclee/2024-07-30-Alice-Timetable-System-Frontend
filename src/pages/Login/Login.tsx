@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { AuthThunkAction } from "../../redux/slices/authSlice";
-import { RouteEnum } from "../../router/router";
+import RouteEnum from "../../enum/RouteEnum";
 
 export default () => {
     const dispatch = useAppDispatch();
