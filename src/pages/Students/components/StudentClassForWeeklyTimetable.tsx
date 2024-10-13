@@ -34,6 +34,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     if (studentClass) {
         console.log("studentClassstudentClass", studentClass);
     }
+    const showAll = useAppSelector(s => s.student.studentDetail.showAllClassesForOneStudent);
     const timetable = useAppSelector((s) => s.student.studentDetail.weeklyTimetable);
     const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
@@ -118,7 +119,6 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
         [studentClass, selectedPackageId]
     );
 
-    const selectedByPackageId = selectedPackageId === String(studentClass?.student_package_id || "0");
     const showLabel = studentClass?.hide != null;
 
     // To account for the numbering of classes
@@ -181,8 +181,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                         }}
                                     >
                                         {/* Control what to show on the entire timetable */}
-                                        {course_name && (
-                                            <FadeIn>
+                                        {course_name && (showAll || (!showAll && (Number(selectedPackageId) === studentClass?.student_package_id))) &&
+                                            (<FadeIn>
                                                 {/* @ts-ignore */}
                                                 <ContextMenuTrigger id={contextMenuId}>
                                                     <Box
@@ -327,8 +327,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         </MenuItem>
                                                     </Box>
                                                 </ContextMenu>
-                                            </FadeIn>
-                                        )}
+                                            </FadeIn>)}
                                     </div>
                                 </div>
                             </TimeslotWrapper>

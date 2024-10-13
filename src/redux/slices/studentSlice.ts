@@ -186,8 +186,13 @@ const studentSlice = createSlice({
                 }
                 Object.entries(hrTimestampToClasses).forEach(([hrTimestamp, classes]) => {
                     const existingClasses = state.allStudents.hrUnixTimestampToClasses?.[hrTimestamp] || []
-                    const newClasses = [...existingClasses, ...classes].sort((a, b) => a.first_name.localeCompare(b.first_name));
-                    lodash.setWith(state.allStudents.hrUnixTimestampToClasses, `["${hrTimestamp}"]`, newClasses, Object);
+                    const existingIds = existingClasses.map(class_ => class_.id);
+                    for (const class_ of classes) {
+                        if (!existingIds.includes(class_.id)) {
+                            existingClasses.push(class_);
+                        }
+                    }
+                    lodash.setWith(state.allStudents.hrUnixTimestampToClasses, `["${hrTimestamp}"]`, existingClasses, Object);
                 })
 
             })

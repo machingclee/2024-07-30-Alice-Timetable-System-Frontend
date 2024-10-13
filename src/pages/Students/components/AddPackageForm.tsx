@@ -58,7 +58,6 @@ export default (props: { studentId: string; studentName: string }) => {
             start_date: chosenStartDateResolvingUndefinedIssue,
             start_time: realStartTime,
             default_classroom,
-            expiry_date: dayjs(start_date).add(4, "months").valueOf(),
             student_id: studentId,
         };
         console.log("reqBody:", reqBody);
@@ -124,22 +123,23 @@ export default (props: { studentId: string; studentName: string }) => {
             <Spacer />
             <FormInputTitle>Start Time</FormInputTitle>
             <Spacer height={5} />
-            <div style={{ display: "flex", alignItems: "center" }}>
+            <Box style={{ display: "flex", alignItems: "center" }}>
+                {/* used <style></style> in index.html to forcefully remove 00-08 and 20-24 */}
                 <TimePicker
                     onChange={(val) => {
                         formData.current.start_time = val.valueOf();
                     }}
                     minuteStep={15}
-                    disabledHours={disabledHours}
                     // defaultValue={dayjs("09:00", "HH:mm")}
                     format={"HH:mm"}
+                    popupClassName="custome-timepicker"
                     popupStyle={{ zIndex: 10 ** 7 }}
                 />
                 <Spacer width={15} />
                 <div style={{ color: colors.grey_deep, display: "flex", alignItems: "center" }}>
                     <IoIosInformationCircle size={20} />  <Spacer width={5} /> (double click to confirm)
                 </div>
-            </div>
+            </Box>
             <Spacer />
             <div style={{ display: "flex" }}>
                 <FormInputTitle>Select a Duration (in minutes)</FormInputTitle>

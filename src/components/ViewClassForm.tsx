@@ -28,7 +28,7 @@ export default (props: { classEvent: TimetableClass }) => {
     const classroomOptions: Classroom[] = ["PRINCE_EDWARD", "CAUSEWAY_BAY"];
 
     return (
-        <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60, marginLeft: "10px" }}>
+        <Box style={{ maxWidth: 400, width: 600, padding: "40px 40px", overflowY: "auto", paddingBottom: 60, marginLeft: "10px" }}>
             <Label label="ViewClassForm.tsx" offsetTop={0} offsetLeft={380} />
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", width: "100%" }}>
                 <div style={{ display: "flex", alignItems: "center" }}>

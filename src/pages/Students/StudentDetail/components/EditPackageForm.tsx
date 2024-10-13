@@ -39,7 +39,7 @@ export default (props: { packageId: string }) => {
             min: formData.current.min || currentPackage.min,
             default_classroom: formData.current.default_classroom || currentPackage.default_classroom,
             student_id: currentPackage.student_id,
-            expiry_date: currentPackage.expiry_date,
+            expiry_date: currentPackage.expiry_date || 0,
         };
         EditPackageDialog.setOpen(false);
         await dispatch(StudentThunkAction.updatePackage(reqBody)).unwrap();

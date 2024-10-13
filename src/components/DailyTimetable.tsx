@@ -12,6 +12,7 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import timeUtil from "../utils/timeUtil";
 import StudentsClassForDailyTimetableByHour from "./StudentsClassForDailyTimetableByHour";
 import Label from "./Label";
+import ViewClassDialog from "./ViewClassDialog";
 
 export default () => {
     const dispatch = useAppDispatch();
@@ -38,32 +39,36 @@ export default () => {
     }, [selectedDay]);
 
     const timetableContainerRef = useRef<HTMLDivElement | null>(null);
-    const gridHeight = 40;
+    const gridHeight = 30;
 
     return (
         <Box
             ref={timetableContainerRef}
             sx={{
-                overflowY: "hidden",
                 height: "1000px",
-                "& .draggable-container": {
+                "& .daily-class-container": {
+                    width: "100%",
+                    height: gridHeight,
                     borderTop: "1px solid rgba(0,0,0,0.1)",
                     borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
+                    "& .daily-class": {
+                        maxWidth: "100px"
+                    }
                 },
                 "& .droppable:last-child": {
-                    "& .draggable-container": {
+                    "& .daily-class-container": {
                         borderRight: "1px solid rgba(0,0,0,0.1)",
                     },
                 },
-                "& .draggable-container:last-child": {
+                "& .daily-class-container:last-child": {
                     borderBottom: "1px solid rgba(0,0,0,0.1)",
                 },
                 "& .freeze": {
                     transform: "translate(0px,0px) !important",
                 },
-                "& .grid-time: nth-child(n+2)": {
+                "& .grid-time: nth-child(n+1)": {
                     paddingRight: "14px",
-                    height: `${gridHeight}px`,
+                    height: `${gridHeight + 5}px`,
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -138,7 +143,6 @@ export default () => {
                     <div style={{ flex: 1 }}>
                         <div style={{ display: "flex" }}>
                             <div>
-                                <Spacer height={30} style={{ position: "sticky", top: 0, background: "white", width: "100%" }} />
                                 {oneForthHourIntervals.map((dayJS) => {
                                     return (
                                         <div style={{ fontSize: 13 }} className="grid-time" key={dayJS.valueOf().toString()}>
@@ -150,12 +154,11 @@ export default () => {
                             <div style={{ flex: 1 }}>
                                 {hoursColumnGrid
                                     .sort()
-                                    .map((hourUnixTimestamp) => {
+                                    .map((hourUnixTimestamp, index) => {
                                         return (
                                             <div key={hourUnixTimestamp} style={{ flex: 1 }} className="time-column" >
                                                 <Spacer height={5} />
-                                                <div className="droppable">
-
+                                                <div className="droppable" style={{ position: "relative", zIndex: hoursColumnGrid.length - index + 1, height: gridHeight }}>
                                                     <StudentsClassForDailyTimetableByHour
                                                         key={hourUnixTimestamp}
                                                         dayUnixTimestamp={timeUtil.getDayUnixTimestamp(selectedDate.getTime())}
@@ -171,6 +174,7 @@ export default () => {
                     <Spacer />
                 </div>
                 <Spacer />
+                <ViewClassDialog.render />
             </CustomScrollbarContainer>
         </Box>
     );
