@@ -42,6 +42,7 @@ export default (props: { dayUnixTimestamp: number; currHourUnixTimestamp: number
         }
     }, [classesThisHour]);
 
+
     return (
         <div className="draggable-container" style={{ position: "relative" }}>
             {/* @ts-ignore */}
