@@ -8992,6 +8992,7 @@ export namespace Prisma {
     created_at: number | null
     class_group_id: number | null
     student_package_id: number | null
+    class_number: number | null
   }
 
   export type ClassSumAggregateOutputType = {
@@ -9002,6 +9003,7 @@ export namespace Prisma {
     created_at: number | null
     class_group_id: number | null
     student_package_id: number | null
+    class_number: number | null
   }
 
   export type ClassMinAggregateOutputType = {
@@ -9017,6 +9019,7 @@ export namespace Prisma {
     class_status: $Enums.Class_status | null
     student_package_id: number | null
     remark: string | null
+    class_number: number | null
   }
 
   export type ClassMaxAggregateOutputType = {
@@ -9032,6 +9035,7 @@ export namespace Prisma {
     class_status: $Enums.Class_status | null
     student_package_id: number | null
     remark: string | null
+    class_number: number | null
   }
 
   export type ClassCountAggregateOutputType = {
@@ -9047,6 +9051,7 @@ export namespace Prisma {
     class_status: number
     student_package_id: number
     remark: number
+    class_number: number
     _all: number
   }
 
@@ -9059,6 +9064,7 @@ export namespace Prisma {
     created_at?: true
     class_group_id?: true
     student_package_id?: true
+    class_number?: true
   }
 
   export type ClassSumAggregateInputType = {
@@ -9069,6 +9075,7 @@ export namespace Prisma {
     created_at?: true
     class_group_id?: true
     student_package_id?: true
+    class_number?: true
   }
 
   export type ClassMinAggregateInputType = {
@@ -9084,6 +9091,7 @@ export namespace Prisma {
     class_status?: true
     student_package_id?: true
     remark?: true
+    class_number?: true
   }
 
   export type ClassMaxAggregateInputType = {
@@ -9099,6 +9107,7 @@ export namespace Prisma {
     class_status?: true
     student_package_id?: true
     remark?: true
+    class_number?: true
   }
 
   export type ClassCountAggregateInputType = {
@@ -9114,6 +9123,7 @@ export namespace Prisma {
     class_status?: true
     student_package_id?: true
     remark?: true
+    class_number?: true
     _all?: true
   }
 
@@ -9216,6 +9226,7 @@ export namespace Prisma {
     class_status: $Enums.Class_status
     student_package_id: number
     remark: string | null
+    class_number: number
     _count: ClassCountAggregateOutputType | null
     _avg: ClassAvgAggregateOutputType | null
     _sum: ClassSumAggregateOutputType | null
@@ -9250,6 +9261,7 @@ export namespace Prisma {
     class_status?: boolean
     student_package_id?: boolean
     remark?: boolean
+    class_number?: boolean
     Class_group_of_Classes?: boolean | Class$Class_group_of_ClassesArgs<ExtArgs>
     Student_package?: boolean | Student_packageDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["class"]>
@@ -9267,6 +9279,7 @@ export namespace Prisma {
     class_status?: boolean
     student_package_id?: boolean
     remark?: boolean
+    class_number?: boolean
     Class_group_of_Classes?: boolean | Class$Class_group_of_ClassesArgs<ExtArgs>
     Student_package?: boolean | Student_packageDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["class"]>
@@ -9284,6 +9297,7 @@ export namespace Prisma {
     class_status?: boolean
     student_package_id?: boolean
     remark?: boolean
+    class_number?: boolean
   }
 
   export type ClassInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -9314,6 +9328,7 @@ export namespace Prisma {
       class_status: $Enums.Class_status
       student_package_id: number
       remark: string | null
+      class_number: number
     }, ExtArgs["result"]["class"]>
     composites: {}
   }
@@ -9721,6 +9736,7 @@ export namespace Prisma {
     readonly class_status: FieldRef<"Class", 'Class_status'>
     readonly student_package_id: FieldRef<"Class", 'Int'>
     readonly remark: FieldRef<"Class", 'String'>
+    readonly class_number: FieldRef<"Class", 'Int'>
   }
     
 
@@ -10312,7 +10328,7 @@ export namespace Prisma {
     start_date: number
     paid_at: number | null
     official_end_date: number | null
-    expiry_date: number
+    expiry_date: number | null
     min: number
     course_id: number
     student_id: string
@@ -10415,7 +10431,7 @@ export namespace Prisma {
       start_date: number
       paid_at: number | null
       official_end_date: number | null
-      expiry_date: number
+      expiry_date: number | null
       min: number
       course_id: number
       student_id: string
@@ -12243,7 +12259,8 @@ export namespace Prisma {
     reason_for_absence: 'reason_for_absence',
     class_status: 'class_status',
     student_package_id: 'student_package_id',
-    remark: 'remark'
+    remark: 'remark',
+    class_number: 'class_number'
   };
 
   export type ClassScalarFieldEnum = (typeof ClassScalarFieldEnum)[keyof typeof ClassScalarFieldEnum]
@@ -12958,6 +12975,7 @@ export namespace Prisma {
     class_status?: EnumClass_statusFilter<"Class"> | $Enums.Class_status
     student_package_id?: IntFilter<"Class"> | number
     remark?: StringNullableFilter<"Class"> | string | null
+    class_number?: IntFilter<"Class"> | number
     Class_group_of_Classes?: XOR<Class_groupNullableRelationFilter, Class_groupWhereInput> | null
     Student_package?: XOR<Student_packageRelationFilter, Student_packageWhereInput>
   }
@@ -12975,6 +12993,7 @@ export namespace Prisma {
     class_status?: SortOrder
     student_package_id?: SortOrder
     remark?: SortOrderInput | SortOrder
+    class_number?: SortOrder
     Class_group_of_Classes?: Class_groupOrderByWithRelationInput
     Student_package?: Student_packageOrderByWithRelationInput
   }
@@ -12996,6 +13015,7 @@ export namespace Prisma {
     class_status?: EnumClass_statusFilter<"Class"> | $Enums.Class_status
     student_package_id?: IntFilter<"Class"> | number
     remark?: StringNullableFilter<"Class"> | string | null
+    class_number?: IntFilter<"Class"> | number
     Class_group_of_Classes?: XOR<Class_groupNullableRelationFilter, Class_groupWhereInput> | null
     Student_package?: XOR<Student_packageRelationFilter, Student_packageWhereInput>
   }, "id" | "id_hour_unix_timestamp">
@@ -13013,6 +13033,7 @@ export namespace Prisma {
     class_status?: SortOrder
     student_package_id?: SortOrder
     remark?: SortOrderInput | SortOrder
+    class_number?: SortOrder
     _count?: ClassCountOrderByAggregateInput
     _avg?: ClassAvgOrderByAggregateInput
     _max?: ClassMaxOrderByAggregateInput
@@ -13036,6 +13057,7 @@ export namespace Prisma {
     class_status?: EnumClass_statusWithAggregatesFilter<"Class"> | $Enums.Class_status
     student_package_id?: IntWithAggregatesFilter<"Class"> | number
     remark?: StringNullableWithAggregatesFilter<"Class"> | string | null
+    class_number?: IntWithAggregatesFilter<"Class"> | number
   }
 
   export type Student_packageWhereInput = {
@@ -13046,7 +13068,7 @@ export namespace Prisma {
     start_date?: FloatFilter<"Student_package"> | number
     paid_at?: FloatNullableFilter<"Student_package"> | number | null
     official_end_date?: FloatNullableFilter<"Student_package"> | number | null
-    expiry_date?: FloatFilter<"Student_package"> | number
+    expiry_date?: FloatNullableFilter<"Student_package"> | number | null
     min?: IntFilter<"Student_package"> | number
     course_id?: IntFilter<"Student_package"> | number
     student_id?: UuidFilter<"Student_package"> | string
@@ -13064,7 +13086,7 @@ export namespace Prisma {
     start_date?: SortOrder
     paid_at?: SortOrderInput | SortOrder
     official_end_date?: SortOrderInput | SortOrder
-    expiry_date?: SortOrder
+    expiry_date?: SortOrderInput | SortOrder
     min?: SortOrder
     course_id?: SortOrder
     student_id?: SortOrder
@@ -13085,7 +13107,7 @@ export namespace Prisma {
     start_date?: FloatFilter<"Student_package"> | number
     paid_at?: FloatNullableFilter<"Student_package"> | number | null
     official_end_date?: FloatNullableFilter<"Student_package"> | number | null
-    expiry_date?: FloatFilter<"Student_package"> | number
+    expiry_date?: FloatNullableFilter<"Student_package"> | number | null
     min?: IntFilter<"Student_package"> | number
     course_id?: IntFilter<"Student_package"> | number
     student_id?: UuidFilter<"Student_package"> | string
@@ -13103,7 +13125,7 @@ export namespace Prisma {
     start_date?: SortOrder
     paid_at?: SortOrderInput | SortOrder
     official_end_date?: SortOrderInput | SortOrder
-    expiry_date?: SortOrder
+    expiry_date?: SortOrderInput | SortOrder
     min?: SortOrder
     course_id?: SortOrder
     student_id?: SortOrder
@@ -13126,7 +13148,7 @@ export namespace Prisma {
     start_date?: FloatWithAggregatesFilter<"Student_package"> | number
     paid_at?: FloatNullableWithAggregatesFilter<"Student_package"> | number | null
     official_end_date?: FloatNullableWithAggregatesFilter<"Student_package"> | number | null
-    expiry_date?: FloatWithAggregatesFilter<"Student_package"> | number
+    expiry_date?: FloatNullableWithAggregatesFilter<"Student_package"> | number | null
     min?: IntWithAggregatesFilter<"Student_package"> | number
     course_id?: IntWithAggregatesFilter<"Student_package"> | number
     student_id?: UuidWithAggregatesFilter<"Student_package"> | string
@@ -13747,6 +13769,7 @@ export namespace Prisma {
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
     remark?: string | null
+    class_number?: number
     Class_group_of_Classes?: Class_groupCreateNestedOneWithoutGroupOfClassesInput
     Student_package: Student_packageCreateNestedOneWithoutClassInput
   }
@@ -13764,6 +13787,7 @@ export namespace Prisma {
     class_status?: $Enums.Class_status
     student_package_id: number
     remark?: string | null
+    class_number?: number
   }
 
   export type ClassUpdateInput = {
@@ -13776,6 +13800,7 @@ export namespace Prisma {
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     remark?: NullableStringFieldUpdateOperationsInput | string | null
+    class_number?: IntFieldUpdateOperationsInput | number
     Class_group_of_Classes?: Class_groupUpdateOneWithoutGroupOfClassesNestedInput
     Student_package?: Student_packageUpdateOneRequiredWithoutClassNestedInput
   }
@@ -13793,6 +13818,7 @@ export namespace Prisma {
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     student_package_id?: IntFieldUpdateOperationsInput | number
     remark?: NullableStringFieldUpdateOperationsInput | string | null
+    class_number?: IntFieldUpdateOperationsInput | number
   }
 
   export type ClassCreateManyInput = {
@@ -13808,6 +13834,7 @@ export namespace Prisma {
     class_status?: $Enums.Class_status
     student_package_id: number
     remark?: string | null
+    class_number?: number
   }
 
   export type ClassUpdateManyMutationInput = {
@@ -13820,6 +13847,7 @@ export namespace Prisma {
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     remark?: NullableStringFieldUpdateOperationsInput | string | null
+    class_number?: IntFieldUpdateOperationsInput | number
   }
 
   export type ClassUncheckedUpdateManyInput = {
@@ -13835,13 +13863,14 @@ export namespace Prisma {
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     student_package_id?: IntFieldUpdateOperationsInput | number
     remark?: NullableStringFieldUpdateOperationsInput | string | null
+    class_number?: IntFieldUpdateOperationsInput | number
   }
 
   export type Student_packageCreateInput = {
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
-    expiry_date: number
+    expiry_date?: number | null
     min: number
     created_at?: number
     created_at_hk?: string
@@ -13857,7 +13886,7 @@ export namespace Prisma {
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
-    expiry_date: number
+    expiry_date?: number | null
     min: number
     course_id: number
     student_id: string
@@ -13872,7 +13901,7 @@ export namespace Prisma {
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
-    expiry_date?: FloatFieldUpdateOperationsInput | number
+    expiry_date?: NullableFloatFieldUpdateOperationsInput | number | null
     min?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
@@ -13888,7 +13917,7 @@ export namespace Prisma {
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
-    expiry_date?: FloatFieldUpdateOperationsInput | number
+    expiry_date?: NullableFloatFieldUpdateOperationsInput | number | null
     min?: IntFieldUpdateOperationsInput | number
     course_id?: IntFieldUpdateOperationsInput | number
     student_id?: StringFieldUpdateOperationsInput | string
@@ -13904,7 +13933,7 @@ export namespace Prisma {
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
-    expiry_date: number
+    expiry_date?: number | null
     min: number
     course_id: number
     student_id: string
@@ -13918,7 +13947,7 @@ export namespace Prisma {
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
-    expiry_date?: FloatFieldUpdateOperationsInput | number
+    expiry_date?: NullableFloatFieldUpdateOperationsInput | number | null
     min?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
@@ -13931,7 +13960,7 @@ export namespace Prisma {
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
-    expiry_date?: FloatFieldUpdateOperationsInput | number
+    expiry_date?: NullableFloatFieldUpdateOperationsInput | number | null
     min?: IntFieldUpdateOperationsInput | number
     course_id?: IntFieldUpdateOperationsInput | number
     student_id?: StringFieldUpdateOperationsInput | string
@@ -14620,6 +14649,7 @@ export namespace Prisma {
     class_status?: SortOrder
     student_package_id?: SortOrder
     remark?: SortOrder
+    class_number?: SortOrder
   }
 
   export type ClassAvgOrderByAggregateInput = {
@@ -14630,6 +14660,7 @@ export namespace Prisma {
     created_at?: SortOrder
     class_group_id?: SortOrder
     student_package_id?: SortOrder
+    class_number?: SortOrder
   }
 
   export type ClassMaxOrderByAggregateInput = {
@@ -14645,6 +14676,7 @@ export namespace Prisma {
     class_status?: SortOrder
     student_package_id?: SortOrder
     remark?: SortOrder
+    class_number?: SortOrder
   }
 
   export type ClassMinOrderByAggregateInput = {
@@ -14660,6 +14692,7 @@ export namespace Prisma {
     class_status?: SortOrder
     student_package_id?: SortOrder
     remark?: SortOrder
+    class_number?: SortOrder
   }
 
   export type ClassSumOrderByAggregateInput = {
@@ -14670,6 +14703,7 @@ export namespace Prisma {
     created_at?: SortOrder
     class_group_id?: SortOrder
     student_package_id?: SortOrder
+    class_number?: SortOrder
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -15747,7 +15781,7 @@ export namespace Prisma {
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
-    expiry_date: number
+    expiry_date?: number | null
     min: number
     created_at?: number
     created_at_hk?: string
@@ -15762,7 +15796,7 @@ export namespace Prisma {
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
-    expiry_date: number
+    expiry_date?: number | null
     min: number
     course_id: number
     created_at?: number
@@ -15860,7 +15894,7 @@ export namespace Prisma {
     start_date?: FloatFilter<"Student_package"> | number
     paid_at?: FloatNullableFilter<"Student_package"> | number | null
     official_end_date?: FloatNullableFilter<"Student_package"> | number | null
-    expiry_date?: FloatFilter<"Student_package"> | number
+    expiry_date?: FloatNullableFilter<"Student_package"> | number | null
     min?: IntFilter<"Student_package"> | number
     course_id?: IntFilter<"Student_package"> | number
     student_id?: UuidFilter<"Student_package"> | string
@@ -16094,7 +16128,7 @@ export namespace Prisma {
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
-    expiry_date: number
+    expiry_date?: number | null
     min: number
     created_at?: number
     created_at_hk?: string
@@ -16109,7 +16143,7 @@ export namespace Prisma {
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
-    expiry_date: number
+    expiry_date?: number | null
     min: number
     student_id: string
     created_at?: number
@@ -16162,7 +16196,7 @@ export namespace Prisma {
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
-    expiry_date: number
+    expiry_date?: number | null
     min: number
     created_at?: number
     created_at_hk?: string
@@ -16177,7 +16211,7 @@ export namespace Prisma {
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
-    expiry_date: number
+    expiry_date?: number | null
     min: number
     course_id: number
     student_id: string
@@ -16226,7 +16260,7 @@ export namespace Prisma {
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
-    expiry_date?: FloatFieldUpdateOperationsInput | number
+    expiry_date?: NullableFloatFieldUpdateOperationsInput | number | null
     min?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
@@ -16241,7 +16275,7 @@ export namespace Prisma {
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
-    expiry_date?: FloatFieldUpdateOperationsInput | number
+    expiry_date?: NullableFloatFieldUpdateOperationsInput | number | null
     min?: IntFieldUpdateOperationsInput | number
     course_id?: IntFieldUpdateOperationsInput | number
     student_id?: StringFieldUpdateOperationsInput | string
@@ -16261,6 +16295,7 @@ export namespace Prisma {
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
     remark?: string | null
+    class_number?: number
     Class_group_of_Classes?: Class_groupCreateNestedOneWithoutGroupOfClassesInput
   }
 
@@ -16276,6 +16311,7 @@ export namespace Prisma {
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
     remark?: string | null
+    class_number?: number
   }
 
   export type ClassCreateOrConnectWithoutStudent_packageInput = {
@@ -16381,6 +16417,7 @@ export namespace Prisma {
     class_status?: EnumClass_statusFilter<"Class"> | $Enums.Class_status
     student_package_id?: IntFilter<"Class"> | number
     remark?: StringNullableFilter<"Class"> | string | null
+    class_number?: IntFilter<"Class"> | number
   }
 
   export type CourseUpsertWithoutStudent_packageInput = {
@@ -16466,6 +16503,7 @@ export namespace Prisma {
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
     remark?: string | null
+    class_number?: number
     Student_package: Student_packageCreateNestedOneWithoutClassInput
   }
 
@@ -16481,6 +16519,7 @@ export namespace Prisma {
     class_status?: $Enums.Class_status
     student_package_id: number
     remark?: string | null
+    class_number?: number
   }
 
   export type ClassCreateOrConnectWithoutClass_group_of_ClassesInput = {
@@ -16593,7 +16632,7 @@ export namespace Prisma {
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
-    expiry_date: number
+    expiry_date?: number | null
     min: number
     course_id: number
     created_at?: number
@@ -16629,7 +16668,7 @@ export namespace Prisma {
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
-    expiry_date?: FloatFieldUpdateOperationsInput | number
+    expiry_date?: NullableFloatFieldUpdateOperationsInput | number | null
     min?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
@@ -16644,7 +16683,7 @@ export namespace Prisma {
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
-    expiry_date?: FloatFieldUpdateOperationsInput | number
+    expiry_date?: NullableFloatFieldUpdateOperationsInput | number | null
     min?: IntFieldUpdateOperationsInput | number
     course_id?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
@@ -16659,7 +16698,7 @@ export namespace Prisma {
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
-    expiry_date?: FloatFieldUpdateOperationsInput | number
+    expiry_date?: NullableFloatFieldUpdateOperationsInput | number | null
     min?: IntFieldUpdateOperationsInput | number
     course_id?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
@@ -16696,7 +16735,7 @@ export namespace Prisma {
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
-    expiry_date: number
+    expiry_date?: number | null
     min: number
     student_id: string
     created_at?: number
@@ -16709,7 +16748,7 @@ export namespace Prisma {
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
-    expiry_date?: FloatFieldUpdateOperationsInput | number
+    expiry_date?: NullableFloatFieldUpdateOperationsInput | number | null
     min?: IntFieldUpdateOperationsInput | number
     created_at?: FloatFieldUpdateOperationsInput | number
     created_at_hk?: StringFieldUpdateOperationsInput | string
@@ -16724,7 +16763,7 @@ export namespace Prisma {
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
-    expiry_date?: FloatFieldUpdateOperationsInput | number
+    expiry_date?: NullableFloatFieldUpdateOperationsInput | number | null
     min?: IntFieldUpdateOperationsInput | number
     student_id?: StringFieldUpdateOperationsInput | string
     created_at?: FloatFieldUpdateOperationsInput | number
@@ -16739,7 +16778,7 @@ export namespace Prisma {
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
-    expiry_date?: FloatFieldUpdateOperationsInput | number
+    expiry_date?: NullableFloatFieldUpdateOperationsInput | number | null
     min?: IntFieldUpdateOperationsInput | number
     student_id?: StringFieldUpdateOperationsInput | string
     created_at?: FloatFieldUpdateOperationsInput | number
@@ -16760,6 +16799,7 @@ export namespace Prisma {
     reason_for_absence?: string | null
     class_status?: $Enums.Class_status
     remark?: string | null
+    class_number?: number
   }
 
   export type ClassUpdateWithoutStudent_packageInput = {
@@ -16772,6 +16812,7 @@ export namespace Prisma {
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     remark?: NullableStringFieldUpdateOperationsInput | string | null
+    class_number?: IntFieldUpdateOperationsInput | number
     Class_group_of_Classes?: Class_groupUpdateOneWithoutGroupOfClassesNestedInput
   }
 
@@ -16787,6 +16828,7 @@ export namespace Prisma {
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     remark?: NullableStringFieldUpdateOperationsInput | string | null
+    class_number?: IntFieldUpdateOperationsInput | number
   }
 
   export type ClassUncheckedUpdateManyWithoutStudent_packageInput = {
@@ -16801,6 +16843,7 @@ export namespace Prisma {
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     remark?: NullableStringFieldUpdateOperationsInput | string | null
+    class_number?: IntFieldUpdateOperationsInput | number
   }
 
   export type ClassCreateManyClass_group_of_ClassesInput = {
@@ -16815,6 +16858,7 @@ export namespace Prisma {
     class_status?: $Enums.Class_status
     student_package_id: number
     remark?: string | null
+    class_number?: number
   }
 
   export type ClassUpdateWithoutClass_group_of_ClassesInput = {
@@ -16827,6 +16871,7 @@ export namespace Prisma {
     reason_for_absence?: NullableStringFieldUpdateOperationsInput | string | null
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     remark?: NullableStringFieldUpdateOperationsInput | string | null
+    class_number?: IntFieldUpdateOperationsInput | number
     Student_package?: Student_packageUpdateOneRequiredWithoutClassNestedInput
   }
 
@@ -16842,6 +16887,7 @@ export namespace Prisma {
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     student_package_id?: IntFieldUpdateOperationsInput | number
     remark?: NullableStringFieldUpdateOperationsInput | string | null
+    class_number?: IntFieldUpdateOperationsInput | number
   }
 
   export type ClassUncheckedUpdateManyWithoutClass_group_of_ClassesInput = {
@@ -16856,6 +16902,7 @@ export namespace Prisma {
     class_status?: EnumClass_statusFieldUpdateOperationsInput | $Enums.Class_status
     student_package_id?: IntFieldUpdateOperationsInput | number
     remark?: NullableStringFieldUpdateOperationsInput | string | null
+    class_number?: IntFieldUpdateOperationsInput | number
   }
 
 

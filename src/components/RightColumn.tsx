@@ -1,31 +1,29 @@
-import { Button } from "antd";
 import Title from "../components/Title";
-import { useParams } from "react-router-dom";
 import Spacer from "../components/Spacer";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { useDispatch } from "react-redux";
 import Sep from "../components/Sep";
 import Label from "../components/Label";
-import { Calendar, theme } from "antd";
+import { Button, Calendar } from "antd";
 import type { CalendarProps } from "antd";
-import * as React from "react";
 import dayjs, { Dayjs } from "dayjs";
 import studentSlice, { StudentThunkAction } from "../redux/slices/studentSlice";
 import timeUtil from "../utils/timeUtil";
 import { AppDispatch } from "../redux/store";
-import { FilterToGetClassesForDailyTimetable, TimetableType } from "../dto/dto";
+import { FilterToGetClassesForDailyTimetable } from "../dto/dto";
 import appSlice from "../redux/slices/appSlice";
 import CollapseButton from "../assets/collapse-button.png";
 import { FaFilter } from "react-icons/fa";
 import Checkbox from "@mui/material/Checkbox";
 import colors from "../constant/colors";
+import React from "react";
 
 export default () => {
-    const filter = useAppSelector((s) => s.student.studentDetail.dailyTimetable.filter);
-    const timetableType = useAppSelector((s) => s.student.studentDetail.dailyTimetable.timetableType);
-    const selectedDate = useAppSelector((s) => s.student.studentDetail.dailyTimetable.selectedDate);
+    const classRoom = useAppSelector((s) => s.student.allStudents.classRoom);
+    const summaryOfClassStatues = useAppSelector((s) => s.student.allStudents.summaryOfClassStatues);
+    const selectedDate = useAppSelector((s) => s.student.allStudents.selectedDate);
     const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
-    const summaryOfClassStatues = useAppSelector((s) => s.student.studentDetail.dailyTimetable.summaryOfClassStatues);
+    const filter = useAppSelector((s) => s.student.allStudents.filter);
     const dispatch = useDispatch<AppDispatch>();
 
     const [formData, setFormData] = React.useState<FilterToGetClassesForDailyTimetable>({
@@ -39,11 +37,13 @@ export default () => {
 
     const submit = () => {
         console.log("formData:", formData);
+        if (!classRoom) return;
         dispatch(studentSlice.actions.setFilter(formData));
+        const currentTimestamp = dayjs(selectedDate.getTime()).startOf("day").valueOf().toString();
         dispatch(
             StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                dateUnixTimestamp: selectedDate.getTime().toString(),
-                timetableType: timetableType,
+                dateUnixTimestamp: currentTimestamp,
+                classRoom: classRoom,
                 filter: formData,
             })
         );
@@ -75,12 +75,22 @@ export default () => {
                     fullscreen={false}
                     onPanelChange={onPanelChange}
                     value={dayjs(selectedDate)}
-                    onSelect={(date, { source }) => {
+                    onSelect={(date, _) => {
+                        if (!classRoom) {
+                            return;
+                        }
                         dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: date.toDate() }));
+                        console.log("I am being called");
+                        // dispatch(
+                        //     StudentThunkAction.getStudentClassesForDailyTimetable({
+                        //         dateUnixTimestamp: timeUtil.getDayUnixTimestamp(date.toDate().getTime()).toString(),
+                        //         classRoom: classRoom,
+                        //     })
+                        // );
                         dispatch(
                             StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
                                 dateUnixTimestamp: timeUtil.getDayUnixTimestamp(date.toDate().getTime()).toString(),
-                                timetableType: timetableType,
+                                classRoom,
                                 filter: formData,
                             })
                         );

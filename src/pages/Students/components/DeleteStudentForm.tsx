@@ -10,7 +10,7 @@ import DeleteClassDialog from "../../../components/DeleteClassDialog";
 import { Class, Course, Student_package } from "../../../prismaTypes/types";
 import colors from "../../../constant/colors";
 import dayjs from "dayjs";
-import { TimetableType } from "../../../dto/dto";
+import { ClassRoom } from "../../../dto/dto";
 
 export default (props: { studentId: string }) => {
     const { studentId } = props;

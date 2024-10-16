@@ -35,7 +35,7 @@ export default () => {
                 setError(errorObject)
             }
         } else {
-            toastUtil.success("User Created")
+            toastUtil.success("Course Created")
             AddClassDialog.setOpen(false)
             dispatch(CourseThunkAction.getCourses());
         }

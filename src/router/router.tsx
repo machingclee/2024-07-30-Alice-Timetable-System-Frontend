@@ -8,34 +8,103 @@ import StudentDetail from "../pages/Students/StudentDetail/StudentDetail.tsx";
 import RouteIndex from "../components/RouteIndex.tsx";
 import Classes from "../pages/Courses/Courses.tsx";
 import CausewayBayTimetable from "../pages/CausewayBayTimetable/CausewayBayTimetable.tsx";
-
-export enum RouteEnum {
-    LOGIN = "/login",
-    DASHBOARD_STUDENTS = "/dashboard/students",
-    DASHBOARD_COURSES = "/dashboard/courses",
-    DASHBOARD_USERS = "/dashboard/users",
-    DASHBOARD_PRINCE_EDWARD_TIMETABLE = "/dashboard/PE-timetable",
-    DASHBOARD_CWB_TIMETABLE = "/dashboard/CWB-timetable",
-}
+import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../redux/hooks.ts";
+import studentSlice, { StudentThunkAction } from "../redux/slices/studentSlice.ts";
+import dayjs from "dayjs";
+import { CourseThunkAction } from "../redux/slices/courseSlice.ts";
+import timeUtil from "../utils/timeUtil.ts";
 
 const getRouter = (_store: any) => {
     return createBrowserRouter(
         createRoutesFromElements(
-            <Route path={"/"} element={<Root />}>
+            <Route path="/" element={<Root />}>
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<Dashboard />}>
                     <Route path={"students"} element={<RouteIndex />}>
                         <Route index element={<Students />} />
                         <Route path=":studentId" element={<StudentDetail />} />
                     </Route>
-                    <Route />
-                    <Route path={"courses"} element={<Classes />} />
-                    <Route path={"users"} element={<Users />} />
-                    <Route path={"PE-timetable"} element={<PrinceEdwardTimetable />} />
-                    <Route path={"CWB-timetable"} element={<CausewayBayTimetable />} />
+                    <Route path="courses" element={<Classes />} />
+                    <Route path="users" element={<Users />} />
+                    <Route path="all-students" element={<AllStudentsIndex />}>
+                        <Route path="prince-edward" element={<PrinceEdwardIndex />}>
+                            <Route index element={<PrinceEdwardTimetable />} />
+                        </Route>
+                        <Route path="causeway-bay" element={<CausewaybayIndex />}>
+                            <Route index element={<CausewayBayTimetable />} />
+                        </Route>
+                    </Route>
                 </Route>
             </Route>
         )
+    );
+};
+
+const CausewaybayIndex = () => {
+    const dispatch = useAppDispatch();
+    const filter = useAppSelector((s) => s.student.allStudents.filter);
+
+    useEffect(() => {
+        dispatch(studentSlice.actions.setClassroom("CAUSEWAY_BAY"));
+    }, []);
+
+    useEffect(() => {
+        const currentTimestamp = dayjs(new Date().getTime()).startOf("day").valueOf().toString();
+        dispatch(
+            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
+                dateUnixTimestamp: currentTimestamp,
+                classRoom: "CAUSEWAY_BAY",
+                filter: filter,
+            })
+        );
+    }, []);
+
+    return <Outlet />;
+};
+
+const PrinceEdwardIndex = () => {
+    const dispatch = useAppDispatch();
+    const filter = useAppSelector((s) => s.student.allStudents.filter);
+
+    useEffect(() => {
+        dispatch(studentSlice.actions.setClassroom("PRINCE_EDWARD"));
+    }, []);
+
+    useEffect(() => {
+        const currentTimestamp = dayjs(new Date().getTime()).startOf("day").valueOf().toString();
+        dispatch(
+            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
+                dateUnixTimestamp: currentTimestamp,
+                classRoom: "PRINCE_EDWARD",
+                filter: filter,
+            })
+        );
+        // dispatch(
+        //     StudentThunkAction.getStudentClassesForDailyTimetable({
+        //         dateUnixTimestamp: currentTimestamp,
+        //         classRoom: "PRINCE_EDWARD",
+        //     })
+        // );
+    }, []);
+
+    return <Outlet />;
+};
+
+const AllStudentsIndex = () => {
+    const dispatch = useAppDispatch();
+    useEffect(() => {
+        dispatch(CourseThunkAction.getCourses());
+        dispatch(StudentThunkAction.getStudents());
+        return () => {
+            dispatch(studentSlice.actions.reset());
+        };
+    }, []);
+
+    return (
+        <>
+            <Outlet />
+        </>
     );
 };
 

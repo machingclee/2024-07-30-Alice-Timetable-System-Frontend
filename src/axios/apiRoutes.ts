@@ -1,4 +1,4 @@
-import { TimetableType } from "../dto/dto";
+import { Classroom } from "../prismaTypes/types";
 
 export default {
     POST_REFRESH_TOKEN: "/auth/refresh-token",
@@ -16,14 +16,14 @@ export default {
     GET_COURSES: "/course/courses",
     GET_STUDENT_DETAIL: (studentId: string) => `/student/student-detail/${studentId}`,
     GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE: (studentId: string) => `/student/student-classes-for-weekly-timteable/${studentId}`,
-    GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: (dateUnixTimestamp: string, timetableType: TimetableType) =>
-        `/student/student-classes-for-daily-timteable/${dateUnixTimestamp}/${timetableType}`,
+    GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: (dateUnixTimestamp: string, classRoom: Classroom) =>
+        `/student/student-classes-for-daily-timteable/${dateUnixTimestamp}/${classRoom}`,
     GET_STUDENT_PACKAGES: (studentId: string) => `/student/student-packages/${studentId}`,
 
     PUT_UPDATE_USER: "/user/update-user",
     PUT_UPDATE_STUDENT: "/student/update-student",
     PUT_UPDATE_COURSE: "/course/update-course",
-    PUT_MOVE_STUDNET_EVENT: "/student/move-event",
+    PUT_MOVE_STUDNET_CLASS: "/student/move-class",
     PUT_DETACH_CLASS_FROM_GROUP: "/student/detach-from-group",
     PUT_UPDATE_CLASS: "/student/update-class",
     PUT_MARK_PACAKGE_AS_PAID: "/student/mark-package-as-paid",

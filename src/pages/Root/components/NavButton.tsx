@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-import { RouteEnum } from "../../../router/router";
 import Label from "../../../components/Label";
+import RouteEnum from "../../../enum/RouteEnum";
 
 export default (props: { activeNavigationRegex: RegExp; title: string; routeEnum: RouteEnum }) => {
     const { pathname } = useLocation();

@@ -123,8 +123,6 @@ export type FilterToGetClassesForDailyTimetable = {
     changeOfClassroom: boolean;
 };
 
-export type TimetableType = "Prince_Edward_Timetable" | "Causeway_Bay_Timetable";
-
 export type DeleteClassRequest = {
     classId: number;
 };
@@ -145,14 +143,12 @@ export type UpdateClassRequest = {
     reason_for_absence: string;
     remark: string;
     actual_classroom: Classroom;
-    student_package_id: number;
 };
 
 export type CreateStudentPackageRequest = {
     num_of_classes: number;
     start_date: number;
     start_time: number;
-    expiry_date: number;
     min: number;
     course_id: number;
     student_id: string;
@@ -170,11 +166,22 @@ export type UpdateStudentPackageRequest = {
     student_id: string;
 };
 
-export type Augmented_Student_package = Student_package & { scheduled_minutes: { count: number } & { consumed_minutes: { count: number } } };
+export type Augmented_Student_package = Student_package & { scheduled_minutes: { count: number }; consumed_minutes: { count: number } };
 
 export type Augmented_Class = Class & { course_name: string; student_id: string };
 
-export type WeeklyTimetableClass = Omit<Student_package, "id"> & { student_package_id: number } & Class & Omit<Course, "id"> & { course_id: number };
+export type TimetableClass = Class & {
+    student_package_id: number;
+    course_id: number;
+    course_name: string;
+    student_id: string;
+    default_classroom: Classroom;
+    first_name: string;
+    last_name: string;
+    chinese_first_name: string;
+    chinese_last_name: string;
+    id: number;
+};
 
 export type SummaryOfClassStatues = {
     present: number;

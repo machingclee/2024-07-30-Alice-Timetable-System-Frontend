@@ -1,14 +1,11 @@
 import { Button, Select } from "antd";
 import Spacer from "../../../components/Spacer";
 import { useEffect, useRef, useState } from "react";
-import { CreateStudentRequest, Gender, UpdateStudentRequest } from "../../../dto/dto";
-import apiClient from "../../../axios/apiClient";
-import apiRoutes from "../../../axios/apiRoutes";
-import { CustomResponse } from "../../../axios/responseTypes";
+import { Gender, UpdateStudentRequest } from "../../../dto/dto";
 import FormInputField from "../../../components/FormInputField";
 import toastUtil from "../../../utils/toastUtil";
 import SectionTitle from "../../../components/SectionTitle";
-import AddUserDialog from "./AddStudentDialog";
+
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { Box } from "@mui/material";
 import FormInputTitle from "../../../components/FormInputTitle";
@@ -16,10 +13,8 @@ import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import studentSlice, { StudentThunkAction } from "../../../redux/slices/studentSlice";
 import Label from "../../../components/Label";
-import moment from "moment";
 import EditStudentDialog from "./EditStudentDialog";
 
-const initialDate = "2015-01-01";
 
 export default ({ studentId }: { studentId: string }) => {
     const dispatch = useAppDispatch();
@@ -77,15 +72,15 @@ export default ({ studentId }: { studentId: string }) => {
             <FormInputField title="First Name" defaultValue={student.first_name} onChange={(t) => update({ first_name: t })} error={error?.["first_name"]} />
             <FormInputField title="Last Name" defaultValue={student.last_name} onChange={(t) => update({ last_name: t })} error={error?.["last_name"]} />
             <FormInputField
-                title="Chinese First Name"
-                defaultValue={student.chinese_first_name}
-                onChange={(t) => update({ chinese_first_name: t })}
+                title="Chinese Last Name"
+                defaultValue={student.chinese_last_name}
+                onChange={(t) => update({ chinese_last_name: t })}
                 error={error?.["chinese_first_name"]}
             />
             <FormInputField
                 title="Chinese First Name"
-                defaultValue={student.chinese_last_name}
-                onChange={(t) => update({ chinese_last_name: t })}
+                defaultValue={student.chinese_first_name}
+                onChange={(t) => update({ chinese_first_name: t })}
                 error={error?.["chinese_last_name"]}
             />
             <div style={{ display: "flex" }}>
