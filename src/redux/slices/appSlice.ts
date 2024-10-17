@@ -1,5 +1,4 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { ClassRoom } from "../../dto/dto";
 
 export type AppSliceState = {
     loading: boolean;

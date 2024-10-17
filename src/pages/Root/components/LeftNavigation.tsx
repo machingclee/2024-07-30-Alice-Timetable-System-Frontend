@@ -18,7 +18,7 @@ const pathRegex = {
     COURSES: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_COURSES)),
     USERS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_USERS)),
     PRINCE_EDWARD_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE)),
-    CAUSEWAY_BAY_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE))
+    CAUSEWAY_BAY_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE)),
 };
 
 export default () => {
@@ -41,6 +41,8 @@ export default () => {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE));
             } else if (pathRegex.COURSES.test(pathname)) {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_COURSES));
+            } else if (pathRegex.CAUSEWAY_BAY_TIMETABLE.test(pathname)) {
+                dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE));
             } else {
                 dispatch(appSlice.actions.setActivePath(pathname));
             }

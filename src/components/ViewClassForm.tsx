@@ -14,16 +14,18 @@ import getColorForClassStatus from "../utils/getColorForClassStatus";
 import getNumberSuffix from "../utils/getNumberSuffix";
 import { TimetableClass } from "../dto/dto";
 
-export default (props: { classEvent: TimetableClass }) => {
+export default (props: { classEvent: TimetableClass; dateUnixTimestamp?: number }) => {
+    const classRoom = useAppSelector((s) => s.student.allStudents.classRoom);
+    const filter = useAppSelector((s) => s.student.allStudents.filter);
     const [editing, setEditing] = useState(false);
-    const { classEvent } = props;
+    const { classEvent, dateUnixTimestamp } = props;
     const { id, min, class_status, reason_for_absence, remark, actual_classroom, default_classroom, class_number } = classEvent;
     const courseInfo = useAppSelector((s) => s.class.courses?.idToCourse?.[classEvent.course_id || 0]);
     const formData = useRef({ min: min, class_status: class_status, reason_for_absence: reason_for_absence, remark: remark, actual_classroom: actual_classroom });
     const [hasAbsence, setHasAbsence] = useState<boolean>(["PRESENT", "CHANGE_OF_CLASSROOM"].includes(class_status) ? false : true);
     const dispatch = useAppDispatch();
 
-    useEffect(() => { }, []);
+    useEffect(() => {}, []);
 
     const classroomOptions: Classroom[] = ["PRINCE_EDWARD", "CAUSEWAY_BAY"];
 
@@ -147,16 +149,30 @@ export default (props: { classEvent: TimetableClass }) => {
                         type="primary"
                         block
                         onClick={async () => {
-                            await dispatch(StudentThunkAction.updateClass({
-                                classId: id,
-                                min: formData.current.min,
-                                class_status: formData.current.class_status,
-                                reason_for_absence: formData.current.reason_for_absence || "",
-                                remark: formData.current.remark || "",
-                                actual_classroom: formData.current.actual_classroom as $Enums.Classroom,
-                            })
-                            ).unwrap();
-                            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: classEvent.student_id }))
+                            await dispatch(
+                                StudentThunkAction.updateClass({
+                                    classId: id,
+                                    min: formData.current.min,
+                                    class_status: formData.current.class_status,
+                                    reason_for_absence: formData.current.reason_for_absence || "",
+                                    remark: formData.current.remark || "",
+                                    actual_classroom: formData.current.actual_classroom as $Enums.Classroom,
+                                })
+                            )
+                                .unwrap()
+                                .finally(() => {
+                                    if (classRoom && dateUnixTimestamp) {
+                                        dispatch(
+                                            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
+                                                classRoom: classRoom,
+                                                dateUnixTimestamp: dateUnixTimestamp.toString(),
+                                                filter: filter,
+                                            })
+                                        );
+                                    } else {
+                                        dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: classEvent.student_id }));
+                                    }
+                                });
                             dispatch(StudentThunkAction.getStudentPackages({ studentId: classEvent.student_id }));
                             ViewClassDialog.setOpen(false);
                         }}

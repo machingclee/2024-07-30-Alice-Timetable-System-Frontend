@@ -14,12 +14,24 @@ import StudentsClassForDailyTimetableByHour from "./StudentsClassForDailyTimetab
 import Label from "./Label";
 import ViewClassDialog from "./ViewClassDialog";
 
+// dispatch(
+//     StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
+//         dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).subtract(1, "day").toDate().getTime()).toString(),
+//         timetableType: timetableType,
+//         filter: filter,
+//     StudentThunkAction.getStudentClassesForDailyTimetable({
+//         dateUnixTimestamp: prevDayjs.startOf("day").valueOf().toString(),
+//         classRoom: classRoom,
+//     })
+// );
+
 export default () => {
     const dispatch = useAppDispatch();
     const classRoom = useAppSelector((s) => s.student.allStudents.classRoom);
     const selectedDate = useAppSelector((s) => s.student.allStudents.selectedDate);
     const [hoursColumnGrid, setHoursColumn] = useState<string[]>([]);
-    const selectedDay = useAppSelector(s => s.student.allStudents.selectedDate);
+    const selectedDay = useAppSelector((s) => s.student.allStudents.selectedDate);
+    const filter = useAppSelector((s) => s.student.allStudents.filter);
 
     // Memoize the half-hour intervals to prevent recalculation on every render
     const oneForthHourIntervals = useMemo(() => {
@@ -52,8 +64,8 @@ export default () => {
                     borderTop: "1px solid rgba(0,0,0,0.1)",
                     borderLeft: "1px solid rgba(0, 0, 0, 0.1)",
                     "& .daily-class": {
-                        maxWidth: "100px"
-                    }
+                        maxWidth: "100px",
+                    },
                 },
                 "& .droppable:last-child": {
                     "& .daily-class-container": {
@@ -102,6 +114,13 @@ export default () => {
                             const prevDayjs = dayjs(selectedDate).subtract(1, "day");
                             dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDayjs.toDate() }));
                             dispatch(
+                                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
+                                    dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).subtract(1, "day").toDate().getTime()).toString(),
+                                    classRoom: classRoom,
+                                    filter: filter,
+                                })
+                            );
+                            dispatch(
                                 StudentThunkAction.getStudentClassesForDailyTimetable({
                                     dateUnixTimestamp: prevDayjs.startOf("day").valueOf().toString(),
                                     classRoom: classRoom,
@@ -121,13 +140,21 @@ export default () => {
                             if (!classRoom) {
                                 return;
                             }
-                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: dayjs(selectedDate).add(1, "day").toDate() }));
+                            const nextDayjs = dayjs(selectedDate).add(1, "day");
+                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDayjs.toDate() }));
                             dispatch(
-                                StudentThunkAction.getStudentClassesForDailyTimetable({
+                                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
                                     dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).add(1, "day").toDate().getTime()).toString(),
                                     classRoom: classRoom,
+                                    filter: filter,
                                 })
                             );
+                            // dispatch(
+                            //     StudentThunkAction.getStudentClassesForDailyTimetable({
+                            //         dateUnixTimestamp: nextDayjs.valueOf().toString(),
+                            //         classRoom: classRoom,
+                            //     })
+                            // );
                         }}
                     >
                         <div style={{ display: "flex", alignItems: "center", fontSize: 14 }}>
@@ -152,22 +179,20 @@ export default () => {
                                 })}
                             </div>
                             <div style={{ flex: 1 }}>
-                                {hoursColumnGrid
-                                    .sort()
-                                    .map((hourUnixTimestamp, index) => {
-                                        return (
-                                            <div key={hourUnixTimestamp} style={{ flex: 1 }} className="time-column" >
-                                                <Spacer height={5} />
-                                                <div className="droppable" style={{ position: "relative", zIndex: hoursColumnGrid.length - index + 1, height: gridHeight }}>
-                                                    <StudentsClassForDailyTimetableByHour
-                                                        key={hourUnixTimestamp}
-                                                        dayUnixTimestamp={timeUtil.getDayUnixTimestamp(selectedDate.getTime())}
-                                                        currHourUnixTimestamp={parseInt(hourUnixTimestamp)}
-                                                    />
-                                                </div>
+                                {hoursColumnGrid.sort().map((hourUnixTimestamp, index) => {
+                                    return (
+                                        <div key={hourUnixTimestamp} style={{ flex: 1 }} className="time-column">
+                                            <Spacer height={5} />
+                                            <div className="droppable" style={{ position: "relative", zIndex: hoursColumnGrid.length - index + 1, height: gridHeight }}>
+                                                <StudentsClassForDailyTimetableByHour
+                                                    key={hourUnixTimestamp}
+                                                    dayUnixTimestamp={timeUtil.getDayUnixTimestamp(selectedDate.getTime())}
+                                                    currHourUnixTimestamp={parseInt(hourUnixTimestamp)}
+                                                />
                                             </div>
-                                        );
-                                    })}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
