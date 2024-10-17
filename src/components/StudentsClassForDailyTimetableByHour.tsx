@@ -10,18 +10,20 @@ import ViewClassForm from "./ViewClassForm";
 import ViewClassDialog from "./ViewClassDialog";
 import StudentClassCard from "./StudentClassCard";
 
-export default (props: {
-    dayUnixTimestamp: number,
-    currHourUnixTimestamp: number,
-}) => {
+export default (props: { dayUnixTimestamp: number; currHourUnixTimestamp: number }) => {
     const { currHourUnixTimestamp, dayUnixTimestamp } = props;
     const classesThisHour = useAppSelector((s) => s.student.allStudents?.hrUnixTimestampToClasses?.[currHourUnixTimestamp]) || [];
 
-
     return (
-        <div className="daily-class-container" style={{
-            position: "relative", display: "flex", width: "100%", zIndex: 1
-        }}>
+        <div
+            className="daily-class-container"
+            style={{
+                position: "relative",
+                display: "flex",
+                width: "100%",
+                zIndex: 1,
+            }}
+        >
             {/* @ts-ignore */}
             {classesThisHour.map((classEvent, index) => {
                 const contextMenuId = `${classEvent?.student_id || ""}-${classEvent?.hour_unix_timestamp || ""}`;
@@ -40,11 +42,7 @@ export default (props: {
                             {/* {showLabel && index === 0 && <Label label="StudentsClassForDailyTimetableByHour.tsx" />} */}
                             {/* @ts-ignore */}
                             <ContextMenuTrigger id={contextMenuId}>
-                                <StudentClassCard
-                                    dayUnixTimestamp={dayUnixTimestamp}
-                                    currHourUnixTimestamp={currHourUnixTimestamp}
-                                    classEvent={classEvent}
-                                />
+                                <StudentClassCard dayUnixTimestamp={dayUnixTimestamp} currHourUnixTimestamp={currHourUnixTimestamp} classEvent={classEvent} />
                             </ContextMenuTrigger>
                             {/* @ts-ignore */}
                             <ContextMenu id={contextMenuId} style={{ zIndex: 10 ** 7 }}>
@@ -70,11 +68,7 @@ export default (props: {
                                     <MenuItem
                                         className="menu-item"
                                         onClick={() => {
-                                            ViewClassDialog.setContent(() => () => (
-                                                <ViewClassForm
-                                                    classEvent={classEvent}
-                                                />
-                                            ));
+                                            ViewClassDialog.setContent(() => () => <ViewClassForm classEvent={classEvent} dateUnixTimestamp={dayUnixTimestamp} />);
                                             ViewClassDialog.setOpen(true);
                                         }}
                                     >
@@ -94,7 +88,8 @@ export default (props: {
                             </ContextMenu>
                         </FadeIn>
                     </div>
-                )
+                );
             })}
-        </div>);
-}
+        </div>
+    );
+};

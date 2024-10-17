@@ -203,11 +203,7 @@ const studentSlice = createSlice({
             })
             .addCase(StudentThunkAction.getFilteredStudentClassesForDailyTimetable.fulfilled, (state, action) => {
                 const classes = action.payload.classes;
-                if (classes.length === 0) {
-                    console.log("清零!");
-                    state.allStudents.hrUnixTimestampToClasses = {};
-                }
-                console.log("classes:", classes);
+                state.allStudents.hrUnixTimestampToClasses = {};
                 const hrTimestampToClasses: { [key: string]: TimetableClass[] } = {};
                 let presentClasses = 0;
                 let suspiciousAbsenceClasses = 0;

@@ -16,7 +16,6 @@ import AddPaymentDetailForm from "./AddPaymentDetailForm";
 import EditPackageDialog from "./EditPackageDialog";
 import EditPackageForm from "./EditPackageForm";
 
-
 export default (props: { packageId: string }) => {
     const { packageId } = props;
     const dispatch = useAppDispatch();
@@ -157,7 +156,7 @@ export default (props: { packageId: string }) => {
                                 <td>{`${assignedClasses}/${num_of_classes}`}</td>
                             </tr>
                             <tr>
-                                <td>Consumed Classes</td>
+                                <td>Finished Classes</td>
                                 <td>{`${finishedClasses}/${num_of_classes}`}</td>
                             </tr>
                             <tr>
