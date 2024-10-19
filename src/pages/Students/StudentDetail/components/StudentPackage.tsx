@@ -8,7 +8,7 @@ import Spacer from "../../../../components/Spacer";
 import Label from "../../../../components/Label";
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu";
 import colors from "../../../../constant/colors";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { FaRegCheckCircle } from "react-icons/fa";
 import { MdOutlinePending } from "react-icons/md";
 import AddPaymentDetailDialog from "./AddPaymentDetailDialog";
@@ -20,7 +20,6 @@ import RouteEnum from "../../../../enum/RouteEnum";
 export default (props: { packageId: string }) => {
     const { packageId } = props;
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { studentId } = useParams<{ studentId: string }>();
     const pkg = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[packageId]);
@@ -165,7 +164,7 @@ export default (props: { packageId: string }) => {
                                 <td>{`${assignedClasses}/${num_of_classes}`}</td>
                             </tr>
                             <tr>
-                                <td>Consumed Classes</td>
+                                <td>Finished Classes</td>
                                 <td>{`${finishedClasses}/${num_of_classes}`}</td>
                             </tr>
                             <tr>

@@ -114,6 +114,15 @@ export type CreateClassRequest = {
     actual_classroom: Classroom;
 };
 
+export type FilterToGetClassesForDailyTimetable = {
+    present: boolean;
+    suspicious_absence: boolean;
+    illegit_absence: boolean;
+    legit_absence: boolean;
+    makeup: boolean;
+    changeOfClassroom: boolean;
+};
+
 export type DeleteClassRequest = {
     classId: number;
 };
@@ -133,7 +142,7 @@ export type UpdateClassRequest = {
     class_status: string;
     reason_for_absence: string;
     remark: string;
-    actual_classroom: Classroom
+    actual_classroom: Classroom;
 };
 
 export type CreateStudentPackageRequest = {
@@ -157,7 +166,7 @@ export type UpdateStudentPackageRequest = {
     student_id: string;
 };
 
-export type Augmented_Student_package = Student_package & { scheduled_minutes: { count: number }, consumed_minutes: { count: number } };
+export type Augmented_Student_package = Student_package & { scheduled_minutes: { count: number }; consumed_minutes: { count: number } };
 
 export type Augmented_Class = Class & { course_name: string; student_id: string };
 
@@ -172,7 +181,6 @@ export type TimetableClass = Class & {
     chinese_first_name: string, // student name
     chinese_last_name: string, // student name
     id: number,
-
 }
 
 export type SummaryOfClassStatues = {

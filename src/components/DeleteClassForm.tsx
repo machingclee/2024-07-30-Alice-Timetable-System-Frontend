@@ -60,7 +60,6 @@ export default (props: { classEvent: TimetableClass }) => {
                             classId: id,
                         })
                     ).unwrap();
-                    // dispatch(StudentThunkAction.getStudentClassesForDailyTimetable({ dateUnixTimestamp: day_unix_timestamp.toString(), timetableType: props.timetableType }));
                     dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: student_id }));
                     dispatch(StudentThunkAction.getStudentPackages({ studentId: student_id }));
                     DeleteClassDialog.setOpen(false);
