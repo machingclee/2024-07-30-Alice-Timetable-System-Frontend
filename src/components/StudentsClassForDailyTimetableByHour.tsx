@@ -36,7 +36,7 @@ export default (props: {
                             position: "relative",
                         }}
                     >
-                        <FadeIn>
+                        <div>
                             {/* {showLabel && index === 0 && <Label label="StudentsClassForDailyTimetableByHour.tsx" />} */}
                             {/* @ts-ignore */}
                             <ContextMenuTrigger id={contextMenuId}>
@@ -92,7 +92,7 @@ export default (props: {
                                     </MenuItem>
                                 </Box>
                             </ContextMenu>
-                        </FadeIn>
+                        </div>
                     </div>
                 )
             })}

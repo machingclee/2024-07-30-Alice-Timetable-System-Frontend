@@ -171,6 +171,7 @@ const studentSlice = createSlice({
                 const { idToObject, ids } = normalizeUtil.normalize({ idAttribute: "id", targetArr: packages });
                 state.studentDetail.packages.ids = ids.sort((id1, id2) => idToObject[id1].start_date - idToObject[id2].start_date);
                 state.studentDetail.packages.idToPackage = idToObject;
+                state.studentDetail.selectedPackageId = state.studentDetail.packages.ids?.[0]
             })
             .addCase(StudentThunkAction.getStudentClassesForDailyTimetable.fulfilled, (state, action) => {
                 const classes = action.payload.classes;

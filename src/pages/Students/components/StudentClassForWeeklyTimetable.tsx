@@ -14,7 +14,6 @@ import DeleteClassDialog from "../../../components/DeleteClassDialog";
 import DuplicateClassDialog from "../../../components/DuplicateClassDialog";
 import DuplicateClassForm from "../../../components/DuplicateClassForm";
 import { StudentThunkAction } from "../../../redux/slices/studentSlice";
-import FadeIn from "../../../components/FadeIn";
 import colors from "../../../constant/colors";
 import Label from "../../../components/Label";
 import ViewClassDialog from "../../../components/ViewClassDialog";
@@ -182,7 +181,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                     >
                                         {/* Control what to show on the entire timetable */}
                                         {course_name && (showAll || (!showAll && (Number(selectedPackageId) === studentClass?.student_package_id))) &&
-                                            (<FadeIn>
+                                            (<div>
                                                 {/* @ts-ignore */}
                                                 <ContextMenuTrigger id={contextMenuId}>
                                                     <Box
@@ -327,7 +326,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         </MenuItem>
                                                     </Box>
                                                 </ContextMenu>
-                                            </FadeIn>)}
+                                            </div>)}
                                     </div>
                                 </div>
                             </TimeslotWrapper>

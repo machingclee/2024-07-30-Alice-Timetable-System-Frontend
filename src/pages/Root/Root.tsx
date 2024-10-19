@@ -6,13 +6,11 @@ import LeftNavigation from "./components/LeftNavigation";
 import { OverlayScrollbarsComponent, OverlayScrollbarsComponentRef } from "overlayscrollbars-react";
 import appSlice from "../../redux/slices/appSlice";
 import AppLoading from "../../components/AppLoading";
-import RouteEnum from "../../enum/RouteEnum";
 
 export default () => {
     const dispatch = useAppDispatch();
     const location = useLocation();
     const navgiate = useNavigate();
-    const accessToken = useAppSelector((s) => s.auth.accessToken);
     const ref = useRef<OverlayScrollbarsComponentRef<"div"> | null>(null);
     console.log("This is root");
 
@@ -28,17 +26,6 @@ export default () => {
             dispatch(appSlice.actions.setActivePath("/login"));
         }
     }, [location.pathname]);
-
-    useEffect(() => {
-        if (!accessToken) {
-            navgiate("/login");
-        } else {
-            const inDashboard = location.pathname.includes("/dashboard");
-            if (!inDashboard) {
-                navgiate(RouteEnum.DASHBOARD_STUDENTS);
-            }
-        }
-    }, [accessToken, location.pathname]);
 
     return (
         <>

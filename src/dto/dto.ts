@@ -167,10 +167,10 @@ export type TimetableClass = Class & {
     course_name: string,
     student_id: string,
     default_classroom: Classroom,
-    first_name: string,
-    last_name: string,
-    chinese_first_name: string,
-    chinese_last_name: string,
+    first_name: string, // student name
+    last_name: string, // student name
+    chinese_first_name: string, // student name
+    chinese_last_name: string, // student name
     id: number,
 
 }

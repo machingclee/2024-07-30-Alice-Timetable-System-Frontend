@@ -10,6 +10,7 @@ export default {
     POST_DUPLICATE_CLASSES: "/student/duplicate-classes",
     POST_CREATE_STUDENT_PACKAGE: "/student/create-student-package",
 
+    GET_PACKAGE_CLASS_STATUS: (pkgUUID: string) => `/public/student-class-status/${pkgUUID}`,
     GET_USERS: "/user/users",
     GET_STUDENTS: "/student/students",
     GET_COURSES: "/course/courses",

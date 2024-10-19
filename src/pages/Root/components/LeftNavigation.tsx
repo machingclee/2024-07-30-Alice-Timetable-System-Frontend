@@ -53,6 +53,10 @@ export default () => {
         return null;
     }
 
+    if (!pathname.startsWith(RouteEnum.DASHBOARD)) {
+        return null;
+    }
+
     return (
         <Box
             style={{

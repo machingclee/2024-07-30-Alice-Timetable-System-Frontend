@@ -1,4 +1,4 @@
-import { createBrowserRouter, createRoutesFromElements, Outlet, Route } from "react-router-dom";
+import { createBrowserRouter, createRoutesFromElements, Outlet, Route, useNavigate } from "react-router-dom";
 import Root from "../pages/Root/Root";
 import Students from "../pages/Students/Students.tsx";
 import Users from "../pages/Users/Users";
@@ -13,6 +13,9 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks.ts";
 import studentSlice, { StudentThunkAction } from "../redux/slices/studentSlice.ts";
 import dayjs from "dayjs";
 import { CourseThunkAction } from "../redux/slices/courseSlice.ts";
+import RouteEnum from "../enum/RouteEnum.ts";
+import ShowAttendenceContent from "../pages/Students/components/PackageClassesStatus.tsx";
+import PackageClassesStatus from "../pages/Students/components/PackageClassesStatus.tsx";
 
 const getRouter = (_store: any) => {
     return createBrowserRouter(
@@ -35,10 +38,17 @@ const getRouter = (_store: any) => {
                         </Route>
                     </Route>
                 </Route>
+                <Route path="/class-status" element={<ClassStatusIndex />}>
+                    <Route path=":packageUUID" element={<PackageClassesStatus />} />
+                </Route>
             </Route>
         )
     );
 };
+
+const ClassStatusIndex = () => {
+    return <Outlet />
+}
 
 const CausewaybayIndex = () => {
     const dispatch = useAppDispatch();
@@ -88,6 +98,18 @@ const AllStudentsIndex = () => {
 }
 
 const Dashboard = () => {
+    const accessToken = useAppSelector((s) => s.auth.accessToken);
+    const navgiate = useNavigate();
+    useEffect(() => {
+        if (!accessToken) {
+            navgiate("/login");
+        } else {
+            const inDashboard = location.pathname.includes("/dashboard");
+            if (!inDashboard) {
+                navgiate(RouteEnum.DASHBOARD_STUDENTS);
+            }
+        }
+    }, [accessToken, location.pathname]);
     return (
         <div style={{ display: "flex", flexDirection: "row", height: "100vh" }}>
             <div style={{ flex: 1, display: "flex", flexDirection: "column", width: "100%" }}>

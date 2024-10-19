@@ -9,6 +9,7 @@ import authSlice, { authMiddleware } from './slices/authSlice';
 import userSlice, { userMiddleware } from './slices/userSlice';
 import studentSlice, { studentMiddleware } from './slices/studentSlice';
 import classSlice, { classMiddleware } from './slices/courseSlice';
+import publicSlice, { publicMiddleware } from "./slices/publicSlice";
 
 // a fix following the guide from https://www.youtube.com/watch?v=fjPIJZ1Eokg
 const createNoopStorage = () => {
@@ -42,14 +43,16 @@ export const store = configureStore({
         app: appSlice.reducer,
         user: userSlice.reducer,
         student: studentSlice.reducer,
-        class: classSlice.reducer
+        class: classSlice.reducer,
+        public: publicSlice.reducer
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({ serializableCheck: false }).concat(
             authMiddleware.middleware,
             userMiddleware.middleware,
             studentMiddleware.middleware,
-            classMiddleware.middleware
+            classMiddleware.middleware,
+            publicMiddleware.middleware
         )
 })
 
