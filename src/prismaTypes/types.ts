@@ -10122,7 +10122,6 @@ export namespace Prisma {
 
   export type Student_packageMinAggregateOutputType = {
     id: number | null
-    uuid: string | null
     start_date: number | null
     paid_at: number | null
     official_end_date: number | null
@@ -10138,7 +10137,6 @@ export namespace Prisma {
 
   export type Student_packageMaxAggregateOutputType = {
     id: number | null
-    uuid: string | null
     start_date: number | null
     paid_at: number | null
     official_end_date: number | null
@@ -10154,7 +10152,6 @@ export namespace Prisma {
 
   export type Student_packageCountAggregateOutputType = {
     id: number
-    uuid: number
     start_date: number
     paid_at: number
     official_end_date: number
@@ -10196,7 +10193,6 @@ export namespace Prisma {
 
   export type Student_packageMinAggregateInputType = {
     id?: true
-    uuid?: true
     start_date?: true
     paid_at?: true
     official_end_date?: true
@@ -10212,7 +10208,6 @@ export namespace Prisma {
 
   export type Student_packageMaxAggregateInputType = {
     id?: true
-    uuid?: true
     start_date?: true
     paid_at?: true
     official_end_date?: true
@@ -10228,7 +10223,6 @@ export namespace Prisma {
 
   export type Student_packageCountAggregateInputType = {
     id?: true
-    uuid?: true
     start_date?: true
     paid_at?: true
     official_end_date?: true
@@ -10331,7 +10325,6 @@ export namespace Prisma {
 
   export type Student_packageGroupByOutputType = {
     id: number
-    uuid: string
     start_date: number
     paid_at: number | null
     official_end_date: number | null
@@ -10366,7 +10359,6 @@ export namespace Prisma {
 
   export type Student_packageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    uuid?: boolean
     start_date?: boolean
     paid_at?: boolean
     official_end_date?: boolean
@@ -10386,7 +10378,6 @@ export namespace Prisma {
 
   export type Student_packageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    uuid?: boolean
     start_date?: boolean
     paid_at?: boolean
     official_end_date?: boolean
@@ -10404,7 +10395,6 @@ export namespace Prisma {
 
   export type Student_packageSelectScalar = {
     id?: boolean
-    uuid?: boolean
     start_date?: boolean
     paid_at?: boolean
     official_end_date?: boolean
@@ -10438,7 +10428,6 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
-      uuid: string
       start_date: number
       paid_at: number | null
       official_end_date: number | null
@@ -10847,7 +10836,6 @@ export namespace Prisma {
    */ 
   interface Student_packageFieldRefs {
     readonly id: FieldRef<"Student_package", 'Int'>
-    readonly uuid: FieldRef<"Student_package", 'String'>
     readonly start_date: FieldRef<"Student_package", 'Float'>
     readonly paid_at: FieldRef<"Student_package", 'Float'>
     readonly official_end_date: FieldRef<"Student_package", 'Float'>
@@ -12280,7 +12268,6 @@ export namespace Prisma {
 
   export const Student_packageScalarFieldEnum: {
     id: 'id',
-    uuid: 'uuid',
     start_date: 'start_date',
     paid_at: 'paid_at',
     official_end_date: 'official_end_date',
@@ -13078,7 +13065,6 @@ export namespace Prisma {
     OR?: Student_packageWhereInput[]
     NOT?: Student_packageWhereInput | Student_packageWhereInput[]
     id?: IntFilter<"Student_package"> | number
-    uuid?: UuidFilter<"Student_package"> | string
     start_date?: FloatFilter<"Student_package"> | number
     paid_at?: FloatNullableFilter<"Student_package"> | number | null
     official_end_date?: FloatNullableFilter<"Student_package"> | number | null
@@ -13097,7 +13083,6 @@ export namespace Prisma {
 
   export type Student_packageOrderByWithRelationInput = {
     id?: SortOrder
-    uuid?: SortOrder
     start_date?: SortOrder
     paid_at?: SortOrderInput | SortOrder
     official_end_date?: SortOrderInput | SortOrder
@@ -13119,7 +13104,6 @@ export namespace Prisma {
     AND?: Student_packageWhereInput | Student_packageWhereInput[]
     OR?: Student_packageWhereInput[]
     NOT?: Student_packageWhereInput | Student_packageWhereInput[]
-    uuid?: UuidFilter<"Student_package"> | string
     start_date?: FloatFilter<"Student_package"> | number
     paid_at?: FloatNullableFilter<"Student_package"> | number | null
     official_end_date?: FloatNullableFilter<"Student_package"> | number | null
@@ -13138,7 +13122,6 @@ export namespace Prisma {
 
   export type Student_packageOrderByWithAggregationInput = {
     id?: SortOrder
-    uuid?: SortOrder
     start_date?: SortOrder
     paid_at?: SortOrderInput | SortOrder
     official_end_date?: SortOrderInput | SortOrder
@@ -13162,7 +13145,6 @@ export namespace Prisma {
     OR?: Student_packageScalarWhereWithAggregatesInput[]
     NOT?: Student_packageScalarWhereWithAggregatesInput | Student_packageScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Student_package"> | number
-    uuid?: UuidWithAggregatesFilter<"Student_package"> | string
     start_date?: FloatWithAggregatesFilter<"Student_package"> | number
     paid_at?: FloatNullableWithAggregatesFilter<"Student_package"> | number | null
     official_end_date?: FloatNullableWithAggregatesFilter<"Student_package"> | number | null
@@ -13885,7 +13867,6 @@ export namespace Prisma {
   }
 
   export type Student_packageCreateInput = {
-    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -13902,7 +13883,6 @@ export namespace Prisma {
 
   export type Student_packageUncheckedCreateInput = {
     id?: number
-    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -13918,7 +13898,6 @@ export namespace Prisma {
   }
 
   export type Student_packageUpdateInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -13935,7 +13914,6 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -13952,7 +13930,6 @@ export namespace Prisma {
 
   export type Student_packageCreateManyInput = {
     id?: number
-    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -13967,7 +13944,6 @@ export namespace Prisma {
   }
 
   export type Student_packageUpdateManyMutationInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -13981,7 +13957,6 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -14792,7 +14767,6 @@ export namespace Prisma {
 
   export type Student_packageCountOrderByAggregateInput = {
     id?: SortOrder
-    uuid?: SortOrder
     start_date?: SortOrder
     paid_at?: SortOrder
     official_end_date?: SortOrder
@@ -14820,7 +14794,6 @@ export namespace Prisma {
 
   export type Student_packageMaxOrderByAggregateInput = {
     id?: SortOrder
-    uuid?: SortOrder
     start_date?: SortOrder
     paid_at?: SortOrder
     official_end_date?: SortOrder
@@ -14836,7 +14809,6 @@ export namespace Prisma {
 
   export type Student_packageMinOrderByAggregateInput = {
     id?: SortOrder
-    uuid?: SortOrder
     start_date?: SortOrder
     paid_at?: SortOrder
     official_end_date?: SortOrder
@@ -15806,7 +15778,6 @@ export namespace Prisma {
   }
 
   export type Student_packageCreateWithoutStudentInput = {
-    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -15822,7 +15793,6 @@ export namespace Prisma {
 
   export type Student_packageUncheckedCreateWithoutStudentInput = {
     id?: number
-    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -15921,7 +15891,6 @@ export namespace Prisma {
     OR?: Student_packageScalarWhereInput[]
     NOT?: Student_packageScalarWhereInput | Student_packageScalarWhereInput[]
     id?: IntFilter<"Student_package"> | number
-    uuid?: UuidFilter<"Student_package"> | string
     start_date?: FloatFilter<"Student_package"> | number
     paid_at?: FloatNullableFilter<"Student_package"> | number | null
     official_end_date?: FloatNullableFilter<"Student_package"> | number | null
@@ -16156,7 +16125,6 @@ export namespace Prisma {
   }
 
   export type Student_packageCreateWithoutCourseInput = {
-    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -16172,7 +16140,6 @@ export namespace Prisma {
 
   export type Student_packageUncheckedCreateWithoutCourseInput = {
     id?: number
-    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -16226,7 +16193,6 @@ export namespace Prisma {
   }
 
   export type Student_packageCreateWithoutClassInput = {
-    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -16242,7 +16208,6 @@ export namespace Prisma {
 
   export type Student_packageUncheckedCreateWithoutClassInput = {
     id?: number
-    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -16292,7 +16257,6 @@ export namespace Prisma {
   }
 
   export type Student_packageUpdateWithoutClassInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16308,7 +16272,6 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateWithoutClassInput = {
     id?: IntFieldUpdateOperationsInput | number
-    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16666,7 +16629,6 @@ export namespace Prisma {
 
   export type Student_packageCreateManyStudentInput = {
     id?: number
-    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -16703,7 +16665,6 @@ export namespace Prisma {
   }
 
   export type Student_packageUpdateWithoutStudentInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16719,7 +16680,6 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateWithoutStudentInput = {
     id?: IntFieldUpdateOperationsInput | number
-    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16735,7 +16695,6 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateManyWithoutStudentInput = {
     id?: IntFieldUpdateOperationsInput | number
-    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16773,7 +16732,6 @@ export namespace Prisma {
 
   export type Student_packageCreateManyCourseInput = {
     id?: number
-    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -16787,7 +16745,6 @@ export namespace Prisma {
   }
 
   export type Student_packageUpdateWithoutCourseInput = {
-    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16803,7 +16760,6 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateWithoutCourseInput = {
     id?: IntFieldUpdateOperationsInput | number
-    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16819,7 +16775,6 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateManyWithoutCourseInput = {
     id?: IntFieldUpdateOperationsInput | number
-    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
