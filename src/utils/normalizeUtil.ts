@@ -9,9 +9,9 @@ const normalize = <T>({
     const objectEntity = new schema.Entity<Selection>("object", undefined, {
         idAttribute,
     });
-    const normalized = normalize_(targetArr, [objectEntity]);
-    const idToObject = normalized.entities["object"] as { [id: string]: T };
-    const ids = normalized["result"].map((r: any) => String(r)) as string[];
+    const normalized = normalize_(targetArr || [], [objectEntity]);
+    const idToObject = normalized.entities["object"] as { [id: string]: T } || {};
+    const ids = normalized["result"].map((r: any) => String(r)) as string[] || [];
     return { ids, idToObject };
 }
 

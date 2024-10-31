@@ -6,20 +6,21 @@ import { useParams } from "react-router-dom";
 import { LuPlusCircle } from "react-icons/lu";
 import Spacer from "../../../../components/Spacer";
 import Sep from "../../../../components/Sep";
-import { Box, Switch } from "@mui/material";
-import { FaAngleDoubleRight } from "react-icons/fa";
+import { Switch } from "@mui/material";
 import CustomScrollbarContainer from "../../../../components/CustomScrollbarContainer";
 import { useAppSelector } from "../../../../redux/hooks";
 import StudentPackage from "./StudentPackage";
 import Label from "../../../../components/Label";
 import { useDispatch } from "react-redux";
 import studentSlice from "../../../../redux/slices/studentSlice";
-import appSlice from "../../../../redux/slices/appSlice";
-import CollapseButton from "../../../../../src/assets/collapse-button.png";
+import { MdOutlineEventNote } from "react-icons/md";
+import { Augmented_Student_package } from "../../../../dto/dto";
 
-export default (props: { packagesOffsetY: number }) => {
-    const { packagesOffsetY } = props;
-    const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
+export default (props: {
+    packagesOffsetY: number,
+    collapseTimtable: boolean,
+}) => {
+    const { packagesOffsetY, collapseTimtable } = props;
     const packages = useAppSelector((s) => s.student.studentDetail.packages);
     const dispatch = useDispatch();
     const { studentId } = useParams<{ studentId: string }>();
@@ -29,11 +30,14 @@ export default (props: { packagesOffsetY: number }) => {
     const handleShowAllClassesOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(studentSlice.actions.setShowAllClassesForOneStudent(event.target.checked));
     };
+    const flattedPackages = packages?.ids?.map(id => packages?.idToPackage?.[id || ""]) as Augmented_Student_package[];
+    const courseNames = Array.from(new Set(flattedPackages?.map(pkg => pkg.course_name)));
 
     return (
         <div
             style={{
-                width: rightColumnCollapsed ? "0px" : "300px",
+                flex: 1,
+                paddingRight: 100,
                 display: "flex",
                 flexDirection: "column",
                 position: "relative",
@@ -47,7 +51,6 @@ export default (props: { packagesOffsetY: number }) => {
                     display: "flex",
                     flexDirection: "column",
                     transition: "opacity 0.5s eas-in-out",
-                    opacity: rightColumnCollapsed ? 0 : 1,
                 }}
             >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -56,7 +59,9 @@ export default (props: { packagesOffsetY: number }) => {
                     <Button
                         style={{ width: 40, height: 40 }}
                         onClick={() => {
-                            AddPackageDialog.setContent(() => () => <AddPackageForm studentId={studentId || ""} studentName={`${first_name} ${last_name}`} />);
+                            AddPackageDialog.setContent(() => () => <AddPackageForm
+                                studentId={studentId || ""} studentName={`${first_name} ${last_name}`}
+                            />);
                             AddPackageDialog.setOpen(true);
                         }}
                         shape="circle"
@@ -67,33 +72,6 @@ export default (props: { packagesOffsetY: number }) => {
                 <Spacer height={5} />
                 <Sep />
                 <Spacer />
-                {/* <Box
-                    sx={{
-                        flex: 1,
-                        "& td": {
-                            "& div": {
-                                display: "flex",
-                                alignItems: "center",
-                                width: "100%",
-                                height: "100%",
-                            },
-                        },
-                    }}
-                >
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div>
-                                        <FaAngleDoubleRight />
-                                        <Spacer width={5} /> Next Class
-                                    </div>
-                                </td>
-                                <td>???</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </Box> */}
                 <div>
                     <div style={{ marginLeft: "10px" }}>Show All Classes</div>
                     <Switch
@@ -106,31 +84,31 @@ export default (props: { packagesOffsetY: number }) => {
                 </div>
                 <CustomScrollbarContainer style={{ height: `calc(100vh - ${packagesOffsetY}px)`, width: "100%" }}>
                     <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                        <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                            {packages.ids?.map((id) => {
-                                return <StudentPackage packageId={id} key={id} />;
+                        <div style={{ width: "100%" }}>
+                            {courseNames.map(courseName => {
+                                const packages = flattedPackages.filter(pkg => pkg.course_name === courseName)
+                                return (
+                                    <div>
+                                        <div style={{ display: "flex", alignItems: "center" }}>
+                                            <MdOutlineEventNote
+                                                size={24}
+                                                style={{ marginRight: 5, marginLeft: 5 }}
+                                            />
+                                            {courseName}
+                                        </div>
+                                        <div style={{ display: collapseTimtable ? "flex" : "unset" }}>
+                                            {packages?.map(pkg => {
+                                                return <StudentPackage packageId={String(pkg.id)} key={pkg.id} />
+                                            })}
+                                        </div>
+                                        <Spacer />
+                                    </div>
+                                )
                             })}
                         </div>
                     </div>
                 </CustomScrollbarContainer>
             </div>
-            <img
-                onClick={() => {
-                    dispatch(appSlice.actions.setRightColumnCollapsed(!rightColumnCollapsed));
-                }}
-                style={{
-                    position: "absolute",
-                    bottom: "50%",
-                    left: rightColumnCollapsed ? "0%" : "-13%",
-                    width: 30,
-                    height: 30,
-                    cursor: "pointer",
-                    transition: "left 0.5s ease-out, transform 1s ease-out",
-                    zIndex: 10 ** 100,
-                    transform: rightColumnCollapsed ? "rotate(0deg)" : "rotate(180deg)",
-                }}
-                src={CollapseButton}
-            />
         </div>
     );
 };

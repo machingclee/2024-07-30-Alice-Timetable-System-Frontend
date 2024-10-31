@@ -8,6 +8,7 @@ import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu";
 import EditStudentDialog from "./EditStudentDialog";
 import EditStudentForm from "./EditStudentForm";
 import RouteEnum from "../../../enum/RouteEnum";
+import dayjs from "dayjs";
 
 export default (props: { id: string }) => {
     const { id } = props;
@@ -53,7 +54,7 @@ export default (props: { id: string }) => {
                     boxShadow: boxShadow.SHADOW_62,
                     padding: "20px 30px",
                     marginBottom: "15px",
-                    borderRadius: "8px",
+                    borderRadius: "0px",
                 }}
                 sx={{
                     position: "relative",
@@ -96,6 +97,7 @@ export default (props: { id: string }) => {
                                 <tr>
                                     <td>Chinese Name:</td>
                                     <td>{chineseName}</td>
+                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td>English Name:</td>
@@ -106,12 +108,13 @@ export default (props: { id: string }) => {
                                     <td>{`${gender}`}</td>
                                 </tr>
                                 <tr>
-                                    <td>school Name:</td>
+                                    <td>School Name:</td>
                                     <td>{`${school_name}`}</td>
                                 </tr>
                                 <tr>
-                                    <td>grade:</td>
+                                    <td >Grade:  <span style={{ fontSize: 13, fontWeight: "bold" }}>{`(before ${dayjs(new Date()).format("YYYY")}-09-01)`}</span></td>
                                     <td>{`${grade}`}</td>
+
                                 </tr>
                                 <tr>
                                     <td>phone number:</td>

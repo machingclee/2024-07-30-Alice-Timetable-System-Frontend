@@ -3,7 +3,7 @@ import SectionTitle from "../../../../components/SectionTitle";
 import Label from "../../../../components/Label";
 import Spacer from "../../../../components/Spacer";
 import { useEffect, useRef, useState } from "react";
-import { Button, Select } from "antd";
+import { Button, DatePicker, Select } from "antd";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import { StudentThunkAction } from "../../../../redux/slices/studentSlice";
 import EditPackageDialog from "./../components/EditPackageDialog";
@@ -13,6 +13,7 @@ import { CourseThunkAction } from "../../../../redux/slices/courseSlice";
 import range from "../../../../utils/range";
 import { Classroom } from "../../../../prismaTypes/types";
 import { useParams } from "react-router-dom";
+import dayjs from "dayjs";
 
 export default (props: { packageId: string }) => {
     const { packageId } = props;
@@ -39,7 +40,7 @@ export default (props: { packageId: string }) => {
             min: formData.current.min || currentPackage.min,
             default_classroom: formData.current.default_classroom || currentPackage.default_classroom,
             student_id: currentPackage.student_id,
-            expiry_date: currentPackage.expiry_date || 0,
+            expiry_date: formData.current.expiry_date || 0,
         };
         EditPackageDialog.setOpen(false);
         await dispatch(StudentThunkAction.updatePackage(reqBody)).unwrap();
@@ -138,6 +139,20 @@ export default (props: { packageId: string }) => {
                 }}
                 options={classroomOptions.map((value) => ({ value, label: value }))}
             />
+            <Spacer />
+            {currentPackage?.expiry_date && <>
+                <div style={{ display: "flex" }}>
+                    <FormInputTitle>Update Expiry Date</FormInputTitle>
+                </div>
+                <Spacer height={5} />
+                <DatePicker
+                    onChange={(val) => {
+                        updateFormData({ expiry_date: val.valueOf() })
+                    }}
+                    popupStyle={{ zIndex: 10 ** 7 }}
+                    defaultValue={dayjs(currentPackage?.expiry_date)}
+                />
+            </>}
 
             <Spacer />
             <Spacer />

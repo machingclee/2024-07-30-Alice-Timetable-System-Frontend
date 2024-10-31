@@ -69,7 +69,6 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; st
         dispatch(CourseThunkAction.getCourses());
     }, []);
 
-    const allowedOptionsForNumberOfClasses = [1, 7, 15, 30, 50];
 
     const classroomOptions: Classroom[] = ["PRINCE_EDWARD", "CAUSEWAY_BAY"];
 

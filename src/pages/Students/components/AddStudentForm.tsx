@@ -91,7 +91,7 @@ export default () => {
             <Spacer />
             <FormInputField title="Parent Email" onChange={t => update({ parent_email: t })} error={error?.["parent_email"]} />
             <FormInputField title="School Name" onChange={t => update({ school_name: t })} error={error?.["school_name"]} />
-            <FormInputField title="Grade" onChange={t => update({ grade: t })} error={error?.["grade"]} />
+            <FormInputField title="Grade" onChange={t => update({ grade: t })} error={error?.["grade"]} remark={`(before ${dayjs(new Date()).format("YYYY")}-09-01)`} />
             <FormInputField title="Phone Number" onChange={t => update({ phone_number: t })} error={error?.["phone_number"]} />
             <FormInputField title="Wechat Id (Optional)" onChange={t => update({ wechat_id: t })} error={error?.["wechat_id"]} />
             <Spacer />

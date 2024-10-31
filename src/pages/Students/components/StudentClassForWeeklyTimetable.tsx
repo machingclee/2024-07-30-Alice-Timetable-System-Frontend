@@ -291,6 +291,21 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         </MenuItem>
                                                         {/* @ts-ignore */}
                                                         <MenuItem
+                                                            className="menu-item"
+                                                            onClick={() => {
+                                                                ViewClassDialog.setContent(() => () => (
+                                                                    <ViewClassForm
+                                                                        isEditing={true}
+                                                                        classEvent={studentClass}
+                                                                    />
+                                                                ));
+                                                                ViewClassDialog.setOpen(true);
+                                                            }}
+                                                        >
+                                                            Edit Class
+                                                        </MenuItem>
+                                                        {/* @ts-ignore */}
+                                                        <MenuItem
                                                             disabled={disableDuplicate}
                                                             className={classnames("menu-item", disableDuplicate ? "disabled" : "")}
                                                             onClick={() => {
