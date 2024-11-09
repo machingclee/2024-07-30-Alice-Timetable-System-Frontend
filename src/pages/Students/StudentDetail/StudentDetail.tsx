@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import SectionTitle from "../../../components/SectionTitle";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import studentSlice, { StudentThunkAction } from "../../../redux/slices/studentSlice";
 import Spacer from "../../../components/Spacer";
 import { IoMdArrowBack } from "react-icons/io";
@@ -18,13 +18,15 @@ import DeleteClassDialog from "../../../components/DeleteClassDialog";
 import AddPaymentDetailDialog from "./components/AddPaymentDetailDialog";
 import ViewClassDialog from "../../../components/ViewClassDialog";
 import EditPackageDialog from "./components/EditPackageDialog";
-import appSlice from "../../../redux/slices/appSlice";
-import CollapseButton from "../../../../src/assets/collapse-button.png";
+import { FaChevronLeft } from "react-icons/fa6";
+import { Box, Collapse } from "@mui/material";
+import { transform } from "lodash";
 
 export default () => {
     const { studentId } = useParams<{ studentId: string }>();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const [collapseTimetable, setCollapseTimetable] = useState(false);
     const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
 
     const studentDetail = useAppSelector((s) => s.student.studentDetail.detail);
@@ -53,27 +55,38 @@ export default () => {
     return (
         <div style={{ marginLeft: "10px", marginRight: "50px", height: "100%", display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex" }}>
-                <div style={{ width: "100%" }}>
-                    <SectionTitle>
-                        <Label label="StudenDetail.tsx" offsetTop={-20} />
-                        <Button
-                            shape="circle"
-                            onClick={() => {
-                                navigate(-1);
-                            }}
-                        >
-                            <IoMdArrowBack />
-                        </Button>
-                        <Spacer height={1} />
-                        {`${first_name} ${last_name}`}
-                    </SectionTitle>
-
-                    <div style={{ height: "calc(100vh - 70px)", width: "100%", overflow: "hidden" }}>
+                <Collapse
+                    sx={{
+                        "& .MuiCollapse-wrapperInner": {
+                            width: "100%"
+                        }
+                    }}
+                    style={{ width: collapseTimetable ? "unset" : "100%", height: "calc(100vh - 70px)", overflow: "hidden" }}
+                    in={!collapseTimetable}
+                    orientation="horizontal"
+                >
+                    <div style={{ width: "100%" }}>
+                        <SectionTitle>
+                            <Label label="StudenDetail.tsx" offsetTop={-20} />
+                            <Button
+                                shape="circle"
+                                onClick={() => {
+                                    navigate(-1);
+                                }}
+                            >
+                                <IoMdArrowBack />
+                            </Button>
+                            <Spacer height={1} />
+                            {`${first_name} ${last_name}`}
+                        </SectionTitle>
                         <WeeklyTimetable />
                     </div>
-                </div>
-                <Spacer style={{ position: "relative" }} width={rightColumnCollapsed ? 0 : 40} />
-                <StudentPackageColumn packagesOffsetY={200} />
+                </Collapse>
+                <CollapseTriggerBar
+                    collapseTimetable={collapseTimetable}
+                    onClick={() => { setCollapseTimetable(t => !t) }} />
+                <Spacer />
+                <StudentPackageColumn packagesOffsetY={200} collapseTimtable={collapseTimetable} />
             </div>
 
             {/* <Calendar /> */}
@@ -88,3 +101,35 @@ export default () => {
         </div>
     );
 };
+
+const CollapseTriggerBar = (props: { collapseTimetable: boolean, onClick: () => void }) => {
+    const { collapseTimetable, onClick } = props;
+    return (
+        <Box
+            onClick={onClick}
+            sx={{
+                "&:hover": {
+                    opacity: 0.5
+                }
+            }}
+            style={{
+                cursor: "pointer",
+                height: "100%",
+                width: 35,
+                backgroundColor: "rgba(113, 98, 159,0.5)",
+                position: "relative"
+            }}>
+            <div
+                style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%,-50%)"
+                }}
+            >
+                <FaChevronLeft style={{ transform: `rotate(${!collapseTimetable ? 0 : 180}deg)` }} />
+            </div>
+
+        </Box>
+    )
+}

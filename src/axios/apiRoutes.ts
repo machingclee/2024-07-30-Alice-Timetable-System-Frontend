@@ -11,6 +11,7 @@ export default {
     POST_CREATE_STUDENT_PACKAGE: "/student/create-student-package",
     POST_GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: "/student/get-filtered-student-classes-for-daily-timteable",
 
+    GET_PACKAGE_CLASS_STATUS: (pkgUUID: string) => `/public/student-class-status/${pkgUUID}`,
     GET_USERS: "/user/users",
     GET_STUDENTS: "/student/students",
     GET_COURSES: "/course/courses",

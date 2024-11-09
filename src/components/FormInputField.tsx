@@ -12,12 +12,13 @@ const FormInputField = (props: {
     inputProps?: HTMLAttributes<HTMLInputElement>;
     onEnter?: () => void;
     isPassword?: boolean;
+    remark?: string;
 }) => {
-    const { onChange, title, error, inputProps, value, onEnter } = props;
+    const { onChange, title, error, inputProps, value, onEnter, remark } = props;
     return (
         <div>
             <div style={{ display: "flex", alignItems: "center" }}>
-                <FormInputTitle>{title}</FormInputTitle>
+                <FormInputTitle>{title + (remark ? " " + remark : "")}</FormInputTitle>
                 <Spacer height={1} />
                 {error && <div style={{ color: "red", fontSize: 13 }}>[{error}]</div>}
             </div>

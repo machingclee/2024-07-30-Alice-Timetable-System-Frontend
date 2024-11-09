@@ -18,6 +18,7 @@ import durations from "../constant/durations";
 import dayjs from "dayjs";
 import range from "../utils/range";
 import { Classroom } from "../prismaTypes/types";
+import appSlice from "../redux/slices/appSlice";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; studentId: string }) => {
     const { dayUnixTimestamp, hourUnixTimestamp, studentId } = props;
@@ -47,21 +48,26 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; st
     };
 
     const submit = async () => {
-        const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_STUDENT_CLASS, formData.current);
-        if (!res.data.success) {
-            const errorMessage = res.data?.errorMessage;
-            const errorObject = res.data?.errorObject;
-            if (errorMessage) {
-                toastUtil.error(errorMessage);
-            }
-            if (errorObject) {
-                setError(errorObject);
-            }
-        } else {
-            toastUtil.success("Event Created");
+        dispatch(appSlice.actions.setLoading(true));
+        try {
+            const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_STUDENT_CLASS, formData.current);
             AddClassEventDialog.setOpen(false);
-            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
-            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
+            if (!res.data.success) {
+                const errorMessage = res.data?.errorMessage;
+                const errorObject = res.data?.errorObject;
+                if (errorMessage) {
+                    toastUtil.error(errorMessage);
+                }
+                if (errorObject) {
+                    setError(errorObject);
+                }
+            } else {
+                toastUtil.success("Event Created");
+                dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
+                dispatch(StudentThunkAction.getStudentPackages({ studentId }));
+            }
+        } finally {
+            dispatch(appSlice.actions.setLoading(false));
         }
     };
 
@@ -69,7 +75,6 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; st
         dispatch(CourseThunkAction.getCourses());
     }, []);
 
-    const allowedOptionsForNumberOfClasses = [1, 7, 15, 30, 50];
 
     const classroomOptions: Classroom[] = ["PRINCE_EDWARD", "CAUSEWAY_BAY"];
 

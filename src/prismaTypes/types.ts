@@ -95,7 +95,8 @@ export const Class_status: {
   LEGIT_ABSENCE: 'LEGIT_ABSENCE',
   MAKEUP: 'MAKEUP',
   CHANGE_OF_CLASSROOM: 'CHANGE_OF_CLASSROOM',
-  TRIAL: 'TRIAL'
+  TRIAL: 'TRIAL',
+  RESERVED: 'RESERVED'
 };
 
 export type Class_status = (typeof Class_status)[keyof typeof Class_status]
@@ -2955,6 +2956,7 @@ export namespace Prisma {
     chinese_first_name: string | null
     chinese_last_name: string | null
     school_name: string | null
+    student_code: string | null
     grade: string | null
     phone_number: string | null
     wechat_id: string | null
@@ -2973,6 +2975,7 @@ export namespace Prisma {
     chinese_first_name: string | null
     chinese_last_name: string | null
     school_name: string | null
+    student_code: string | null
     grade: string | null
     phone_number: string | null
     wechat_id: string | null
@@ -2991,6 +2994,7 @@ export namespace Prisma {
     chinese_first_name: number
     chinese_last_name: number
     school_name: number
+    student_code: number
     grade: number
     phone_number: number
     wechat_id: number
@@ -3021,6 +3025,7 @@ export namespace Prisma {
     chinese_first_name?: true
     chinese_last_name?: true
     school_name?: true
+    student_code?: true
     grade?: true
     phone_number?: true
     wechat_id?: true
@@ -3039,6 +3044,7 @@ export namespace Prisma {
     chinese_first_name?: true
     chinese_last_name?: true
     school_name?: true
+    student_code?: true
     grade?: true
     phone_number?: true
     wechat_id?: true
@@ -3057,6 +3063,7 @@ export namespace Prisma {
     chinese_first_name?: true
     chinese_last_name?: true
     school_name?: true
+    student_code?: true
     grade?: true
     phone_number?: true
     wechat_id?: true
@@ -3162,6 +3169,7 @@ export namespace Prisma {
     chinese_first_name: string | null
     chinese_last_name: string | null
     school_name: string
+    student_code: string
     grade: string
     phone_number: string | null
     wechat_id: string | null
@@ -3199,6 +3207,7 @@ export namespace Prisma {
     chinese_first_name?: boolean
     chinese_last_name?: boolean
     school_name?: boolean
+    student_code?: boolean
     grade?: boolean
     phone_number?: boolean
     wechat_id?: boolean
@@ -3221,6 +3230,7 @@ export namespace Prisma {
     chinese_first_name?: boolean
     chinese_last_name?: boolean
     school_name?: boolean
+    student_code?: boolean
     grade?: boolean
     phone_number?: boolean
     wechat_id?: boolean
@@ -3240,6 +3250,7 @@ export namespace Prisma {
     chinese_first_name?: boolean
     chinese_last_name?: boolean
     school_name?: boolean
+    student_code?: boolean
     grade?: boolean
     phone_number?: boolean
     wechat_id?: boolean
@@ -3275,6 +3286,7 @@ export namespace Prisma {
       chinese_first_name: string | null
       chinese_last_name: string | null
       school_name: string
+      student_code: string
       grade: string
       phone_number: string | null
       wechat_id: string | null
@@ -3686,6 +3698,7 @@ export namespace Prisma {
     readonly chinese_first_name: FieldRef<"Student", 'String'>
     readonly chinese_last_name: FieldRef<"Student", 'String'>
     readonly school_name: FieldRef<"Student", 'String'>
+    readonly student_code: FieldRef<"Student", 'String'>
     readonly grade: FieldRef<"Student", 'String'>
     readonly phone_number: FieldRef<"Student", 'String'>
     readonly wechat_id: FieldRef<"Student", 'String'>
@@ -10122,6 +10135,7 @@ export namespace Prisma {
 
   export type Student_packageMinAggregateOutputType = {
     id: number | null
+    uuid: string | null
     start_date: number | null
     paid_at: number | null
     official_end_date: number | null
@@ -10137,6 +10151,7 @@ export namespace Prisma {
 
   export type Student_packageMaxAggregateOutputType = {
     id: number | null
+    uuid: string | null
     start_date: number | null
     paid_at: number | null
     official_end_date: number | null
@@ -10152,6 +10167,7 @@ export namespace Prisma {
 
   export type Student_packageCountAggregateOutputType = {
     id: number
+    uuid: number
     start_date: number
     paid_at: number
     official_end_date: number
@@ -10193,6 +10209,7 @@ export namespace Prisma {
 
   export type Student_packageMinAggregateInputType = {
     id?: true
+    uuid?: true
     start_date?: true
     paid_at?: true
     official_end_date?: true
@@ -10208,6 +10225,7 @@ export namespace Prisma {
 
   export type Student_packageMaxAggregateInputType = {
     id?: true
+    uuid?: true
     start_date?: true
     paid_at?: true
     official_end_date?: true
@@ -10223,6 +10241,7 @@ export namespace Prisma {
 
   export type Student_packageCountAggregateInputType = {
     id?: true
+    uuid?: true
     start_date?: true
     paid_at?: true
     official_end_date?: true
@@ -10325,6 +10344,7 @@ export namespace Prisma {
 
   export type Student_packageGroupByOutputType = {
     id: number
+    uuid: string
     start_date: number
     paid_at: number | null
     official_end_date: number | null
@@ -10359,6 +10379,7 @@ export namespace Prisma {
 
   export type Student_packageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    uuid?: boolean
     start_date?: boolean
     paid_at?: boolean
     official_end_date?: boolean
@@ -10378,6 +10399,7 @@ export namespace Prisma {
 
   export type Student_packageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    uuid?: boolean
     start_date?: boolean
     paid_at?: boolean
     official_end_date?: boolean
@@ -10395,6 +10417,7 @@ export namespace Prisma {
 
   export type Student_packageSelectScalar = {
     id?: boolean
+    uuid?: boolean
     start_date?: boolean
     paid_at?: boolean
     official_end_date?: boolean
@@ -10428,6 +10451,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
+      uuid: string
       start_date: number
       paid_at: number | null
       official_end_date: number | null
@@ -10836,6 +10860,7 @@ export namespace Prisma {
    */ 
   interface Student_packageFieldRefs {
     readonly id: FieldRef<"Student_package", 'Int'>
+    readonly uuid: FieldRef<"Student_package", 'String'>
     readonly start_date: FieldRef<"Student_package", 'Float'>
     readonly paid_at: FieldRef<"Student_package", 'Float'>
     readonly official_end_date: FieldRef<"Student_package", 'Float'>
@@ -12168,6 +12193,7 @@ export namespace Prisma {
     chinese_first_name: 'chinese_first_name',
     chinese_last_name: 'chinese_last_name',
     school_name: 'school_name',
+    student_code: 'student_code',
     grade: 'grade',
     phone_number: 'phone_number',
     wechat_id: 'wechat_id',
@@ -12268,6 +12294,7 @@ export namespace Prisma {
 
   export const Student_packageScalarFieldEnum: {
     id: 'id',
+    uuid: 'uuid',
     start_date: 'start_date',
     paid_at: 'paid_at',
     official_end_date: 'official_end_date',
@@ -12524,6 +12551,7 @@ export namespace Prisma {
     chinese_first_name?: StringNullableFilter<"Student"> | string | null
     chinese_last_name?: StringNullableFilter<"Student"> | string | null
     school_name?: StringFilter<"Student"> | string
+    student_code?: StringFilter<"Student"> | string
     grade?: StringFilter<"Student"> | string
     phone_number?: StringNullableFilter<"Student"> | string | null
     wechat_id?: StringNullableFilter<"Student"> | string | null
@@ -12545,6 +12573,7 @@ export namespace Prisma {
     chinese_first_name?: SortOrderInput | SortOrder
     chinese_last_name?: SortOrderInput | SortOrder
     school_name?: SortOrder
+    student_code?: SortOrder
     grade?: SortOrder
     phone_number?: SortOrderInput | SortOrder
     wechat_id?: SortOrderInput | SortOrder
@@ -12571,6 +12600,7 @@ export namespace Prisma {
     chinese_first_name?: StringNullableFilter<"Student"> | string | null
     chinese_last_name?: StringNullableFilter<"Student"> | string | null
     school_name?: StringFilter<"Student"> | string
+    student_code?: StringFilter<"Student"> | string
     grade?: StringFilter<"Student"> | string
     birthdate?: FloatFilter<"Student"> | number
     parent_email?: StringFilter<"Student"> | string
@@ -12590,6 +12620,7 @@ export namespace Prisma {
     chinese_first_name?: SortOrderInput | SortOrder
     chinese_last_name?: SortOrderInput | SortOrder
     school_name?: SortOrder
+    student_code?: SortOrder
     grade?: SortOrder
     phone_number?: SortOrderInput | SortOrder
     wechat_id?: SortOrderInput | SortOrder
@@ -12616,6 +12647,7 @@ export namespace Prisma {
     chinese_first_name?: StringNullableWithAggregatesFilter<"Student"> | string | null
     chinese_last_name?: StringNullableWithAggregatesFilter<"Student"> | string | null
     school_name?: StringWithAggregatesFilter<"Student"> | string
+    student_code?: StringWithAggregatesFilter<"Student"> | string
     grade?: StringWithAggregatesFilter<"Student"> | string
     phone_number?: StringNullableWithAggregatesFilter<"Student"> | string | null
     wechat_id?: StringNullableWithAggregatesFilter<"Student"> | string | null
@@ -13065,6 +13097,7 @@ export namespace Prisma {
     OR?: Student_packageWhereInput[]
     NOT?: Student_packageWhereInput | Student_packageWhereInput[]
     id?: IntFilter<"Student_package"> | number
+    uuid?: UuidFilter<"Student_package"> | string
     start_date?: FloatFilter<"Student_package"> | number
     paid_at?: FloatNullableFilter<"Student_package"> | number | null
     official_end_date?: FloatNullableFilter<"Student_package"> | number | null
@@ -13083,6 +13116,7 @@ export namespace Prisma {
 
   export type Student_packageOrderByWithRelationInput = {
     id?: SortOrder
+    uuid?: SortOrder
     start_date?: SortOrder
     paid_at?: SortOrderInput | SortOrder
     official_end_date?: SortOrderInput | SortOrder
@@ -13104,6 +13138,7 @@ export namespace Prisma {
     AND?: Student_packageWhereInput | Student_packageWhereInput[]
     OR?: Student_packageWhereInput[]
     NOT?: Student_packageWhereInput | Student_packageWhereInput[]
+    uuid?: UuidFilter<"Student_package"> | string
     start_date?: FloatFilter<"Student_package"> | number
     paid_at?: FloatNullableFilter<"Student_package"> | number | null
     official_end_date?: FloatNullableFilter<"Student_package"> | number | null
@@ -13122,6 +13157,7 @@ export namespace Prisma {
 
   export type Student_packageOrderByWithAggregationInput = {
     id?: SortOrder
+    uuid?: SortOrder
     start_date?: SortOrder
     paid_at?: SortOrderInput | SortOrder
     official_end_date?: SortOrderInput | SortOrder
@@ -13145,6 +13181,7 @@ export namespace Prisma {
     OR?: Student_packageScalarWhereWithAggregatesInput[]
     NOT?: Student_packageScalarWhereWithAggregatesInput | Student_packageScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"Student_package"> | number
+    uuid?: UuidWithAggregatesFilter<"Student_package"> | string
     start_date?: FloatWithAggregatesFilter<"Student_package"> | number
     paid_at?: FloatNullableWithAggregatesFilter<"Student_package"> | number | null
     official_end_date?: FloatNullableWithAggregatesFilter<"Student_package"> | number | null
@@ -13283,6 +13320,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
+    student_code?: string
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -13303,6 +13341,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
+    student_code?: string
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -13323,6 +13362,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
+    student_code?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13343,6 +13383,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
+    student_code?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13363,6 +13404,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
+    student_code?: string
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -13381,6 +13423,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
+    student_code?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13398,6 +13441,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
+    student_code?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13867,6 +13911,7 @@ export namespace Prisma {
   }
 
   export type Student_packageCreateInput = {
+    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -13883,6 +13928,7 @@ export namespace Prisma {
 
   export type Student_packageUncheckedCreateInput = {
     id?: number
+    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -13898,6 +13944,7 @@ export namespace Prisma {
   }
 
   export type Student_packageUpdateInput = {
+    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -13914,6 +13961,7 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
+    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -13930,6 +13978,7 @@ export namespace Prisma {
 
   export type Student_packageCreateManyInput = {
     id?: number
+    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -13944,6 +13993,7 @@ export namespace Prisma {
   }
 
   export type Student_packageUpdateManyMutationInput = {
+    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -13957,6 +14007,7 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
+    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -14237,6 +14288,7 @@ export namespace Prisma {
     chinese_first_name?: SortOrder
     chinese_last_name?: SortOrder
     school_name?: SortOrder
+    student_code?: SortOrder
     grade?: SortOrder
     phone_number?: SortOrder
     wechat_id?: SortOrder
@@ -14260,6 +14312,7 @@ export namespace Prisma {
     chinese_first_name?: SortOrder
     chinese_last_name?: SortOrder
     school_name?: SortOrder
+    student_code?: SortOrder
     grade?: SortOrder
     phone_number?: SortOrder
     wechat_id?: SortOrder
@@ -14278,6 +14331,7 @@ export namespace Prisma {
     chinese_first_name?: SortOrder
     chinese_last_name?: SortOrder
     school_name?: SortOrder
+    student_code?: SortOrder
     grade?: SortOrder
     phone_number?: SortOrder
     wechat_id?: SortOrder
@@ -14767,6 +14821,7 @@ export namespace Prisma {
 
   export type Student_packageCountOrderByAggregateInput = {
     id?: SortOrder
+    uuid?: SortOrder
     start_date?: SortOrder
     paid_at?: SortOrder
     official_end_date?: SortOrder
@@ -14794,6 +14849,7 @@ export namespace Prisma {
 
   export type Student_packageMaxOrderByAggregateInput = {
     id?: SortOrder
+    uuid?: SortOrder
     start_date?: SortOrder
     paid_at?: SortOrder
     official_end_date?: SortOrder
@@ -14809,6 +14865,7 @@ export namespace Prisma {
 
   export type Student_packageMinOrderByAggregateInput = {
     id?: SortOrder
+    uuid?: SortOrder
     start_date?: SortOrder
     paid_at?: SortOrder
     official_end_date?: SortOrder
@@ -15673,6 +15730,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
+    student_code?: string
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -15692,6 +15750,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
+    student_code?: string
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -15740,6 +15799,7 @@ export namespace Prisma {
     chinese_first_name?: StringNullableFilter<"Student"> | string | null
     chinese_last_name?: StringNullableFilter<"Student"> | string | null
     school_name?: StringFilter<"Student"> | string
+    student_code?: StringFilter<"Student"> | string
     grade?: StringFilter<"Student"> | string
     phone_number?: StringNullableFilter<"Student"> | string | null
     wechat_id?: StringNullableFilter<"Student"> | string | null
@@ -15778,6 +15838,7 @@ export namespace Prisma {
   }
 
   export type Student_packageCreateWithoutStudentInput = {
+    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -15793,6 +15854,7 @@ export namespace Prisma {
 
   export type Student_packageUncheckedCreateWithoutStudentInput = {
     id?: number
+    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -15891,6 +15953,7 @@ export namespace Prisma {
     OR?: Student_packageScalarWhereInput[]
     NOT?: Student_packageScalarWhereInput | Student_packageScalarWhereInput[]
     id?: IntFilter<"Student_package"> | number
+    uuid?: UuidFilter<"Student_package"> | string
     start_date?: FloatFilter<"Student_package"> | number
     paid_at?: FloatNullableFilter<"Student_package"> | number | null
     official_end_date?: FloatNullableFilter<"Student_package"> | number | null
@@ -15944,6 +16007,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
+    student_code?: string
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -15963,6 +16027,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
+    student_code?: string
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -16019,6 +16084,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
+    student_code?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16038,6 +16104,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
+    student_code?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16125,6 +16192,7 @@ export namespace Prisma {
   }
 
   export type Student_packageCreateWithoutCourseInput = {
+    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -16140,6 +16208,7 @@ export namespace Prisma {
 
   export type Student_packageUncheckedCreateWithoutCourseInput = {
     id?: number
+    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -16193,6 +16262,7 @@ export namespace Prisma {
   }
 
   export type Student_packageCreateWithoutClassInput = {
+    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -16208,6 +16278,7 @@ export namespace Prisma {
 
   export type Student_packageUncheckedCreateWithoutClassInput = {
     id?: number
+    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -16257,6 +16328,7 @@ export namespace Prisma {
   }
 
   export type Student_packageUpdateWithoutClassInput = {
+    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16272,6 +16344,7 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateWithoutClassInput = {
     id?: IntFieldUpdateOperationsInput | number
+    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16349,6 +16422,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
+    student_code?: string
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -16368,6 +16442,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
+    student_code?: string
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -16462,6 +16537,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
+    student_code?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16481,6 +16557,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
+    student_code?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16555,6 +16632,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
+    student_code?: string
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -16572,6 +16650,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
+    student_code?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16591,6 +16670,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
+    student_code?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16610,6 +16690,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
+    student_code?: StringFieldUpdateOperationsInput | string
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16629,6 +16710,7 @@ export namespace Prisma {
 
   export type Student_packageCreateManyStudentInput = {
     id?: number
+    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -16665,6 +16747,7 @@ export namespace Prisma {
   }
 
   export type Student_packageUpdateWithoutStudentInput = {
+    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16680,6 +16763,7 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateWithoutStudentInput = {
     id?: IntFieldUpdateOperationsInput | number
+    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16695,6 +16779,7 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateManyWithoutStudentInput = {
     id?: IntFieldUpdateOperationsInput | number
+    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16732,6 +16817,7 @@ export namespace Prisma {
 
   export type Student_packageCreateManyCourseInput = {
     id?: number
+    uuid?: string
     start_date: number
     paid_at?: number | null
     official_end_date?: number | null
@@ -16745,6 +16831,7 @@ export namespace Prisma {
   }
 
   export type Student_packageUpdateWithoutCourseInput = {
+    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16760,6 +16847,7 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateWithoutCourseInput = {
     id?: IntFieldUpdateOperationsInput | number
+    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null
@@ -16775,6 +16863,7 @@ export namespace Prisma {
 
   export type Student_packageUncheckedUpdateManyWithoutCourseInput = {
     id?: IntFieldUpdateOperationsInput | number
+    uuid?: StringFieldUpdateOperationsInput | string
     start_date?: FloatFieldUpdateOperationsInput | number
     paid_at?: NullableFloatFieldUpdateOperationsInput | number | null
     official_end_date?: NullableFloatFieldUpdateOperationsInput | number | null

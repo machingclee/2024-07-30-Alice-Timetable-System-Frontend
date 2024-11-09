@@ -15,16 +15,17 @@ import AddPaymentDetailDialog from "./AddPaymentDetailDialog";
 import AddPaymentDetailForm from "./AddPaymentDetailForm";
 import EditPackageDialog from "./EditPackageDialog";
 import EditPackageForm from "./EditPackageForm";
+import RouteEnum from "../../../../enum/RouteEnum";
 
 export default (props: { packageId: string }) => {
     const { packageId } = props;
     const dispatch = useAppDispatch();
     const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
     const { studentId } = useParams<{ studentId: string }>();
-    const package_ = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[packageId]);
-    const { course_id, min, official_end_date, expiry_date, start_date, num_of_classes, scheduled_minutes, paid_at, default_classroom, consumed_minutes } = package_ || {};
-    const assignedClasses = Math.floor(((scheduled_minutes?.count || 0) / (package_?.min || 1)) * 10) / 10;
-    const finishedClasses = Math.floor(((consumed_minutes?.count || 0) / (package_?.min || 1)) * 10) / 10;
+    const pkg = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[packageId]);
+    const { course_id, min, official_end_date, expiry_date, start_date, num_of_classes, scheduled_minutes, paid_at, default_classroom, consumed_minutes } = pkg || {};
+    const assignedClasses = Math.floor(((scheduled_minutes?.count || 0) / (pkg?.min || 1)) * 10) / 10;
+    const finishedClasses = Math.floor(((consumed_minutes?.count || 0) / (pkg?.min || 1)) * 10) / 10;
     if (!course_id) {
         return null;
     }
@@ -41,12 +42,14 @@ export default (props: { packageId: string }) => {
         //     dispatch(StudentThunkAction.getStudentPackages({ studentId }))
         // }
     };
+
     const markAsUnPaid = async () => {
         await dispatch(StudentThunkAction.markPackageAsUnPaid({ packageId: Number(packageId) })).unwrap();
         if (studentId) {
             dispatch(StudentThunkAction.getStudentPackages({ studentId }));
         }
     };
+
     const deletePackage = async () => {
         if (!studentId) {
             return;
@@ -62,6 +65,11 @@ export default (props: { packageId: string }) => {
             dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
         }
     };
+
+    const showAttendence = async () => {
+        const route = `${RouteEnum.CLASS_STATUS}/${pkg?.uuid}`;
+        window.open(route, "_blank");
+    }
 
     const editPackage = async () => {
         EditPackageDialog.setContent(() => () => <EditPackageForm packageId={packageId} />);
@@ -206,6 +214,12 @@ export default (props: { packageId: string }) => {
                             Delete package
                         </MenuItem>
                     </>
+                    {/* @ts-ignore */}
+                    <MenuItem
+                        className="menu-item" onClick={showAttendence}
+                    >
+                        Show Attendence
+                    </MenuItem>
                     {!isPaid && (
                         <>
                             {/* @ts-ignore */}

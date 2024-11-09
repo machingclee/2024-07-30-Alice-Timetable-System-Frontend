@@ -38,7 +38,7 @@ export default (props: { dayUnixTimestamp: number; currHourUnixTimestamp: number
                             position: "relative",
                         }}
                     >
-                        <FadeIn>
+                        <div>
                             {/* {showLabel && index === 0 && <Label label="StudentsClassForDailyTimetableByHour.tsx" />} */}
                             {/* @ts-ignore */}
                             <ContextMenuTrigger id={contextMenuId}>
@@ -86,7 +86,7 @@ export default (props: { dayUnixTimestamp: number; currHourUnixTimestamp: number
                                     </MenuItem>
                                 </Box>
                             </ContextMenu>
-                        </FadeIn>
+                        </div>
                     </div>
                 );
             })}
