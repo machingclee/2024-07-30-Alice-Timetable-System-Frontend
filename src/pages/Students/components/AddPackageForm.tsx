@@ -3,7 +3,7 @@ import Spacer from "../../../components/Spacer";
 import { useEffect, useRef, useState } from "react";
 import SectionTitle from "../../../components/SectionTitle";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { Box } from "@mui/material";
+import { Autocomplete, Box, TextField } from "@mui/material";
 import FormInputTitle from "../../../components/FormInputTitle";
 import Label from "../../../components/Label";
 import { CourseThunkAction } from "../../../redux/slices/courseSlice";
@@ -44,7 +44,7 @@ export default (props: { studentId: string; studentName: string }) => {
         if (!(course_id != null && min != null && num_of_classes != null && default_classroom != null)) {
             return;
         }
-
+        console.log("Hi!");
         // Solve the issue of chosen start_time starts from today, not from the start_date
         const chosenStartTimeResolvingUndefinedIssue = start_time ? start_time : dayjs("09:00", "HH:mm").valueOf();
         const chosenStartDateResolvingUndefinedIssue = start_date ? start_date : toMidnight(new Date().getTime());
@@ -112,13 +112,13 @@ export default (props: { studentId: string; studentName: string }) => {
             <DatePicker
                 disabledDate={(current) => {
                     // Can't select days before today
-                    return current && current < dayjs().startOf('day');
+                    return current && current < dayjs().startOf("day");
                 }}
                 onChange={(val) => {
                     formData.current.start_date = val.valueOf();
                 }}
                 popupStyle={{ zIndex: 10 ** 7 }}
-            // defaultValue={dayjs(new Date())}
+                // defaultValue={dayjs(new Date())}
             />
             <Spacer />
             <FormInputTitle>Start Time</FormInputTitle>
@@ -137,7 +137,7 @@ export default (props: { studentId: string; studentName: string }) => {
                 />
                 <Spacer width={15} />
                 <div style={{ color: colors.grey_deep, display: "flex", alignItems: "center" }}>
-                    <IoIosInformationCircle size={20} />  <Spacer width={5} /> (double click to confirm)
+                    <IoIosInformationCircle size={20} /> <Spacer width={5} /> (double click to confirm)
                 </div>
             </Box>
             <Spacer />
@@ -164,13 +164,25 @@ export default (props: { studentId: string; studentName: string }) => {
                 <FormInputTitle>Select Number of Classes</FormInputTitle>
             </div>
             <Spacer height={5} />
-            <Select
-                dropdownStyle={{ zIndex: 10 ** 4 }}
+            <Autocomplete
+                size="small"
                 style={{ width: "100%" }}
-                onChange={(value) => {
-                    updateFormData({ num_of_classes: value });
-                }}
-                options={allowedOptionsForNumberOfClasses.map((value) => ({ value: value, label: `${value}` }))} // Map allowed options to Select options
+                disablePortal
+                options={allowedOptionsForNumberOfClasses}
+                freeSolo
+                sx={{ width: 300 }}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        onChange={(value) => {
+                            // Ensure the value is a valid number, then update form data
+                            const inputValue = parseInt(value.target.value);
+                            if (!isNaN(inputValue)) {
+                                updateFormData({ num_of_classes: inputValue });
+                            }
+                        }}
+                    />
+                )}
             />
             <Spacer />
             <div style={{ display: "flex" }}>

@@ -19,10 +19,9 @@ export default (props: { classEvent: TimetableClass; dateUnixTimestamp?: number 
     const filter = useAppSelector((s) => s.student.allStudents.filter);
     const [editing, setEditing] = useState(false);
     const { classEvent, dateUnixTimestamp } = props;
-    const { id, min, class_status, reason_for_absence, remark, actual_classroom, default_classroom, class_number } = classEvent;
+    const { id, min, class_status, remark, actual_classroom, default_classroom, class_number } = classEvent;
     const courseInfo = useAppSelector((s) => s.class.courses?.idToCourse?.[classEvent.course_id || 0]);
-    const formData = useRef({ min: min, class_status: class_status, reason_for_absence: reason_for_absence, remark: remark, actual_classroom: actual_classroom });
-    const [hasAbsence, setHasAbsence] = useState<boolean>(["PRESENT", "CHANGE_OF_CLASSROOM"].includes(class_status) ? false : true);
+    const formData = useRef({ min: min, class_status: class_status, remark: remark, actual_classroom: actual_classroom });
     const dispatch = useAppDispatch();
 
     useEffect(() => {}, []);
@@ -106,27 +105,10 @@ export default (props: { classEvent: TimetableClass; dateUnixTimestamp?: number 
                         style={{ width: "100%" }}
                         defaultValue={class_status}
                         onChange={(value) => {
-                            setHasAbsence(!(value === "PRESENT" || value === "MAKEUP"));
                             formData.current = { ...formData.current, class_status: value };
                         }}
                         options={classStatuses}
                     />
-                )}
-            </div>
-            <div>
-                {hasAbsence && (
-                    <>
-                        <div style={{ margin: "10px 0", fontWeight: "bold", fontSize: "16px" }}>Reason for Absence</div>
-                        {!editing && <div style={{ width: "100%", height: "32px", fontWeight: "lighter" }}>{reason_for_absence === "" ? "Null" : reason_for_absence}</div>}
-                        {editing && (
-                            <Input
-                                defaultValue={reason_for_absence || ""}
-                                onChange={(value) => {
-                                    formData.current = { ...formData.current, reason_for_absence: value.target.value };
-                                }}
-                            />
-                        )}
-                    </>
                 )}
             </div>
             <div>
@@ -154,7 +136,7 @@ export default (props: { classEvent: TimetableClass; dateUnixTimestamp?: number 
                                     classId: id,
                                     min: formData.current.min,
                                     class_status: formData.current.class_status,
-                                    reason_for_absence: formData.current.reason_for_absence || "",
+                                    reason_for_absence: "",
                                     remark: formData.current.remark || "",
                                     actual_classroom: formData.current.actual_classroom as $Enums.Classroom,
                                 })

@@ -50,6 +50,7 @@ export default () => {
                             onChange={(t) => {
                                 setPassword(t);
                             }}
+                            isPassword={true}
                             inputProps={{ style: { minWidth: 400, fontSize: 16 } }}
                             onEnter={login}
                         />

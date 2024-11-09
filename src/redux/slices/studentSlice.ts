@@ -440,7 +440,7 @@ registerDialogAndActions(studentMiddleware, [
     ...loadingActions(StudentThunkAction.getStudentDetail),
     ...loadingActions(StudentThunkAction.getStudents),
     ...loadingActions(StudentThunkAction.updateClass),
-    // ...loadingActions(StudentThunkAction.createStudentPackage),
+    ...loadingActions(StudentThunkAction.createStudentEvent),
     {
         rejections: [
             StudentThunkAction.getStudentDetail.rejected,

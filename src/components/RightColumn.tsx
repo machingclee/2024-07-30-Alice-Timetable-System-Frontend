@@ -16,7 +16,8 @@ import CollapseButton from "../assets/collapse-button.png";
 import { FaFilter } from "react-icons/fa";
 import Checkbox from "@mui/material/Checkbox";
 import colors from "../constant/colors";
-import React from "react";
+import React, { useRef } from "react";
+import { IoIosArrowForward } from "react-icons/io";
 
 export default () => {
     const classRoom = useAppSelector((s) => s.student.allStudents.classRoom);
@@ -25,6 +26,7 @@ export default () => {
     const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
     const filter = useAppSelector((s) => s.student.allStudents.filter);
     const dispatch = useDispatch<AppDispatch>();
+    const filterByClassOnPress = useRef(false);
 
     const [formData, setFormData] = React.useState<FilterToGetClassesForDailyTimetable>({
         present: filter.present,
@@ -113,100 +115,111 @@ export default () => {
                     }}
                 >
                     <FaFilter />
-                    <Spacer width={5} /> Filter By Class Status
+                    <Spacer width={5} /> Filter By
                 </div>
-                <div style={{ display: "flex", justifyContent: "flex-start", alignContent: "center", gap: "15px" }}>
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Checkbox
-                                onChange={(event) => {
-                                    setFormData((prev) => ({ ...prev, present: event.target.checked }));
-                                }}
-                                checked={formData.present}
-                                {...label}
-                            />
-                            Present
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Checkbox
-                                onChange={(event) => {
-                                    setFormData((prev) => ({ ...prev, suspicious_absence: event.target.checked }));
-                                }}
-                                checked={formData.suspicious_absence}
-                                {...label}
-                            />
-                            Suspicious Absence
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Checkbox
-                                onChange={(event) => {
-                                    setFormData((prev) => ({ ...prev, illegit_absence: event.target.checked }));
-                                }}
-                                checked={formData.illegit_absence}
-                                {...label}
-                            />
-                            Illegit Absence
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Checkbox
-                                onChange={(event) => {
-                                    setFormData((prev) => ({ ...prev, legit_absence: event.target.checked }));
-                                }}
-                                checked={formData.legit_absence}
-                                {...label}
-                            />
-                            Legit Absence
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Checkbox
-                                onChange={(event) => {
-                                    setFormData((prev) => ({ ...prev, makeup: event.target.checked }));
-                                }}
-                                checked={formData.makeup}
-                                {...label}
-                            />
-                            Makeup
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Checkbox
-                                onChange={(event) => {
-                                    setFormData((prev) => ({ ...prev, changeOfClassroom: event.target.checked }));
-                                }}
-                                checked={formData.changeOfClassroom}
-                                {...label}
-                            />
-                            Change of Classroom
-                        </div>
+                <div>
+                    <div
+                        onClick={() => {
+                            filterByClassOnPress.current = filterByClassOnPress.current!;
+                        }}
+                        style={{ marginLeft: "10px", display: "flex", gap: "15px", fontSize: 18, fontWeight: 500, cursor: "pointer" }}
+                    >
+                        <IoIosArrowForward />
+                        <div>Class Status</div>
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "9px", marginTop: "12px" }}>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
-                            <div style={{ background: colors.blue, width: "15px", height: "15px" }} />
+                    <div style={{ display: "flex", justifyContent: "flex-start", alignContent: "center", gap: "15px" }}>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                <Checkbox
+                                    onChange={(event) => {
+                                        setFormData((prev) => ({ ...prev, present: event.target.checked }));
+                                    }}
+                                    checked={formData.present}
+                                    {...label}
+                                />
+                                Present
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                <Checkbox
+                                    onChange={(event) => {
+                                        setFormData((prev) => ({ ...prev, suspicious_absence: event.target.checked }));
+                                    }}
+                                    checked={formData.suspicious_absence}
+                                    {...label}
+                                />
+                                Suspicious Absence
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                <Checkbox
+                                    onChange={(event) => {
+                                        setFormData((prev) => ({ ...prev, illegit_absence: event.target.checked }));
+                                    }}
+                                    checked={formData.illegit_absence}
+                                    {...label}
+                                />
+                                Illegit Absence
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                <Checkbox
+                                    onChange={(event) => {
+                                        setFormData((prev) => ({ ...prev, legit_absence: event.target.checked }));
+                                    }}
+                                    checked={formData.legit_absence}
+                                    {...label}
+                                />
+                                Legit Absence
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                <Checkbox
+                                    onChange={(event) => {
+                                        setFormData((prev) => ({ ...prev, makeup: event.target.checked }));
+                                    }}
+                                    checked={formData.makeup}
+                                    {...label}
+                                />
+                                Makeup
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                <Checkbox
+                                    onChange={(event) => {
+                                        setFormData((prev) => ({ ...prev, changeOfClassroom: event.target.checked }));
+                                    }}
+                                    checked={formData.changeOfClassroom}
+                                    {...label}
+                                />
+                                Change of Classroom
+                            </div>
                         </div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
-                            <div style={{ background: colors.amber, width: "15px", height: "15px" }} />
-                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "9px", marginTop: "12px" }}>
+                            <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                                <div style={{ background: colors.blue, width: "15px", height: "15px" }} />
+                            </div>
+                            <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                                <div style={{ background: colors.amber, width: "15px", height: "15px" }} />
+                            </div>
 
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
-                            <div style={{ background: colors.red, width: "15px", height: "15px" }} />
+                            <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                                <div style={{ background: colors.red, width: "15px", height: "15px" }} />
+                            </div>
+                            <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                                <div style={{ background: colors.grey, width: "15px", height: "15px" }} />
+                            </div>
+                            <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
+                                <div style={{ background: colors.green, width: "15px", height: "15px" }} />
+                            </div>
+                            <div style={{ height: "32px", display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "10px" }}>
+                                <div style={{ background: colors.purple, width: "15px", height: "15px" }} />
+                            </div>
                         </div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
-                            <div style={{ background: colors.grey, width: "15px", height: "15px" }} />
-                        </div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
-                            <div style={{ background: colors.green, width: "15px", height: "15px" }} />
-                        </div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "10px" }}>
-                            <div style={{ background: colors.purple, width: "15px", height: "15px" }} />
-                        </div>
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "9px", marginTop: "12px" }}>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.present})</div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.suspiciousAbsence})</div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.illegitAbsence})</div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.legitAbsence})</div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.makeup})</div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "10px" }}>
-                            ({summaryOfClassStatues.changeOfClassroom})
+                        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "9px", marginTop: "12px" }}>
+                            <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.present})</div>
+                            <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.suspiciousAbsence})</div>
+                            <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.illegitAbsence})</div>
+                            <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.legitAbsence})</div>
+                            <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>({summaryOfClassStatues.makeup})</div>
+                            <div style={{ height: "32px", display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "10px" }}>
+                                ({summaryOfClassStatues.changeOfClassroom})
+                            </div>
                         </div>
                     </div>
                 </div>

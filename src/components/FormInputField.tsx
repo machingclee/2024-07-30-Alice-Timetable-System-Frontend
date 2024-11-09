@@ -11,6 +11,7 @@ const FormInputField = (props: {
     error?: string;
     inputProps?: HTMLAttributes<HTMLInputElement>;
     onEnter?: () => void;
+    isPassword?: boolean;
 }) => {
     const { onChange, title, error, inputProps, value, onEnter } = props;
     return (
@@ -27,8 +28,9 @@ const FormInputField = (props: {
                         onEnter?.();
                     }
                 }}
+                type={props.isPassword ? "password" : undefined}
                 defaultValue={props.defaultValue}
-                placeholder={`Please input ${title}`}
+                placeholder={`Please Enter ${title}`}
                 onChange={(e) => onChange(e.target.value)}
                 {...(value ? { value } : {})}
                 {...inputProps}
