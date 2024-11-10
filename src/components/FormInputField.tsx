@@ -11,13 +11,14 @@ const FormInputField = (props: {
     error?: string;
     inputProps?: HTMLAttributes<HTMLInputElement>;
     onEnter?: () => void;
-    remark?: string
+    isPassword?: boolean;
+    remark?: string;
 }) => {
     const { onChange, title, error, inputProps, value, onEnter, remark } = props;
     return (
         <div>
             <div style={{ display: "flex", alignItems: "center" }}>
-                <FormInputTitle>{title + (remark ? (" " + remark) : "")}</FormInputTitle>
+                <FormInputTitle>{title + (remark ? " " + remark : "")}</FormInputTitle>
                 <Spacer height={1} />
                 {error && <div style={{ color: "red", fontSize: 13 }}>[{error}]</div>}
             </div>
@@ -28,8 +29,9 @@ const FormInputField = (props: {
                         onEnter?.();
                     }
                 }}
+                type={props.isPassword ? "password" : undefined}
                 defaultValue={props.defaultValue}
-                placeholder={`Please input ${title}`}
+                placeholder={`Please Enter ${title}`}
                 onChange={(e) => onChange(e.target.value)}
                 {...(value ? { value } : {})}
                 {...inputProps}

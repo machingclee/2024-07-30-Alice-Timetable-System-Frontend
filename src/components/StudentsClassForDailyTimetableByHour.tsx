@@ -9,10 +9,21 @@ import DeleteClassDialog from "./DeleteClassDialog";
 import ViewClassForm from "./ViewClassForm";
 import ViewClassDialog from "./ViewClassDialog";
 import StudentClassCard from "./StudentClassCard";
+import dayjs from "dayjs";
 
 export default (props: { dayUnixTimestamp: number; currHourUnixTimestamp: number }) => {
     const { currHourUnixTimestamp, dayUnixTimestamp } = props;
     const classesThisHour = useAppSelector((s) => s.student.allStudents?.hrUnixTimestampToClasses?.[currHourUnixTimestamp]) || [];
+    const time = dayjs(currHourUnixTimestamp);
+    const isFullHour = time.minute() === 0;
+    const timeSlotStyle: React.CSSProperties = {
+        height: isFullHour ? "2px" : "0",
+        opacity: 0.2,
+        top: -4,
+        width: isFullHour ? "100%" : "0",
+        backgroundColor: "black",
+        position: "absolute",
+    };
 
     return (
         <div
@@ -24,6 +35,7 @@ export default (props: { dayUnixTimestamp: number; currHourUnixTimestamp: number
                 zIndex: 1,
             }}
         >
+            <div style={timeSlotStyle} />
             {/* @ts-ignore */}
             {classesThisHour.map((classEvent, index) => {
                 const contextMenuId = `${classEvent?.student_id || ""}-${classEvent?.hour_unix_timestamp || ""}`;
