@@ -88,37 +88,6 @@ export default () => {
                 <NavButton activeNavigationRegex={pathRegex.CAUSEWAY_BAY_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE} title="CWB Timetable" />
             </div>
             <div style={{ transition: "opacity 0.4s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
-                {/* <div style={{ display: "flex", flexDirection: "row" }}>
-                    <div>
-                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Present</div>
-                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Sus. Absence</div>
-                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Illegit Absence</div>
-                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Legit Absence</div>
-                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Makeup</div>
-                        <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>Change of Classroom</div>
-                    </div>
-                    <div style={{ marginLeft: "30px" }}>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
-                            <div style={{ background: colors.blue, width: "15px", height: "15px" }} />
-                        </div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
-                            <div style={{ background: colors.amber, width: "15px", height: "15px" }} />
-                        </div>
-
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
-                            <div style={{ background: colors.red, width: "15px", height: "15px" }} />
-                        </div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
-                            <div style={{ background: colors.grey, width: "15px", height: "15px" }} />
-                        </div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", marginLeft: "10px" }}>
-                            <div style={{ background: colors.green, width: "15px", height: "15px" }} />
-                        </div>
-                        <div style={{ height: "32px", display: "flex", justifyContent: "center", alignItems: "center", marginLeft: "10px" }}>
-                            <div style={{ background: colors.purple, width: "15px", height: "15px" }} />
-                        </div>
-                    </div>
-                </div> */}
                 <Spacer height={30} />
                 <div style={{ boxShadow: boxShadow.SHADOW_61, borderRadius: 4, padding: 10, position: "relative" }}>
                     <div style={{ display: "flex" }}>

@@ -256,6 +256,7 @@ export default () => {
                                                 <div
                                                     className="grid-hour header"
                                                     style={{
+                                                        width: "100%",
                                                         fontWeight: 400,
                                                         textAlign: "center",
                                                     }}
@@ -271,6 +272,17 @@ export default () => {
                                                                 {Object.keys(timeGrid[dayUnixTimestamp])
                                                                     .sort()
                                                                     .map((hourUnixTimestamp, index) => {
+                                                                        // const time = dayjs(parseInt(hourUnixTimestamp));
+                                                                        // const isFullHour = time.minute() === 0; // Check if it's a full hour (minute is 0)
+                                                                        // console.log("time:", time);
+                                                                        // console.log("isFullHour:", isFullHour);
+                                                                        // // Apply thicker border for full hours
+                                                                        // const timeSlotStyle: React.CSSProperties = {
+                                                                        //     height: isFullHour ? "2px" : "0",
+                                                                        //     width: "100%",
+                                                                        //     backgroundColor: "black",
+                                                                        //     position: "absolute",
+                                                                        // };
                                                                         return (
                                                                             <React.Fragment key={hourUnixTimestamp}>
                                                                                 <StudentClass
@@ -280,6 +292,7 @@ export default () => {
                                                                                     activeDraggableId={activeDraggableId}
                                                                                 />
                                                                                 {activeDraggableId === hourUnixTimestamp && provided.placeholder}
+                                                                                {/* </div> */}
                                                                             </React.Fragment>
                                                                         );
                                                                     })}

@@ -60,6 +60,8 @@ export type StudentSliceState = {
             legitAbsence: number;
             makeup: number;
             changeOfClassroom: number;
+            trial: number;
+            reserved: number;
         };
     };
 };
@@ -86,6 +88,9 @@ const initialState: StudentSliceState = {
             legit_absence: true,
             makeup: true,
             changeOfClassroom: true,
+            trial: true,
+            reserved: true,
+            courseIds: [],
         },
         summaryOfClassStatues: {
             present: 0,
@@ -94,6 +99,8 @@ const initialState: StudentSliceState = {
             legitAbsence: 0,
             makeup: 0,
             changeOfClassroom: 0,
+            trial: 0,
+            reserved: 0,
         },
     },
 };
@@ -104,6 +111,22 @@ const studentSlice = createSlice({
     reducers: {
         setFilter: (state, action: PayloadAction<FilterToGetClassesForDailyTimetable>) => {
             state.allStudents.filter = action.payload;
+        },
+        setCourseFilterItem: (state, action: PayloadAction<number[]>) => {
+            state.allStudents.filter.courseIds = action.payload;
+        },
+        addCourseFilterItem: (state, action: PayloadAction<number>) => {
+            state.allStudents.filter.courseIds.push(action.payload);
+        },
+        dropCourseFilterItem: (state, action: PayloadAction<number>) => {
+            const newArray: number[] = [];
+            state.allStudents.filter.courseIds.forEach((id) => {
+                if (id !== action.payload) {
+                    newArray.push(id);
+                }
+            });
+            console.log("newArray:", newArray);
+            state.allStudents.filter.courseIds = newArray;
         },
         setClassroom: (state, action: PayloadAction<Classroom>) => {
             state.allStudents.classRoom = action.payload;
@@ -211,6 +234,8 @@ const studentSlice = createSlice({
                 let legitAbsenceClasses = 0;
                 let makeupClasses = 0;
                 let changeOfClassroomClasses = 0;
+                let trialClasses = 0;
+                let reservedClasses = 0;
                 for (const class_ of classes) {
                     const timestamp = class_.hour_unix_timestamp.toString();
                     const classesForNow = hrTimestampToClasses?.[timestamp];
@@ -232,6 +257,9 @@ const studentSlice = createSlice({
                             case "PRESENT":
                                 presentClasses++;
                                 break;
+                            case "RESERVED":
+                                reservedClasses++;
+                                break;
                             case "SUSPICIOUS_ABSENCE":
                                 suspiciousAbsenceClasses++;
                                 break;
@@ -243,6 +271,9 @@ const studentSlice = createSlice({
                                 break;
                             case "MAKEUP":
                                 makeupClasses++;
+                                break;
+                            case "TRIAL":
+                                trialClasses++;
                                 break;
                             case "CHANGE_OF_CLASSROOM":
                                 changeOfClassroomClasses++;
@@ -258,6 +289,8 @@ const studentSlice = createSlice({
                     legitAbsence: legitAbsenceClasses,
                     makeup: makeupClasses,
                     changeOfClassroom: changeOfClassroomClasses,
+                    trial: trialClasses,
+                    reserved: reservedClasses,
                 };
             })
             .addCase(StudentThunkAction.getStudentClassesForDailyTimetable.fulfilled, (state, action) => {

@@ -4,7 +4,6 @@ import DailyTimetable from "../../components/DailyTimetable";
 import Label from "../../components/Label";
 import { Button } from "antd";
 import Spacer from "../../components/Spacer";
-import RightColumn from "../../components/RightColumn";
 import { useNavigate } from "react-router-dom";
 import DuplicateClassDialog from "../../components/DuplicateClassDialog";
 import ViewClassDialog from "../../components/ViewClassDialog";
@@ -12,6 +11,7 @@ import DeleteClassDialog from "../../components/DeleteClassDialog";
 import AddClassEventDialog from "../../components/AddClassEventDialog";
 import { IoPrint } from "react-icons/io5";
 import PrintButton from "../../components/PrintButton";
+import RightColumn from "../../components/RightColumn";
 
 export default () => {
     const navigate = useNavigate();

@@ -4,17 +4,13 @@ import { Box } from "@mui/material";
 import colors from "../constant/colors";
 import boxShadow from "../constant/boxShadow";
 
-export default (props: {
-    classEvent: TimetableClass,
-    dayUnixTimestamp: number,
-    currHourUnixTimestamp: number,
-}) => {
-    const { classEvent, currHourUnixTimestamp, dayUnixTimestamp } = props
+export default (props: { classEvent: TimetableClass; dayUnixTimestamp: number; currHourUnixTimestamp: number }) => {
+    const { classEvent, currHourUnixTimestamp, dayUnixTimestamp } = props;
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
     const invalidData = dayUnixTimestamp >= currHourUnixTimestamp;
     const { first_name, last_name, chinese_first_name, chinese_last_name } = classEvent;
     const engName = `${last_name} ${first_name}`;
-    const chiName = chinese_first_name && chinese_last_name ? `${chinese_first_name}${chinese_last_name}` : ""
+    const chiName = chinese_first_name && chinese_last_name ? `${chinese_first_name}${chinese_last_name}` : "";
     return (
         <Box
             onMouseEnter={() => {
@@ -23,7 +19,6 @@ export default (props: {
             onMouseLeave={() => {
                 setClassEventHeight(null);
             }}
-
             style={{
                 cursor: "pointer",
                 border: "1px solid #357fd9",
@@ -42,15 +37,19 @@ export default (props: {
                     } else {
                         switch (classEvent.class_status) {
                             case "PRESENT":
-                                return colors.blue;
+                                return colors.greenBlue;
+                            case "TRIAL":
+                                return colors.pink;
                             case "SUSPICIOUS_ABSENCE":
-                                return colors.amber;
+                                return colors.orange;
                             case "ILLEGIT_ABSENCE":
                                 return colors.red;
                             case "LEGIT_ABSENCE":
                                 return colors.grey;
                             case "MAKEUP":
-                                return colors.green;
+                                return colors.blue;
+                            case "RESERVED":
+                                return colors.cyan;
                             case "CHANGE_OF_CLASSROOM":
                                 return colors.purple;
                         }
@@ -66,5 +65,5 @@ export default (props: {
             <div style={{ padding: 4 }}>{engName}</div>
             {chiName && <div style={{ padding: 4 }}>{chiName}</div>}
         </Box>
-    )
-}
+    );
+};

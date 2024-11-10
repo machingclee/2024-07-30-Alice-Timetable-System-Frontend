@@ -22,10 +22,7 @@ export default (props: { classEvent: TimetableClass; dateUnixTimestamp?: number;
     const { id, min, class_status, reason_for_absence, remark, actual_classroom, class_number } = classEvent;
     const courseInfo = useAppSelector((s) => s.class.courses?.idToCourse?.[classEvent.course_id || 0]);
     const formData = useRef({ min: min, class_status: class_status, remark: remark, actual_classroom: actual_classroom, reason_for_absence: reason_for_absence });
-    const [hasAbsence, setHasAbsence] = useState<boolean>(["PRESENT", "CHANGE_OF_CLASSROOM"].includes(class_status) ? false : true);
     const dispatch = useAppDispatch();
-
-    useEffect(() => {}, []);
 
     const classroomOptions: Classroom[] = ["PRINCE_EDWARD", "CAUSEWAY_BAY"];
 
@@ -121,35 +118,10 @@ export default (props: { classEvent: TimetableClass; dateUnixTimestamp?: number;
                         style={{ width: "100%" }}
                         defaultValue={class_status}
                         onChange={(value) => {
-                            setHasAbsence(!(value === "PRESENT" || value === "MAKEUP"));
                             formData.current = { ...formData.current, class_status: value };
                         }}
                         options={classStatuses}
                     />
-                )}
-            </div>
-            <Spacer height={5} />
-            <div>
-                {hasAbsence && (
-                    <>
-                        <Spacer height={5} />
-                        <div style={{ fontWeight: "bold", fontSize: "16px" }}>Reason for Absence</div>
-                        <Spacer height={5} />
-                        {!editing && (
-                            <DisplayResult>
-                                <div style={{ width: "100%", fontWeight: "lighter" }}>{reason_for_absence === "" ? "N/A" : reason_for_absence}</div>
-                            </DisplayResult>
-                        )}
-                        {editing && (
-                            <Input
-                                disabled={!editing}
-                                defaultValue={reason_for_absence || ""}
-                                onChange={(value) => {
-                                    formData.current = { ...formData.current, reason_for_absence: value.target.value };
-                                }}
-                            />
-                        )}
-                    </>
                 )}
             </div>
             <Spacer height={5} />

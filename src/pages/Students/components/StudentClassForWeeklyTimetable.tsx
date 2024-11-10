@@ -18,6 +18,7 @@ import colors from "../../../constant/colors";
 import Label from "../../../components/Label";
 import ViewClassDialog from "../../../components/ViewClassDialog";
 import ViewClassForm from "../../../components/ViewClassForm";
+import { $Enums, Class_status } from "../../../prismaTypes/types";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number }) => {
     const dispatch = useAppDispatch();
@@ -25,15 +26,16 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const { studentId } = useParams<{ studentId: string }>();
     const hours = useAppSelector((s) => s.student.studentDetail.weeklyTimetable?.hrUnixTimestamps);
+    const [classStatusMenuOptionsExpand, setClassStatusMenuOptionsExpand] = useState<boolean>(false);
     const targetHit = hours?.includes(String(hourUnixTimestamp));
     if (targetHit) {
-        console.log("targetHit", hourUnixTimestamp, hours)
+        console.log("targetHit", hourUnixTimestamp, hours);
     }
     const studentClass = useAppSelector((s) => s.student.studentDetail.weeklyTimetable?.hrUnixTimestampToClass?.[String(hourUnixTimestamp)]);
     if (studentClass) {
         console.log("studentClassstudentClass", studentClass);
     }
-    const showAll = useAppSelector(s => s.student.studentDetail.showAllClassesForOneStudent);
+    const showAll = useAppSelector((s) => s.student.studentDetail.showAllClassesForOneStudent);
     const timetable = useAppSelector((s) => s.student.studentDetail.weeklyTimetable);
     const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
@@ -51,6 +53,18 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const rightClickable = !(studentClass != null);
     const dayAndTime = dayjs(hourUnixTimestamp).format("ddd, HH:mm");
     const disableDuplicate = studentClass?.class_group_id != null;
+    // To adjust place a thick line to indicate the hour unit
+    const time = dayjs(hourUnixTimestamp);
+    const isFullHour = time.minute() === 0;
+    const timeSlotStyle: React.CSSProperties = {
+        height: isFullHour ? "2px" : "0",
+        opacity: 0.2,
+        top: -2,
+        width: "100%",
+        backgroundColor: "black",
+        position: "absolute",
+    };
+
     const groupedLabel = () => {
         if (!hasDuplicationGroup) {
             return null;
@@ -71,54 +85,77 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const TimeslotWrapper = useCallback(
         rightClickable
             ? ({ children }: PropsWithChildren) => {
-                return (
-                    <>
-                        {/* @ts-ignore */}
-                        <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
-                        {/* @ts-ignore */}
-                        <ContextMenu
-                            id={hourUnixTimestamp.toString()}
-                            style={{
-                                zIndex: 10 ** 7,
-                                borderRadius: 8,
-                                backgroundColor: "white",
-                                boxShadow: boxShadow.SHADOW_62,
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    "& .menu-item": {
-                                        padding: "10px",
-                                        cursor: "pointer",
-                                        color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
-                                        "&:hover": {
-                                            "&:hover": {
-                                                color: "rgb(64, 150, 255)",
-                                            },
-                                        },
-                                    },
-                                }}
-                            >
-                                {/* @ts-ignore */}
-                                <MenuItem
-                                    className="menu-item"
-                                    disabled={!selectedPackageId}
-                                    onClick={() => {
-                                        createEvent();
-                                    }}
-                                >
-                                    {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
-                                </MenuItem>
-                            </Box>
-                        </ContextMenu>
-                    </>
-                );
-            }
+                  return (
+                      <>
+                          {/* @ts-ignore */}
+                          <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
+                          {/* @ts-ignore */}
+                          <ContextMenu
+                              id={hourUnixTimestamp.toString()}
+                              style={{
+                                  zIndex: 10 ** 7,
+                                  borderRadius: 8,
+                                  backgroundColor: "white",
+                                  boxShadow: boxShadow.SHADOW_62,
+                              }}
+                          >
+                              <Box
+                                  sx={{
+                                      "& .menu-item": {
+                                          padding: "10px",
+                                          cursor: "pointer",
+                                          color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
+                                          "&:hover": {
+                                              "&:hover": {
+                                                  color: "rgb(64, 150, 255)",
+                                              },
+                                          },
+                                      },
+                                  }}
+                              >
+                                  {/* @ts-ignore */}
+                                  <MenuItem
+                                      className="menu-item"
+                                      disabled={!selectedPackageId}
+                                      onClick={() => {
+                                          createEvent();
+                                      }}
+                                  >
+                                      {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
+                                  </MenuItem>
+                              </Box>
+                          </ContextMenu>
+                      </>
+                  );
+              }
             : ({ children }: PropsWithChildren) => children,
         [studentClass, selectedPackageId]
     );
 
     const showLabel = studentClass?.hide != null;
+
+    const updateClassStatusHandle = (status: Class_status) => {
+        console.log("studentClass?.class_number:", studentClass?.class_number);
+        console.log("studentClass?.min:", studentClass?.min);
+        console.log("studentClass?.remark:", studentClass?.remark);
+        console.log("studentClass?.actual_classroom:", studentClass?.actual_classroom);
+        if (studentClass?.class_number && studentClass?.min && studentClass?.actual_classroom) {
+            dispatch(
+                StudentThunkAction.updateClass({
+                    class_status: status,
+                    classId: studentClass?.id,
+                    min: studentClass?.min,
+                    reason_for_absence: "",
+                    remark: studentClass?.remark ? studentClass?.remark : "",
+                    actual_classroom: studentClass?.actual_classroom as $Enums.Classroom,
+                })
+            )
+                .unwrap()
+                .then(() => {
+                    dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: studentClass.student_id }));
+                });
+        }
+    };
 
     // To account for the numbering of classes
     useEffect(() => {
@@ -163,6 +200,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                             {showLabel && <Label label="StudentClassForWeeklyTimetable.tsx" />}
                             {/* @ts-ignore */}
                             <TimeslotWrapper>
+                                {/* Place a thick line to indicate the hour unit */}
+                                <div style={timeSlotStyle} />
                                 <div
                                     ref={innerRef}
                                     className={classnames("grid-hour", shouldFreeze ? "disbaletransform" : "")}
@@ -180,8 +219,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                         }}
                                     >
                                         {/* Control what to show on the entire timetable */}
-                                        {course_name && (showAll || (!showAll && (Number(selectedPackageId) === studentClass?.student_package_id))) &&
-                                            (<div>
+                                        {course_name && (showAll || (!showAll && Number(selectedPackageId) === studentClass?.student_package_id)) && (
+                                            <div>
                                                 {/* @ts-ignore */}
                                                 <ContextMenuTrigger id={contextMenuId}>
                                                     <Box
@@ -208,19 +247,23 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                 } else {
                                                                     switch (studentClass.class_status) {
                                                                         case "PRESENT":
-                                                                            return colors.blue;
+                                                                            return colors.greenBlue;
+                                                                        case "TRIAL":
+                                                                            return colors.pink;
+                                                                        case "RESERVED":
+                                                                            return colors.cyan;
                                                                         case "SUSPICIOUS_ABSENCE":
-                                                                            return colors.amber;
+                                                                            return colors.orange;
                                                                         case "ILLEGIT_ABSENCE":
                                                                             return colors.red;
                                                                         case "LEGIT_ABSENCE":
                                                                             return colors.grey;
                                                                         case "MAKEUP":
-                                                                            return colors.green;
+                                                                            return colors.blue;
                                                                         case "CHANGE_OF_CLASSROOM":
                                                                             return colors.purple;
                                                                         case "TRIAL":
-                                                                            return "black"
+                                                                            return "black";
                                                                     }
                                                                 }
                                                             })(),
@@ -279,11 +322,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         <MenuItem
                                                             className="menu-item"
                                                             onClick={() => {
-                                                                ViewClassDialog.setContent(() => () => (
-                                                                    <ViewClassForm
-                                                                        classEvent={studentClass}
-                                                                    />
-                                                                ));
+                                                                ViewClassDialog.setContent(() => () => <ViewClassForm classEvent={studentClass} />);
                                                                 ViewClassDialog.setOpen(true);
                                                             }}
                                                         >
@@ -293,12 +332,7 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         <MenuItem
                                                             className="menu-item"
                                                             onClick={() => {
-                                                                ViewClassDialog.setContent(() => () => (
-                                                                    <ViewClassForm
-                                                                        isEditing={true}
-                                                                        classEvent={studentClass}
-                                                                    />
-                                                                ));
+                                                                ViewClassDialog.setContent(() => () => <ViewClassForm isEditing={true} classEvent={studentClass} />);
                                                                 ViewClassDialog.setOpen(true);
                                                             }}
                                                         >
@@ -339,9 +373,92 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                         >
                                                             <span style={{ color: "red" }}>Delete Class</span>
                                                         </MenuItem>
+                                                        <div
+                                                            className={classnames("menu-item")}
+                                                            onClick={() => {
+                                                                setClassStatusMenuOptionsExpand(!classStatusMenuOptionsExpand);
+                                                            }}
+                                                        >
+                                                            <span style={{ color: "yellowgreen" }}>Change Status</span>
+                                                        </div>
+                                                        <div style={{ height: "1px", opacity: 0.1, backgroundColor: "black" }} />
+                                                        <div
+                                                            style={{
+                                                                transition: "width 0.7s ease-in-out, max-height 0.5s ease-in-out",
+                                                                overflow: "hidden",
+                                                                maxHeight: classStatusMenuOptionsExpand ? "500px" : "0px",
+                                                                width: classStatusMenuOptionsExpand ? "150px" : "0px",
+                                                            }}
+                                                        >
+                                                            {classStatusMenuOptionsExpand && (
+                                                                <>
+                                                                    {/* @ts-ignore */}
+                                                                    <MenuItem
+                                                                        className={classnames("menu-item")}
+                                                                        onClick={() => {
+                                                                            updateClassStatusHandle("PRESENT");
+                                                                        }}
+                                                                    >
+                                                                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                                                            <span>Present</span>
+                                                                            <div style={{ background: colors.greenBlue, width: "15px", height: "15px" }} />
+                                                                        </div>
+                                                                    </MenuItem>
+                                                                    {/* @ts-ignore */}
+                                                                    <MenuItem
+                                                                        className={classnames("menu-item")}
+                                                                        onClick={() => {
+                                                                            updateClassStatusHandle("SUSPICIOUS_ABSENCE");
+                                                                        }}
+                                                                    >
+                                                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                                                            <span>Suspicious Absence</span>
+                                                                            <div style={{ background: colors.orange, width: "15px", height: "15px" }} />
+                                                                        </div>
+                                                                    </MenuItem>
+                                                                    {/* @ts-ignore */}
+                                                                    <MenuItem
+                                                                        className={classnames("menu-item")}
+                                                                        onClick={() => {
+                                                                            updateClassStatusHandle("ILLEGIT_ABSENCE");
+                                                                        }}
+                                                                    >
+                                                                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                                                            <span>Illegit Absence</span>
+                                                                            <div style={{ background: colors.red, width: "15px", height: "15px" }} />
+                                                                        </div>
+                                                                    </MenuItem>
+                                                                    {/* @ts-ignore */}
+                                                                    <MenuItem
+                                                                        className={classnames("menu-item")}
+                                                                        onClick={() => {
+                                                                            updateClassStatusHandle("LEGIT_ABSENCE");
+                                                                        }}
+                                                                    >
+                                                                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                                                            <span>Legit Absence</span>
+                                                                            <div style={{ background: colors.grey, width: "15px", height: "15px" }} />
+                                                                        </div>
+                                                                    </MenuItem>
+                                                                    {/* @ts-ignore */}
+                                                                    <MenuItem
+                                                                        className={classnames("menu-item")}
+                                                                        onClick={() => {
+                                                                            updateClassStatusHandle("MAKEUP");
+                                                                        }}
+                                                                    >
+                                                                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                                                            <span>Makeup</span>
+                                                                            <div style={{ background: colors.blue, width: "15px", height: "15px" }} />
+                                                                        </div>
+                                                                    </MenuItem>
+                                                                </>
+                                                            )}
+                                                        </div>
                                                     </Box>
                                                 </ContextMenu>
-                                            </div>)}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </TimeslotWrapper>
