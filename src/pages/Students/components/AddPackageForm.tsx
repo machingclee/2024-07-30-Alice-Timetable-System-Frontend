@@ -169,20 +169,18 @@ export default (props: { studentId: string; studentName: string }) => {
                 style={{ width: "100%" }}
                 disablePortal
                 options={allowedOptionsForNumberOfClasses}
+                getOptionLabel={(option) => option.toString()}
+                onInputChange={(event, value) => {
+                    console.log("value:", value);
+                    const inputValue = parseInt(value);
+                    console.log("inputValue:", inputValue);
+                    if (!isNaN(inputValue)) {
+                        updateFormData({ num_of_classes: inputValue });
+                    }
+                }}
                 freeSolo
                 sx={{ width: 300 }}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        onChange={(value) => {
-                            // Ensure the value is a valid number, then update form data
-                            const inputValue = parseInt(value.target.value);
-                            if (!isNaN(inputValue)) {
-                                updateFormData({ num_of_classes: inputValue });
-                            }
-                        }}
-                    />
-                )}
+                renderInput={(params) => <TextField {...params} />}
             />
             <Spacer />
             <div style={{ display: "flex" }}>

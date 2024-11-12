@@ -3,6 +3,10 @@ import { TimetableClass } from "../dto/dto";
 import { Box } from "@mui/material";
 import colors from "../constant/colors";
 import boxShadow from "../constant/boxShadow";
+import getEnv from "../utils/getEnv";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+
+const FRONTEND_URL = getEnv().VITE_FRONTEND_URL;
 
 export default (props: { classEvent: TimetableClass; dayUnixTimestamp: number; currHourUnixTimestamp: number }) => {
     const { classEvent, currHourUnixTimestamp, dayUnixTimestamp } = props;
@@ -11,6 +15,7 @@ export default (props: { classEvent: TimetableClass; dayUnixTimestamp: number; c
     const { first_name, last_name, chinese_first_name, chinese_last_name } = classEvent;
     const engName = `${last_name} ${first_name}`;
     const chiName = chinese_first_name && chinese_last_name ? `${chinese_first_name}${chinese_last_name}` : "";
+
     return (
         <Box
             onMouseEnter={() => {
@@ -18,6 +23,11 @@ export default (props: { classEvent: TimetableClass; dayUnixTimestamp: number; c
             }}
             onMouseLeave={() => {
                 setClassEventHeight(null);
+            }}
+            onClick={() => {
+                console.log("FRONTEND_URL:", FRONTEND_URL);
+                console.log("studentId:", classEvent.student_id);
+                window.open(FRONTEND_URL + `/dashboard/students/${classEvent.student_id}/${currHourUnixTimestamp}`, "_blank");
             }}
             style={{
                 cursor: "pointer",
@@ -61,9 +71,9 @@ export default (props: { classEvent: TimetableClass; dayUnixTimestamp: number; c
                 textAlign: "center",
             }}
         >
-            <div style={{ padding: 4 }}>{classEvent.course_name}</div>
-            <div style={{ padding: 4 }}>{engName}</div>
-            {chiName && <div style={{ padding: 4 }}>{chiName}</div>}
+            {/* <div style={{ padding: 4 }}>{classEvent.course_name}</div> */}
+            <div style={{ padding: 4 }}>{classEvent.student_code}</div>
+            {chiName ? <div style={{ padding: 4 }}>{chiName}</div> : <div style={{ padding: 4 }}>{engName}</div>}
         </Box>
     );
 };

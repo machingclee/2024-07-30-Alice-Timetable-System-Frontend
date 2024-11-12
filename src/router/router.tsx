@@ -24,7 +24,7 @@ const getRouter = (_store: any) => {
                 <Route path="/dashboard" element={<Dashboard />}>
                     <Route path={"students"} element={<RouteIndex />}>
                         <Route index element={<Students />} />
-                        <Route path=":studentId" element={<StudentDetail />} />
+                        <Route path=":studentId/:timestamp" element={<StudentDetail />} />
                     </Route>
                     <Route path="courses" element={<Classes />} />
                     <Route path="users" element={<Users />} />
@@ -46,8 +46,8 @@ const getRouter = (_store: any) => {
 };
 
 const ClassStatusIndex = () => {
-    return <Outlet />
-}
+    return <Outlet />;
+};
 
 const CausewaybayIndex = () => {
     const dispatch = useAppDispatch();

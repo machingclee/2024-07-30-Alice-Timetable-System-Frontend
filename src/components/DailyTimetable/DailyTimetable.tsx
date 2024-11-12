@@ -1,29 +1,20 @@
 import { Button } from "antd";
-import CustomScrollbarContainer from "../components/CustomScrollbarContainer";
+import CustomScrollbarContainer from "../CustomScrollbarContainer";
 import { Box } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
 import { useState, useEffect, useRef, useMemo } from "react";
-import SectionTitle from "../components/SectionTitle";
-import Spacer from "../components/Spacer";
+import SectionTitle from "../SectionTitle";
+import Spacer from "../Spacer";
 
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import studentSlice, { StudentThunkAction } from "../redux/slices/studentSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import studentSlice, { StudentThunkAction } from "../../redux/slices/studentSlice";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import timeUtil from "../utils/timeUtil";
-import StudentsClassForDailyTimetableByHour from "./StudentsClassForDailyTimetableByHour";
-import Label from "./Label";
-import ViewClassDialog from "./ViewClassDialog";
+import timeUtil from "../../utils/timeUtil";
+import Label from "../Label";
+import ViewClassDialog from "../ViewClassDialog";
+import TimeColumn from "./components/TimeColumn";
 
-// dispatch(
-//     StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-//         dateUnixTimestamp: timeUtil.getDayUnixTimestamp(dayjs(selectedDate).subtract(1, "day").toDate().getTime()).toString(),
-//         timetableType: timetableType,
-//         filter: filter,
-//     StudentThunkAction.getStudentClassesForDailyTimetable({
-//         dateUnixTimestamp: prevDayjs.startOf("day").valueOf().toString(),
-//         classRoom: classRoom,
-//     })
-// );
+const gridHeight = 30;
 
 export default () => {
     const dispatch = useAppDispatch();
@@ -32,6 +23,8 @@ export default () => {
     const [hoursColumnGrid, setHoursColumn] = useState<string[]>([]);
     const selectedDay = useAppSelector((s) => s.student.allStudents.selectedDate);
     const filter = useAppSelector((s) => s.student.allStudents.filter);
+    const hrUnixTimestampOnClick = useAppSelector((s) => s.student.allStudents.totalClassesInHighlight.hrUnixTimestampOnClick);
+    const hrUnixTimestampToClasses = useAppSelector((s) => s.student.allStudents.hrUnixTimestampToClasses);
 
     // Memoize the half-hour intervals to prevent recalculation on every render
     const oneForthHourIntervals = useMemo(() => {
@@ -43,6 +36,18 @@ export default () => {
         return intervals;
     }, [selectedDate]);
 
+    // Determine if the class starts on, progresses through or ends on a particular unix timestamp
+    function isClassOngoing(pointInTime: number, classStart: number, durationMinutes: number): boolean {
+        // Convert duration from minutes to milliseconds
+        const durationMilliseconds = durationMinutes * 60 * 1000;
+
+        // Calculate the class end time
+        const classEnd = classStart + durationMilliseconds;
+        console.log("pointInTime >= classStart && pointInTime <= classEnd:", pointInTime >= classStart && pointInTime <= classEnd);
+        // Check if the pointInTime falls within the class start and end time
+        return pointInTime >= classStart && pointInTime <= classEnd;
+    }
+
     // Initialize the time grid based on `hrUnixTimestamps`
     useEffect(() => {
         const hoursOfTheDay = oneForthHourIntervals.map((dayJS) => String(dayJS.valueOf()));
@@ -51,7 +56,21 @@ export default () => {
     }, [selectedDay]);
 
     const timetableContainerRef = useRef<HTMLDivElement | null>(null);
-    const gridHeight = 30;
+
+    // Move to the parent component to do one operation of counting the number of classes starting on, progressing through or ending on a particular unix timestamp
+    useEffect(() => {
+        if (hrUnixTimestampOnClick) {
+            let numOfClasses = 0;
+            Object.values(hrUnixTimestampToClasses).forEach((timetableClass) => {
+                timetableClass.forEach((timetableClass) => {
+                    if (isClassOngoing(hrUnixTimestampOnClick, timetableClass.hour_unix_timestamp, timetableClass.min)) {
+                        numOfClasses++;
+                    }
+                });
+            });
+            dispatch(studentSlice.actions.setNumberOfClassesInHighlight(numOfClasses));
+        }
+    }, [hrUnixTimestampOnClick]);
 
     return (
         <Box
@@ -181,16 +200,12 @@ export default () => {
                             <div style={{ flex: 1 }}>
                                 {hoursColumnGrid.sort().map((hourUnixTimestamp, index) => {
                                     return (
-                                        <div key={hourUnixTimestamp} style={{ flex: 1 }} className="time-column">
-                                            <Spacer height={5} />
-                                            <div className="droppable" style={{ position: "relative", zIndex: hoursColumnGrid.length - index + 1, height: gridHeight }}>
-                                                <StudentsClassForDailyTimetableByHour
-                                                    key={hourUnixTimestamp}
-                                                    dayUnixTimestamp={timeUtil.getDayUnixTimestamp(selectedDate.getTime())}
-                                                    currHourUnixTimestamp={parseInt(hourUnixTimestamp)}
-                                                />
-                                            </div>
-                                        </div>
+                                        <TimeColumn
+                                            key={`${hourUnixTimestamp}-${selectedDate.getTime()}`}
+                                            index={index}
+                                            hourUnixTimestamp={hourUnixTimestamp}
+                                            hoursColumnGrid={hoursColumnGrid}
+                                        />
                                     );
                                 })}
                             </div>

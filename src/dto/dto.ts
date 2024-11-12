@@ -31,6 +31,7 @@ export type CreateStudentRequest = {
 
 export type UpdateStudentRequest = {
     id: string;
+    student_code: string;
     first_name: string;
     last_name: string;
     chinese_first_name: string;
@@ -70,6 +71,7 @@ export type User = {
 
 export type Student = {
     id: string;
+    student_code: string;
     first_name: string;
     last_name: string;
     chinese_first_name: string;
@@ -193,6 +195,7 @@ export type TimetableClass = Class & {
     course_id: number;
     course_name: string;
     student_id: string;
+    student_code: string;
     default_classroom: Classroom;
     first_name: string; // student name
     last_name: string; // student name

@@ -1,6 +1,6 @@
 import { IoMdArrowBack } from "react-icons/io";
 import SectionTitle from "../../components/SectionTitle";
-import DailyTimetable from "../../components/DailyTimetable";
+import DailyTimetable from "../../components/DailyTimetable/DailyTimetable";
 import Label from "../../components/Label";
 import { Button } from "antd";
 import Spacer from "../../components/Spacer";
