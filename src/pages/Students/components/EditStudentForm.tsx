@@ -15,13 +15,13 @@ import studentSlice, { StudentThunkAction } from "../../../redux/slices/studentS
 import Label from "../../../components/Label";
 import EditStudentDialog from "./EditStudentDialog";
 
-
 export default ({ studentId }: { studentId: string }) => {
     const dispatch = useAppDispatch();
     const student = useAppSelector((s) => s.student.students.idToStudent?.[studentId]);
     if (!student) return;
     const formData = useRef<Partial<UpdateStudentRequest>>({
         id: studentId,
+        student_code: student.student_code,
         first_name: student.first_name,
         last_name: student.last_name,
         chinese_first_name: student.chinese_first_name,
@@ -69,6 +69,7 @@ export default ({ studentId }: { studentId: string }) => {
             <Label label="EditStudentForm.tsx" offsetTop={-20} />
             <SectionTitle>Edit Student Info</SectionTitle>
             <Spacer />
+            <FormInputField title="Student Code" defaultValue={student.student_code} onChange={(t) => update({ student_code: t })} error={error?.["student_code"]} />
             <FormInputField title="First Name" defaultValue={student.first_name} onChange={(t) => update({ first_name: t })} error={error?.["first_name"]} />
             <FormInputField title="Last Name" defaultValue={student.last_name} onChange={(t) => update({ last_name: t })} error={error?.["last_name"]} />
             <FormInputField

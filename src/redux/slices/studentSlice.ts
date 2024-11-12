@@ -52,8 +52,12 @@ export type StudentSliceState = {
         classRoom: Classroom | null;
         selectedDate: Date;
         hrUnixTimestampToClasses: { [id: string]: TimetableClass[] };
+        totalClassesInHighlight: {
+            hrUnixTimestampOnClick: number | null;
+            numberOfClassesInHighlight: number;
+        };
         filter: FilterToGetClassesForDailyTimetable;
-        summaryOfClassStatues: {
+        summaryOfClassStatuses: {
             present: number;
             suspiciousAbsence: number;
             illegitAbsence: number;
@@ -81,6 +85,10 @@ const initialState: StudentSliceState = {
         selectedDate: new Date(),
         classRoom: null,
         hrUnixTimestampToClasses: {},
+        totalClassesInHighlight: {
+            hrUnixTimestampOnClick: 0,
+            numberOfClassesInHighlight: 0,
+        },
         filter: {
             present: true,
             suspicious_absence: true,
@@ -92,7 +100,7 @@ const initialState: StudentSliceState = {
             reserved: true,
             courseIds: [],
         },
-        summaryOfClassStatues: {
+        summaryOfClassStatuses: {
             present: 0,
             suspiciousAbsence: 0,
             illegitAbsence: 0,
@@ -109,6 +117,12 @@ const studentSlice = createSlice({
     name: "student",
     initialState,
     reducers: {
+        setNumberOfClassesInHighlight: (state, action: PayloadAction<number>) => {
+            state.allStudents.totalClassesInHighlight.numberOfClassesInHighlight = action.payload;
+        },
+        setHrUnixTimestampOnClick: (state, action: PayloadAction<number | null>) => {
+            state.allStudents.totalClassesInHighlight.hrUnixTimestampOnClick = action.payload;
+        },
         setFilter: (state, action: PayloadAction<FilterToGetClassesForDailyTimetable>) => {
             state.allStudents.filter = action.payload;
         },
@@ -146,6 +160,9 @@ const studentSlice = createSlice({
         },
         setDailyTimetableSelectedDate: (state, action: PayloadAction<{ date: Date }>) => {
             state.allStudents.selectedDate = action.payload.date;
+        },
+        setWeeklyTimetableSelectedDate: (state, action: PayloadAction<{ date: Date }>) => {
+            state.studentDetail.weeklyTimetable.selectedDate = action.payload.date;
         },
         unsetStudentEvent: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
@@ -282,7 +299,7 @@ const studentSlice = createSlice({
                     }
                     lodash.setWith(state.allStudents.hrUnixTimestampToClasses, `["${hrTimestamp}"]`, existingClasses, Object);
                 });
-                state.allStudents.summaryOfClassStatues = {
+                state.allStudents.summaryOfClassStatuses = {
                     present: presentClasses,
                     suspiciousAbsence: suspiciousAbsenceClasses,
                     illegitAbsence: illegitAbsenceClasses,

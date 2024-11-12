@@ -23,7 +23,7 @@ import { CourseThunkAction } from "../redux/slices/courseSlice";
 
 export default () => {
     const classRoom = useAppSelector((s) => s.student.allStudents.classRoom);
-    const summaryOfClassStatues = useAppSelector((s) => s.student.allStudents.summaryOfClassStatues);
+    const summaryOfClassStatues = useAppSelector((s) => s.student.allStudents.summaryOfClassStatuses);
     const courseIds = useAppSelector((s) => s.class.courses.ids);
     const filterCourseIds = useAppSelector((s) => s.student.allStudents.filter.courseIds);
     const selectedDate = useAppSelector((s) => s.student.allStudents.selectedDate);
@@ -66,7 +66,6 @@ export default () => {
     useEffect(() => {
         if (courseIds) {
             dispatch(studentSlice.actions.setCourseFilterItem(courseIds));
-            console.log("Hi!!!");
         }
     }, [courseIds]);
 

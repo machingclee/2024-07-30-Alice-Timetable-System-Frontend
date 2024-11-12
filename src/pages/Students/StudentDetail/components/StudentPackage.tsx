@@ -25,6 +25,7 @@ export default (props: { packageId: string }) => {
     const pkg = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[packageId]);
     const { course_id, min, official_end_date, expiry_date, start_date, num_of_classes, scheduled_minutes, paid_at, default_classroom, consumed_minutes } = pkg || {};
     const assignedClasses = Math.floor(((scheduled_minutes?.count || 0) / (pkg?.min || 1)) * 10) / 10;
+    console.log("consumed_minutes:", consumed_minutes);
     const finishedClasses = Math.floor(((consumed_minutes?.count || 0) / (pkg?.min || 1)) * 10) / 10;
     if (!course_id) {
         return null;
@@ -69,7 +70,7 @@ export default (props: { packageId: string }) => {
     const showAttendence = async () => {
         const route = `${RouteEnum.CLASS_STATUS}/${pkg?.uuid}`;
         window.open(route, "_blank");
-    }
+    };
 
     const editPackage = async () => {
         EditPackageDialog.setContent(() => () => <EditPackageForm packageId={packageId} />);
@@ -215,9 +216,7 @@ export default (props: { packageId: string }) => {
                         </MenuItem>
                     </>
                     {/* @ts-ignore */}
-                    <MenuItem
-                        className="menu-item" onClick={showAttendence}
-                    >
+                    <MenuItem className="menu-item" onClick={showAttendence}>
                         Show Attendence
                     </MenuItem>
                     {!isPaid && (

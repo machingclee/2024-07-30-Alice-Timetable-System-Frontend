@@ -11,7 +11,7 @@ import { StudentThunkAction } from "../../redux/slices/studentSlice";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import EditStudentDialog from "./components/EditStudentDialog";
-import escapeStringRegexp from 'escape-string-regexp';
+import escapeStringRegexp from "escape-string-regexp";
 
 export default () => {
     const dispatch = useAppDispatch();
@@ -29,18 +29,21 @@ export default () => {
     }, [dispatch]);
 
     const filterRegex = new RegExp(escapeStringRegexp(filter), "i");
-    const filteredIds = ids.filter(id => {
+    const filteredIds = ids.filter((id) => {
         const student = idToStudent?.[id];
         const {
+            student_code = "",
             chinese_first_name = "",
             chinese_last_name = "",
             first_name = "",
             last_name = "",
             parent_email = "",
-            school_name = ""
+            school_name = "",
+            phone_number = "",
         } = student || {};
 
         const sum = [
+            student_code,
             chinese_first_name,
             chinese_last_name,
             `${chinese_last_name} ${chinese_first_name}`,
@@ -48,16 +51,17 @@ export default () => {
             first_name,
             last_name,
             parent_email,
-            school_name
+            phone_number,
+            school_name,
         ].reduce((acc, curr) => {
-            const sum = acc + Number(filterRegex.test(curr))
+            const sum = acc + Number(filterRegex.test(curr));
             return sum;
         }, 0);
 
         return sum >= 1;
     });
 
-    console.log("filteredIds", filteredIds)
+    console.log("filteredIds", filteredIds);
 
     return (
         <div>
@@ -77,17 +81,16 @@ export default () => {
                             result += " " + student.last_name;
                         }
                         return result;
-                    })()
+                    })();
                     return searchDisplay;
                 })}
                 onInputChange={(_, newValue) => {
-                    console.log("newValuenewValuenewValue", newValue)
+                    console.log("newValuenewValuenewValue", newValue);
                     setFilter(newValue || "");
                 }}
-                renderInput={(params) => <TextField {...params}
-                    label="Find the student"
-                    placeholder="Chinese Name, English Name, School Name, Parent Email, etc."
-                    variant="outlined" />}
+                renderInput={(params) => (
+                    <TextField {...params} label="Find the student" placeholder="Chinese Name, English Name, School Name, Parent Email, etc." variant="outlined" />
+                )}
             />
 
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
@@ -98,8 +101,11 @@ export default () => {
 
             <Spacer />
 
-            <Box>{filteredIds.map((id) => <StudentRow id={id} key={id} />)}</Box>
-
+            <Box>
+                {filteredIds.map((id) => (
+                    <StudentRow id={id} key={id} />
+                ))}
+            </Box>
             <AddStudentDialog.render />
             <EditStudentDialog.render />
         </div>
