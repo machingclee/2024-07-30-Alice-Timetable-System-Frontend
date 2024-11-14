@@ -25,6 +25,11 @@ export type Parent = $Result.DefaultSelection<Prisma.$ParentPayload>
  */
 export type Student = $Result.DefaultSelection<Prisma.$StudentPayload>
 /**
+ * Model Event_store
+ * 
+ */
+export type Event_store = $Result.DefaultSelection<Prisma.$Event_storePayload>
+/**
  * Model Portfolio
  * 
  */
@@ -268,6 +273,16 @@ export class PrismaClient<
     * ```
     */
   get student(): Prisma.StudentDelegate<ExtArgs>;
+
+  /**
+   * `prisma.event_store`: Exposes CRUD operations for the **Event_store** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Event_stores
+    * const event_stores = await prisma.event_store.findMany()
+    * ```
+    */
+  get event_store(): Prisma.Event_storeDelegate<ExtArgs>;
 
   /**
    * `prisma.portfolio`: Exposes CRUD operations for the **Portfolio** model.
@@ -827,6 +842,7 @@ export namespace Prisma {
   export const ModelName: {
     Parent: 'Parent',
     Student: 'Student',
+    Event_store: 'Event_store',
     Portfolio: 'Portfolio',
     Portfolio_to_art_photo: 'Portfolio_to_art_photo',
     Login_session: 'Login_session',
@@ -850,7 +866,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "parent" | "student" | "portfolio" | "portfolio_to_art_photo" | "login_session" | "user" | "course" | "class" | "student_package" | "class_group"
+      modelProps: "parent" | "student" | "event_store" | "portfolio" | "portfolio_to_art_photo" | "login_session" | "user" | "course" | "class" | "student_package" | "class_group"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -991,6 +1007,76 @@ export namespace Prisma {
           count: {
             args: Prisma.StudentCountArgs<ExtArgs>
             result: $Utils.Optional<StudentCountAggregateOutputType> | number
+          }
+        }
+      }
+      Event_store: {
+        payload: Prisma.$Event_storePayload<ExtArgs>
+        fields: Prisma.Event_storeFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.Event_storeFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Event_storePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.Event_storeFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Event_storePayload>
+          }
+          findFirst: {
+            args: Prisma.Event_storeFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Event_storePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.Event_storeFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Event_storePayload>
+          }
+          findMany: {
+            args: Prisma.Event_storeFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Event_storePayload>[]
+          }
+          create: {
+            args: Prisma.Event_storeCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Event_storePayload>
+          }
+          createMany: {
+            args: Prisma.Event_storeCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.Event_storeCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Event_storePayload>[]
+          }
+          delete: {
+            args: Prisma.Event_storeDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Event_storePayload>
+          }
+          update: {
+            args: Prisma.Event_storeUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Event_storePayload>
+          }
+          deleteMany: {
+            args: Prisma.Event_storeDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.Event_storeUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.Event_storeUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$Event_storePayload>
+          }
+          aggregate: {
+            args: Prisma.Event_storeAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateEvent_store>
+          }
+          groupBy: {
+            args: Prisma.Event_storeGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Event_storeGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.Event_storeCountArgs<ExtArgs>
+            result: $Utils.Optional<Event_storeCountAggregateOutputType> | number
           }
         }
       }
@@ -3169,7 +3255,7 @@ export namespace Prisma {
     chinese_first_name: string | null
     chinese_last_name: string | null
     school_name: string
-    student_code: string
+    student_code: string | null
     grade: string
     phone_number: string | null
     wechat_id: string | null
@@ -3286,7 +3372,7 @@ export namespace Prisma {
       chinese_first_name: string | null
       chinese_last_name: string | null
       school_name: string
-      student_code: string
+      student_code: string | null
       grade: string
       phone_number: string | null
       wechat_id: string | null
@@ -4092,6 +4178,918 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: StudentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Event_store
+   */
+
+  export type AggregateEvent_store = {
+    _count: Event_storeCountAggregateOutputType | null
+    _avg: Event_storeAvgAggregateOutputType | null
+    _sum: Event_storeSumAggregateOutputType | null
+    _min: Event_storeMinAggregateOutputType | null
+    _max: Event_storeMaxAggregateOutputType | null
+  }
+
+  export type Event_storeAvgAggregateOutputType = {
+    id: number | null
+    created_at: number | null
+  }
+
+  export type Event_storeSumAggregateOutputType = {
+    id: number | null
+    created_at: number | null
+  }
+
+  export type Event_storeMinAggregateOutputType = {
+    id: number | null
+    event_type: string | null
+    created_at: number | null
+    created_at_hk: string | null
+  }
+
+  export type Event_storeMaxAggregateOutputType = {
+    id: number | null
+    event_type: string | null
+    created_at: number | null
+    created_at_hk: string | null
+  }
+
+  export type Event_storeCountAggregateOutputType = {
+    id: number
+    payload: number
+    event_type: number
+    created_at: number
+    created_at_hk: number
+    _all: number
+  }
+
+
+  export type Event_storeAvgAggregateInputType = {
+    id?: true
+    created_at?: true
+  }
+
+  export type Event_storeSumAggregateInputType = {
+    id?: true
+    created_at?: true
+  }
+
+  export type Event_storeMinAggregateInputType = {
+    id?: true
+    event_type?: true
+    created_at?: true
+    created_at_hk?: true
+  }
+
+  export type Event_storeMaxAggregateInputType = {
+    id?: true
+    event_type?: true
+    created_at?: true
+    created_at_hk?: true
+  }
+
+  export type Event_storeCountAggregateInputType = {
+    id?: true
+    payload?: true
+    event_type?: true
+    created_at?: true
+    created_at_hk?: true
+    _all?: true
+  }
+
+  export type Event_storeAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Event_store to aggregate.
+     */
+    where?: Event_storeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Event_stores to fetch.
+     */
+    orderBy?: Event_storeOrderByWithRelationInput | Event_storeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: Event_storeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Event_stores from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Event_stores.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Event_stores
+    **/
+    _count?: true | Event_storeCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Event_storeAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Event_storeSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Event_storeMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Event_storeMaxAggregateInputType
+  }
+
+  export type GetEvent_storeAggregateType<T extends Event_storeAggregateArgs> = {
+        [P in keyof T & keyof AggregateEvent_store]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateEvent_store[P]>
+      : GetScalarType<T[P], AggregateEvent_store[P]>
+  }
+
+
+
+
+  export type Event_storeGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: Event_storeWhereInput
+    orderBy?: Event_storeOrderByWithAggregationInput | Event_storeOrderByWithAggregationInput[]
+    by: Event_storeScalarFieldEnum[] | Event_storeScalarFieldEnum
+    having?: Event_storeScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Event_storeCountAggregateInputType | true
+    _avg?: Event_storeAvgAggregateInputType
+    _sum?: Event_storeSumAggregateInputType
+    _min?: Event_storeMinAggregateInputType
+    _max?: Event_storeMaxAggregateInputType
+  }
+
+  export type Event_storeGroupByOutputType = {
+    id: number
+    payload: JsonValue
+    event_type: string
+    created_at: number
+    created_at_hk: string
+    _count: Event_storeCountAggregateOutputType | null
+    _avg: Event_storeAvgAggregateOutputType | null
+    _sum: Event_storeSumAggregateOutputType | null
+    _min: Event_storeMinAggregateOutputType | null
+    _max: Event_storeMaxAggregateOutputType | null
+  }
+
+  type GetEvent_storeGroupByPayload<T extends Event_storeGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Event_storeGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Event_storeGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Event_storeGroupByOutputType[P]>
+            : GetScalarType<T[P], Event_storeGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type Event_storeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    payload?: boolean
+    event_type?: boolean
+    created_at?: boolean
+    created_at_hk?: boolean
+  }, ExtArgs["result"]["event_store"]>
+
+  export type Event_storeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    payload?: boolean
+    event_type?: boolean
+    created_at?: boolean
+    created_at_hk?: boolean
+  }, ExtArgs["result"]["event_store"]>
+
+  export type Event_storeSelectScalar = {
+    id?: boolean
+    payload?: boolean
+    event_type?: boolean
+    created_at?: boolean
+    created_at_hk?: boolean
+  }
+
+
+  export type $Event_storePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Event_store"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: number
+      payload: Prisma.JsonValue
+      event_type: string
+      created_at: number
+      created_at_hk: string
+    }, ExtArgs["result"]["event_store"]>
+    composites: {}
+  }
+
+  type Event_storeGetPayload<S extends boolean | null | undefined | Event_storeDefaultArgs> = $Result.GetResult<Prisma.$Event_storePayload, S>
+
+  type Event_storeCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<Event_storeFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: Event_storeCountAggregateInputType | true
+    }
+
+  export interface Event_storeDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Event_store'], meta: { name: 'Event_store' } }
+    /**
+     * Find zero or one Event_store that matches the filter.
+     * @param {Event_storeFindUniqueArgs} args - Arguments to find a Event_store
+     * @example
+     * // Get one Event_store
+     * const event_store = await prisma.event_store.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends Event_storeFindUniqueArgs>(args: SelectSubset<T, Event_storeFindUniqueArgs<ExtArgs>>): Prisma__Event_storeClient<$Result.GetResult<Prisma.$Event_storePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Event_store that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {Event_storeFindUniqueOrThrowArgs} args - Arguments to find a Event_store
+     * @example
+     * // Get one Event_store
+     * const event_store = await prisma.event_store.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends Event_storeFindUniqueOrThrowArgs>(args: SelectSubset<T, Event_storeFindUniqueOrThrowArgs<ExtArgs>>): Prisma__Event_storeClient<$Result.GetResult<Prisma.$Event_storePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Event_store that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Event_storeFindFirstArgs} args - Arguments to find a Event_store
+     * @example
+     * // Get one Event_store
+     * const event_store = await prisma.event_store.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends Event_storeFindFirstArgs>(args?: SelectSubset<T, Event_storeFindFirstArgs<ExtArgs>>): Prisma__Event_storeClient<$Result.GetResult<Prisma.$Event_storePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Event_store that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Event_storeFindFirstOrThrowArgs} args - Arguments to find a Event_store
+     * @example
+     * // Get one Event_store
+     * const event_store = await prisma.event_store.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends Event_storeFindFirstOrThrowArgs>(args?: SelectSubset<T, Event_storeFindFirstOrThrowArgs<ExtArgs>>): Prisma__Event_storeClient<$Result.GetResult<Prisma.$Event_storePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Event_stores that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Event_storeFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Event_stores
+     * const event_stores = await prisma.event_store.findMany()
+     * 
+     * // Get first 10 Event_stores
+     * const event_stores = await prisma.event_store.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const event_storeWithIdOnly = await prisma.event_store.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends Event_storeFindManyArgs>(args?: SelectSubset<T, Event_storeFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Event_storePayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Event_store.
+     * @param {Event_storeCreateArgs} args - Arguments to create a Event_store.
+     * @example
+     * // Create one Event_store
+     * const Event_store = await prisma.event_store.create({
+     *   data: {
+     *     // ... data to create a Event_store
+     *   }
+     * })
+     * 
+     */
+    create<T extends Event_storeCreateArgs>(args: SelectSubset<T, Event_storeCreateArgs<ExtArgs>>): Prisma__Event_storeClient<$Result.GetResult<Prisma.$Event_storePayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Event_stores.
+     * @param {Event_storeCreateManyArgs} args - Arguments to create many Event_stores.
+     * @example
+     * // Create many Event_stores
+     * const event_store = await prisma.event_store.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends Event_storeCreateManyArgs>(args?: SelectSubset<T, Event_storeCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Event_stores and returns the data saved in the database.
+     * @param {Event_storeCreateManyAndReturnArgs} args - Arguments to create many Event_stores.
+     * @example
+     * // Create many Event_stores
+     * const event_store = await prisma.event_store.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Event_stores and only return the `id`
+     * const event_storeWithIdOnly = await prisma.event_store.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends Event_storeCreateManyAndReturnArgs>(args?: SelectSubset<T, Event_storeCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Event_storePayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Event_store.
+     * @param {Event_storeDeleteArgs} args - Arguments to delete one Event_store.
+     * @example
+     * // Delete one Event_store
+     * const Event_store = await prisma.event_store.delete({
+     *   where: {
+     *     // ... filter to delete one Event_store
+     *   }
+     * })
+     * 
+     */
+    delete<T extends Event_storeDeleteArgs>(args: SelectSubset<T, Event_storeDeleteArgs<ExtArgs>>): Prisma__Event_storeClient<$Result.GetResult<Prisma.$Event_storePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Event_store.
+     * @param {Event_storeUpdateArgs} args - Arguments to update one Event_store.
+     * @example
+     * // Update one Event_store
+     * const event_store = await prisma.event_store.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends Event_storeUpdateArgs>(args: SelectSubset<T, Event_storeUpdateArgs<ExtArgs>>): Prisma__Event_storeClient<$Result.GetResult<Prisma.$Event_storePayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Event_stores.
+     * @param {Event_storeDeleteManyArgs} args - Arguments to filter Event_stores to delete.
+     * @example
+     * // Delete a few Event_stores
+     * const { count } = await prisma.event_store.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends Event_storeDeleteManyArgs>(args?: SelectSubset<T, Event_storeDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Event_stores.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Event_storeUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Event_stores
+     * const event_store = await prisma.event_store.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends Event_storeUpdateManyArgs>(args: SelectSubset<T, Event_storeUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Event_store.
+     * @param {Event_storeUpsertArgs} args - Arguments to update or create a Event_store.
+     * @example
+     * // Update or create a Event_store
+     * const event_store = await prisma.event_store.upsert({
+     *   create: {
+     *     // ... data to create a Event_store
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Event_store we want to update
+     *   }
+     * })
+     */
+    upsert<T extends Event_storeUpsertArgs>(args: SelectSubset<T, Event_storeUpsertArgs<ExtArgs>>): Prisma__Event_storeClient<$Result.GetResult<Prisma.$Event_storePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Event_stores.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Event_storeCountArgs} args - Arguments to filter Event_stores to count.
+     * @example
+     * // Count the number of Event_stores
+     * const count = await prisma.event_store.count({
+     *   where: {
+     *     // ... the filter for the Event_stores we want to count
+     *   }
+     * })
+    **/
+    count<T extends Event_storeCountArgs>(
+      args?: Subset<T, Event_storeCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Event_storeCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Event_store.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Event_storeAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Event_storeAggregateArgs>(args: Subset<T, Event_storeAggregateArgs>): Prisma.PrismaPromise<GetEvent_storeAggregateType<T>>
+
+    /**
+     * Group by Event_store.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Event_storeGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends Event_storeGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: Event_storeGroupByArgs['orderBy'] }
+        : { orderBy?: Event_storeGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, Event_storeGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetEvent_storeGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Event_store model
+   */
+  readonly fields: Event_storeFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Event_store.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__Event_storeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Event_store model
+   */ 
+  interface Event_storeFieldRefs {
+    readonly id: FieldRef<"Event_store", 'Int'>
+    readonly payload: FieldRef<"Event_store", 'Json'>
+    readonly event_type: FieldRef<"Event_store", 'String'>
+    readonly created_at: FieldRef<"Event_store", 'Float'>
+    readonly created_at_hk: FieldRef<"Event_store", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Event_store findUnique
+   */
+  export type Event_storeFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event_store
+     */
+    select?: Event_storeSelect<ExtArgs> | null
+    /**
+     * Filter, which Event_store to fetch.
+     */
+    where: Event_storeWhereUniqueInput
+  }
+
+  /**
+   * Event_store findUniqueOrThrow
+   */
+  export type Event_storeFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event_store
+     */
+    select?: Event_storeSelect<ExtArgs> | null
+    /**
+     * Filter, which Event_store to fetch.
+     */
+    where: Event_storeWhereUniqueInput
+  }
+
+  /**
+   * Event_store findFirst
+   */
+  export type Event_storeFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event_store
+     */
+    select?: Event_storeSelect<ExtArgs> | null
+    /**
+     * Filter, which Event_store to fetch.
+     */
+    where?: Event_storeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Event_stores to fetch.
+     */
+    orderBy?: Event_storeOrderByWithRelationInput | Event_storeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Event_stores.
+     */
+    cursor?: Event_storeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Event_stores from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Event_stores.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Event_stores.
+     */
+    distinct?: Event_storeScalarFieldEnum | Event_storeScalarFieldEnum[]
+  }
+
+  /**
+   * Event_store findFirstOrThrow
+   */
+  export type Event_storeFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event_store
+     */
+    select?: Event_storeSelect<ExtArgs> | null
+    /**
+     * Filter, which Event_store to fetch.
+     */
+    where?: Event_storeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Event_stores to fetch.
+     */
+    orderBy?: Event_storeOrderByWithRelationInput | Event_storeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Event_stores.
+     */
+    cursor?: Event_storeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Event_stores from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Event_stores.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Event_stores.
+     */
+    distinct?: Event_storeScalarFieldEnum | Event_storeScalarFieldEnum[]
+  }
+
+  /**
+   * Event_store findMany
+   */
+  export type Event_storeFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event_store
+     */
+    select?: Event_storeSelect<ExtArgs> | null
+    /**
+     * Filter, which Event_stores to fetch.
+     */
+    where?: Event_storeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Event_stores to fetch.
+     */
+    orderBy?: Event_storeOrderByWithRelationInput | Event_storeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Event_stores.
+     */
+    cursor?: Event_storeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Event_stores from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Event_stores.
+     */
+    skip?: number
+    distinct?: Event_storeScalarFieldEnum | Event_storeScalarFieldEnum[]
+  }
+
+  /**
+   * Event_store create
+   */
+  export type Event_storeCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event_store
+     */
+    select?: Event_storeSelect<ExtArgs> | null
+    /**
+     * The data needed to create a Event_store.
+     */
+    data: XOR<Event_storeCreateInput, Event_storeUncheckedCreateInput>
+  }
+
+  /**
+   * Event_store createMany
+   */
+  export type Event_storeCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Event_stores.
+     */
+    data: Event_storeCreateManyInput | Event_storeCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Event_store createManyAndReturn
+   */
+  export type Event_storeCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event_store
+     */
+    select?: Event_storeSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many Event_stores.
+     */
+    data: Event_storeCreateManyInput | Event_storeCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Event_store update
+   */
+  export type Event_storeUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event_store
+     */
+    select?: Event_storeSelect<ExtArgs> | null
+    /**
+     * The data needed to update a Event_store.
+     */
+    data: XOR<Event_storeUpdateInput, Event_storeUncheckedUpdateInput>
+    /**
+     * Choose, which Event_store to update.
+     */
+    where: Event_storeWhereUniqueInput
+  }
+
+  /**
+   * Event_store updateMany
+   */
+  export type Event_storeUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Event_stores.
+     */
+    data: XOR<Event_storeUpdateManyMutationInput, Event_storeUncheckedUpdateManyInput>
+    /**
+     * Filter which Event_stores to update
+     */
+    where?: Event_storeWhereInput
+  }
+
+  /**
+   * Event_store upsert
+   */
+  export type Event_storeUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event_store
+     */
+    select?: Event_storeSelect<ExtArgs> | null
+    /**
+     * The filter to search for the Event_store to update in case it exists.
+     */
+    where: Event_storeWhereUniqueInput
+    /**
+     * In case the Event_store found by the `where` argument doesn't exist, create a new Event_store with this data.
+     */
+    create: XOR<Event_storeCreateInput, Event_storeUncheckedCreateInput>
+    /**
+     * In case the Event_store was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<Event_storeUpdateInput, Event_storeUncheckedUpdateInput>
+  }
+
+  /**
+   * Event_store delete
+   */
+  export type Event_storeDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event_store
+     */
+    select?: Event_storeSelect<ExtArgs> | null
+    /**
+     * Filter which Event_store to delete.
+     */
+    where: Event_storeWhereUniqueInput
+  }
+
+  /**
+   * Event_store deleteMany
+   */
+  export type Event_storeDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Event_stores to delete
+     */
+    where?: Event_storeWhereInput
+  }
+
+  /**
+   * Event_store without action
+   */
+  export type Event_storeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Event_store
+     */
+    select?: Event_storeSelect<ExtArgs> | null
   }
 
 
@@ -12208,6 +13206,17 @@ export namespace Prisma {
   export type StudentScalarFieldEnum = (typeof StudentScalarFieldEnum)[keyof typeof StudentScalarFieldEnum]
 
 
+  export const Event_storeScalarFieldEnum: {
+    id: 'id',
+    payload: 'payload',
+    event_type: 'event_type',
+    created_at: 'created_at',
+    created_at_hk: 'created_at_hk'
+  };
+
+  export type Event_storeScalarFieldEnum = (typeof Event_storeScalarFieldEnum)[keyof typeof Event_storeScalarFieldEnum]
+
+
   export const PortfolioScalarFieldEnum: {
     id: 'id',
     student_id: 'student_id',
@@ -12326,6 +13335,13 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
@@ -12340,6 +13356,15 @@ export namespace Prisma {
   };
 
   export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   /**
@@ -12400,6 +13425,13 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
     
 
 
@@ -12551,7 +13583,7 @@ export namespace Prisma {
     chinese_first_name?: StringNullableFilter<"Student"> | string | null
     chinese_last_name?: StringNullableFilter<"Student"> | string | null
     school_name?: StringFilter<"Student"> | string
-    student_code?: StringFilter<"Student"> | string
+    student_code?: StringNullableFilter<"Student"> | string | null
     grade?: StringFilter<"Student"> | string
     phone_number?: StringNullableFilter<"Student"> | string | null
     wechat_id?: StringNullableFilter<"Student"> | string | null
@@ -12573,7 +13605,7 @@ export namespace Prisma {
     chinese_first_name?: SortOrderInput | SortOrder
     chinese_last_name?: SortOrderInput | SortOrder
     school_name?: SortOrder
-    student_code?: SortOrder
+    student_code?: SortOrderInput | SortOrder
     grade?: SortOrder
     phone_number?: SortOrderInput | SortOrder
     wechat_id?: SortOrderInput | SortOrder
@@ -12590,6 +13622,7 @@ export namespace Prisma {
 
   export type StudentWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    student_code?: string
     phone_number?: string
     wechat_id?: string
     AND?: StudentWhereInput | StudentWhereInput[]
@@ -12600,7 +13633,6 @@ export namespace Prisma {
     chinese_first_name?: StringNullableFilter<"Student"> | string | null
     chinese_last_name?: StringNullableFilter<"Student"> | string | null
     school_name?: StringFilter<"Student"> | string
-    student_code?: StringFilter<"Student"> | string
     grade?: StringFilter<"Student"> | string
     birthdate?: FloatFilter<"Student"> | number
     parent_email?: StringFilter<"Student"> | string
@@ -12611,7 +13643,7 @@ export namespace Prisma {
     Portfolio?: PortfolioListRelationFilter
     Student_package?: Student_packageListRelationFilter
     Parent?: XOR<ParentNullableRelationFilter, ParentWhereInput> | null
-  }, "id" | "phone_number" | "wechat_id">
+  }, "id" | "phone_number" | "wechat_id" | "student_code">
 
   export type StudentOrderByWithAggregationInput = {
     id?: SortOrder
@@ -12620,7 +13652,7 @@ export namespace Prisma {
     chinese_first_name?: SortOrderInput | SortOrder
     chinese_last_name?: SortOrderInput | SortOrder
     school_name?: SortOrder
-    student_code?: SortOrder
+    student_code?: SortOrderInput | SortOrder
     grade?: SortOrder
     phone_number?: SortOrderInput | SortOrder
     wechat_id?: SortOrderInput | SortOrder
@@ -12647,7 +13679,7 @@ export namespace Prisma {
     chinese_first_name?: StringNullableWithAggregatesFilter<"Student"> | string | null
     chinese_last_name?: StringNullableWithAggregatesFilter<"Student"> | string | null
     school_name?: StringWithAggregatesFilter<"Student"> | string
-    student_code?: StringWithAggregatesFilter<"Student"> | string
+    student_code?: StringNullableWithAggregatesFilter<"Student"> | string | null
     grade?: StringWithAggregatesFilter<"Student"> | string
     phone_number?: StringNullableWithAggregatesFilter<"Student"> | string | null
     wechat_id?: StringNullableWithAggregatesFilter<"Student"> | string | null
@@ -12657,6 +13689,60 @@ export namespace Prisma {
     created_at_hk?: StringWithAggregatesFilter<"Student"> | string
     parent_id?: UuidNullableWithAggregatesFilter<"Student"> | string | null
     gender?: EnumGenderWithAggregatesFilter<"Student"> | $Enums.Gender
+  }
+
+  export type Event_storeWhereInput = {
+    AND?: Event_storeWhereInput | Event_storeWhereInput[]
+    OR?: Event_storeWhereInput[]
+    NOT?: Event_storeWhereInput | Event_storeWhereInput[]
+    id?: IntFilter<"Event_store"> | number
+    payload?: JsonFilter<"Event_store">
+    event_type?: StringFilter<"Event_store"> | string
+    created_at?: FloatFilter<"Event_store"> | number
+    created_at_hk?: StringFilter<"Event_store"> | string
+  }
+
+  export type Event_storeOrderByWithRelationInput = {
+    id?: SortOrder
+    payload?: SortOrder
+    event_type?: SortOrder
+    created_at?: SortOrder
+    created_at_hk?: SortOrder
+  }
+
+  export type Event_storeWhereUniqueInput = Prisma.AtLeast<{
+    id?: number
+    AND?: Event_storeWhereInput | Event_storeWhereInput[]
+    OR?: Event_storeWhereInput[]
+    NOT?: Event_storeWhereInput | Event_storeWhereInput[]
+    payload?: JsonFilter<"Event_store">
+    event_type?: StringFilter<"Event_store"> | string
+    created_at?: FloatFilter<"Event_store"> | number
+    created_at_hk?: StringFilter<"Event_store"> | string
+  }, "id">
+
+  export type Event_storeOrderByWithAggregationInput = {
+    id?: SortOrder
+    payload?: SortOrder
+    event_type?: SortOrder
+    created_at?: SortOrder
+    created_at_hk?: SortOrder
+    _count?: Event_storeCountOrderByAggregateInput
+    _avg?: Event_storeAvgOrderByAggregateInput
+    _max?: Event_storeMaxOrderByAggregateInput
+    _min?: Event_storeMinOrderByAggregateInput
+    _sum?: Event_storeSumOrderByAggregateInput
+  }
+
+  export type Event_storeScalarWhereWithAggregatesInput = {
+    AND?: Event_storeScalarWhereWithAggregatesInput | Event_storeScalarWhereWithAggregatesInput[]
+    OR?: Event_storeScalarWhereWithAggregatesInput[]
+    NOT?: Event_storeScalarWhereWithAggregatesInput | Event_storeScalarWhereWithAggregatesInput[]
+    id?: IntWithAggregatesFilter<"Event_store"> | number
+    payload?: JsonWithAggregatesFilter<"Event_store">
+    event_type?: StringWithAggregatesFilter<"Event_store"> | string
+    created_at?: FloatWithAggregatesFilter<"Event_store"> | number
+    created_at_hk?: StringWithAggregatesFilter<"Event_store"> | string
   }
 
   export type PortfolioWhereInput = {
@@ -13320,7 +14406,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
-    student_code?: string
+    student_code?: string | null
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -13341,7 +14427,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
-    student_code?: string
+    student_code?: string | null
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -13362,7 +14448,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
-    student_code?: StringFieldUpdateOperationsInput | string
+    student_code?: NullableStringFieldUpdateOperationsInput | string | null
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13383,7 +14469,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
-    student_code?: StringFieldUpdateOperationsInput | string
+    student_code?: NullableStringFieldUpdateOperationsInput | string | null
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13404,7 +14490,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
-    student_code?: string
+    student_code?: string | null
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -13423,7 +14509,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
-    student_code?: StringFieldUpdateOperationsInput | string
+    student_code?: NullableStringFieldUpdateOperationsInput | string | null
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13441,7 +14527,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
-    student_code?: StringFieldUpdateOperationsInput | string
+    student_code?: NullableStringFieldUpdateOperationsInput | string | null
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13451,6 +14537,59 @@ export namespace Prisma {
     created_at_hk?: StringFieldUpdateOperationsInput | string
     parent_id?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  }
+
+  export type Event_storeCreateInput = {
+    payload: JsonNullValueInput | InputJsonValue
+    event_type: string
+    created_at?: number
+    created_at_hk?: string
+  }
+
+  export type Event_storeUncheckedCreateInput = {
+    id?: number
+    payload: JsonNullValueInput | InputJsonValue
+    event_type: string
+    created_at?: number
+    created_at_hk?: string
+  }
+
+  export type Event_storeUpdateInput = {
+    payload?: JsonNullValueInput | InputJsonValue
+    event_type?: StringFieldUpdateOperationsInput | string
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type Event_storeUncheckedUpdateInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    payload?: JsonNullValueInput | InputJsonValue
+    event_type?: StringFieldUpdateOperationsInput | string
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type Event_storeCreateManyInput = {
+    id?: number
+    payload: JsonNullValueInput | InputJsonValue
+    event_type: string
+    created_at?: number
+    created_at_hk?: string
+  }
+
+  export type Event_storeUpdateManyMutationInput = {
+    payload?: JsonNullValueInput | InputJsonValue
+    event_type?: StringFieldUpdateOperationsInput | string
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type Event_storeUncheckedUpdateManyInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    payload?: JsonNullValueInput | InputJsonValue
+    event_type?: StringFieldUpdateOperationsInput | string
+    created_at?: FloatFieldUpdateOperationsInput | number
+    created_at_hk?: StringFieldUpdateOperationsInput | string
   }
 
   export type PortfolioCreateInput = {
@@ -14363,6 +15502,112 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+  export type JsonFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type Event_storeCountOrderByAggregateInput = {
+    id?: SortOrder
+    payload?: SortOrder
+    event_type?: SortOrder
+    created_at?: SortOrder
+    created_at_hk?: SortOrder
+  }
+
+  export type Event_storeAvgOrderByAggregateInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type Event_storeMaxOrderByAggregateInput = {
+    id?: SortOrder
+    event_type?: SortOrder
+    created_at?: SortOrder
+    created_at_hk?: SortOrder
+  }
+
+  export type Event_storeMinOrderByAggregateInput = {
+    id?: SortOrder
+    event_type?: SortOrder
+    created_at?: SortOrder
+    created_at_hk?: SortOrder
+  }
+
+  export type Event_storeSumOrderByAggregateInput = {
+    id?: SortOrder
+    created_at?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
+  }
+
   export type StudentRelationFilter = {
     is?: StudentWhereInput
     isNot?: StudentWhereInput
@@ -14410,17 +15655,6 @@ export namespace Prisma {
     created_at?: SortOrder
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type PortfolioRelationFilter = {
     is?: PortfolioWhereInput
     isNot?: PortfolioWhereInput
@@ -14453,22 +15687,6 @@ export namespace Prisma {
 
   export type Portfolio_to_art_photoSumOrderByAggregateInput = {
     id?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -15099,6 +16317,14 @@ export namespace Prisma {
     deleteMany?: Student_packageScalarWhereInput | Student_packageScalarWhereInput[]
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type StudentCreateNestedOneWithoutPortfolioInput = {
     create?: XOR<StudentCreateWithoutPortfolioInput, StudentUncheckedCreateWithoutPortfolioInput>
     connectOrCreate?: StudentCreateOrConnectWithoutPortfolioInput
@@ -15167,14 +16393,6 @@ export namespace Prisma {
     upsert?: PortfolioUpsertWithoutPortfolioToArtPictureInput
     connect?: PortfolioWhereUniqueInput
     update?: XOR<XOR<PortfolioUpdateToOneWithWhereWithoutPortfolioToArtPictureInput, PortfolioUpdateWithoutPortfolioToArtPictureInput>, PortfolioUncheckedUpdateWithoutPortfolioToArtPictureInput>
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -15590,6 +16808,28 @@ export namespace Prisma {
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
   }
+  export type NestedJsonFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
@@ -15730,7 +16970,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
-    student_code?: string
+    student_code?: string | null
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -15750,7 +16990,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
-    student_code?: string
+    student_code?: string | null
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -15799,7 +17039,7 @@ export namespace Prisma {
     chinese_first_name?: StringNullableFilter<"Student"> | string | null
     chinese_last_name?: StringNullableFilter<"Student"> | string | null
     school_name?: StringFilter<"Student"> | string
-    student_code?: StringFilter<"Student"> | string
+    student_code?: StringNullableFilter<"Student"> | string | null
     grade?: StringFilter<"Student"> | string
     phone_number?: StringNullableFilter<"Student"> | string | null
     wechat_id?: StringNullableFilter<"Student"> | string | null
@@ -16007,7 +17247,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
-    student_code?: string
+    student_code?: string | null
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -16027,7 +17267,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
-    student_code?: string
+    student_code?: string | null
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -16084,7 +17324,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
-    student_code?: StringFieldUpdateOperationsInput | string
+    student_code?: NullableStringFieldUpdateOperationsInput | string | null
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16104,7 +17344,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
-    student_code?: StringFieldUpdateOperationsInput | string
+    student_code?: NullableStringFieldUpdateOperationsInput | string | null
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16422,7 +17662,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
-    student_code?: string
+    student_code?: string | null
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -16442,7 +17682,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
-    student_code?: string
+    student_code?: string | null
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -16537,7 +17777,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
-    student_code?: StringFieldUpdateOperationsInput | string
+    student_code?: NullableStringFieldUpdateOperationsInput | string | null
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16557,7 +17797,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
-    student_code?: StringFieldUpdateOperationsInput | string
+    student_code?: NullableStringFieldUpdateOperationsInput | string | null
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16632,7 +17872,7 @@ export namespace Prisma {
     chinese_first_name?: string | null
     chinese_last_name?: string | null
     school_name: string
-    student_code?: string
+    student_code?: string | null
     grade: string
     phone_number?: string | null
     wechat_id?: string | null
@@ -16650,7 +17890,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
-    student_code?: StringFieldUpdateOperationsInput | string
+    student_code?: NullableStringFieldUpdateOperationsInput | string | null
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16670,7 +17910,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
-    student_code?: StringFieldUpdateOperationsInput | string
+    student_code?: NullableStringFieldUpdateOperationsInput | string | null
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16690,7 +17930,7 @@ export namespace Prisma {
     chinese_first_name?: NullableStringFieldUpdateOperationsInput | string | null
     chinese_last_name?: NullableStringFieldUpdateOperationsInput | string | null
     school_name?: StringFieldUpdateOperationsInput | string
-    student_code?: StringFieldUpdateOperationsInput | string
+    student_code?: NullableStringFieldUpdateOperationsInput | string | null
     grade?: StringFieldUpdateOperationsInput | string
     phone_number?: NullableStringFieldUpdateOperationsInput | string | null
     wechat_id?: NullableStringFieldUpdateOperationsInput | string | null
@@ -17031,6 +18271,10 @@ export namespace Prisma {
      * @deprecated Use StudentDefaultArgs instead
      */
     export type StudentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = StudentDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use Event_storeDefaultArgs instead
+     */
+    export type Event_storeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = Event_storeDefaultArgs<ExtArgs>
     /**
      * @deprecated Use PortfolioDefaultArgs instead
      */

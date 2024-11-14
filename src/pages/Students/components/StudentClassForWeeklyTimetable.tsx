@@ -262,8 +262,6 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                                             return colors.blue;
                                                                         case "CHANGE_OF_CLASSROOM":
                                                                             return colors.purple;
-                                                                        case "TRIAL":
-                                                                            return "black";
                                                                     }
                                                                 }
                                                             })(),

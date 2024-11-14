@@ -17,6 +17,7 @@ const pathRegex = {
     STUDENTS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_STUDENTS)),
     COURSES: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_COURSES)),
     USERS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_USERS)),
+    COMPETITIONS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_COMPETITIONS)),
     PRINCE_EDWARD_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE)),
     CAUSEWAY_BAY_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE)),
 };
@@ -43,6 +44,8 @@ export default () => {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_COURSES));
             } else if (pathRegex.CAUSEWAY_BAY_TIMETABLE.test(pathname)) {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE));
+            } else if (pathRegex.COMPETITIONS.test(pathname)) {
+                dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_COMPETITIONS));
             } else {
                 dispatch(appSlice.actions.setActivePath(pathname));
             }
@@ -86,6 +89,9 @@ export default () => {
                 <NavButton activeNavigationRegex={pathRegex.PRINCE_EDWARD_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE} title="Prince Ed. Timetable" />
                 <Spacer height={10} />
                 <NavButton activeNavigationRegex={pathRegex.CAUSEWAY_BAY_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE} title="CWB Timetable" />
+                <Spacer height={10} />
+                <NavButton activeNavigationRegex={pathRegex.COMPETITIONS} routeEnum={RouteEnum.DASHBOARD_COMPETITIONS} title="Competitions" />
+                <Spacer height={10} />
             </div>
             <div style={{ transition: "opacity 0.4s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
                 <Spacer height={30} />
