@@ -15,6 +15,7 @@ import AddPackageDialog from "./AddPackageDialog";
 import { Classroom } from "../../../prismaTypes/types";
 import { IoIosInformationCircle } from "react-icons/io";
 import colors from "../../../constant/colors";
+import { toast } from "react-toastify";
 
 // Function to convert timestamp to the start of the day (midnight)
 const toMidnight = (timestamp: number): number => {
@@ -118,7 +119,7 @@ export default (props: { studentId: string; studentName: string }) => {
                     formData.current.start_date = val.valueOf();
                 }}
                 popupStyle={{ zIndex: 10 ** 7 }}
-                // defaultValue={dayjs(new Date())}
+            // defaultValue={dayjs(new Date())}
             />
             <Spacer />
             <FormInputTitle>Start Time</FormInputTitle>
@@ -168,21 +169,17 @@ export default (props: { studentId: string; studentName: string }) => {
                 size="small"
                 style={{ width: "100%" }}
                 disablePortal
-                options={allowedOptionsForNumberOfClasses}
+                options={allowedOptionsForNumberOfClasses.map(i => i.toString())}
                 freeSolo
+                onChange={(_, newValue) => {
+                    if (Number.isNaN(Number(newValue))) {
+                        toast.error(`${newValue} is an invalid input`)
+                    } else {
+                        updateFormData({ num_of_classes: Number(newValue) })
+                    }
+                }}
                 sx={{ width: 300 }}
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        onChange={(value) => {
-                            // Ensure the value is a valid number, then update form data
-                            const inputValue = parseInt(value.target.value);
-                            if (!isNaN(inputValue)) {
-                                updateFormData({ num_of_classes: inputValue });
-                            }
-                        }}
-                    />
-                )}
+                renderInput={(params) => <TextField {...params} />}
             />
             <Spacer />
             <div style={{ display: "flex" }}>
