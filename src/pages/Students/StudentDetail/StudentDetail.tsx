@@ -21,9 +21,11 @@ import EditPackageDialog from "./components/EditPackageDialog";
 import { FaChevronLeft } from "react-icons/fa6";
 import { Box, Collapse } from "@mui/material";
 import { transform } from "lodash";
+import dayjs from "dayjs";
 
 export default () => {
-    const { studentId } = useParams<{ studentId: string }>();
+    const { studentId, timestamp } = useParams<{ studentId: string; timestamp: string }>();
+    if (!timestamp) return;
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [collapseTimetable, setCollapseTimetable] = useState(false);
@@ -42,6 +44,7 @@ export default () => {
 
     // To get courses in case the user wants to add a course to the timetable
     useEffect(() => {
+        dispatch(studentSlice.actions.setWeeklyTimetableSelectedDate({ date: new Date(parseInt(timestamp)) }));
         dispatch(CourseThunkAction.getCourses());
         return () => {
             dispatch(studentSlice.actions.reset());
@@ -58,8 +61,8 @@ export default () => {
                 <Collapse
                     sx={{
                         "& .MuiCollapse-wrapperInner": {
-                            width: "100%"
-                        }
+                            width: "100%",
+                        },
                     }}
                     style={{ width: collapseTimetable ? "unset" : "100%", height: "calc(100vh - 70px)", overflow: "hidden" }}
                     in={!collapseTimetable}
@@ -84,7 +87,10 @@ export default () => {
                 </Collapse>
                 <CollapseTriggerBar
                     collapseTimetable={collapseTimetable}
-                    onClick={() => { setCollapseTimetable(t => !t) }} />
+                    onClick={() => {
+                        setCollapseTimetable((t) => !t);
+                    }}
+                />
                 <Spacer />
                 <StudentPackageColumn packagesOffsetY={200} collapseTimtable={collapseTimetable} />
             </div>
@@ -102,34 +108,34 @@ export default () => {
     );
 };
 
-const CollapseTriggerBar = (props: { collapseTimetable: boolean, onClick: () => void }) => {
+const CollapseTriggerBar = (props: { collapseTimetable: boolean; onClick: () => void }) => {
     const { collapseTimetable, onClick } = props;
     return (
         <Box
             onClick={onClick}
             sx={{
                 "&:hover": {
-                    opacity: 0.5
-                }
+                    opacity: 0.5,
+                },
             }}
             style={{
                 cursor: "pointer",
                 height: "100%",
                 width: 35,
                 backgroundColor: "rgba(113, 98, 159,0.5)",
-                position: "relative"
-            }}>
+                position: "relative",
+            }}
+        >
             <div
                 style={{
                     position: "absolute",
                     top: "50%",
                     left: "50%",
-                    transform: "translate(-50%,-50%)"
+                    transform: "translate(-50%,-50%)",
                 }}
             >
                 <FaChevronLeft style={{ transform: `rotate(${!collapseTimetable ? 0 : 180}deg)` }} />
             </div>
-
         </Box>
-    )
-}
+    );
+};

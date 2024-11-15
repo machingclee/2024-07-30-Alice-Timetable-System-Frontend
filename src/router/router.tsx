@@ -15,6 +15,8 @@ import dayjs from "dayjs";
 import { CourseThunkAction } from "../redux/slices/courseSlice.ts";
 import RouteEnum from "../enum/RouteEnum.ts";
 import PackageClassesStatus from "../pages/Students/components/PackageClassesStatus.tsx";
+import Competitions from "../pages/Competitions/Competitions.tsx";
+import CompetitionDetail from "../pages/Competitions/competitionDetail/CompetitionDetail.tsx";
 
 const getRouter = (_store: any) => {
     return createBrowserRouter(
@@ -24,9 +26,13 @@ const getRouter = (_store: any) => {
                 <Route path="/dashboard" element={<Dashboard />}>
                     <Route path={"students"} element={<RouteIndex />}>
                         <Route index element={<Students />} />
-                        <Route path=":studentId" element={<StudentDetail />} />
+                        <Route path=":studentId/:timestamp" element={<StudentDetail />} />
                     </Route>
                     <Route path="courses" element={<Classes />} />
+                    <Route path={"competitions"} element={<RouteIndex />}>
+                        <Route index element={<Competitions />} />
+                        <Route path=":competitionId" element={<CompetitionDetail />} />
+                    </Route>
                     <Route path="users" element={<Users />} />
                     <Route path="all-students" element={<AllStudentsIndex />}>
                         <Route path="prince-edward" element={<PrinceEdwardIndex />}>
@@ -46,8 +52,8 @@ const getRouter = (_store: any) => {
 };
 
 const ClassStatusIndex = () => {
-    return <Outlet />
-}
+    return <Outlet />;
+};
 
 const CausewaybayIndex = () => {
     const dispatch = useAppDispatch();

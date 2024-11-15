@@ -31,6 +31,7 @@ export type CreateStudentRequest = {
 
 export type UpdateStudentRequest = {
     id: string;
+    student_code: string;
     first_name: string;
     last_name: string;
     chinese_first_name: string;
@@ -70,6 +71,7 @@ export type User = {
 
 export type Student = {
     id: string;
+    student_code: string;
     first_name: string;
     last_name: string;
     chinese_first_name: string;
@@ -180,6 +182,56 @@ export type UpdateStudentPackageRequest = {
     student_id: string;
 };
 
+export type Competition = {
+    name: string;
+    intro: string;
+    questionIds: string[];
+    IdToQuestion: { [id: string]: Question };
+};
+
+// 多選/單選/短答
+export type QuestionType = "MultipleChoiceQuestion" | "SingleChoiceQuestion" | "ShortQuestion";
+
+export type Question = MultipleChoiceQuestion | SingleChoiceQuestion | ShortQuestion;
+
+export type MultipleChoiceQuestion = {
+    questionId: string;
+    type: "MultipleChoiceQuestion";
+    question: string;
+    optionIds: string[];
+    optionIdToOption: { [id: string]: MultipleChoiceOption };
+    compulsory: boolean;
+};
+
+export type MultipleChoiceOption = {
+    id: string;
+    option: string;
+    chosen: boolean;
+};
+
+export type SingleChoiceQuestion = {
+    questionId: string;
+    type: "SingleChoiceQuestion";
+    question: string;
+    optionIds: string[];
+    optionIdToOption: { [id: string]: SingleChoiceOption };
+    compulsory: boolean;
+};
+
+export type SingleChoiceOption = {
+    id: string;
+    option: string;
+    chosen: boolean;
+};
+
+export type ShortQuestion = {
+    questionId: string;
+    type: "ShortQuestion";
+    question: string;
+    response: string;
+    compulsory: boolean;
+};
+
 export type Augmented_Student_package = Student_package & {
     scheduled_minutes: { count: number };
     consumed_minutes: { count: number };
@@ -193,6 +245,7 @@ export type TimetableClass = Class & {
     course_id: number;
     course_name: string;
     student_id: string;
+    student_code: string;
     default_classroom: Classroom;
     first_name: string; // student name
     last_name: string; // student name

@@ -10,6 +10,7 @@ import ViewClassForm from "./ViewClassForm";
 import ViewClassDialog from "./ViewClassDialog";
 import StudentClassCard from "./StudentClassCard";
 import dayjs from "dayjs";
+import { useEffect } from "react";
 
 export default (props: { dayUnixTimestamp: number; currHourUnixTimestamp: number }) => {
     const { currHourUnixTimestamp, dayUnixTimestamp } = props;
@@ -79,7 +80,8 @@ export default (props: { dayUnixTimestamp: number; currHourUnixTimestamp: number
                                     {/* @ts-ignore */}
                                     <MenuItem
                                         className="menu-item"
-                                        onClick={() => {
+                                        onClick={(e) => {
+                                            e.stopPropagation();
                                             ViewClassDialog.setContent(() => () => <ViewClassForm classEvent={classEvent} dateUnixTimestamp={dayUnixTimestamp} />);
                                             ViewClassDialog.setOpen(true);
                                         }}

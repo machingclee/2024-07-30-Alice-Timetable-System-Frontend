@@ -15,7 +15,7 @@ export default (props: { id: string }) => {
     const navigate = useNavigate();
     const student = useAppSelector((s) => s.student.students?.idToStudent?.[id]);
     const goDetailPage = () => {
-        navigate(`${RouteEnum.DASHBOARD_STUDENTS}/${id}`);
+        navigate(`${RouteEnum.DASHBOARD_STUDENTS}/${id}/${dayjs(new Date()).unix() * 1000}`);
     };
     const contextMenuId = props.id;
 
@@ -23,6 +23,7 @@ export default (props: { id: string }) => {
         return null;
     }
     const {
+        student_code = "",
         first_name = "",
         parent_email = "",
         last_name = "",
@@ -33,18 +34,19 @@ export default (props: { id: string }) => {
         grade = "",
         school_name = "",
         phone_number = "",
-        wechat_id = "" } = student;
+        wechat_id = "",
+    } = student;
 
     const chineseName = (() => {
         let name = "";
         if (chinese_last_name) {
-            name += chinese_last_name
+            name += chinese_last_name;
         }
         if (chinese_first_name) {
-            name += chinese_first_name
+            name += chinese_first_name;
         }
         return name;
-    })()
+    })();
 
     return (
         <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
@@ -70,7 +72,7 @@ export default (props: { id: string }) => {
                         outline: "none",
                     },
                     "& td": {
-                        marginBottom: "4px"
+                        marginBottom: "4px",
                     },
                     "& td:nth-child(1)": {
                         verticalAlign: "top",
@@ -95,9 +97,12 @@ export default (props: { id: string }) => {
                             <tbody>
                                 <Label label="StudentRow.tsx" offsetTop={-20} />
                                 <tr>
+                                    <td>Student Code:</td>
+                                    <td>{student_code}</td>
+                                </tr>
+                                <tr>
                                     <td>Chinese Name:</td>
                                     <td>{chineseName}</td>
-                                    <td></td>
                                 </tr>
                                 <tr>
                                     <td>English Name:</td>
@@ -112,9 +117,10 @@ export default (props: { id: string }) => {
                                     <td>{`${school_name}`}</td>
                                 </tr>
                                 <tr>
-                                    <td >Grade:  <span style={{ fontSize: 13, fontWeight: "bold" }}>{`(before ${dayjs(new Date()).format("YYYY")}-09-01)`}</span></td>
+                                    <td>
+                                        Grade: <span style={{ fontSize: 13, fontWeight: "bold" }}>{`(before ${dayjs(new Date()).format("YYYY")}-09-01)`}</span>
+                                    </td>
                                     <td>{`${grade}`}</td>
-
                                 </tr>
                                 <tr>
                                     <td>phone number:</td>
@@ -137,8 +143,8 @@ export default (props: { id: string }) => {
                         <Button
                             TouchRippleProps={{
                                 style: {
-                                    color: "rgba(0,0,0,0.5)"
-                                }
+                                    color: "rgba(0,0,0,0.5)",
+                                },
                             }}
                             onClick={goDetailPage}
                             style={{

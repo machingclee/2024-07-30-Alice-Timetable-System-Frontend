@@ -169,7 +169,8 @@ export default (props: { studentId: string; studentName: string }) => {
                 size="small"
                 style={{ width: "100%" }}
                 disablePortal
-                options={allowedOptionsForNumberOfClasses.map(i => i.toString())}
+                options={allowedOptionsForNumberOfClasses}
+                getOptionLabel={(option) => option.toString()}
                 freeSolo
                 onChange={(_, newValue) => {
                     if (Number.isNaN(Number(newValue))) {

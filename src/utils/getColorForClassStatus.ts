@@ -15,8 +15,6 @@ export default (class_status: Class_status) => {
             return colors.grey;
         case "MAKEUP":
             return colors.blue;
-        case "TRIAL":
-            return colors.blue;
         case "RESERVED":
             return colors.cyan;
     }
