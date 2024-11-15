@@ -182,6 +182,7 @@ export default ({ question, competitionId }: { competitionId: string; question: 
                     Add One More Option
                 </div>
             </div>
+            <div style={{ width: "100%", height: "1px", backgroundColor: "grey", marginTop: 10, marginBottom: 10, opacity: 0.2 }} />
             <QuestionBottomProps competitionId={competitionId} questionId={question.questionId} mustFill={question.compulsory} />
         </Box>
     );

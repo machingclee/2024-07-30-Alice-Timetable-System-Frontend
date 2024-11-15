@@ -187,7 +187,6 @@ export type Competition = {
     intro: string;
     questionIds: string[];
     IdToQuestion: { [id: string]: Question };
-    // questions: Question[];
 };
 
 // 多選/單選/短答

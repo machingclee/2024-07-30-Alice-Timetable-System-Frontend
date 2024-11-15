@@ -155,6 +155,13 @@ const competitionSlice = createSlice({
                 }
             }
         },
+        updateQuestionOrder: (state, action) => {
+            const { competitionId, questionIds } = action.payload;
+            const competition = state.competitions.idToObject?.[competitionId];
+            if (competition) {
+                competition.questionIds = questionIds; // Update the order of questions
+            }
+        },
         deleteQuestion: (state, action: PayloadAction<{ competitionId: string; questionId: string }>) => {
             const { competitionId, questionId } = action.payload;
             const competition = state.competitions.idToObject?.[competitionId];
