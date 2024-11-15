@@ -85,10 +85,9 @@ export default (props: { id: string }) => {
         >
             <div>
                 <table>
-                    <Label label="CourseRow.tsx" offsetTop={-20} />
+                    <Label label="CompetitionRow.tsx" offsetTop={-20} />
                     <tbody>
                         <tr>
-                            <td>Competition Name:</td>
                             {!editing && <td>{competition.name}</td>}
                             {editing && (
                                 <td>

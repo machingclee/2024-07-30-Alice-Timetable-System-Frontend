@@ -21,7 +21,7 @@ export default () => {
         <div style={{ marginBottom: 20 }}>
             <SectionTitle>Competitions</SectionTitle>
             <Spacer />
-            <TitleAndIntroduction competitionId={competitionId} title={competition?.name || "Title"} intro={competition?.intro || "Introduction"} />
+            <TitleAndIntroduction competitionId={competitionId} title={competition?.name || "Untitled Table"} intro={competition?.intro || "Table Description"} />
             {competition &&
                 competition.questionIds.map((id, index) => {
                     return <GeneralQuestion key={id} competitionId={competitionId} questionId={id} index={index} />;

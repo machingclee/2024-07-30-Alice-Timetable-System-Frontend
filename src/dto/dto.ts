@@ -199,11 +199,13 @@ export type MultipleChoiceQuestion = {
     questionId: string;
     type: "MultipleChoiceQuestion";
     question: string;
-    options: MultipleChoiceOption[];
+    optionIds: string[];
+    optionIdToOption: { [id: string]: MultipleChoiceOption };
+    compulsory: boolean;
 };
 
 export type MultipleChoiceOption = {
-    index: number;
+    id: string;
     option: string;
     chosen: boolean;
 };
@@ -212,11 +214,13 @@ export type SingleChoiceQuestion = {
     questionId: string;
     type: "SingleChoiceQuestion";
     question: string;
-    options: SingleChoiceOption[];
+    optionIds: string[];
+    optionIdToOption: { [id: string]: SingleChoiceOption };
+    compulsory: boolean;
 };
 
 export type SingleChoiceOption = {
-    index: number;
+    id: string;
     option: string;
     chosen: boolean;
 };
@@ -226,6 +230,7 @@ export type ShortQuestion = {
     type: "ShortQuestion";
     question: string;
     response: string;
+    compulsory: boolean;
 };
 
 export type Augmented_Student_package = Student_package & {

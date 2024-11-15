@@ -98,7 +98,7 @@ export default ({ question, competitionId }: { competitionId: string; question: 
             {/* Short response input field */}
             <TextField disabled placeholder="Short Response" id="standard-basic" variant="standard" style={{ marginTop: 15, width: 300 }} />
             <div style={{ width: "100%", height: "1px", backgroundColor: "grey", marginTop: 50, marginBottom: 10, opacity: 0.2 }} />
-            <QuestionBottomProps competitionId={competitionId} questionId={question.questionId} mustFill={true} />
+            <QuestionBottomProps competitionId={competitionId} questionId={question.questionId} mustFill={question.compulsory} />
         </Box>
     );
 };

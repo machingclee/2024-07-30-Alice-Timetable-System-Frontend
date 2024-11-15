@@ -1,9 +1,10 @@
 import { IconButton } from "@mui/material";
 import { ReactNode } from "react";
 
-export default ({ children }: { children: ReactNode }) => {
+export default ({ onClick, children }: { onClick?: () => void; children: ReactNode }) => {
     return (
         <IconButton
+            onClick={onClick}
             sx={{
                 width: 40,
                 height: 40,

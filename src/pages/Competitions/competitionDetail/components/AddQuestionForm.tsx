@@ -29,6 +29,7 @@ export default ({ competitionId }: { competitionId: string }) => {
                     questionId: genUtil.generateRandomHexString(),
                     question: "Question to Ask", // Could be from form input
                     options: [], // You need to construct this from form input
+                    compulsory: true,
                 };
                 AddQuestionDialog.setOpen(false);
                 break;
@@ -38,6 +39,7 @@ export default ({ competitionId }: { competitionId: string }) => {
                     questionId: genUtil.generateRandomHexString(),
                     question: "Question to Ask", // Could be from form input
                     options: [], // You need to construct this from form input
+                    compulsory: true,
                 };
                 AddQuestionDialog.setOpen(false);
                 break;
@@ -47,6 +49,7 @@ export default ({ competitionId }: { competitionId: string }) => {
                     questionId: genUtil.generateRandomHexString(),
                     question: "Question to Ask", // Could be from form input
                     response: "", // You need to construct this from form input
+                    compulsory: true,
                 };
                 AddQuestionDialog.setOpen(false);
                 break;

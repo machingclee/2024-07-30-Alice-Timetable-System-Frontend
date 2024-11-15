@@ -5,7 +5,6 @@ import SingleChoiceComponent from "./SingleChoiceComponent";
 
 export default ({ competitionId, questionId, index }: { competitionId: string; questionId: string; index: number }) => {
     const question = useAppSelector((s) => s.competition.competitions.idToObject?.[competitionId].IdToQuestion?.[questionId]);
-    const dispatch = useAppDispatch();
     if (!question) return;
 
     switch (question.type) {

@@ -11,8 +11,8 @@ export default () => {
 
     const handleAddCompetitionOnClick = () => {
         const competition = {
-            name: "Title",
-            intro: "Intro",
+            name: "Untitled Table",
+            intro: "Table Description",
             questionIds: [],
             IdToQuestion: {},
         };

@@ -8,8 +8,9 @@ import Label from "../../../../components/Label";
 import competitionSlice from "../../../../redux/slices/competitionSlice";
 import UpdateTextField from "./UpdateTextField";
 import Spacer from "../../../../components/Spacer";
-import { FaRegTrashCan } from "react-icons/fa6";
 import QuestionBottomProps from "./QuestionBottomProps";
+import Option from "./Option";
+import tokenUtil from "../../../../utils/tokenUtil";
 
 export default ({ question, competitionId }: { competitionId: string; question: MultipleChoiceQuestion }) => {
     const dispatch = useAppDispatch();
@@ -33,12 +34,37 @@ export default ({ question, competitionId }: { competitionId: string; question: 
         [question]
     );
 
-    const updateOptionAtIndex = (index: number, updatedOption: Partial<MultipleChoiceOption>) => {
-        const currentOptions = formData.current.options;
-
-        const newOptions = currentOptions.map((option, i) => (i === index ? { ...option, ...updatedOption } : option));
-
-        onFieldUpdate({ options: newOptions });
+    const updateOptionAtId = (optionId: string, updatedOption: Partial<MultipleChoiceOption>) => {
+        const updatedOption_ = {
+            ...updatedOption,
+            id: optionId,
+        };
+        // Create a shallow copy of optionIdToOption to avoid direct mutation
+        const optionIdToOption = {
+            ...formData.current.optionIdToOption,
+            [optionId]: {
+                ...formData.current.optionIdToOption[optionId], // Copy the existing option
+                ...updatedOption_, // Apply the updates
+            },
+        };
+        // Additional Object is added
+        if (Object.keys(optionIdToOption).length !== Object.keys(formData.current.optionIdToOption).length) {
+            console.log("Additional object!!!!!!");
+            const newIds = lodash.clone(formData.current.optionIds);
+            newIds.push(optionId);
+            const updatedFormData = {
+                ...formData.current,
+                optionIdToOption: optionIdToOption,
+                optionIds: newIds,
+            };
+            onFieldUpdate(updatedFormData);
+        } else {
+            const updatedFormData = {
+                ...formData.current,
+                optionIdToOption: optionIdToOption,
+            };
+            onFieldUpdate(updatedFormData);
+        }
     };
 
     const onFieldUpdate = (update: Partial<MultipleChoiceQuestion>) => {
@@ -47,12 +73,44 @@ export default ({ question, competitionId }: { competitionId: string; question: 
     };
 
     const createNewOption = () => {
+        const optionId = tokenUtil.generateRandomHexString();
+        const optionText = "Option " + (question.optionIds.length + 1);
+        const newMultipleChoiceOption = {
+            id: optionId,
+            option: optionText,
+            chosen: false,
+        };
+        const updatedIds = lodash.clone(formData.current.optionIds).filter((id) => id !== optionId);
+        updatedIds.push(optionId);
+        const updatedIdToObject = lodash.cloneDeep(formData.current.optionIdToOption);
+        updatedIdToObject[optionId] = newMultipleChoiceOption;
+        const updatedFormData = {
+            ...formData.current,
+            optionIdToOption: updatedIdToObject,
+            optionIds: updatedIds,
+        };
         dispatch(
             competitionSlice.actions.addOption({
+                optionId: optionId,
+                optionText: optionText,
                 competitionId: competitionId,
                 questionId: question.questionId,
             })
         );
+        onFieldUpdate(updatedFormData);
+    };
+
+    const handleDeleteOption = (optionId: string) => {
+        const updatedIds = lodash.clone(formData.current.optionIds).filter((id) => id !== optionId);
+        const updatedIdToObject = lodash.cloneDeep(formData.current.optionIdToOption);
+        delete updatedIdToObject[optionId];
+        dispatch(competitionSlice.actions.deleteOption({ competitionId: competitionId, questionId: question.questionId, optionId: optionId }));
+        const updatedFormData = {
+            ...formData.current,
+            optionIdToOption: updatedIdToObject,
+            optionIds: updatedIds,
+        };
+        onFieldUpdate(updatedFormData);
     };
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -64,7 +122,6 @@ export default ({ question, competitionId }: { competitionId: string; question: 
     useEffect(() => {
         // Add event listener for clicks
         document.addEventListener("mousedown", handleClickOutside);
-
         // Cleanup the event listener on component unmount
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
@@ -112,24 +169,17 @@ export default ({ question, competitionId }: { competitionId: string; question: 
             </div>
             <Spacer />
             {/* Options */}
-            {question.options.map((option, index) => (
-                <div key={index} style={{ display: "flex", alignItems: "center", marginTop: "5px" }}>
-                    <Checkbox disabled style={{ paddingTop: 15 }} />
-                    {!startEdit && <div style={{ color: "dark", fontSize: 16, fontStyle: "normal", paddingTop: 10 }}>{option.option}</div>}
-                    {startEdit && (
-                        <UpdateTextField
-                            style={{ paddingTop: 5, fontSize: 16 }}
-                            placeholder={`Option ${option.index + 1}`}
-                            defaultValue={option.option}
-                            onChange={(t) =>
-                                updateOptionAtIndex(option.index, {
-                                    option: t,
-                                    chosen: false,
-                                })
-                            }
-                        />
-                    )}
-                </div>
+            {question.optionIds.map((optionId, index) => (
+                <Option
+                    key={optionId}
+                    optionId={optionId}
+                    competitionId={competitionId}
+                    questionId={question.questionId}
+                    index={index.toString()}
+                    startEdit={startEdit}
+                    updateOptionAtId={updateOptionAtId}
+                    handleDeleteOption={handleDeleteOption}
+                />
             ))}
             <div style={{ display: "flex", alignItems: "center" }}>
                 <Checkbox disabled style={{ paddingTop: 20 }} />
@@ -138,7 +188,7 @@ export default ({ question, competitionId }: { competitionId: string; question: 
                 </div>
             </div>
             <div style={{ width: "100%", height: "1px", backgroundColor: "grey", marginTop: 10, marginBottom: 10, opacity: 0.2 }} />
-            <QuestionBottomProps competitionId={competitionId} questionId={question.questionId} mustFill={true} />
+            <QuestionBottomProps competitionId={competitionId} questionId={question.questionId} mustFill={question.compulsory} />
         </Box>
     );
 };

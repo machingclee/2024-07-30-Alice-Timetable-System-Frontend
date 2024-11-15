@@ -11,14 +11,17 @@ export default ({ competitionId, questionId, mustFill }: { competitionId: string
         dispatch(competitionSlice.actions.deleteQuestion({ competitionId: competitionId, questionId: questionId }));
     };
 
+    const handleChangeCompulsoryStatus = () => {
+        dispatch(competitionSlice.actions.changeQuestionCompulsoryStatusToTheOpposite({ competitionId: competitionId, questionId: questionId }));
+    };
     return (
         <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-            <InteractiveWrapper>
-                <FaRegTrashCan style={{ width: "20px", height: "40px", cursor: "pointer" }} onClick={handleDeleteOnClick} />
+            <InteractiveWrapper onClick={handleDeleteOnClick}>
+                <FaRegTrashCan style={{ width: "20px", height: "40px", cursor: "pointer" }} />
             </InteractiveWrapper>
             <div style={{ height: "40px", width: "1px", backgroundColor: "grey", opacity: 0.2, marginLeft: "20px", marginRight: "20px" }} />
             <div>Must Fill</div>
-            <Switch defaultChecked={mustFill} />
+            <Switch defaultChecked={mustFill} onClick={handleChangeCompulsoryStatus} />
         </div>
     );
 };

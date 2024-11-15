@@ -11,6 +11,8 @@ import Label from "../../../../components/Label";
 import competitionSlice from "../../../../redux/slices/competitionSlice";
 import UpdateTextField from "./UpdateTextField";
 import QuestionBottomProps from "./QuestionBottomProps";
+import Option from "./Option";
+import tokenUtil from "../../../../utils/tokenUtil";
 
 export default ({ question, competitionId }: { competitionId: string; question: SingleChoiceQuestion }) => {
     const dispatch = useAppDispatch();
@@ -35,12 +37,37 @@ export default ({ question, competitionId }: { competitionId: string; question: 
         [question]
     );
 
-    const updateOptionAtIndex = (index: number, updatedOption: Partial<SingleChoiceOption>) => {
-        const currentOptions = formData.current.options;
-
-        const newOptions = currentOptions.map((option, i) => (i === index ? { ...option, ...updatedOption } : option));
-
-        onFieldUpdate({ options: newOptions });
+    const updateOptionAtId = (optionId: string, updatedOption: Partial<MultipleChoiceOption>) => {
+        const updatedOption_ = {
+            ...updatedOption,
+            id: optionId,
+        };
+        // Create a shallow copy of optionIdToOption to avoid direct mutation
+        const optionIdToOption = {
+            ...formData.current.optionIdToOption,
+            [optionId]: {
+                ...formData.current.optionIdToOption[optionId], // Copy the existing option
+                ...updatedOption_, // Apply the updates
+            },
+        };
+        // Additional Object is added
+        if (Object.keys(optionIdToOption).length !== Object.keys(formData.current.optionIdToOption).length) {
+            console.log("Additional object!!!!!!");
+            const newIds = lodash.clone(formData.current.optionIds);
+            newIds.push(optionId);
+            const updatedFormData = {
+                ...formData.current,
+                optionIdToOption: optionIdToOption,
+                optionIds: newIds,
+            };
+            onFieldUpdate(updatedFormData);
+        } else {
+            const updatedFormData = {
+                ...formData.current,
+                optionIdToOption: optionIdToOption,
+            };
+            onFieldUpdate(updatedFormData);
+        }
     };
 
     const onFieldUpdate = (update: Partial<SingleChoiceQuestion>) => {
@@ -48,13 +75,36 @@ export default ({ question, competitionId }: { competitionId: string; question: 
         checkDataDistinction();
     };
 
+    const handleDeleteOption = (optionId: string) => {
+        dispatch(competitionSlice.actions.deleteOption({ competitionId: competitionId, questionId: question.questionId, optionId: optionId }));
+    };
+
     const createNewOption = () => {
+        const optionId = tokenUtil.generateRandomHexString();
+        const optionText = "Option " + (question.optionIds.length + 1);
+        const newMultipleChoiceOption = {
+            id: optionId,
+            option: optionText,
+            chosen: false,
+        };
+        const updatedIds = lodash.clone(formData.current.optionIds).filter((id) => id !== optionId);
+        updatedIds.push(optionId);
+        const updatedIdToObject = lodash.cloneDeep(formData.current.optionIdToOption);
+        updatedIdToObject[optionId] = newMultipleChoiceOption;
+        const updatedFormData = {
+            ...formData.current,
+            optionIdToOption: updatedIdToObject,
+            optionIds: updatedIds,
+        };
         dispatch(
             competitionSlice.actions.addOption({
+                optionId: optionId,
+                optionText: optionText,
                 competitionId: competitionId,
                 questionId: question.questionId,
             })
         );
+        onFieldUpdate(updatedFormData);
     };
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -114,24 +164,17 @@ export default ({ question, competitionId }: { competitionId: string; question: 
             </div>
             <Spacer />
             {/* Options */}
-            {question.options.map((option, index) => (
-                <div key={index} style={{ display: "flex", alignItems: "center", marginTop: "5px" }}>
-                    <Radio disabled style={{ paddingTop: 15 }} />
-                    {!startEdit && <div style={{ color: "dark", fontSize: 16, fontStyle: "normal", paddingTop: 10 }}>{option.option}</div>}
-                    {startEdit && (
-                        <UpdateTextField
-                            style={{ marginTop: 5, fontSize: 16 }}
-                            placeholder={`Option ${option.index + 1}`}
-                            defaultValue={option.option}
-                            onChange={(t) =>
-                                updateOptionAtIndex(option.index, {
-                                    option: t,
-                                    chosen: false,
-                                })
-                            }
-                        />
-                    )}
-                </div>
+            {question.optionIds.map((optionId, index) => (
+                <Option
+                    key={optionId}
+                    optionId={optionId}
+                    competitionId={competitionId}
+                    questionId={question.questionId}
+                    index={index.toString()}
+                    startEdit={startEdit}
+                    updateOptionAtId={updateOptionAtId}
+                    handleDeleteOption={handleDeleteOption}
+                />
             ))}
             <div style={{ display: "flex", alignItems: "center" }}>
                 <Radio disabled style={{ paddingTop: 20 }} />
@@ -139,7 +182,7 @@ export default ({ question, competitionId }: { competitionId: string; question: 
                     Add One More Option
                 </div>
             </div>
-            <QuestionBottomProps competitionId={competitionId} questionId={question.questionId} mustFill={true} />
+            <QuestionBottomProps competitionId={competitionId} questionId={question.questionId} mustFill={question.compulsory} />
         </Box>
     );
 };
