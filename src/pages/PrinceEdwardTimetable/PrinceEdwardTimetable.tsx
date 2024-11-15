@@ -9,12 +9,13 @@ import DuplicateClassDialog from "../../components/DuplicateClassDialog";
 import ViewClassDialog from "../../components/ViewClassDialog";
 import DeleteClassDialog from "../../components/DeleteClassDialog";
 import AddClassEventDialog from "../../components/AddClassEventDialog";
-import { IoPrint } from "react-icons/io5";
-import PrintButton from "../../components/PrintButton";
+import PrintButton, { PrintHandler } from "../../components/PrintButton";
 import RightColumn from "../../components/RightColumn";
+import { useEffect, useRef } from "react";
 
 export default () => {
     const navigate = useNavigate();
+    const printButtonRef = useRef<PrintHandler>(null);
 
     return (
         <div style={{ marginLeft: "10px", marginRight: "50px", height: "100%", width: "100%", display: "flex", flexDirection: "column" }}>
@@ -34,10 +35,10 @@ export default () => {
                             <Spacer height={1} />
                             Prince Edward Daily Timetable
                         </SectionTitle>
-                        <PrintButton />
+                        <PrintButton ref={printButtonRef} />
                     </div>
                     <div style={{ height: "calc(100vh - 70px)", overflow: "hidden" }}>
-                        <DailyTimetable />
+                        <DailyTimetable printButtonRef={printButtonRef} />
                     </div>
                 </div>
                 <Spacer />

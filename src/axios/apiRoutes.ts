@@ -20,6 +20,7 @@ export default {
     GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: (dateUnixTimestamp: string, classRoom: Classroom) =>
         `/student/student-classes-for-daily-timteable/${dateUnixTimestamp}/${classRoom}`,
     GET_STUDENT_PACKAGES: (studentId: string) => `/student/student-packages/${studentId}`,
+    GET_LOGGING: (props: { page: number, limit: number }) => `/logging/get-logs?page=${props.page}&limit=${props.limit}`,
 
     PUT_UPDATE_USER: "/user/update-user",
     PUT_UPDATE_STUDENT: "/student/update-student",

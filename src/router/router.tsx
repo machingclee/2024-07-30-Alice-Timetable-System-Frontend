@@ -17,6 +17,7 @@ import RouteEnum from "../enum/RouteEnum.ts";
 import PackageClassesStatus from "../pages/Students/components/PackageClassesStatus.tsx";
 import Competitions from "../pages/Competitions/Competitions.tsx";
 import CompetitionDetail from "../pages/Competitions/competitionDetail/CompetitionDetail.tsx";
+import Logging from "../pages/Logging/Logging.tsx";
 
 const getRouter = (_store: any) => {
     return createBrowserRouter(
@@ -42,14 +43,23 @@ const getRouter = (_store: any) => {
                             <Route index element={<CausewayBayTimetable />} />
                         </Route>
                     </Route>
+                    <Route path="logging" element={<LogginIndex />} >
+                        <Route element={<Logging />} index />
+                    </Route>
                 </Route>
                 <Route path="/class-status" element={<ClassStatusIndex />}>
                     <Route path=":packageUUID" element={<PackageClassesStatus />} />
                 </Route>
+
             </Route>
         )
     );
 };
+
+const LogginIndex = () => {
+    return <Outlet />;
+};
+
 
 const ClassStatusIndex = () => {
     return <Outlet />;

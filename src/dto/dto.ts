@@ -261,3 +261,12 @@ export type SummaryOfClassStatues = {
     makeup: number;
     changeOfClassroom: number;
 };
+
+
+export type Loggings = {
+    id: number;
+    payload: { ctx: { userEmail: string }, data: any };
+    event_type: string;
+    created_at: number;
+    created_at_hk: string;
+}[]

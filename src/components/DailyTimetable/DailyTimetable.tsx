@@ -2,7 +2,7 @@ import { Button } from "antd";
 import CustomScrollbarContainer from "../CustomScrollbarContainer";
 import { Box } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import SectionTitle from "../SectionTitle";
 import Spacer from "../Spacer";
 
@@ -12,11 +12,15 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import timeUtil from "../../utils/timeUtil";
 import Label from "../Label";
 import ViewClassDialog from "../ViewClassDialog";
-import TimeColumn from "./components/TimeColumn";
-
+import TimeRow from "./components/TimeRow";
+import { PrintHandler } from "../PrintButton";
 const gridHeight = 30;
 
-export default () => {
+export default ({
+    printButtonRef: printButtonRef
+}: {
+    printButtonRef?: React.RefObject<PrintHandler>
+}) => {
     const dispatch = useAppDispatch();
     const classRoom = useAppSelector((s) => s.student.allStudents.classRoom);
     const selectedDate = useAppSelector((s) => s.student.allStudents.selectedDate);
@@ -55,7 +59,7 @@ export default () => {
         // Add another thing to listen to: change of the date (like next day and previous day)
     }, [selectedDay]);
 
-    const timetableContainerRef = useRef<HTMLDivElement | null>(null);
+
 
     // Move to the parent component to do one operation of counting the number of classes starting on, progressing through or ending on a particular unix timestamp
     useEffect(() => {
@@ -74,7 +78,6 @@ export default () => {
 
     return (
         <Box
-            ref={timetableContainerRef}
             sx={{
                 height: "1000px",
                 "& .daily-class-container": {
@@ -97,16 +100,6 @@ export default () => {
                 "& .freeze": {
                     transform: "translate(0px,0px) !important",
                 },
-                "& .grid-time: nth-child(n+1)": {
-                    paddingRight: "14px",
-                    height: `${gridHeight + 5}px`,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                },
                 "& .grid-hour: nth-child(n+1)": {
                     width: "120px",
                     height: `${gridHeight - 1}px`,
@@ -124,7 +117,10 @@ export default () => {
         >
             <Label label="DailyTimetable.tsx" offsetLeft={40} offsetTop={20} />
             <SectionTitle style={{ justifyContent: "center" }}>
-                <div style={{ display: "flex", alignItems: "center", padding: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", padding: 10 }} ref={ref => {
+                    console.log("setting print target ref", ref)
+
+                }}>
                     <Button
                         onClick={() => {
                             if (!classRoom) {
@@ -183,36 +179,55 @@ export default () => {
                 </div>
             </SectionTitle>
 
-            <CustomScrollbarContainer style={{ height: "calc(100vh - 120px)" }}>
-                <Spacer />
-                <div style={{ display: "flex" }}>
-                    <div style={{ flex: 1 }}>
-                        <div style={{ display: "flex" }}>
-                            <div>
-                                {oneForthHourIntervals.map((dayJS) => {
-                                    return (
-                                        <div style={{ fontSize: 13 }} className="grid-time" key={dayJS.valueOf().toString()}>
-                                            {dayJS.format("HH:mm")}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                {hoursColumnGrid.sort().map((hourUnixTimestamp, index) => {
-                                    return (
-                                        <TimeColumn
-                                            key={`${hourUnixTimestamp}-${selectedDate.getTime()}`}
-                                            index={index}
-                                            hourUnixTimestamp={hourUnixTimestamp}
-                                            hoursColumnGrid={hoursColumnGrid}
-                                        />
-                                    );
-                                })}
+            <CustomScrollbarContainer style={{ height: "calc(100vh - 120px)" }} setPrintContent={(content: HTMLDivElement | null) => {
+                printButtonRef?.current?.setPrintTarget(content)
+            }}>
+                <Box sx={{
+                    "@media print": {
+                        padding: "20px", // Print-specific padding
+                        pageBreakInside: 'avoid'
+                    },
+                    "& .grid-time: nth-child(n+1)": {
+                        paddingRight: "14px",
+                        height: `${gridHeight + 5}px`,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                    }
+                }}>
+                    <Spacer />
+                    <div style={{ display: "flex" }}>
+                        <div style={{ flex: 1 }} >
+                            <div style={{ display: "flex" }}>
+                                <div>
+                                    {oneForthHourIntervals.map((dayJS) => {
+                                        return (
+                                            <div style={{ fontSize: 13 }} className="grid-time" key={dayJS.valueOf().toString()}>
+                                                {dayJS.format("HH:mm")}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    {hoursColumnGrid.sort().map((hourUnixTimestamp, index) => {
+                                        return (
+                                            <TimeRow
+                                                key={`${hourUnixTimestamp}-${selectedDate.getTime()}`}
+                                                index={index}
+                                                hourUnixTimestamp={hourUnixTimestamp}
+                                                hoursColumnGrid={hoursColumnGrid}
+                                            />
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </div>
+                        <Spacer />
                     </div>
-                    <Spacer />
-                </div>
+                </Box>
                 <Spacer />
                 <ViewClassDialog.render />
             </CustomScrollbarContainer>

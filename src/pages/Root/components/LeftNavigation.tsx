@@ -20,6 +20,7 @@ const pathRegex = {
     COMPETITIONS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_COMPETITIONS)),
     PRINCE_EDWARD_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE)),
     CAUSEWAY_BAY_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE)),
+    LOGGING: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_LOGGING)),
 };
 
 export default () => {
@@ -91,6 +92,8 @@ export default () => {
                 <NavButton activeNavigationRegex={pathRegex.CAUSEWAY_BAY_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE} title="CWB Timetable" />
                 <Spacer height={10} />
                 <NavButton activeNavigationRegex={pathRegex.COMPETITIONS} routeEnum={RouteEnum.DASHBOARD_COMPETITIONS} title="Competitions" />
+                <Spacer height={10} />
+                <NavButton activeNavigationRegex={pathRegex.LOGGING} routeEnum={RouteEnum.DASHBOARD_LOGGING} title="Logging" />
                 <Spacer height={10} />
             </div>
             <div style={{ transition: "opacity 0.4s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>

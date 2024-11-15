@@ -10,16 +10,15 @@ import dayjs, { Dayjs } from "dayjs";
 import studentSlice, { StudentThunkAction } from "../redux/slices/studentSlice";
 import timeUtil from "../utils/timeUtil";
 import { AppDispatch } from "../redux/store";
-import { FilterToGetClassesForDailyTimetable, FilterToGetClassesForDailyTimetableWithoutCourseIds } from "../dto/dto";
+import { FilterToGetClassesForDailyTimetableWithoutCourseIds } from "../dto/dto";
 import appSlice from "../redux/slices/appSlice";
 import CollapseButton from "../assets/collapse-button.png";
 import { FaFilter } from "react-icons/fa";
 import Checkbox from "@mui/material/Checkbox";
 import colors from "../constant/colors";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
 import ClassFilterItem from "./CourseFilterItem";
-import { CourseThunkAction } from "../redux/slices/courseSlice";
 
 export default () => {
     const classRoom = useAppSelector((s) => s.student.allStudents.classRoom);

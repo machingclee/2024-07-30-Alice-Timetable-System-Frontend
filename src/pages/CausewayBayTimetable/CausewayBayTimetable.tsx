@@ -10,14 +10,16 @@ import DuplicateClassDialog from "../../components/DuplicateClassDialog";
 import ViewClassDialog from "../../components/ViewClassDialog";
 import DeleteClassDialog from "../../components/DeleteClassDialog";
 import AddClassEventDialog from "../../components/AddClassEventDialog";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import studentSlice from "../../redux/slices/studentSlice";
 import { useAppDispatch } from "../../redux/hooks";
 import { CourseThunkAction } from "../../redux/slices/courseSlice";
-import PrintButton from "../../components/PrintButton";
+import PrintButton, { PrintHandler } from "../../components/PrintButton";
 export default () => {
+
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const printButtonRef = useRef<PrintHandler>(null);
 
     useEffect(() => {
         dispatch(studentSlice.actions.setClassroom("CAUSEWAY_BAY"));
@@ -48,10 +50,10 @@ export default () => {
                             <Spacer height={1} />
                             Causeway Bay Daily Timetable
                         </SectionTitle>
-                        <PrintButton />
+                        <PrintButton ref={printButtonRef} />
                     </div>
                     <div style={{ height: "calc(100vh - 70px)", overflow: "hidden" }}>
-                        <DailyTimetable />
+                        <DailyTimetable printButtonRef={printButtonRef} />
                     </div>
                 </div>
                 <Spacer />
