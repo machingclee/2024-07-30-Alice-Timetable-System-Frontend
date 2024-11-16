@@ -4,13 +4,12 @@ import { Box } from "@mui/material";
 import colors from "../constant/colors";
 import boxShadow from "../constant/boxShadow";
 import getEnv from "../utils/getEnv";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 const FRONTEND_URL = getEnv().VITE_FRONTEND_URL;
 
-export default (props: { classEvent: TimetableClass; dayUnixTimestamp: number; currHourUnixTimestamp: number }) => {
-    const { classEvent, currHourUnixTimestamp, dayUnixTimestamp } = props;
-    const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
+export default (props: { classEvent: TimetableClass; dayUnixTimestamp: number; currHourUnixTimestamp: number, classminToHeight?: (min: number) => number }) => {
+    const { classEvent, currHourUnixTimestamp, dayUnixTimestamp, classminToHeight: minToHeight } = props;
+    const [displayOnlyclassEventHeight, setDisplayOnlyClassEventHeight] = useState<number | null>(null);
     const invalidData = dayUnixTimestamp >= currHourUnixTimestamp;
     const { first_name, last_name, chinese_first_name, chinese_last_name } = classEvent;
     const engName = `${last_name} ${first_name}`;
@@ -19,10 +18,10 @@ export default (props: { classEvent: TimetableClass; dayUnixTimestamp: number; c
     return (
         <Box
             onMouseEnter={() => {
-                setClassEventHeight(120);
+                setDisplayOnlyClassEventHeight(120);
             }}
             onMouseLeave={() => {
-                setClassEventHeight(null);
+                setDisplayOnlyClassEventHeight(null);
             }}
             onClick={() => {
                 console.log("FRONTEND_URL:", FRONTEND_URL);
@@ -30,17 +29,17 @@ export default (props: { classEvent: TimetableClass; dayUnixTimestamp: number; c
                 window.open(FRONTEND_URL + `/dashboard/students/${classEvent.student_id}/${currHourUnixTimestamp}`, "_blank");
             }}
             style={{
+                border: "1px solid rgba(0,0,0,0.2)",
                 cursor: "pointer",
-                border: "1px solid #357fd9",
                 margin: "5px",
                 boxShadow: boxShadow.SHADOW_62,
                 minHeight: "50px",
                 transition: "height 0.18s ease-in-out",
-                zIndex: classEventHeight ? 10 ** 7 : 10 ** 5,
+                zIndex: displayOnlyclassEventHeight ? 10 ** 7 : 10 ** 5,
                 overflow: "hidden",
                 maxWidth: 150,
                 width: 150,
-                height: classEventHeight || 1.2 * (classEvent.min || 0) - 10,
+                height: displayOnlyclassEventHeight || (minToHeight ? minToHeight(classEvent.min) : (1.2 * (classEvent.min || 0) - 10)),
                 backgroundColor: (() => {
                     if (invalidData) {
                         return "red";

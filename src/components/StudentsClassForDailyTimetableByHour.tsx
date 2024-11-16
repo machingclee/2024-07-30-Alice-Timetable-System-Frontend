@@ -3,14 +3,13 @@ import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu";
 import boxShadow from "../constant/boxShadow";
 import { Box } from "@mui/material";
 import { useAppSelector } from "../redux/hooks";
-import FadeIn from "./FadeIn";
 import DeleteClassForm from "./DeleteClassForm";
 import DeleteClassDialog from "./DeleteClassDialog";
 import ViewClassForm from "./ViewClassForm";
 import ViewClassDialog from "./ViewClassDialog";
 import StudentClassCard from "./StudentClassCard";
 import dayjs from "dayjs";
-import { useEffect } from "react";
+
 
 export default (props: { dayUnixTimestamp: number; currHourUnixTimestamp: number }) => {
     const { currHourUnixTimestamp, dayUnixTimestamp } = props;
@@ -55,7 +54,15 @@ export default (props: { dayUnixTimestamp: number; currHourUnixTimestamp: number
                             {/* {showLabel && index === 0 && <Label label="StudentsClassForDailyTimetableByHour.tsx" />} */}
                             {/* @ts-ignore */}
                             <ContextMenuTrigger id={contextMenuId}>
-                                <StudentClassCard dayUnixTimestamp={dayUnixTimestamp} currHourUnixTimestamp={currHourUnixTimestamp} classEvent={classEvent} />
+                                <StudentClassCard
+                                    dayUnixTimestamp={dayUnixTimestamp}
+                                    currHourUnixTimestamp={currHourUnixTimestamp}
+                                    classEvent={classEvent}
+                                    classminToHeight={(min) => {
+                                        const numOfChunks = min / 15;
+                                        return numOfChunks * 35 - 15
+                                    }}
+                                />
                             </ContextMenuTrigger>
                             {/* @ts-ignore */}
                             <ContextMenu id={contextMenuId} style={{ zIndex: 10 ** 7 }}>

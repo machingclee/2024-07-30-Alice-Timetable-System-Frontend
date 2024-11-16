@@ -7,6 +7,7 @@ import React from "react";
 import studentSlice from "../../../redux/slices/studentSlice";
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import boxShadow from "../../../constant/boxShadow";
+import Label from "../../Label";
 const gridHeight = 30;
 
 export default ({ index, hourUnixTimestamp, hoursColumnGrid }: { index: number; hourUnixTimestamp: string; hoursColumnGrid: string[] }) => {
@@ -77,7 +78,7 @@ export default ({ index, hourUnixTimestamp, hoursColumnGrid }: { index: number; 
             <div className="droppable" style={{ position: "relative", zIndex: hoursColumnGrid.length - index + 1, height: gridHeight }}>
                 <div style={{ position: "absolute", width: "100%", height: 32, backgroundColor: isHovered ? "#9e9e9e" : "transparent" }} />
                 <BasePopup id={id} open={open} anchor={anchorEl} placement="left">
-
+                    <Label label="count number of classes" />
                     <div style={{ backgroundColor: "white", padding: 10, borderRadius: 4, boxShadow: boxShadow.SHADOW_62, transform: "translateX(-5px)" }}>{numberOfClassesInHighlight} class(es)</div>
                 </BasePopup>
 

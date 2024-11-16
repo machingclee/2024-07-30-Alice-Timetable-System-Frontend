@@ -75,7 +75,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                     padding: "2px 5px",
                     fontSize: 12,
                     color: "white",
-                    backgroundColor: colors.purple,
+                    backgroundColor: "rgba(0,0,0,0.35)",
+                    backdropFilter: "brightness(90%) saturate(200%) hue-rotate(-20deg)",
                 }}
             >
                 Grouped
@@ -85,49 +86,49 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
     const TimeslotWrapper = useCallback(
         rightClickable
             ? ({ children }: PropsWithChildren) => {
-                  return (
-                      <>
-                          {/* @ts-ignore */}
-                          <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
-                          {/* @ts-ignore */}
-                          <ContextMenu
-                              id={hourUnixTimestamp.toString()}
-                              style={{
-                                  zIndex: 10 ** 7,
-                                  borderRadius: 8,
-                                  backgroundColor: "white",
-                                  boxShadow: boxShadow.SHADOW_62,
-                              }}
-                          >
-                              <Box
-                                  sx={{
-                                      "& .menu-item": {
-                                          padding: "10px",
-                                          cursor: "pointer",
-                                          color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
-                                          "&:hover": {
-                                              "&:hover": {
-                                                  color: "rgb(64, 150, 255)",
-                                              },
-                                          },
-                                      },
-                                  }}
-                              >
-                                  {/* @ts-ignore */}
-                                  <MenuItem
-                                      className="menu-item"
-                                      disabled={!selectedPackageId}
-                                      onClick={() => {
-                                          createEvent();
-                                      }}
-                                  >
-                                      {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
-                                  </MenuItem>
-                              </Box>
-                          </ContextMenu>
-                      </>
-                  );
-              }
+                return (
+                    <>
+                        {/* @ts-ignore */}
+                        <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
+                        {/* @ts-ignore */}
+                        <ContextMenu
+                            id={hourUnixTimestamp.toString()}
+                            style={{
+                                zIndex: 10 ** 7,
+                                borderRadius: 8,
+                                backgroundColor: "white",
+                                boxShadow: boxShadow.SHADOW_62,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    "& .menu-item": {
+                                        padding: "10px",
+                                        cursor: "pointer",
+                                        color: !selectedPackageId ? "rgb(200,200,200) !important" : "inherit",
+                                        "&:hover": {
+                                            "&:hover": {
+                                                color: "rgb(64, 150, 255)",
+                                            },
+                                        },
+                                    },
+                                }}
+                            >
+                                {/* @ts-ignore */}
+                                <MenuItem
+                                    className="menu-item"
+                                    disabled={!selectedPackageId}
+                                    onClick={() => {
+                                        createEvent();
+                                    }}
+                                >
+                                    {!selectedPackageId ? "Please First Select a Package" : `Add Class(es) at ${dayAndTime}`}
+                                </MenuItem>
+                            </Box>
+                        </ContextMenu>
+                    </>
+                );
+            }
             : ({ children }: PropsWithChildren) => children,
         [studentClass, selectedPackageId]
     );
@@ -231,8 +232,8 @@ export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; ac
                                                             setClassEventHeight(null);
                                                         }}
                                                         style={{
+                                                            border: "1px solid rgba(0,0,0,0.2)",
                                                             position: "absolute",
-                                                            border: "1px solid #357fd9",
                                                             boxShadow: boxShadow.SHADOW_62,
                                                             transition: "height 0.18s ease-in-out",
                                                             zIndex: classEventHeight ? 10 ** 7 : 10 ** 5,

@@ -14,6 +14,7 @@ import Label from "../Label";
 import ViewClassDialog from "../ViewClassDialog";
 import TimeRow from "./components/TimeRow";
 import { PrintHandler } from "../PrintButton";
+import Interval from "../../utils/Interval";
 const gridHeight = 30;
 
 export default ({
@@ -65,11 +66,22 @@ export default ({
     useEffect(() => {
         if (hrUnixTimestampOnClick) {
             let numOfClasses = 0;
+            const t_min = hrUnixTimestampOnClick;
+            const t_max = dayjs(hrUnixTimestampOnClick).add(15, "minute").valueOf();
+            const intervalOnClick = new Interval(t_min, t_max - 1);
+
             Object.values(hrUnixTimestampToClasses).forEach((timetableClass) => {
+
                 timetableClass.forEach((timetableClass) => {
-                    if (isClassOngoing(hrUnixTimestampOnClick, timetableClass.hour_unix_timestamp, timetableClass.min)) {
+                    const { hour_unix_timestamp, min } = timetableClass;
+                    const classInterval = new Interval(hour_unix_timestamp, dayjs(hour_unix_timestamp).add(min, "minute").valueOf() - 1);
+                    const intersection = classInterval.intersect(intervalOnClick);
+                    if (intersection) {
                         numOfClasses++;
                     }
+                    // if (isClassOngoing(hrUnixTimestampOnClick, timetableClass.hour_unix_timestamp, timetableClass.min)) {
+                    //     numOfClasses++;
+                    // }
                 });
             });
             dispatch(studentSlice.actions.setNumberOfClassesInHighlight(numOfClasses));
