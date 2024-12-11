@@ -69,21 +69,25 @@ export type User = {
     id: string;
 };
 
-export type Student = {
+export type StudentResponse = {
     id: string;
-    student_code: string;
-    first_name: string;
-    last_name: string;
-    chinese_first_name: string;
-    chinese_last_name: string;
-    gender: Gender;
-    birthdate: number;
-    parent_email: string;
-    school_name: string;
+    firstName: string;
+    lastName: string;
+    chineseFirstName?: string;
+    chineseLastName?: string;
+    schoolName: string;
+    studentCode?: string;
     grade: string;
-    phone_number?: string;
-    wechat_id?: string;
-};
+    phoneNumber?: string;
+    wechatId?: string;
+    birthdate: number;   // Double in Kotlin becomes number in TypeScript
+    parentEmail: string;
+    createdAt?: number;
+    createdAtHk?: string;
+    parentId?: string;
+    gender: Gender;
+}
+
 
 export type CreateCourseRequest = {
     course_name: string;

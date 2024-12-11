@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import NavButton from "./NavButton";
 import appSlice from "../../../redux/slices/appSlice";
 import Label from "../../../components/Label";
-import CollapseButton from "../../../assets/collapse-button.png";
+
 import escapeStringRegexp from "escape-string-regexp";
 import RouteEnum from "../../../enum/RouteEnum";
 
@@ -66,11 +66,10 @@ export default () => {
     return (
         <Box
             style={{
-                width: leftNavigatorCollapsed ? 0 : 160,
                 height: "100%",
-                marginTop: "20px",
                 marginLeft: "30px",
                 transition: "width 0.5s ease-out",
+                marginRight: "20px"
             }}
             sx={{
                 display: "flex",
@@ -135,23 +134,7 @@ export default () => {
                 <Spacer />
                 <Spacer />
             </div>
-            <img
-                onClick={() => {
-                    dispatch(appSlice.actions.setleftNavigatorCollapsed(!leftNavigatorCollapsed));
-                }}
-                style={{
-                    position: "absolute",
-                    bottom: "50%",
-                    right: leftNavigatorCollapsed ? "0%" : "-8%",
-                    width: 30,
-                    height: 30,
-                    cursor: "pointer",
-                    transition: "rotate 1s ease-out-in,right 0.5s ease-out,",
-                    zIndex: 10 ** 100,
-                    transform: leftNavigatorCollapsed ? "rotate(180deg)" : "rotate(0deg)",
-                }}
-                src={CollapseButton}
-            />
+
         </Box>
     );
 };

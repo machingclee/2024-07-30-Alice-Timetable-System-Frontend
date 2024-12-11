@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import { Collapse, Container } from "@mui/material";
 import { useEffect, useRef } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -6,11 +6,17 @@ import LeftNavigation from "./components/LeftNavigation";
 import { OverlayScrollbarsComponent, OverlayScrollbarsComponentRef } from "overlayscrollbars-react";
 import appSlice from "../../redux/slices/appSlice";
 import AppLoading from "../../components/AppLoading";
+import CloseLeftColumnButton from "./components/CloseLeftColumnButton";
+import Spacer from "../../components/Spacer";
 
 export default () => {
     const dispatch = useAppDispatch();
     const location = useLocation();
     const navgiate = useNavigate();
+    const { pathname } = useLocation();
+    const islogin = pathname === "/login";
+    const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
+
     const ref = useRef<OverlayScrollbarsComponentRef<"div"> | null>(null);
     console.log("This is root");
 
@@ -49,11 +55,27 @@ export default () => {
                             paddingRight: "0",
                         },
                     }}
-                    style={{ display: "flex", position: "relative" }}
+                    style={{
+                        display: "flex",
+                        position: "relative",
+                        marginRight: 20
+                    }}
                 >
-                    <div style={{ position: "fixed", height: "100%" }}>
-                        <LeftNavigation />
-                    </div>
+                    <Collapse style={{ height: "100vh" }} in={!leftNavigatorCollapsed} orientation="horizontal">
+                        <Spacer />
+                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
+                            <CloseLeftColumnButton />
+                        </div>
+                        <div >
+                            <LeftNavigation />
+                        </div>
+                    </Collapse>
+                    <Collapse style={{ height: "100vh" }} in={leftNavigatorCollapsed} orientation="horizontal">
+                        <Spacer />
+                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
+                            <CloseLeftColumnButton />
+                        </div>
+                    </Collapse>
                     <RootOutlet />
                 </Container>
             </OverlayScrollbarsComponent>
@@ -63,11 +85,8 @@ export default () => {
 };
 
 const RootOutlet = () => {
-    const { pathname } = useLocation();
-    const islogin = pathname === "/login";
-    const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
     return (
-        <div style={{ flex: 1, marginLeft: islogin ? 0 : leftNavigatorCollapsed ? 40 : 200, height: "100vh", width: "100%" }}>
+        <div style={{ flex: 1, height: "100vh", width: "100%" }}>
             <Outlet />
         </div>
     );

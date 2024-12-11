@@ -23,27 +23,27 @@ export default (props: { id: string }) => {
         return null;
     }
     const {
-        student_code = "",
-        first_name = "",
-        parent_email = "",
-        last_name = "",
-        chinese_first_name = "",
-        chinese_last_name = "",
+        studentCode = "",
+        firstName = "",
+        parentEmail = "",
+        lastName = "",
+        chineseFirstName = "",
+        chineseLastName = "",
         gender = "",
         birthdate = "",
         grade = "",
-        school_name = "",
-        phone_number = "",
-        wechat_id = "",
+        schoolName = "",
+        phoneNumber = "",
+        wechatId = "",
     } = student;
 
     const chineseName = (() => {
         let name = "";
-        if (chinese_last_name) {
-            name += chinese_last_name;
+        if (chineseLastName) {
+            name += chineseLastName;
         }
-        if (chinese_first_name) {
-            name += chinese_first_name;
+        if (chineseFirstName) {
+            name += chineseFirstName;
         }
         return name;
     })();
@@ -98,7 +98,7 @@ export default (props: { id: string }) => {
                                 <Label label="StudentRow.tsx" offsetTop={-20} />
                                 <tr>
                                     <td>Student Code:</td>
-                                    <td>{student_code}</td>
+                                    <td>{studentCode}</td>
                                 </tr>
                                 <tr>
                                     <td>Chinese Name:</td>
@@ -106,7 +106,7 @@ export default (props: { id: string }) => {
                                 </tr>
                                 <tr>
                                     <td>English Name:</td>
-                                    <td>{`${first_name} ${last_name}`}</td>
+                                    <td>{`${firstName} ${lastName}`}</td>
                                 </tr>
                                 <tr>
                                     <td>Gender:</td>
@@ -114,7 +114,7 @@ export default (props: { id: string }) => {
                                 </tr>
                                 <tr>
                                     <td>School Name:</td>
-                                    <td>{`${school_name}`}</td>
+                                    <td>{`${schoolName}`}</td>
                                 </tr>
                                 <tr>
                                     <td>
@@ -124,15 +124,15 @@ export default (props: { id: string }) => {
                                 </tr>
                                 <tr>
                                     <td>phone number:</td>
-                                    <td>{`${phone_number}`}</td>
+                                    <td>{`${phoneNumber}`}</td>
                                 </tr>
                                 <tr>
                                     <td>Wechat ID:</td>
-                                    <td>{`${wechat_id || ""}`}</td>
+                                    <td>{`${wechatId || ""}`}</td>
                                 </tr>
                                 <tr>
                                     <td>Parent Email:</td>
-                                    <td>{parent_email}</td>
+                                    <td>{parentEmail}</td>
                                 </tr>
                                 <tr>
                                     <td>Birthday:</td>

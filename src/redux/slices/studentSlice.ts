@@ -1,11 +1,10 @@
-import { createAsyncThunk, createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import registerDialogAndActions from "../../utils/registerEffects";
 import apiClient from "../../axios/apiClient";
 import { CustomResponse } from "../../axios/responseTypes";
 import apiRoutes from "../../axios/apiRoutes";
 import { processRes } from "../../utils/processRes";
 import {
-    Student,
     CreateClassRequest,
     MoveClassRequest,
     DuplicateClassRequest,
@@ -19,6 +18,7 @@ import {
     UpdateStudentRequest,
     FilterToGetClassesForDailyTimetable,
     TimetableClass,
+    StudentResponse,
 } from "../../dto/dto";
 import normalizeUtil from "../../utils/normalizeUtil";
 import { loadingActions } from "../../utils/loadingActions";
@@ -26,17 +26,18 @@ import { RootState } from "../store";
 import lodash from "lodash";
 import { Classroom, Student_package } from "../../prismaTypes/types";
 import MoveClassStatus from "../../enum/MoveClassStatus";
+import { createApiThunk } from "../../utils/createApiThunk";
 
 export type StudentSliceState = {
     students: {
         ids?: string[];
         idToStudent?: {
-            [key: string]: Student;
+            [key: string]: StudentResponse;
         };
     };
     studentDetail: {
         showAllClassesForOneStudent: boolean;
-        detail: Student | null;
+        detail: StudentResponse | null;
         selectedPackageId: string;
         packages: {
             ids?: string[];
@@ -180,7 +181,7 @@ const studentSlice = createSlice({
                 state.studentDetail.weeklyTimetable.hrUnixTimestampToClass[hrTimestamp].hide = false;
             }
         },
-        updateStudent: (state, action: PayloadAction<{ student: Student }>) => {
+        updateStudent: (state, action: PayloadAction<{ student: StudentResponse }>) => {
             const { student } = action.payload;
             if (state.students.idToStudent && student.id) {
                 state.students.idToStudent[student.id] = student;
@@ -343,34 +344,34 @@ const studentSlice = createSlice({
 });
 
 export class StudentThunkAction {
-    public static getStudents = createAsyncThunk("studentSlice/getStudents", async (_: undefined, api) => {
-        const res = await apiClient.get<CustomResponse<Student[]>>(apiRoutes.GET_STUDENTS);
+    public static getStudents = createApiThunk("studentSlice/getStudents", async (_: undefined, api) => {
+        const res = await apiClient.get<CustomResponse<StudentResponse[]>>(apiRoutes.GET_STUDENTS);
         return processRes(res, api);
     });
-    public static updatePackage = createAsyncThunk("studentSlice/updatePackage", async (props: UpdateStudentPackageRequest, api) => {
+    public static updatePackage = createApiThunk("studentSlice/updatePackage", async (props: UpdateStudentPackageRequest, api) => {
         const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_UPDATE_PACKAGE, props);
         return processRes(res, api);
     });
-    public static createUser = createAsyncThunk("studentSlice/createStudent", async (props: CreateStudentRequest, api) => {
-        const res = await apiClient.post<CustomResponse<Student>>(apiRoutes.POST_CREATE_STUDNET, props);
+    public static createUser = createApiThunk("studentSlice/createStudent", async (props: CreateStudentRequest, api) => {
+        const res = await apiClient.post<CustomResponse<StudentResponse>>(apiRoutes.POST_CREATE_STUDNET, props);
         return processRes(res, api);
     });
 
-    public static getStudentClassesForWeeklyTimetable = createAsyncThunk("studentSlice/getStudentClassesForWeeklyTimetable", async (props: { studentId: string }, api) => {
+    public static getStudentClassesForWeeklyTimetable = createApiThunk("studentSlice/getStudentClassesForWeeklyTimetable", async (props: { studentId: string }, api) => {
         const { studentId } = props;
         const res = await apiClient.get<CustomResponse<{ classes: TimetableClass[] }>>(apiRoutes.GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE(studentId));
         return processRes(res, api);
     });
-    public static getStudentDetail = createAsyncThunk("studentSlice/getStudentDetail", async (props: { studentId: string }, api) => {
+    public static getStudentDetail = createApiThunk("studentSlice/getStudentDetail", async (props: { studentId: string }, api) => {
         const { studentId } = props;
-        const res = await apiClient.get<CustomResponse<Student>>(apiRoutes.GET_STUDENT_DETAIL(studentId));
+        const res = await apiClient.get<CustomResponse<StudentResponse>>(apiRoutes.GET_STUDENT_DETAIL(studentId));
         return processRes(res, api);
     });
-    public static createStudentEvent = createAsyncThunk("studentSlice/createStudentEvent", async (props: CreateClassRequest, api) => {
+    public static createStudentEvent = createApiThunk("studentSlice/createStudentEvent", async (props: CreateClassRequest, api) => {
         const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_STUDENT_CLASS, props);
         return processRes(res, api);
     });
-    public static moveStudentEvent = createAsyncThunk(
+    public static moveStudentEvent = createApiThunk(
         "studentSlice/moveStudentEvent",
         async (props: { fromHourTimestamp: string; toDayTimestamp: string; toHourTimestamp: string }, api) => {
             const { fromHourTimestamp: fromTimestamp, toDayTimestamp, toHourTimestamp } = props;
@@ -412,19 +413,19 @@ export class StudentThunkAction {
             }
         }
     );
-    public static updateStudent = createAsyncThunk("studentSlice/updateStudent", async (props: Partial<UpdateStudentRequest>, api) => {
-        const res = await apiClient.put<CustomResponse<{ student: Student }>>(apiRoutes.PUT_UPDATE_STUDENT, props);
+    public static updateStudent = createApiThunk("studentSlice/updateStudent", async (props: Partial<UpdateStudentRequest>, api) => {
+        const res = await apiClient.put<CustomResponse<{ student: StudentResponse }>>(apiRoutes.PUT_UPDATE_STUDENT, props);
         return processRes(res, api);
     });
 
-    public static getFilteredStudentClassesForDailyTimetable = createAsyncThunk(
+    public static getFilteredStudentClassesForDailyTimetable = createApiThunk(
         "studentSlice/getFilteredStudentClassesForDailyTimetable",
         async (props: { dateUnixTimestamp: string; classRoom: Classroom; filter: FilterToGetClassesForDailyTimetable }, api) => {
             const res = await apiClient.post<CustomResponse<{ classes: TimetableClass[] }>>(apiRoutes.POST_GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE, props);
             return processRes(res, api);
         }
     );
-    public static getStudentClassesForDailyTimetable = createAsyncThunk(
+    public static getStudentClassesForDailyTimetable = createApiThunk(
         "studentSlice/getStudentClassesForDailyTimetable",
         async (props: { dateUnixTimestamp: string; classRoom: Classroom }, api) => {
             const res = await apiClient.get<CustomResponse<{ classes: TimetableClass[] }>>(
@@ -433,43 +434,43 @@ export class StudentThunkAction {
             return processRes(res, api);
         }
     );
-    public static deleteClass = createAsyncThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
+    public static deleteClass = createApiThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
         const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.classId));
         return processRes(res, api);
     });
-    public static duplicateClases = createAsyncThunk("studentSlice/duplicateClases", async (props: DuplicateClassRequest, api) => {
+    public static duplicateClases = createApiThunk("studentSlice/duplicateClases", async (props: DuplicateClassRequest, api) => {
         const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_DUPLICATE_CLASSES, props);
         return processRes(res, api);
     });
 
-    public static detachFromGroup = createAsyncThunk("studentSlice/detachFromGroup", async (props: DetachClassRequest, api) => {
+    public static detachFromGroup = createApiThunk("studentSlice/detachFromGroup", async (props: DetachClassRequest, api) => {
         const res = await apiClient.put<CustomResponse<{ hour_unix_timestamp: number }>>(apiRoutes.PUT_DETACH_CLASS_FROM_GROUP, props);
         return processRes(res, api);
     });
-    public static updateClass = createAsyncThunk("studentSlice/updateClass", async (props: UpdateClassRequest, api) => {
+    public static updateClass = createApiThunk("studentSlice/updateClass", async (props: UpdateClassRequest, api) => {
         const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_UPDATE_CLASS, props);
         return processRes(res, api);
     });
 
-    public static createStudentPackage = createAsyncThunk("studentSlice/createStudentPackage", async (props: CreateStudentPackageRequest, api) => {
+    public static createStudentPackage = createApiThunk("studentSlice/createStudentPackage", async (props: CreateStudentPackageRequest, api) => {
         const res = await apiClient.post<CustomResponse<Student_package>>(apiRoutes.POST_CREATE_STUDENT_PACKAGE, props);
         return processRes(res, api);
     });
-    public static getStudentPackages = createAsyncThunk("studentSlice/getStudentPackages", async (props: { studentId: string }, api) => {
+    public static getStudentPackages = createApiThunk("studentSlice/getStudentPackages", async (props: { studentId: string }, api) => {
         const { studentId } = props;
         const res = await apiClient.get<CustomResponse<{ packages: Augmented_Student_package[] }>>(apiRoutes.GET_STUDENT_PACKAGES(studentId));
         return processRes(res, api);
     });
-    public static markPackageAsPaid = createAsyncThunk("studentSlice/markPackageAsPaid", async (props: { packageId: number; paidAt: number }, api) => {
+    public static markPackageAsPaid = createApiThunk("studentSlice/markPackageAsPaid", async (props: { packageId: number; paidAt: number }, api) => {
         const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_MARK_PACAKGE_AS_PAID, props);
         return processRes(res, api);
     });
-    public static markPackageAsUnPaid = createAsyncThunk("studentSlice/markPackageAsUnPaid", async (props: { packageId: number }, api) => {
+    public static markPackageAsUnPaid = createApiThunk("studentSlice/markPackageAsUnPaid", async (props: { packageId: number }, api) => {
         const { packageId } = props;
         const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_MARK_PACAKGE_AS_UNPAID, { packageId });
         return processRes(res, api);
     });
-    public static deletePackage = createAsyncThunk(
+    public static deletePackage = createApiThunk(
         "studentSlice/deletePackage",
         async (
             props: {

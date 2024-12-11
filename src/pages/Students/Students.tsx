@@ -32,27 +32,27 @@ export default () => {
     const filteredIds = ids.filter((id) => {
         const student = idToStudent?.[id];
         const {
-            student_code = "",
-            chinese_first_name = "",
-            chinese_last_name = "",
-            first_name = "",
-            last_name = "",
-            parent_email = "",
-            school_name = "",
-            phone_number = "",
+            studentCode = "",
+            chineseFirstName = "",
+            chineseLastName = "",
+            firstName = "",
+            lastName = "",
+            parentEmail = "",
+            schoolName = "",
+            phoneNumber = "",
         } = student || {};
 
         const sum = [
-            student_code,
-            chinese_first_name,
-            chinese_last_name,
-            `${chinese_last_name} ${chinese_first_name}`,
-            `${first_name} ${last_name}`,
-            first_name,
-            last_name,
-            parent_email,
-            phone_number,
-            school_name,
+            studentCode,
+            chineseFirstName,
+            chineseLastName,
+            `${chineseLastName} ${chineseFirstName}`,
+            `${firstName} ${lastName}`,
+            firstName,
+            lastName,
+            parentEmail,
+            phoneNumber,
+            schoolName,
         ].reduce((acc, curr) => {
             const sum = acc + Number(filterRegex.test(curr));
             return sum;
@@ -74,11 +74,11 @@ export default () => {
                     const student = idToStudent?.[id];
                     const searchDisplay = (() => {
                         let result = "";
-                        if (student?.first_name) {
-                            result += student.first_name;
+                        if (student?.firstName) {
+                            result += student.firstName;
                         }
-                        if (student?.last_name) {
-                            result += " " + student.last_name;
+                        if (student?.lastName) {
+                            result += " " + student.lastName;
                         }
                         return result;
                     })();

@@ -13,7 +13,7 @@ export default {
 
     GET_PACKAGE_CLASS_STATUS: (pkgUUID: string) => `/public/student-class-status/${pkgUUID}`,
     GET_USERS: "/user/users",
-    GET_STUDENTS: "/student/students",
+    GET_STUDENTS: "/students",
     GET_COURSES: "/course/courses",
     GET_STUDENT_DETAIL: (studentId: string) => `/student/student-detail/${studentId}`,
     GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE: (studentId: string) => `/student/student-classes-for-weekly-timteable/${studentId}`,

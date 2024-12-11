@@ -27,54 +27,38 @@ export default (
     }[]
 ) => {
     for (const actionMessage of actionMessageList) {
-        const { action, rejections, content, effect } = actionMessage;
+        const { action, rejections, effect } = actionMessage;
 
         if (action) {
-            let effect_: Effect;
             if (effect) {
-                effect_ = effect;
-            } else if (content) {
-                effect_ = async (_, { dispatch: __ }) => {
-                    // dispatch(appSlice.actions.updateNotification(
-                    //     { open: true, content: content || "No Message" }
-                    // ))
-                };
-            } else {
-                effect_ = async (_, __) => { };
+                middleware.startListening({ actionCreator: action, effect });
             }
-
-            middleware.startListening({ actionCreator: action, effect: effect_ });
-
         } else if (rejections) {
-            if (effect) {
+            middleware.startListening({
                 // @ts-ignore
-                middleware.startListening({ matcher: isAnyOf(...rejections), effect });
-            } else {
-                middleware.startListening({
-                    // @ts-ignore
-                    matcher: isAnyOf(...rejections),
-                    effect: async (action, { dispatch: _ }) => {
-                        const msg = action?.payload as string;
-                        let errMsg = "Failed";
-                        if (msg) {
-                            errMsg = msg;
-                            toast.error(
-                                errMsg,
-                                {
-                                    toastId: errMsg,
-                                    position: "top-center",
-                                    autoClose: 5000,
-                                    hideProgressBar: false,
-                                    closeOnClick: true,
-                                    pauseOnHover: true,
-                                    draggable: true,
-                                    progress: undefined,
-                                    theme: "colored",
-                                })
-                        }
+                matcher: isAnyOf(...rejections),
+                effect: async (action, { dispatch: _ }) => {
+                    console.log("actionactionactionaction", action)
+                    const msg = action?.payload as string;
+                    let errMsg = "Failed";
+                    if (msg) {
+                        errMsg = msg;
+                        toast.error(
+                            errMsg,
+                            {
+                                toastId: errMsg,
+                                position: "top-center",
+                                autoClose: 5000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "colored",
+                            })
                     }
-                })
-            }
+                }
+            })
 
         }
     }

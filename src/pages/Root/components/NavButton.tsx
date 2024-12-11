@@ -12,7 +12,7 @@ export default (props: { activeNavigationRegex: RegExp; title: string; routeEnum
 
     return (
         <>
-            <Label label="NavButton.tsx" offsetLeft={-40} offsetTop={-10} />
+            <Label label="NavButton.tsx" offsetLeft={10} offsetTop={-10} />
             <Button
                 block
                 type={active ? "primary" : "default"}
