@@ -4,7 +4,7 @@ export default {
     POST_REFRESH_TOKEN: "/auth/refresh-token",
     POST_LOGIN: "/auth/login",
     POST_CREATE_USER: "/user/create-user",
-    POST_CREATE_STUDNET: "/student/create-student",
+    POST_CREATE_STUDNET: "/students",
     POST_CREATE_COURSE: "/course/create-course",
     POST_CREATE_STUDENT_CLASS: "/student/create-student-class",
     POST_DUPLICATE_CLASSES: "/student/duplicate-classes",

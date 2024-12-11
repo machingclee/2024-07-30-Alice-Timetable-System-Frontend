@@ -652,15 +652,15 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@mui/base@^5.0.0-beta.61":
-  version "5.0.0-beta.61"
-  resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-beta.61.tgz#729e816b5104da1eeeacb11d1e61be90f2c21dcc"
-  integrity sha512-YaMOTXS3ecDNGsPKa6UdlJ8loFLvcL9+VbpCK3hfk71OaNauZRp4Yf7KeXDYr7Ms3M/XBD3SaiR6JMr6vYtfDg==
+"@mui/base@^5.0.0-beta.66":
+  version "5.0.0-beta.66"
+  resolved "https://registry.yarnpkg.com/@mui/base/-/base-5.0.0-beta.66.tgz#b40151caf47c221c32852c3970f659f23e4a8aee"
+  integrity sha512-1SzcNbtIms0o/Dx+599B6QbvR5qUMBUjwc2Gs47h1HsF7RcEFXxqaq7zrWkIWbvGctIIPx0j330oGx/SkF+UmA==
   dependencies:
     "@babel/runtime" "^7.26.0"
     "@floating-ui/react-dom" "^2.1.1"
     "@mui/types" "^7.2.19"
-    "@mui/utils" "^6.1.6"
+    "@mui/utils" "^6.2.0"
     "@popperjs/core" "^2.11.8"
     clsx "^2.1.1"
     prop-types "^15.8.1"
@@ -744,17 +744,17 @@
     prop-types "^15.8.1"
     react-is "^18.3.1"
 
-"@mui/utils@^6.1.6":
-  version "6.1.7"
-  resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-6.1.7.tgz#0959d9772ae13c6ceac984a493e06aebb9087e71"
-  integrity sha512-Gr7cRZxBoZ0BIa3Xqf/2YaUrBLyNPJvXPQH3OsD9WMZukI/TutibbQBVqLYpgqJn8pKSjbD50Yq2auG0wI1xOw==
+"@mui/utils@^6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@mui/utils/-/utils-6.2.0.tgz#a39f0a2837048a42114169d298ce970913097203"
+  integrity sha512-77CaFJi+OIi2SjbPwCis8z5DXvE0dfx9hBz5FguZHt1VYFlWEPCWTHcMsQCahSErnfik5ebLsYK8+D+nsjGVfw==
   dependencies:
     "@babel/runtime" "^7.26.0"
     "@mui/types" "^7.2.19"
-    "@types/prop-types" "^15.7.13"
+    "@types/prop-types" "^15.7.14"
     clsx "^2.1.1"
     prop-types "^15.8.1"
-    react-is "^18.3.1"
+    react-is "^19.0.0"
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -1036,6 +1036,11 @@
   version "15.7.13"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.13.tgz#2af91918ee12d9d32914feb13f5326658461b451"
   integrity sha512-hCZTSvwbzWGvhqxp/RqVqwU999pBf2vp7hzIjiYOsl8wqOmUxkQ6ddw1cV3l8811+kdUFus/q4d1Y3E3SyEifA==
+
+"@types/prop-types@^15.7.14":
+  version "15.7.14"
+  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.14.tgz#1433419d73b2a7ebfc6918dcefd2ec0d5cd698f2"
+  integrity sha512-gNMvNH49DJ7OJYv+KAKn0Xp45p8PLl6zo2YnvDIbTd4J6MER2BmWN49TG7n9LvkyihINxeKW8+3bfS2yDC9dzQ==
 
 "@types/react-beautiful-dnd@^13.1.8":
   version "13.1.8"
@@ -2708,6 +2713,11 @@ react-is@^18.0.0, react-is@^18.2.0, react-is@^18.3.1:
   version "18.3.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-18.3.1.tgz#e83557dc12eae63a99e003a46388b1dcbb44db7e"
   integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
+
+react-is@^19.0.0:
+  version "19.0.0"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-19.0.0.tgz#d6669fd389ff022a9684f708cf6fa4962d1fea7a"
+  integrity sha512-H91OHcwjZsbq3ClIDHMzBShc1rotbfACdWENsmEf0IFvZ3FgGPtdHMcsv45bQ1hAbgdfiA8SnxTKfDS+x/8m2g==
 
 react-redux@8.1.2:
   version "8.1.2"
