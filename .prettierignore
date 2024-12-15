@@ -1,1 +1,2 @@
 **/pages/Competitions/**
+src/redux/slices/competitionSlice.ts
