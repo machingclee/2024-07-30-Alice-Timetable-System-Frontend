@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export type AppSliceState = {
     loading: boolean;
@@ -10,19 +10,19 @@ export type AppSliceState = {
     rightColumnCollapsed: boolean;
 };
 
-type TimetableAction = "Create Class" | "Move Class" | "Resize Class" | null;
+type TimetableAction = 'Create Class' | 'Move Class' | 'Resize Class' | null;
 
 const initialState: AppSliceState = {
     loading: false,
     activePath: null,
     timetableAction: null,
-    createClassPopperFromHourTimestampOnShow: "",
+    createClassPopperFromHourTimestampOnShow: '',
     leftNavigatorCollapsed: false,
     rightColumnCollapsed: false,
 };
 
 const appSlice = createSlice({
-    name: "app",
+    name: 'app',
     initialState,
     reducers: {
         setRightColumnCollapsed: (state, action: PayloadAction<boolean>) => {

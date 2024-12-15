@@ -1,9 +1,9 @@
-import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import registerDialogAndActions from "../../utils/registerEffects";
-import apiClient from "../../axios/apiClient";
-import { CustomResponse } from "../../axios/responseTypes";
-import apiRoutes from "../../axios/apiRoutes";
-import { processRes } from "../../utils/processRes";
+import { createListenerMiddleware, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import registerDialogAndActions from '../../utils/registerEffects';
+import apiClient from '../../axios/apiClient';
+import { CustomResponse } from '../../axios/responseTypes';
+import apiRoutes from '../../axios/apiRoutes';
+import { processRes } from '../../utils/processRes';
 import {
     CreateClassRequest,
     MoveClassRequest,
@@ -19,14 +19,14 @@ import {
     FilterToGetClassesForDailyTimetable,
     TimetableClass,
     StudentResponse,
-} from "../../dto/dto";
-import normalizeUtil from "../../utils/normalizeUtil";
-import { loadingActions } from "../../utils/loadingActions";
-import { RootState } from "../store";
-import lodash from "lodash";
-import { Classroom, Student_package } from "../../prismaTypes/types";
-import MoveClassStatus from "../../enum/MoveClassStatus";
-import { createApiThunk } from "../../utils/createApiThunk";
+} from '../../dto/dto';
+import normalizeUtil from '../../utils/normalizeUtil';
+import { loadingActions } from '../../utils/loadingActions';
+import { RootState } from '../store';
+import lodash from 'lodash';
+import { Classroom, Student_package } from '../../prismaTypes/types';
+import MoveClassStatus from '../../enum/MoveClassStatus';
+import { createApiThunk } from '../../utils/createApiThunk';
 
 export type StudentSliceState = {
     students: {
@@ -44,9 +44,11 @@ export type StudentSliceState = {
             idToPackage?: { [id: string]: Augmented_Student_package };
         };
         weeklyTimetable: {
-            selectedDate: Date;
+            selectedDate: Date; // we will list the timetables of the week containing this date (timestamp)
             hrUnixTimestamps?: string[];
-            hrUnixTimestampToClass?: { [id: string]: TimetableClass & { hide: boolean } };
+            hrUnixTimestampToClass?: {
+                [id: string]: TimetableClass & { hide: boolean };
+            };
         };
     };
     massTimetablePage: {
@@ -74,7 +76,7 @@ export type StudentSliceState = {
 const initialState: StudentSliceState = {
     students: {},
     studentDetailTimetablePage: {
-        selectedPackageId: "",
+        selectedPackageId: '',
         packages: {},
         detail: null,
         weeklyTimetable: {
@@ -115,7 +117,7 @@ const initialState: StudentSliceState = {
 };
 
 const studentSlice = createSlice({
-    name: "student",
+    name: 'student',
     initialState,
     reducers: {
         setNumberOfClassesInHighlight: (state, action: PayloadAction<number>) => {
@@ -135,12 +137,12 @@ const studentSlice = createSlice({
         },
         dropCourseFilterItem: (state, action: PayloadAction<number>) => {
             const newArray: number[] = [];
-            state.massTimetablePage.filter.courseIds.forEach((id) => {
+            state.massTimetablePage.filter.courseIds.forEach(id => {
                 if (id !== action.payload) {
                     newArray.push(id);
                 }
             });
-            console.log("newArray:", newArray);
+            console.log('newArray:', newArray);
             state.massTimetablePage.filter.courseIds = newArray;
         },
         setClassroom: (state, action: PayloadAction<Classroom>) => {
@@ -150,8 +152,11 @@ const studentSlice = createSlice({
             const packageId = action.payload;
             state.studentDetailTimetablePage.selectedPackageId = packageId;
             const availableFirstDate = state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestamps
-                ?.filter((timestamp) => {
-                    return state.studentDetailTimetablePage.weeklyTimetable?.hrUnixTimestampToClass?.[timestamp].student_package_id == Number(packageId);
+                ?.filter(timestamp => {
+                    return (
+                        state.studentDetailTimetablePage.weeklyTimetable?.hrUnixTimestampToClass?.[timestamp]
+                            .student_package_id == Number(packageId)
+                    );
                 })
                 .sort((a, b) => Number(a) - Number(b))
                 .slice(0, 1)?.[0];
@@ -187,7 +192,7 @@ const studentSlice = createSlice({
                 state.students.idToStudent[student.id] = student;
             }
         },
-        resetStudentDetail: (state) => {
+        resetStudentDetail: state => {
             state.studentDetailTimetablePage = initialState.studentDetailTimetablePage;
         },
         reset: () => {
@@ -197,11 +202,14 @@ const studentSlice = createSlice({
             state.studentDetailTimetablePage.showAllClassesForOneStudent = action.payload;
         },
     },
-    extraReducers: (builder) => {
+    extraReducers: builder => {
         builder
             .addCase(StudentThunkAction.getStudents.fulfilled, (state, action) => {
                 const students = action.payload.students;
-                const { idToObject, ids } = normalizeUtil.normalize({ idAttribute: "id", targetArr: students });
+                const { idToObject, ids } = normalizeUtil.normalize({
+                    idAttribute: 'id',
+                    targetArr: students,
+                });
                 state.students.ids = ids;
                 state.students.idToStudent = idToObject;
             })
@@ -217,35 +225,54 @@ const studentSlice = createSlice({
             })
             .addCase(StudentThunkAction.moveStudentEvent.fulfilled, (state, action) => {
                 if (action.payload?.type === MoveClassStatus.PROCEED) {
-                    console.log("now proceed");
+                    console.log('now proceed');
                     const { result, newOfficialEndDate, packageIdToChangeOfficialEndDate } = action.payload;
                     const { event: classEvent } = result || {};
-                    const hour_unix_timestamp = classEvent?.hour_unix_timestamp || "";
+                    const hour_unix_timestamp = classEvent?.hour_unix_timestamp || '';
 
-                    if (newOfficialEndDate && packageIdToChangeOfficialEndDate && state.studentDetailTimetablePage.packages.idToPackage) {
-                        state.studentDetailTimetablePage.packages.idToPackage[packageIdToChangeOfficialEndDate].official_end_date = newOfficialEndDate;
+                    if (
+                        newOfficialEndDate &&
+                        packageIdToChangeOfficialEndDate &&
+                        state.studentDetailTimetablePage.packages.idToPackage
+                    ) {
+                        state.studentDetailTimetablePage.packages.idToPackage[
+                            packageIdToChangeOfficialEndDate
+                        ].official_end_date = newOfficialEndDate;
                     }
                     if (state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClass) {
-                        lodash.setWith(state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClass, hour_unix_timestamp, classEvent);
+                        lodash.setWith(
+                            state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClass,
+                            hour_unix_timestamp,
+                            classEvent
+                        );
                     }
                 }
             })
             .addCase(StudentThunkAction.detachFromGroup.fulfilled, (state, action) => {
                 const hourTimeStamp = action.payload.hour_unix_timestamp;
                 if (state.studentDetailTimetablePage?.weeklyTimetable.hrUnixTimestampToClass?.[String(hourTimeStamp)]) {
-                    state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClass[String(hourTimeStamp)].class_group_id = null;
+                    state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClass[
+                        String(hourTimeStamp)
+                    ].class_group_id = null;
                 }
             })
             .addCase(StudentThunkAction.getStudentPackages.fulfilled, (state, action) => {
                 const packages = action.payload.packages;
-                const { idToObject, ids } = normalizeUtil.normalize({ idAttribute: "id", targetArr: packages });
-                state.studentDetailTimetablePage.packages.ids = ids.sort((id1, id2) => idToObject[id1].start_date - idToObject[id2].start_date);
+                const { idToObject, ids } = normalizeUtil.normalize({
+                    idAttribute: 'id',
+                    targetArr: packages,
+                });
+                state.studentDetailTimetablePage.packages.ids = ids.sort(
+                    (id1, id2) => idToObject[id1].start_date - idToObject[id2].start_date
+                );
                 state.studentDetailTimetablePage.packages.idToPackage = idToObject;
             })
             .addCase(StudentThunkAction.getFilteredStudentClassesForDailyTimetable.fulfilled, (state, action) => {
                 const classes = action.payload.classes;
                 state.massTimetablePage.hrUnixTimestampToClasses = {};
-                const hrTimestampToClasses: { [key: string]: TimetableClass[] } = {};
+                const hrTimestampToClasses: {
+                    [key: string]: TimetableClass[];
+                } = {};
                 let presentClasses = 0;
                 let suspiciousAbsenceClasses = 0;
                 let illegitAbsenceClasses = 0;
@@ -265,40 +292,45 @@ const studentSlice = createSlice({
                 }
                 Object.entries(hrTimestampToClasses).forEach(([hrTimestamp, classes]) => {
                     const existingClasses = state.massTimetablePage.hrUnixTimestampToClasses?.[hrTimestamp] || [];
-                    const existingIds = existingClasses.map((class_) => class_.id);
+                    const existingIds = existingClasses.map(class_ => class_.id);
 
                     for (const class_ of classes) {
                         if (!existingIds.includes(class_.id)) {
                             existingClasses.push(class_);
                         }
                         switch (class_.class_status) {
-                            case "PRESENT":
+                            case 'PRESENT':
                                 presentClasses++;
                                 break;
-                            case "RESERVED":
+                            case 'RESERVED':
                                 reservedClasses++;
                                 break;
-                            case "SUSPICIOUS_ABSENCE":
+                            case 'SUSPICIOUS_ABSENCE':
                                 suspiciousAbsenceClasses++;
                                 break;
-                            case "ILLEGIT_ABSENCE":
+                            case 'ILLEGIT_ABSENCE':
                                 illegitAbsenceClasses++;
                                 break;
-                            case "LEGIT_ABSENCE":
+                            case 'LEGIT_ABSENCE':
                                 legitAbsenceClasses++;
                                 break;
-                            case "MAKEUP":
+                            case 'MAKEUP':
                                 makeupClasses++;
                                 break;
-                            case "TRIAL":
+                            case 'TRIAL':
                                 trialClasses++;
                                 break;
-                            case "CHANGE_OF_CLASSROOM":
+                            case 'CHANGE_OF_CLASSROOM':
                                 changeOfClassroomClasses++;
                                 break;
                         }
                     }
-                    lodash.setWith(state.massTimetablePage.hrUnixTimestampToClasses, `["${hrTimestamp}"]`, existingClasses, Object);
+                    lodash.setWith(
+                        state.massTimetablePage.hrUnixTimestampToClasses,
+                        `["${hrTimestamp}"]`,
+                        existingClasses,
+                        Object
+                    );
                 });
                 state.massTimetablePage.summaryOfClassStatuses = {
                     present: presentClasses,
@@ -313,7 +345,9 @@ const studentSlice = createSlice({
             })
             .addCase(StudentThunkAction.getStudentClassesForDailyTimetable.fulfilled, (state, action) => {
                 const classes = action.payload.classes;
-                const hrTimestampToClasses: { [key: string]: TimetableClass[] } = {};
+                const hrTimestampToClasses: {
+                    [key: string]: TimetableClass[];
+                } = {};
                 for (const class_ of classes) {
                     const timestamp = class_.hour_unix_timestamp.toString();
                     const classesForNow = hrTimestampToClasses?.[timestamp];
@@ -325,18 +359,29 @@ const studentSlice = createSlice({
                 }
                 Object.entries(hrTimestampToClasses).forEach(([hrTimestamp, classes]) => {
                     const existingClasses = state.massTimetablePage.hrUnixTimestampToClasses?.[hrTimestamp] || [];
-                    const existingIds = existingClasses.map((class_) => class_.id);
+                    const existingIds = existingClasses.map(class_ => class_.id);
                     for (const class_ of classes) {
                         if (!existingIds.includes(class_.id)) {
                             existingClasses.push(class_);
                         }
                     }
-                    lodash.setWith(state.massTimetablePage.hrUnixTimestampToClasses, `["${hrTimestamp}"]`, existingClasses, Object);
+                    lodash.setWith(
+                        state.massTimetablePage.hrUnixTimestampToClasses,
+                        `["${hrTimestamp}"]`,
+                        existingClasses,
+                        Object
+                    );
                 });
             })
             .addCase(StudentThunkAction.getStudentClassesForWeeklyTimetable.fulfilled, (state, action) => {
-                const classes = action.payload.classes.map((clz) => ({ ...clz, hide: false }));
-                const { ids, idToObject } = normalizeUtil.normalize({ idAttribute: "hour_unix_timestamp", targetArr: classes });
+                const classes = action.payload.classes.map(clz => ({
+                    ...clz,
+                    hide: false,
+                }));
+                const { ids, idToObject } = normalizeUtil.normalize({
+                    idAttribute: 'hour_unix_timestamp',
+                    targetArr: classes,
+                });
                 state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestamps = ids;
                 state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClass = idToObject;
             });
@@ -344,47 +389,80 @@ const studentSlice = createSlice({
 });
 
 export class StudentThunkAction {
-    public static getStudents = createApiThunk("studentSlice/getStudents", async (_: undefined, api) => {
-        const res = await apiClient.get<CustomResponse<{ students: StudentResponse[], total: number }>>(apiRoutes.GET_STUDENTS);
+    public static getStudents = createApiThunk('studentSlice/getStudents', async (_: undefined, api) => {
+        const res = await apiClient.get<CustomResponse<{ students: StudentResponse[]; total: number }>>(
+            apiRoutes.GET_STUDENTS
+        );
         return processRes(res, api);
     });
-    public static updatePackage = createApiThunk("studentSlice/updatePackage", async (props: UpdateStudentPackageRequest, api) => {
-        const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_UPDATE_PACKAGE, props);
-        return processRes(res, api);
-    });
-    public static createUser = createApiThunk("studentSlice/createStudent", async (props: CreateStudentRequest, api) => {
-        const res = await apiClient.post<CustomResponse<StudentResponse>>(apiRoutes.POST_CREATE_STUDNET, props);
-        return processRes(res, api);
-    });
+    public static updatePackage = createApiThunk(
+        'studentSlice/updatePackage',
+        async (props: UpdateStudentPackageRequest, api) => {
+            const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_UPDATE_PACKAGE, props);
+            return processRes(res, api);
+        }
+    );
+    public static createUser = createApiThunk(
+        'studentSlice/createStudent',
+        async (props: CreateStudentRequest, api) => {
+            const res = await apiClient.post<CustomResponse<StudentResponse>>(apiRoutes.POST_CREATE_STUDNET, props);
+            return processRes(res, api);
+        }
+    );
 
-    public static getStudentClassesForWeeklyTimetable = createApiThunk("studentSlice/getStudentClassesForWeeklyTimetable", async (props: { studentId: string }, api) => {
-        const { studentId } = props;
-        const res = await apiClient.get<CustomResponse<{ classes: TimetableClass[] }>>(apiRoutes.GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE(studentId));
-        return processRes(res, api);
-    });
-    public static getStudentDetail = createApiThunk("studentSlice/getStudentDetail", async (props: { studentId: string }, api) => {
-        const { studentId } = props;
-        const res = await apiClient.get<CustomResponse<StudentResponse>>(apiRoutes.GET_STUDENT_DETAIL(studentId));
-        return processRes(res, api);
-    });
-    public static createStudentEvent = createApiThunk("studentSlice/createStudentEvent", async (props: CreateClassRequest, api) => {
-        const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_STUDENT_CLASS, props);
-        return processRes(res, api);
-    });
+    public static getStudentClassesForWeeklyTimetable = createApiThunk(
+        'studentSlice/getStudentClassesForWeeklyTimetable',
+        async (props: { studentId: string }, api) => {
+            const { studentId } = props;
+            const res = await apiClient.get<CustomResponse<{ classes: TimetableClass[] }>>(
+                apiRoutes.GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE(studentId)
+            );
+            return processRes(res, api);
+        }
+    );
+    public static getStudentDetail = createApiThunk(
+        'studentSlice/getStudentDetail',
+        async (props: { studentId: string }, api) => {
+            const { studentId } = props;
+            const res = await apiClient.get<CustomResponse<StudentResponse>>(apiRoutes.GET_STUDENT_DETAIL(studentId));
+            return processRes(res, api);
+        }
+    );
+    public static createStudentEvent = createApiThunk(
+        'studentSlice/createStudentEvent',
+        async (props: CreateClassRequest, api) => {
+            const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_STUDENT_CLASS, props);
+            return processRes(res, api);
+        }
+    );
     public static moveStudentEvent = createApiThunk(
-        "studentSlice/moveStudentEvent",
-        async (props: { fromHourTimestamp: string; toDayTimestamp: string; toHourTimestamp: string }, api) => {
+        'studentSlice/moveStudentEvent',
+        async (
+            props: {
+                fromHourTimestamp: string;
+                toDayTimestamp: string;
+                toHourTimestamp: string;
+            },
+            api
+        ) => {
             const { fromHourTimestamp: fromTimestamp, toDayTimestamp, toHourTimestamp } = props;
-            const existingRecord = (api.getState() as RootState).student.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClass?.[toHourTimestamp];
-            const currStudentId = (api.getState() as RootState).student.studentDetailTimetablePage.detail?.id || "";
+            const existingRecord = (api.getState() as RootState).student.studentDetailTimetablePage.weeklyTimetable
+                .hrUnixTimestampToClass?.[toHourTimestamp];
+            const currStudentId = (api.getState() as RootState).student.studentDetailTimetablePage.detail?.id || '';
             if (existingRecord) {
-                return { type: "skipped" };
+                return { type: 'skipped' };
             }
-            const classEvent = lodash.cloneDeep((api.getState() as RootState).student?.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClass?.[fromTimestamp])!;
+            const classEvent = lodash.cloneDeep(
+                (api.getState() as RootState).student?.studentDetailTimetablePage.weeklyTimetable
+                    .hrUnixTimestampToClass?.[fromTimestamp]
+            )!;
             classEvent.day_unix_timestamp = Number(toDayTimestamp);
             classEvent.hour_unix_timestamp = Number(toHourTimestamp);
 
-            api.dispatch({ type: "student/unsetStudentEvent", payload: { hrTimestamp: fromTimestamp } });
+            api.dispatch({
+                type: 'student/unsetStudentEvent',
+                payload: { hrTimestamp: fromTimestamp },
+            });
 
             const eventId = classEvent.id;
             const requestBody: MoveClassRequest = {
@@ -405,28 +483,58 @@ export class StudentThunkAction {
                 }>
             >(apiRoutes.PUT_MOVE_STUDNET_CLASS, requestBody);
             if (!res.data.success) {
-                api.dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: currStudentId }));
-                return { type: MoveClassStatus.PROCEED, fromTimestamp, result: { event: classEvent } };
+                api.dispatch(
+                    StudentThunkAction.getStudentClassesForWeeklyTimetable({
+                        studentId: currStudentId,
+                    })
+                );
+                return {
+                    type: MoveClassStatus.PROCEED,
+                    fromTimestamp,
+                    result: { event: classEvent },
+                };
             } else {
                 const { packageIdToChangeOfficialEndDate, newOfficialEndDate } = res.data.result;
-                return { type: MoveClassStatus.PROCEED, fromTimestamp, result: { event: classEvent }, packageIdToChangeOfficialEndDate, newOfficialEndDate };
+                return {
+                    type: MoveClassStatus.PROCEED,
+                    fromTimestamp,
+                    result: { event: classEvent },
+                    packageIdToChangeOfficialEndDate,
+                    newOfficialEndDate,
+                };
             }
         }
     );
-    public static updateStudent = createApiThunk("studentSlice/updateStudent", async (props: Partial<UpdateStudentRequest>, api) => {
-        const res = await apiClient.put<CustomResponse<{ student: StudentResponse }>>(apiRoutes.PUT_UPDATE_STUDENT, props);
-        return processRes(res, api);
-    });
+    public static updateStudent = createApiThunk(
+        'studentSlice/updateStudent',
+        async (props: Partial<UpdateStudentRequest>, api) => {
+            const res = await apiClient.put<CustomResponse<{ student: StudentResponse }>>(
+                apiRoutes.PUT_UPDATE_STUDENT,
+                props
+            );
+            return processRes(res, api);
+        }
+    );
 
     public static getFilteredStudentClassesForDailyTimetable = createApiThunk(
-        "studentSlice/getFilteredStudentClassesForDailyTimetable",
-        async (props: { dateUnixTimestamp: string; classRoom: Classroom; filter: FilterToGetClassesForDailyTimetable }, api) => {
-            const res = await apiClient.post<CustomResponse<{ classes: TimetableClass[] }>>(apiRoutes.POST_GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE, props);
+        'studentSlice/getFilteredStudentClassesForDailyTimetable',
+        async (
+            props: {
+                dateUnixTimestamp: string;
+                classRoom: Classroom;
+                filter: FilterToGetClassesForDailyTimetable;
+            },
+            api
+        ) => {
+            const res = await apiClient.post<CustomResponse<{ classes: TimetableClass[] }>>(
+                apiRoutes.POST_GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE,
+                props
+            );
             return processRes(res, api);
         }
     );
     public static getStudentClassesForDailyTimetable = createApiThunk(
-        "studentSlice/getStudentClassesForDailyTimetable",
+        'studentSlice/getStudentClassesForDailyTimetable',
         async (props: { dateUnixTimestamp: string; classRoom: Classroom }, api) => {
             const res = await apiClient.get<CustomResponse<{ classes: TimetableClass[] }>>(
                 apiRoutes.GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE(props.dateUnixTimestamp, props.classRoom)
@@ -434,44 +542,72 @@ export class StudentThunkAction {
             return processRes(res, api);
         }
     );
-    public static deleteClass = createApiThunk("studentSlice/deleteClass", async (props: DeleteClassRequest, api) => {
+    public static deleteClass = createApiThunk('studentSlice/deleteClass', async (props: DeleteClassRequest, api) => {
         const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.classId));
         return processRes(res, api);
     });
-    public static duplicateClases = createApiThunk("studentSlice/duplicateClases", async (props: DuplicateClassRequest, api) => {
-        const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_DUPLICATE_CLASSES, props);
-        return processRes(res, api);
-    });
+    public static duplicateClases = createApiThunk(
+        'studentSlice/duplicateClases',
+        async (props: DuplicateClassRequest, api) => {
+            const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_DUPLICATE_CLASSES, props);
+            return processRes(res, api);
+        }
+    );
 
-    public static detachFromGroup = createApiThunk("studentSlice/detachFromGroup", async (props: DetachClassRequest, api) => {
-        const res = await apiClient.put<CustomResponse<{ hour_unix_timestamp: number }>>(apiRoutes.PUT_DETACH_CLASS_FROM_GROUP, props);
-        return processRes(res, api);
-    });
-    public static updateClass = createApiThunk("studentSlice/updateClass", async (props: UpdateClassRequest, api) => {
+    public static detachFromGroup = createApiThunk(
+        'studentSlice/detachFromGroup',
+        async (props: DetachClassRequest, api) => {
+            const res = await apiClient.put<CustomResponse<{ hour_unix_timestamp: number }>>(
+                apiRoutes.PUT_DETACH_CLASS_FROM_GROUP,
+                props
+            );
+            return processRes(res, api);
+        }
+    );
+    public static updateClass = createApiThunk('studentSlice/updateClass', async (props: UpdateClassRequest, api) => {
         const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_UPDATE_CLASS, props);
         return processRes(res, api);
     });
 
-    public static createStudentPackage = createApiThunk("studentSlice/createStudentPackage", async (props: CreateStudentPackageRequest, api) => {
-        const res = await apiClient.post<CustomResponse<Student_package>>(apiRoutes.POST_CREATE_STUDENT_PACKAGE, props);
-        return processRes(res, api);
-    });
-    public static getStudentPackages = createApiThunk("studentSlice/getStudentPackages", async (props: { studentId: string }, api) => {
-        const { studentId } = props;
-        const res = await apiClient.get<CustomResponse<{ packages: Augmented_Student_package[] }>>(apiRoutes.GET_STUDENT_PACKAGES(studentId));
-        return processRes(res, api);
-    });
-    public static markPackageAsPaid = createApiThunk("studentSlice/markPackageAsPaid", async (props: { packageId: number; paidAt: number }, api) => {
-        const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_MARK_PACAKGE_AS_PAID, props);
-        return processRes(res, api);
-    });
-    public static markPackageAsUnPaid = createApiThunk("studentSlice/markPackageAsUnPaid", async (props: { packageId: number }, api) => {
-        const { packageId } = props;
-        const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_MARK_PACAKGE_AS_UNPAID, { packageId });
-        return processRes(res, api);
-    });
+    public static createStudentPackage = createApiThunk(
+        'studentSlice/createStudentPackage',
+        async (props: CreateStudentPackageRequest, api) => {
+            const res = await apiClient.post<CustomResponse<Student_package>>(
+                apiRoutes.POST_CREATE_STUDENT_PACKAGE,
+                props
+            );
+            return processRes(res, api);
+        }
+    );
+    public static getStudentPackages = createApiThunk(
+        'studentSlice/getStudentPackages',
+        async (props: { studentId: string }, api) => {
+            const { studentId } = props;
+            const res = await apiClient.get<CustomResponse<{ packages: Augmented_Student_package[] }>>(
+                apiRoutes.GET_STUDENT_PACKAGES(studentId)
+            );
+            return processRes(res, api);
+        }
+    );
+    public static markPackageAsPaid = createApiThunk(
+        'studentSlice/markPackageAsPaid',
+        async (props: { packageId: number; paidAt: number }, api) => {
+            const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_MARK_PACAKGE_AS_PAID, props);
+            return processRes(res, api);
+        }
+    );
+    public static markPackageAsUnPaid = createApiThunk(
+        'studentSlice/markPackageAsUnPaid',
+        async (props: { packageId: number }, api) => {
+            const { packageId } = props;
+            const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_MARK_PACAKGE_AS_UNPAID, {
+                packageId,
+            });
+            return processRes(res, api);
+        }
+    );
     public static deletePackage = createApiThunk(
-        "studentSlice/deletePackage",
+        'studentSlice/deletePackage',
         async (
             props: {
                 studentId: string;
@@ -480,7 +616,9 @@ export class StudentThunkAction {
             api
         ) => {
             const { studentId, packageId } = props;
-            const res = await apiClient.delete<CustomResponse<undefined>>(apiRoutes.DELETE_PACKAGE(studentId, packageId));
+            const res = await apiClient.delete<CustomResponse<undefined>>(
+                apiRoutes.DELETE_PACKAGE(studentId, packageId)
+            );
             return processRes(res, api);
         }
     );
@@ -507,8 +645,12 @@ registerDialogAndActions(studentMiddleware, [
     {
         action: StudentThunkAction.duplicateClases.fulfilled,
         effect: (_, { dispatch, getState }) => {
-            const studentId = (getState() as RootState).student.studentDetailTimetablePage.detail?.id || "";
-            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
+            const studentId = (getState() as RootState).student.studentDetailTimetablePage.detail?.id || '';
+            dispatch(
+                StudentThunkAction.getStudentClassesForWeeklyTimetable({
+                    studentId,
+                })
+            );
         },
     },
 ]);

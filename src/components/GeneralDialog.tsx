@@ -1,15 +1,15 @@
-import { Dialog } from "@mui/material";
-import { OverlayScrollbarsComponent, OverlayScrollbarsComponentRef } from "overlayscrollbars-react";
-import { useRef, useState } from "react";
+import { Dialog } from '@mui/material';
+import { OverlayScrollbarsComponent, OverlayScrollbarsComponentRef } from 'overlayscrollbars-react';
+import { useRef, useState } from 'react';
 
 export default class GeneralDialog {
-    public setContent = (_: () => () => JSX.Element) => { };
-    public setOpen: (open: boolean) => void = () => { };
+    public setContent = (_: () => () => JSX.Element) => {};
+    public setOpen: (open: boolean) => void = () => {};
 
     render = () => {
-        const [content, setContent] = useState(() => () => <></>)
+        const [content, setContent] = useState(() => () => <></>);
         const [open, setOpen] = useState(false);
-        const ref = useRef<OverlayScrollbarsComponentRef<"div"> | null>(null);
+        const ref = useRef<OverlayScrollbarsComponentRef<'div'> | null>(null);
 
         this.setOpen = setOpen;
         this.setContent = setContent;
@@ -17,22 +17,25 @@ export default class GeneralDialog {
         const Content = content;
 
         return (
-            <Dialog onClose={() => { setOpen(false) }} open={open}>
+            <Dialog
+                onClose={() => {
+                    setOpen(false);
+                }}
+                open={open}
+            >
                 <OverlayScrollbarsComponent
-                    style={{ height: "100%", width: "100%", overflowY: "auto", }}
+                    style={{ height: '100%', width: '100%', overflowY: 'auto' }}
                     ref={ref}
                     options={{
                         scrollbars: {
-                            autoHide: "leave",
+                            autoHide: 'leave',
                             autoHideDelay: 100,
-                        }
+                        },
                     }}
                 >
                     <Content />
                 </OverlayScrollbarsComponent>
             </Dialog>
         );
-    }
-
+    };
 }
-

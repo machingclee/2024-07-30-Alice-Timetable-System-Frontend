@@ -1,41 +1,40 @@
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import AddStudentDialog from "./components/AddStudentDialog";
-import { Button } from "antd";
-import AddStudentForm from "./components/AddStudentForm";
-import Spacer from "../../components/Spacer";
-import { Box } from "@mui/material";
-import SectionTitle from "../../components/SectionTitle";
-import StudentRow from "./components/StudentRow";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import EditStudentDialog from "./components/EditStudentDialog";
-import escapeStringRegexp from "escape-string-regexp";
-import { StudentThunkAction } from "../../redux/slices/studentSlice";
+import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import AddStudentDialog from './components/AddStudentDialog';
+import { Button } from 'antd';
+import AddStudentForm from './components/AddStudentForm';
+import Spacer from '../../components/Spacer';
+import { Box } from '@mui/material';
+import SectionTitle from '../../components/SectionTitle';
+import StudentRow from './components/StudentRow';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import EditStudentDialog from './components/EditStudentDialog';
+import escapeStringRegexp from 'escape-string-regexp';
+import { StudentThunkAction } from '../../redux/slices/studentSlice';
 
-export default () => {
+export default function Students() {
     const dispatch = useAppDispatch();
-    const studentIds = useAppSelector(s => s.student.students.ids)
-    const ids = useAppSelector((s) => s.student.students.ids) || [];
-    const [filter, setFilter] = useState("");
-    const idToStudent = useAppSelector((s) => s.student.students.idToStudent);
+    const ids = useAppSelector(s => s.student.students.ids) || [];
+    const [filter, setFilter] = useState('');
+    const idToStudent = useAppSelector(s => s.student.students.idToStudent);
     const openAddUserDialog = () => {
         AddStudentDialog.setContent(() => () => <AddStudentForm />);
         AddStudentDialog.setOpen(true);
     };
 
-    const filterRegex = new RegExp(escapeStringRegexp(filter), "i");
-    const filteredIds = ids.filter((id) => {
+    const filterRegex = new RegExp(escapeStringRegexp(filter), 'i');
+    const filteredIds = ids.filter(id => {
         const student = idToStudent?.[id];
         const {
-            studentCode = "",
-            chineseFirstName = "",
-            chineseLastName = "",
-            firstName = "",
-            lastName = "",
-            parentEmail = "",
-            schoolName = "",
-            phoneNumber = "",
+            studentCode = '',
+            chineseFirstName = '',
+            chineseLastName = '',
+            firstName = '',
+            lastName = '',
+            parentEmail = '',
+            schoolName = '',
+            phoneNumber = '',
         } = student || {};
 
         const sum = [
@@ -57,12 +56,11 @@ export default () => {
         return sum >= 1;
     });
 
-    console.log("filteredIds", filteredIds);
-
+    console.log('filteredIds', filteredIds);
 
     useEffect(() => {
         dispatch(StudentThunkAction.getStudents());
-    }, [])
+    }, [dispatch]);
 
     return (
         <div>
@@ -71,29 +69,40 @@ export default () => {
             {/* Autocomplete for searching students */}
             <Autocomplete
                 freeSolo // Allows arbitrary input not limited to the options
-                options={filteredIds.map((id) => {
+                options={filteredIds.map(id => {
                     const student = idToStudent?.[id];
                     const searchDisplay = (() => {
-                        let result = "";
+                        let result = '';
                         if (student?.firstName) {
                             result += student.firstName;
                         }
                         if (student?.lastName) {
-                            result += " " + student.lastName;
+                            result += ' ' + student.lastName;
                         }
                         return result;
                     })();
                     return searchDisplay;
                 })}
                 onInputChange={(_, newValue) => {
-                    setFilter(newValue || "");
+                    setFilter(newValue || '');
                 }}
-                renderInput={(params) => (
-                    <TextField {...params} label="Find the student" placeholder="Chinese Name, English Name, School Name, Parent Email, etc." variant="outlined" />
+                renderInput={params => (
+                    <TextField
+                        {...params}
+                        label="Find the student"
+                        placeholder="Chinese Name, English Name, School Name, Parent Email, etc."
+                        variant="outlined"
+                    />
                 )}
             />
 
-            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    marginTop: 20,
+                }}
+            >
                 <Button type="primary" onClick={openAddUserDialog}>
                     Add Student
                 </Button>
@@ -101,14 +110,10 @@ export default () => {
 
             <Spacer />
 
-            <Box>
-                {filteredIds?.map((studentId) => (
-                    <StudentRow studentId={studentId} />
-                ))}
-            </Box>
+            <Box>{filteredIds?.map(studentId => <StudentRow studentId={studentId} />)}</Box>
 
             <AddStudentDialog.render />
             <EditStudentDialog.render />
         </div>
     );
-};
+}

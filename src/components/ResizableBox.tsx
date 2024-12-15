@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import colors from "../constant/colors";
+import React, { useState, useRef } from 'react';
+import colors from '../constant/colors';
 
 interface ResizableDivProps {
     nonNull: boolean;
@@ -25,13 +25,13 @@ const ResizableBox: React.FC<ResizableDivProps> = ({ nonNull, hourUnixTimestamp,
         };
 
         const stopResizing = () => {
-            window.removeEventListener("mousemove", doResize);
-            window.removeEventListener("mouseup", stopResizing);
+            window.removeEventListener('mousemove', doResize);
+            window.removeEventListener('mouseup', stopResizing);
             setIsResizing(false);
         };
 
-        window.addEventListener("mousemove", doResize, false);
-        window.addEventListener("mouseup", stopResizing, false);
+        window.addEventListener('mousemove', doResize, false);
+        window.addEventListener('mouseup', stopResizing, false);
         setIsResizing(true);
     };
 
@@ -39,16 +39,16 @@ const ResizableBox: React.FC<ResizableDivProps> = ({ nonNull, hourUnixTimestamp,
         <div
             style={{
                 height: `70px`, // Main div height is fixed
-                backgroundColor: nonNull ? colors.blue : "transparent",
-                padding: "5px",
-                borderRadius: "4px",
-                fontSize: "12px",
-                color: "white",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                position: "relative",
-                userSelect: "none", // Avoid text selection during drag
+                backgroundColor: nonNull ? colors.BLUE : 'transparent',
+                padding: '5px',
+                borderRadius: '4px',
+                fontSize: '12px',
+                color: 'white',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                position: 'relative',
+                userSelect: 'none', // Avoid text selection during drag
             }}
             key={hourUnixTimestamp}
         >
@@ -57,11 +57,11 @@ const ResizableBox: React.FC<ResizableDivProps> = ({ nonNull, hourUnixTimestamp,
                 ref={resizableRef}
                 className="handle"
                 style={{
-                    width: "100%",
+                    width: '100%',
                     height: `${handleHeight}px`, // Controlled by state
-                    background: "#333",
-                    cursor: "ns-resize",
-                    position: "absolute",
+                    background: '#333',
+                    cursor: 'ns-resize',
+                    position: 'absolute',
                     bottom: 0,
                     left: 0,
                 }}

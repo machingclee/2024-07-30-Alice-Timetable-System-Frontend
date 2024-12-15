@@ -1,7 +1,7 @@
-import { Class, Classroom, Student_package } from "../prismaTypes/types";
+import { Class, Classroom, Student_package } from '../prismaTypes/types';
 
-export type Gender = "MALE" | "FEMALE";
-export type RoleInSystem = "SUPER_ADMIN" | "ADMIN" | "STAFF" | "STUDENT";
+export type Gender = 'MALE' | 'FEMALE';
+export type RoleInSystem = 'SUPER_ADMIN' | 'ADMIN' | 'STAFF' | 'STUDENT';
 
 export type TokenPayload = {
     first_name: string;
@@ -80,14 +80,13 @@ export type StudentResponse = {
     grade: string;
     phoneNumber?: string;
     wechatId?: string;
-    birthdate: number;   // Double in Kotlin becomes number in TypeScript
+    birthdate: number; // Double in Kotlin becomes number in TypeScript
     parentEmail: string;
     createdAt?: number;
     createdAtHk?: string;
     parentId?: string;
     gender: Gender;
-}
-
+};
 
 export type CreateCourseRequest = {
     course_name: string;
@@ -194,13 +193,12 @@ export type Competition = {
 };
 
 // 多選/單選/短答
-export type QuestionType = "MultipleChoiceQuestion" | "SingleChoiceQuestion" | "ShortQuestion";
-
 export type Question = MultipleChoiceQuestion | SingleChoiceQuestion | ShortQuestion;
+export type QuestionType = Question['type'];
 
 export type MultipleChoiceQuestion = {
     questionId: string;
-    type: "MultipleChoiceQuestion";
+    type: 'MultipleChoiceQuestion';
     question: string;
     optionIds: string[];
     optionIdToOption: { [id: string]: MultipleChoiceOption };
@@ -215,7 +213,7 @@ export type MultipleChoiceOption = {
 
 export type SingleChoiceQuestion = {
     questionId: string;
-    type: "SingleChoiceQuestion";
+    type: 'SingleChoiceQuestion';
     question: string;
     optionIds: string[];
     optionIdToOption: { [id: string]: SingleChoiceOption };
@@ -230,7 +228,7 @@ export type SingleChoiceOption = {
 
 export type ShortQuestion = {
     questionId: string;
-    type: "ShortQuestion";
+    type: 'ShortQuestion';
     question: string;
     response: string;
     compulsory: boolean;
@@ -242,7 +240,10 @@ export type Augmented_Student_package = Student_package & {
     course_name: string;
 };
 
-export type Augmented_Class = Class & { course_name: string; student_id: string };
+export type Augmented_Class = Class & {
+    course_name: string;
+    student_id: string;
+};
 
 export type TimetableClass = Class & {
     student_package_id: number;
@@ -266,11 +267,11 @@ export type SummaryOfClassStatues = {
     changeOfClassroom: number;
 };
 
-
 export type Loggings = {
     id: number;
-    payload: { ctx: { userEmail: string }, data: any };
+    // eslint-disable-next-line
+    payload: { ctx: { userEmail: string }; data: any };
     event_type: string;
     created_at: number;
     created_at_hk: string;
-}[]
+}[];

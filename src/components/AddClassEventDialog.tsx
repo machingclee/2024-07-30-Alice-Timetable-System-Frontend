@@ -1,4 +1,4 @@
-import GeneralDialog from "./GeneralDialog";
+import GeneralDialog from './GeneralDialog';
 
 const AddClassEventDialog = new GeneralDialog();
 export default AddClassEventDialog;

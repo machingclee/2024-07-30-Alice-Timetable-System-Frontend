@@ -1,4 +1,4 @@
-import GeneralDialog from "../../../components/GeneralDialog";
+import GeneralDialog from '../../../components/GeneralDialog';
 
-const MoveConfirmationDialog = new GeneralDialog()
-export default MoveConfirmationDialog
+const MoveConfirmationDialog = new GeneralDialog();
+export default MoveConfirmationDialog;

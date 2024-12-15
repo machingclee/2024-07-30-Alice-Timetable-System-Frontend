@@ -1,5 +1,5 @@
 enum MoveClassStatus {
-    PROCEED = "proceed"
+    PROCEED = 'proceed',
 }
 
-export default MoveClassStatus
+export default MoveClassStatus;

@@ -1,17 +1,17 @@
-import { useLocation } from "react-router-dom";
-import { Box } from "@mui/material";
-import Spacer from "../../../components/Spacer";
-import { Button } from "antd";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import authSlice from "../../../redux/slices/authSlice";
-import boxShadow from "../../../constant/boxShadow";
-import { useEffect } from "react";
-import NavButton from "./NavButton";
-import appSlice from "../../../redux/slices/appSlice";
-import Label from "../../../components/Label";
+import { useLocation } from 'react-router-dom';
+import { Box } from '@mui/material';
+import Spacer from '../../../components/Spacer';
+import { Button } from 'antd';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import authSlice from '../../../redux/slices/authSlice';
+import boxShadow from '../../../constant/boxShadow';
+import { useEffect } from 'react';
+import NavButton from './NavButton';
+import appSlice from '../../../redux/slices/appSlice';
+import Label from '../../../components/Label';
 
-import escapeStringRegexp from "escape-string-regexp";
-import RouteEnum from "../../../enum/RouteEnum";
+import escapeStringRegexp from 'escape-string-regexp';
+import RouteEnum from '../../../enum/RouteEnum';
 
 const pathRegex = {
     STUDENTS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_STUDENTS)),
@@ -23,11 +23,11 @@ const pathRegex = {
     LOGGING: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_LOGGING)),
 };
 
-export default () => {
+export default function LeftNavigation() {
     const dispatch = useAppDispatch();
     const { pathname } = useLocation();
-    const authData = useAppSelector((s) => s.auth.user);
-    const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
+    const authData = useAppSelector(s => s.auth.user);
+    const leftNavigatorCollapsed = useAppSelector(s => s.app.leftNavigatorCollapsed);
     const { first_name, last_name, role_in_system } = authData;
     const logout = () => {
         dispatch(authSlice.actions.reset());
@@ -51,9 +51,9 @@ export default () => {
                 dispatch(appSlice.actions.setActivePath(pathname));
             }
         }
-    }, [pathname]);
+    }, [pathname, dispatch]);
 
-    const isLogin = pathname === "/login";
+    const isLogin = pathname === '/login';
 
     if (isLogin) {
         return null;
@@ -66,50 +66,95 @@ export default () => {
     return (
         <Box
             style={{
-                height: "100%",
-                marginLeft: "30px",
-                transition: "width 0.5s ease-out",
-                marginRight: "20px"
+                height: '100%',
+                marginLeft: '30px',
+                transition: 'width 0.5s ease-out',
+                marginRight: '20px',
             }}
             sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
             }}
         >
-            <div style={{ transition: "opacity 0.4s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
+            <div
+                style={{
+                    transition: 'opacity 0.4s ease-in-out',
+                    opacity: leftNavigatorCollapsed ? 0 : 1,
+                }}
+            >
                 <Spacer />
                 <Label label="LeftNavigation.tsx" offsetTop={-10} />
-                <NavButton activeNavigationRegex={pathRegex.STUDENTS} routeEnum={RouteEnum.DASHBOARD_STUDENTS} title="Students" />
+                <NavButton
+                    activeNavigationRegex={pathRegex.STUDENTS}
+                    routeEnum={RouteEnum.DASHBOARD_STUDENTS}
+                    title="Students"
+                />
                 <Spacer height={10} />
-                <NavButton activeNavigationRegex={pathRegex.COURSES} routeEnum={RouteEnum.DASHBOARD_COURSES} title="Courses" />
+                <NavButton
+                    activeNavigationRegex={pathRegex.COURSES}
+                    routeEnum={RouteEnum.DASHBOARD_COURSES}
+                    title="Courses"
+                />
                 <Spacer height={10} />
-                <NavButton activeNavigationRegex={pathRegex.USERS} routeEnum={RouteEnum.DASHBOARD_USERS} title="Users" />
+                <NavButton
+                    activeNavigationRegex={pathRegex.USERS}
+                    routeEnum={RouteEnum.DASHBOARD_USERS}
+                    title="Users"
+                />
                 <Spacer height={10} />
-                <NavButton activeNavigationRegex={pathRegex.PRINCE_EDWARD_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE} title="Prince Ed. Timetable" />
+                <NavButton
+                    activeNavigationRegex={pathRegex.PRINCE_EDWARD_TIMETABLE}
+                    routeEnum={RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE}
+                    title="Prince Ed. Timetable"
+                />
                 <Spacer height={10} />
-                <NavButton activeNavigationRegex={pathRegex.CAUSEWAY_BAY_TIMETABLE} routeEnum={RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE} title="CWB Timetable" />
+                <NavButton
+                    activeNavigationRegex={pathRegex.CAUSEWAY_BAY_TIMETABLE}
+                    routeEnum={RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE}
+                    title="CWB Timetable"
+                />
                 <Spacer height={10} />
-                <NavButton activeNavigationRegex={pathRegex.COMPETITIONS} routeEnum={RouteEnum.DASHBOARD_COMPETITIONS} title="Competitions" />
+                <NavButton
+                    activeNavigationRegex={pathRegex.COMPETITIONS}
+                    routeEnum={RouteEnum.DASHBOARD_COMPETITIONS}
+                    title="Competitions"
+                />
                 <Spacer height={10} />
-                <NavButton activeNavigationRegex={pathRegex.LOGGING} routeEnum={RouteEnum.DASHBOARD_LOGGING} title="Logging" />
+                <NavButton
+                    activeNavigationRegex={pathRegex.LOGGING}
+                    routeEnum={RouteEnum.DASHBOARD_LOGGING}
+                    title="Logging"
+                />
                 <Spacer height={10} />
             </div>
-            <div style={{ transition: "opacity 0.4s ease-in-out", opacity: leftNavigatorCollapsed ? 0 : 1 }}>
+            <div
+                style={{
+                    transition: 'opacity 0.4s ease-in-out',
+                    opacity: leftNavigatorCollapsed ? 0 : 1,
+                }}
+            >
                 <Spacer height={30} />
-                <div style={{ boxShadow: boxShadow.SHADOW_61, borderRadius: 4, padding: 10, position: "relative" }}>
-                    <div style={{ display: "flex" }}>
+                <div
+                    style={{
+                        boxShadow: boxShadow.SHADOW_61,
+                        borderRadius: 4,
+                        padding: 10,
+                        position: 'relative',
+                    }}
+                >
+                    <div style={{ display: 'flex' }}>
                         <div
                             style={{
-                                position: "absolute",
+                                position: 'absolute',
                                 top: -10,
                                 left: 5,
                                 fontSize: 11,
-                                background: "white",
+                                background: 'white',
                                 fontWeight: 500,
                                 padding: 4,
                                 borderRadius: 4,
-                                color: "rgb(150,150,150)",
+                                color: 'rgb(150,150,150)',
                                 fontFamily: 'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
                             }}
                         >
@@ -119,10 +164,10 @@ export default () => {
                     <Spacer height={5} />
                     <div
                         style={{
-                            width: "100%",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
+                            width: '100%',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
                         }}
                     >{`${first_name} ${last_name}`}</div>
                 </div>
@@ -134,7 +179,6 @@ export default () => {
                 <Spacer />
                 <Spacer />
             </div>
-
         </Box>
     );
-};
+}

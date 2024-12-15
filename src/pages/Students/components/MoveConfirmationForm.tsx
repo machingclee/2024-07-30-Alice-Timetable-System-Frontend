@@ -1,19 +1,26 @@
-import { Alert, Box } from "@mui/material";
-import Spacer from "../../../components/Spacer";
-import { Button, Select } from "antd";
+import { Alert, Box } from '@mui/material';
+import Spacer from '../../../components/Spacer';
+import { Button } from 'antd';
 
-import MoveConfirmationDialog from "./MoveConfirmationDialog";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { StudentThunkAction } from "../../../redux/slices/studentSlice";
-import SectionTitle from "../../../components/SectionTitle";
-import dayjs from "dayjs";
+import MoveConfirmationDialog from './MoveConfirmationDialog';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { StudentThunkAction } from '../../../redux/slices/studentSlice';
+import SectionTitle from '../../../components/SectionTitle';
 
-export default (props: { moveClassesAction: () => Promise<void> }) => {
+export default function MoveConfirmationForm(props: { moveClassesAction: () => Promise<void> }) {
     const { moveClassesAction: moveClasses } = props;
     const dispatch = useAppDispatch();
-    const studentId = useAppSelector((s) => s.student.studentDetailTimetablePage.detail?.id) || "";
+    const studentId = useAppSelector(s => s.student.studentDetailTimetablePage.detail?.id) || '';
     return (
-        <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
+        <Box
+            style={{
+                maxWidth: 400,
+                width: 600,
+                padding: '40px 80px',
+                overflowY: 'auto',
+                paddingBottom: 60,
+            }}
+        >
             <SectionTitle>Are you sure to move the classes?</SectionTitle>
             <div>
                 <Spacer />
@@ -51,4 +58,4 @@ export default (props: { moveClassesAction: () => Promise<void> }) => {
             </div>
         </Box>
     );
-};
+}

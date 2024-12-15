@@ -1,16 +1,16 @@
-import Checkbox from "@mui/material/Checkbox";
-import Label from "./Label";
-import { useAppSelector } from "../redux/hooks";
-import { AppDispatch } from "../redux/store";
-import { useDispatch } from "react-redux";
-import studentSlice from "../redux/slices/studentSlice";
-import { useState } from "react";
+import Checkbox from '@mui/material/Checkbox';
+import Label from './Label';
+import { useAppSelector } from '../redux/hooks';
+import { AppDispatch } from '../redux/store';
+import { useDispatch } from 'react-redux';
+import studentSlice from '../redux/slices/studentSlice';
+import { useState } from 'react';
 
-export default ({ id }: { id: number }) => {
+export default function CourseFilterItem({ id }: { id: number }) {
     const dispatch = useDispatch<AppDispatch>();
-    const filterCourseIds = useAppSelector((s) => s.student.massTimetablePage.filter.courseIds);
+    const filterCourseIds = useAppSelector(s => s.student.massTimetablePage.filter.courseIds);
     const [checked, setChecked] = useState(filterCourseIds.includes(id) ? true : false);
-    const course = useAppSelector((s) => s.class.courses.idToCourse?.[id]);
+    const course = useAppSelector(s => s.class.courses.idToCourse?.[id]);
 
     const handleCourseFilterItemOnChange = (checked: boolean) => {
         if (checked) {
@@ -23,9 +23,15 @@ export default ({ id }: { id: number }) => {
     };
 
     return (
-        <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center" }}>
+        <div
+            style={{
+                display: 'flex',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+            }}
+        >
             <Checkbox
-                onChange={(event) => {
+                onChange={event => {
                     handleCourseFilterItemOnChange(event.target.checked);
                 }}
                 checked={checked}
@@ -34,4 +40,4 @@ export default ({ id }: { id: number }) => {
             {course?.course_name}
         </div>
     );
-};
+}

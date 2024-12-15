@@ -1,21 +1,21 @@
-import { Button, DatePicker, Select } from "antd";
-import Spacer from "../../../components/Spacer";
-import { useEffect, useRef, useState } from "react";
-import SectionTitle from "../../../components/SectionTitle";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { Autocomplete, Box, TextField } from "@mui/material";
-import FormInputTitle from "../../../components/FormInputTitle";
-import Label from "../../../components/Label";
-import { CourseThunkAction } from "../../../redux/slices/courseSlice";
-import { StudentThunkAction } from "../../../redux/slices/studentSlice";
-import { TimePicker } from "antd";
-import { CreateStudentPackageRequest } from "../../../dto/dto";
-import dayjs from "dayjs";
-import AddPackageDialog from "./AddPackageDialog";
-import { Classroom } from "../../../prismaTypes/types";
-import { IoIosInformationCircle } from "react-icons/io";
-import colors from "../../../constant/colors";
-import { toast } from "react-toastify";
+import { Button, DatePicker, Select } from 'antd';
+import Spacer from '../../../components/Spacer';
+import { useEffect, useRef, useState } from 'react';
+import SectionTitle from '../../../components/SectionTitle';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { Autocomplete, Box, TextField } from '@mui/material';
+import FormInputTitle from '../../../components/FormInputTitle';
+import Label from '../../../components/Label';
+import { CourseThunkAction } from '../../../redux/slices/courseSlice';
+import { StudentThunkAction } from '../../../redux/slices/studentSlice';
+import { TimePicker } from 'antd';
+import { CreateStudentPackageRequest } from '../../../dto/dto';
+import dayjs from 'dayjs';
+import AddPackageDialog from './AddPackageDialog';
+import { Classroom } from '../../../prismaTypes/types';
+import { IoIosInformationCircle } from 'react-icons/io';
+import colors from '../../../constant/colors';
+import { toast } from 'react-toastify';
 
 // Function to convert timestamp to the start of the day (midnight)
 const toMidnight = (timestamp: number): number => {
@@ -29,11 +29,11 @@ const toMidnight = (timestamp: number): number => {
     return midnight.valueOf();
 };
 
-export default (props: { studentId: string; studentName: string }) => {
+export default function AddPackageForm(props: { studentId: string; studentName: string }) {
     const { studentName, studentId } = props;
     const [error, _] = useState<Partial<CreateStudentPackageRequest>>({});
     const dispatch = useAppDispatch();
-    const classes = useAppSelector((s) => s.class.courses);
+    const classes = useAppSelector(s => s.class.courses);
     const formData = useRef<Partial<CreateStudentPackageRequest>>({});
     const updateFormData = (update: Partial<CreateStudentPackageRequest>) => {
         formData.current = { ...formData.current, ...update };
@@ -41,15 +41,17 @@ export default (props: { studentId: string; studentName: string }) => {
 
     const submit = async () => {
         const { course_id, min, start_date, num_of_classes, start_time, default_classroom } = formData.current || {};
-        console.log("submission data", course_id, min, start_date, num_of_classes, start_time, default_classroom);
+        console.log('submission data', course_id, min, start_date, num_of_classes, start_time, default_classroom);
         if (!(course_id != null && min != null && num_of_classes != null && default_classroom != null)) {
             return;
         }
-        console.log("Hi!");
+        console.log('Hi!');
         // Solve the issue of chosen start_time starts from today, not from the start_date
-        const chosenStartTimeResolvingUndefinedIssue = start_time ? start_time : dayjs("09:00", "HH:mm").valueOf();
+        const chosenStartTimeResolvingUndefinedIssue = start_time ? start_time : dayjs('09:00', 'HH:mm').valueOf();
         const chosenStartDateResolvingUndefinedIssue = start_date ? start_date : toMidnight(new Date().getTime());
-        const timestampToAdd = chosenStartTimeResolvingUndefinedIssue - toMidnight(start_time ? start_time : dayjs("09:00", "HH:mm").valueOf());
+        const timestampToAdd =
+            chosenStartTimeResolvingUndefinedIssue -
+            toMidnight(start_time ? start_time : dayjs('09:00', 'HH:mm').valueOf());
         const realStartTime = chosenStartDateResolvingUndefinedIssue + timestampToAdd;
 
         const reqBody: CreateStudentPackageRequest = {
@@ -61,33 +63,39 @@ export default (props: { studentId: string; studentName: string }) => {
             default_classroom,
             student_id: studentId,
         };
-        console.log("reqBody:", reqBody);
+        console.log('reqBody:', reqBody);
         AddPackageDialog.setOpen(false);
         await dispatch(StudentThunkAction.createStudentPackage(reqBody)).unwrap();
         dispatch(StudentThunkAction.getStudentPackages({ studentId })).unwrap();
-        dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId })).unwrap();
-    };
-
-    const disabledHours = () => {
-        // Enable hours from 9 (09:00) to 19 (7 PM)
-        const hours = Array.from({ length: 24 }, (_, i) => i);
-        return hours.filter((hour) => hour < 9 || hour > 19);
+        dispatch(
+            StudentThunkAction.getStudentClassesForWeeklyTimetable({
+                studentId,
+            })
+        ).unwrap();
     };
 
     useEffect(() => {
         dispatch(CourseThunkAction.getCourses());
-    }, []);
+    }, [dispatch]);
 
     const allowedOptionsForNumberOfClasses = [1, 7, 15, 30, 50];
 
-    const classroomOptions: Classroom[] = ["PRINCE_EDWARD", "CAUSEWAY_BAY"];
+    const classroomOptions: Classroom[] = ['PRINCE_EDWARD', 'CAUSEWAY_BAY'];
 
     return (
-        <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
+        <Box
+            style={{
+                maxWidth: 400,
+                width: 600,
+                padding: '40px 80px',
+                overflowY: 'auto',
+                paddingBottom: 60,
+            }}
+        >
             <Label label="AddPackageForm.tsx" offsetTop={0} offsetLeft={180} />
             <SectionTitle>Add Student Package for {studentName}</SectionTitle>
             <Spacer />
-            <div style={{ display: "flex" }}>
+            <div style={{ display: 'flex' }}>
                 <FormInputTitle>Select a Course</FormInputTitle>
                 <Spacer />
                 {error.course_id && <div>{error.course_id}</div>}
@@ -95,15 +103,15 @@ export default (props: { studentId: string; studentName: string }) => {
             <Spacer height={5} />
             <Select
                 dropdownStyle={{ zIndex: 10 ** 4 }}
-                style={{ width: "100%" }}
-                onChange={(value) => {
+                style={{ width: '100%' }}
+                onChange={value => {
                     updateFormData({ course_id: value });
                 }}
-                options={classes.ids?.map((id_) => {
+                options={classes.ids?.map(id_ => {
                     const { course_name, id } = classes.idToCourse?.[id_] || {};
                     return {
                         value: id || 0,
-                        label: course_name || "",
+                        label: course_name || '',
                     };
                 })}
             />
@@ -111,38 +119,44 @@ export default (props: { studentId: string; studentName: string }) => {
             <FormInputTitle>Start Date</FormInputTitle>
             <Spacer height={5} />
             <DatePicker
-                disabledDate={(current) => {
+                disabledDate={current => {
                     // Can't select days before today
-                    return current && current < dayjs().startOf("day");
+                    return current && current < dayjs().startOf('day');
                 }}
-                onChange={(val) => {
+                onChange={val => {
                     formData.current.start_date = val.valueOf();
                 }}
                 popupStyle={{ zIndex: 10 ** 7 }}
-            // defaultValue={dayjs(new Date())}
+                // defaultValue={dayjs(new Date())}
             />
             <Spacer />
             <FormInputTitle>Start Time</FormInputTitle>
             <Spacer height={5} />
-            <Box style={{ display: "flex", alignItems: "center" }}>
+            <Box style={{ display: 'flex', alignItems: 'center' }}>
                 {/* used <style></style> in index.html to forcefully remove 00-08 and 20-24 */}
                 <TimePicker
-                    onChange={(val) => {
+                    onChange={val => {
                         formData.current.start_time = val.valueOf();
                     }}
                     minuteStep={15}
                     // defaultValue={dayjs("09:00", "HH:mm")}
-                    format={"HH:mm"}
+                    format={'HH:mm'}
                     popupClassName="custome-timepicker"
                     popupStyle={{ zIndex: 10 ** 7 }}
                 />
                 <Spacer width={15} />
-                <div style={{ color: colors.grey_deep, display: "flex", alignItems: "center" }}>
+                <div
+                    style={{
+                        color: colors.GREY_DEEP,
+                        display: 'flex',
+                        alignItems: 'center',
+                    }}
+                >
                     <IoIosInformationCircle size={20} /> <Spacer width={5} /> (double click to confirm)
                 </div>
             </Box>
             <Spacer />
-            <div style={{ display: "flex" }}>
+            <div style={{ display: 'flex' }}>
                 <FormInputTitle>Select a Duration (in minutes)</FormInputTitle>
                 <Spacer />
                 {error.min && <div>{error.min}</div>}
@@ -150,50 +164,53 @@ export default (props: { studentId: string; studentName: string }) => {
             <Spacer height={5} />
             <Select
                 dropdownStyle={{ zIndex: 10 ** 4 }}
-                style={{ width: "100%" }}
-                onChange={(value) => {
+                style={{ width: '100%' }}
+                onChange={value => {
                     updateFormData({ min: value });
                 }}
                 options={[
-                    { value: 45, label: "45" },
-                    { value: 60, label: "60" },
-                    { value: 75, label: "75" },
+                    { value: 45, label: '45' },
+                    { value: 60, label: '60' },
+                    { value: 75, label: '75' },
                 ]}
             />
             <Spacer />
-            <div style={{ display: "flex" }}>
+            <div style={{ display: 'flex' }}>
                 <FormInputTitle>Select Number of Classes</FormInputTitle>
             </div>
             <Spacer height={5} />
             <Autocomplete
                 size="small"
-                style={{ width: "100%" }}
+                style={{ width: '100%' }}
                 disablePortal
                 options={allowedOptionsForNumberOfClasses}
-                getOptionLabel={(option) => option.toString()}
+                getOptionLabel={option => option.toString()}
                 freeSolo
                 onChange={(_, newValue) => {
                     if (Number.isNaN(Number(newValue))) {
-                        toast.error(`${newValue} is an invalid input`)
+                        toast.error(`${newValue} is an invalid input`);
                     } else {
-                        updateFormData({ num_of_classes: Number(newValue) })
+                        updateFormData({ num_of_classes: Number(newValue) });
                     }
                 }}
                 sx={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={params => <TextField {...params} />}
             />
             <Spacer />
-            <div style={{ display: "flex" }}>
+            <div style={{ display: 'flex' }}>
                 <FormInputTitle>Select Default Classroom</FormInputTitle>
             </div>
             <Spacer height={5} />
             <Select
                 dropdownStyle={{ zIndex: 10 ** 4 }}
-                style={{ width: "100%" }}
-                onChange={(value) => {
+                style={{ width: '100%' }}
+                onChange={value => {
                     updateFormData({ default_classroom: value });
                 }}
-                options={classroomOptions.map((value) => ({ value: value, label: `${value}` }))} // Map allowed options to Select options
+                options={classroomOptions.map(value => ({
+                    value: value,
+                    label: `${value}`,
+                }))} // Map allowed options to Select options
             />
             <Spacer />
             <Spacer />
@@ -202,4 +219,4 @@ export default (props: { studentId: string; studentName: string }) => {
             </Button>
         </Box>
     );
-};
+}

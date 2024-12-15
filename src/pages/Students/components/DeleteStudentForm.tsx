@@ -1,35 +1,43 @@
-import { Alert, Box } from "@mui/material";
-import SectionTitle from "../../../components/SectionTitle";
-import Label from "../../../components/Label";
-import Spacer from "../../../components/Spacer";
-import { useEffect, useRef } from "react";
-import { Button } from "antd";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { StudentThunkAction } from "../../../redux/slices/studentSlice";
-import DeleteClassDialog from "../../../components/DeleteClassDialog";
-import { Class, Course, Student_package } from "../../../prismaTypes/types";
-import colors from "../../../constant/colors";
-import dayjs from "dayjs";
-import { ClassRoom } from "../../../dto/dto";
+import { Box } from '@mui/material';
+import SectionTitle from '../../../components/SectionTitle';
+import Label from '../../../components/Label';
+import Spacer from '../../../components/Spacer';
+import { useEffect } from 'react';
+import { Button } from 'antd';
+import { useAppSelector } from '../../../redux/hooks';
+import DeleteClassDialog from '../../../components/DeleteClassDialog';
+import colors from '../../../constant/colors';
 
-export default (props: { studentId: string }) => {
+export default function DeleteStudentForm(props: { studentId: string }) {
     const { studentId } = props;
-    const { first_name, last_name, chinese_first_name, chinese_last_name, gender, birthdate, parent_email, school_name, grade, phone_number, wechat_id } = useAppSelector(
-        (s) => s.student.students.idToStudent?.[studentId]
-    );
+    const student = useAppSelector(s => s.student.students.idToStudent?.[studentId]);
+
+    const { firstName, lastName, chineseFirstName = '', chineseLastName = '' } = student || {};
 
     useEffect(() => {
         console.log(DeleteClassDialog);
-    }, [DeleteClassDialog]);
+    }, []);
+
+    if (!student) {
+        return null;
+    }
 
     return (
-        <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
+        <Box
+            style={{
+                maxWidth: 400,
+                width: 600,
+                padding: '40px 80px',
+                overflowY: 'auto',
+                paddingBottom: 60,
+            }}
+        >
             <Label label="DeleteStudentForm.tsx" offsetTop={0} offsetLeft={300} />
             <SectionTitle>Are you sure to delete this student?</SectionTitle>
             <Spacer height={40} />
-            <div>English name: {first_name + " " + last_name}</div>
+            <div>English name: {firstName + ' ' + lastName}</div>
             <Spacer height={10} />
-            <div>Chinese name: {chinese_first_name + chinese_last_name ? chinese_first_name + chinese_last_name : "null"}</div>
+            <div>Chinese name: {chineseFirstName + chineseLastName ? chineseFirstName + chineseLastName : 'null'}</div>
             <Spacer />
             {/* {hasDuplicationGroup && (
                 <Alert severity="warning">
@@ -43,7 +51,7 @@ export default (props: { studentId: string }) => {
             )} */}
             <Spacer />
             <Button
-                style={{ backgroundColor: colors.red }}
+                style={{ backgroundColor: colors.RED }}
                 type="primary"
                 block
                 onClick={async () => {
@@ -72,4 +80,4 @@ export default (props: { studentId: string }) => {
             </Button>
         </Box>
     );
-};
+}
