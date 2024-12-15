@@ -18,7 +18,7 @@ import dayjs from "dayjs";
 export default (props: { packageId: string }) => {
     const { packageId } = props;
     const { studentId } = useParams<{ studentId: string }>();
-    const currentPackage = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[packageId]);
+    const currentPackage = useAppSelector((s) => s.student.studentDetailTimetablePage.packages.idToPackage?.[packageId]);
 
     const [error, _] = useState<Partial<UpdateStudentPackageRequest>>({});
     const dispatch = useAppDispatch();

@@ -13,8 +13,6 @@ export default () => {
     const dispatch = useAppDispatch();
     const location = useLocation();
     const navgiate = useNavigate();
-    const { pathname } = useLocation();
-    const islogin = pathname === "/login";
     const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
 
     const ref = useRef<OverlayScrollbarsComponentRef<"div"> | null>(null);
@@ -47,6 +45,7 @@ export default () => {
             >
                 <Container
                     sx={{
+                        background: "rgb(245,245,245)",
                         "@media (min-width: 1200px)": {
                             maxWidth: "none",
                         },
@@ -58,7 +57,6 @@ export default () => {
                     style={{
                         display: "flex",
                         position: "relative",
-                        marginRight: 20
                     }}
                 >
                     <Collapse style={{ height: "100vh" }} in={!leftNavigatorCollapsed} orientation="horizontal">

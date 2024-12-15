@@ -23,13 +23,13 @@ export default ({
     printButtonRef?: React.RefObject<PrintHandler>
 }) => {
     const dispatch = useAppDispatch();
-    const classRoom = useAppSelector((s) => s.student.allStudents.classRoom);
-    const selectedDate = useAppSelector((s) => s.student.allStudents.selectedDate);
+    const classRoom = useAppSelector((s) => s.student.massTimetablePage.classRoom);
+    const selectedDate = useAppSelector((s) => s.student.massTimetablePage.selectedDate);
     const [hoursColumnGrid, setHoursColumn] = useState<string[]>([]);
-    const selectedDay = useAppSelector((s) => s.student.allStudents.selectedDate);
-    const filter = useAppSelector((s) => s.student.allStudents.filter);
-    const hrUnixTimestampOnClick = useAppSelector((s) => s.student.allStudents.totalClassesInHighlight.hrUnixTimestampOnClick);
-    const hrUnixTimestampToClasses = useAppSelector((s) => s.student.allStudents.hrUnixTimestampToClasses);
+    const selectedDay = useAppSelector((s) => s.student.massTimetablePage.selectedDate);
+    const filter = useAppSelector((s) => s.student.massTimetablePage.filter);
+    const hrUnixTimestampOnClick = useAppSelector((s) => s.student.massTimetablePage.totalClassesInHighlight.hrUnixTimestampOnClick);
+    const hrUnixTimestampToClasses = useAppSelector((s) => s.student.massTimetablePage.hrUnixTimestampToClasses);
 
     // Memoize the half-hour intervals to prevent recalculation on every render
     const oneForthHourIntervals = useMemo(() => {

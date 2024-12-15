@@ -21,13 +21,13 @@ import { IoIosArrowForward } from "react-icons/io";
 import ClassFilterItem from "./CourseFilterItem";
 
 export default () => {
-    const classRoom = useAppSelector((s) => s.student.allStudents.classRoom);
-    const summaryOfClassStatues = useAppSelector((s) => s.student.allStudents.summaryOfClassStatuses);
+    const classRoom = useAppSelector((s) => s.student.massTimetablePage.classRoom);
+    const summaryOfClassStatues = useAppSelector((s) => s.student.massTimetablePage.summaryOfClassStatuses);
     const courseIds = useAppSelector((s) => s.class.courses.ids);
-    const filterCourseIds = useAppSelector((s) => s.student.allStudents.filter.courseIds);
-    const selectedDate = useAppSelector((s) => s.student.allStudents.selectedDate);
+    const filterCourseIds = useAppSelector((s) => s.student.massTimetablePage.filter.courseIds);
+    const selectedDate = useAppSelector((s) => s.student.massTimetablePage.selectedDate);
     const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
-    const filter = useAppSelector((s) => s.student.allStudents.filter);
+    const filter = useAppSelector((s) => s.student.massTimetablePage.filter);
     const dispatch = useDispatch<AppDispatch>();
     const [filterByClassStatusOnPress, setFilterByClassStatusOnPress] = useState<boolean>(false);
     const [filterByCourseOnPress, setFilterByCourseOnPress] = useState<boolean>(false);

@@ -67,7 +67,7 @@ const ClassStatusIndex = () => {
 
 const CausewaybayIndex = () => {
     const dispatch = useAppDispatch();
-    const filter = useAppSelector((s) => s.student.allStudents.filter);
+    const filter = useAppSelector((s) => s.student.massTimetablePage.filter);
 
     useEffect(() => {
         dispatch(studentSlice.actions.setClassroom("CAUSEWAY_BAY"));
@@ -89,7 +89,7 @@ const CausewaybayIndex = () => {
 
 const PrinceEdwardIndex = () => {
     const dispatch = useAppDispatch();
-    const filter = useAppSelector((s) => s.student.allStudents.filter);
+    const filter = useAppSelector((s) => s.student.massTimetablePage.filter);
 
     useEffect(() => {
         dispatch(studentSlice.actions.setClassroom("PRINCE_EDWARD"));

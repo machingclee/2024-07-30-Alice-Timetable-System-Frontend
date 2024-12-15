@@ -15,8 +15,8 @@ import getNumberSuffix from "../utils/getNumberSuffix";
 import { TimetableClass } from "../dto/dto";
 
 export default (props: { classEvent: TimetableClass; dateUnixTimestamp?: number; isEditing?: boolean }) => {
-    const classRoom = useAppSelector((s) => s.student.allStudents.classRoom);
-    const filter = useAppSelector((s) => s.student.allStudents.filter);
+    const classRoom = useAppSelector((s) => s.student.massTimetablePage.classRoom);
+    const filter = useAppSelector((s) => s.student.massTimetablePage.filter);
     const [editing, setEditing] = useState(props.isEditing || false);
     const { classEvent, dateUnixTimestamp } = props;
     const { id, min, class_status, reason_for_absence, remark, actual_classroom, class_number } = classEvent;

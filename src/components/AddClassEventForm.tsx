@@ -23,11 +23,11 @@ import appSlice from "../redux/slices/appSlice";
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; studentId: string }) => {
     const { dayUnixTimestamp, hourUnixTimestamp, studentId } = props;
     const [error, setError] = useState<Partial<CreateClassRequest>>({});
-    const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
-    const defaultClassroom = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[selectedPackageId]?.default_classroom);
-    const defaultCourseId = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[selectedPackageId]?.course_id || 0);
-    const defaultMin = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[selectedPackageId]?.min || 0);
-    const defaultNumOfClasses = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[selectedPackageId]?.num_of_classes || 1);
+    const selectedPackageId = useAppSelector((s) => s.student.studentDetailTimetablePage.selectedPackageId);
+    const defaultClassroom = useAppSelector((s) => s.student.studentDetailTimetablePage.packages.idToPackage?.[selectedPackageId]?.default_classroom);
+    const defaultCourseId = useAppSelector((s) => s.student.studentDetailTimetablePage.packages.idToPackage?.[selectedPackageId]?.course_id || 0);
+    const defaultMin = useAppSelector((s) => s.student.studentDetailTimetablePage.packages.idToPackage?.[selectedPackageId]?.min || 0);
+    const defaultNumOfClasses = useAppSelector((s) => s.student.studentDetailTimetablePage.packages.idToPackage?.[selectedPackageId]?.num_of_classes || 1);
     const dispatch = useAppDispatch();
     const courses = useAppSelector((s) => s.class.courses);
     const formData = useRef<Partial<CreateClassRequest>>({

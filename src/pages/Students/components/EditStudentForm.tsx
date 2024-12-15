@@ -21,18 +21,18 @@ export default ({ studentId }: { studentId: string }) => {
     if (!student) return;
     const formData = useRef<Partial<UpdateStudentRequest>>({
         id: studentId,
-        student_code: student.student_code,
-        first_name: student.first_name,
-        last_name: student.last_name,
-        chinese_first_name: student.chinese_first_name,
-        chinese_last_name: student.chinese_last_name,
+        student_code: student.studentCode,
+        first_name: student.firstName,
+        last_name: student.lastName,
+        chinese_first_name: student.chineseFirstName,
+        chinese_last_name: student.chineseLastName,
         gender: student.gender,
         grade: student.grade,
         birthdate: student.birthdate,
-        parent_email: student.parent_email,
-        school_name: student.school_name,
-        phone_number: student.phone_number,
-        wechat_id: student.wechat_id,
+        parent_email: student.parentEmail,
+        school_name: student.schoolName,
+        phone_number: student.phoneNumber,
+        wechat_id: student.wechatId,
     });
     const [error, setError] = useState<Partial<UpdateStudentRequest>>({});
     const update = (update_: Partial<UpdateStudentRequest>) => {
@@ -69,18 +69,18 @@ export default ({ studentId }: { studentId: string }) => {
             <Label label="EditStudentForm.tsx" offsetTop={-20} />
             <SectionTitle>Edit Student Info</SectionTitle>
             <Spacer />
-            <FormInputField title="Student Code" defaultValue={student.student_code} onChange={(t) => update({ student_code: t })} error={error?.["student_code"]} />
-            <FormInputField title="First Name" defaultValue={student.first_name} onChange={(t) => update({ first_name: t })} error={error?.["first_name"]} />
-            <FormInputField title="Last Name" defaultValue={student.last_name} onChange={(t) => update({ last_name: t })} error={error?.["last_name"]} />
+            <FormInputField title="Student Code" defaultValue={student.studentCode} onChange={(t) => update({ student_code: t })} error={error?.["student_code"]} />
+            <FormInputField title="First Name" defaultValue={student.firstName} onChange={(t) => update({ first_name: t })} error={error?.["first_name"]} />
+            <FormInputField title="Last Name" defaultValue={student.lastName} onChange={(t) => update({ last_name: t })} error={error?.["last_name"]} />
             <FormInputField
                 title="Chinese Last Name"
-                defaultValue={student.chinese_last_name}
+                defaultValue={student.chineseLastName}
                 onChange={(t) => update({ chinese_last_name: t })}
                 error={error?.["chinese_first_name"]}
             />
             <FormInputField
                 title="Chinese First Name"
-                defaultValue={student.chinese_first_name}
+                defaultValue={student.firstName}
                 onChange={(t) => update({ chinese_first_name: t })}
                 error={error?.["chinese_last_name"]}
             />
@@ -116,11 +116,11 @@ export default ({ studentId }: { studentId: string }) => {
                 </div>
             </div>
             <Spacer />
-            <FormInputField title="Parent Email" defaultValue={student.parent_email} onChange={(t) => update({ parent_email: t })} error={error?.["parent_email"]} />
-            <FormInputField title="School Name" defaultValue={student.school_name} onChange={(t) => update({ school_name: t })} error={error?.["school_name"]} />
+            <FormInputField title="Parent Email" defaultValue={student.parentEmail} onChange={(t) => update({ parent_email: t })} error={error?.["parent_email"]} />
+            <FormInputField title="School Name" defaultValue={student.schoolName} onChange={(t) => update({ school_name: t })} error={error?.["school_name"]} />
             <FormInputField title="Grade" defaultValue={student.grade} onChange={(t) => update({ grade: t })} error={error?.["grade"]} />
-            <FormInputField title="Phone Number" defaultValue={student.phone_number} onChange={(t) => update({ phone_number: t })} error={error?.["phone_number"]} />
-            <FormInputField title="Wechat Id (Optional)" defaultValue={student.wechat_id} onChange={(t) => update({ wechat_id: t })} error={error?.["wechat_id"]} />
+            <FormInputField title="Phone Number" defaultValue={student.phoneNumber} onChange={(t) => update({ phone_number: t })} error={error?.["phone_number"]} />
+            <FormInputField title="Wechat Id (Optional)" defaultValue={student.wechatId} onChange={(t) => update({ wechat_id: t })} error={error?.["wechat_id"]} />
             <Spacer />
             <Spacer />
             <Button type="primary" block onClick={submit}>

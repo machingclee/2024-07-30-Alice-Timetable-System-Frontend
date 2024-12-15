@@ -5,17 +5,33 @@ import { PersistGate } from "redux-persist/integration/react"
 import { store, persistor } from "./redux/store"
 import { ToastContainer } from "react-toastify"
 import ConfigAxios from "./components/ConfigAxios"
+import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+import toastUtil from "./utils/toastUtil"
+
+const queryClient = new QueryClient({
+    queryCache: new QueryCache({
+        onError: err => {
+            if (err?.message) {
+                toastUtil.error(err.message)
+            }
+        }
+    })
+})
 
 export default () => {
     return (
         <Provider store={store}>
             <PersistGate persistor={persistor}>
-                <ConfigAxios store={store}>
-                    <RouterProvider router={getRouter(store)} />
-                    <ToastContainer
-                        limit={1}
-                    />
-                </ConfigAxios>
+                <QueryClientProvider client={queryClient}>
+                    <ConfigAxios store={store}>
+                        <RouterProvider router={getRouter(store)} />
+                        <ToastContainer
+                            limit={1}
+                        />
+                    </ConfigAxios>
+                    {/* <ReactQueryDevtools /> */}
+                </QueryClientProvider>
             </PersistGate>
         </Provider>
     )

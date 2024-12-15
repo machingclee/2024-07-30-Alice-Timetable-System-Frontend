@@ -13,7 +13,7 @@ import dayjs from "dayjs";
 
 export default (props: { dayUnixTimestamp: number; currHourUnixTimestamp: number }) => {
     const { currHourUnixTimestamp, dayUnixTimestamp } = props;
-    const classesThisHour = useAppSelector((s) => s.student.allStudents?.hrUnixTimestampToClasses?.[currHourUnixTimestamp]) || [];
+    const classesThisHour = useAppSelector((s) => s.student.massTimetablePage?.hrUnixTimestampToClasses?.[currHourUnixTimestamp]) || [];
     const time = dayjs(currHourUnixTimestamp);
     const isFullHour = time.minute() === 0;
     const timeSlotStyle: React.CSSProperties = {

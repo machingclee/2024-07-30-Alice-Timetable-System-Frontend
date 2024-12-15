@@ -21,10 +21,10 @@ export default (props: {
     collapseTimtable: boolean,
 }) => {
     const { packagesOffsetY, collapseTimtable } = props;
-    const packages = useAppSelector((s) => s.student.studentDetail.packages);
+    const packages = useAppSelector((s) => s.student.studentDetailTimetablePage.packages);
     const dispatch = useDispatch();
     const { studentId } = useParams<{ studentId: string }>();
-    const studentDetail = useAppSelector((s) => s.student.studentDetail.detail);
+    const studentDetail = useAppSelector((s) => s.student.studentDetailTimetablePage.detail);
     const { first_name, last_name } = studentDetail || {};
     const label = { inputProps: { "aria-label": "Switch demo" } };
     const handleShowAllClassesOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -7,26 +7,22 @@ import Spacer from "../../components/Spacer";
 import { Box } from "@mui/material";
 import SectionTitle from "../../components/SectionTitle";
 import StudentRow from "./components/StudentRow";
-import { StudentThunkAction } from "../../redux/slices/studentSlice";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import EditStudentDialog from "./components/EditStudentDialog";
 import escapeStringRegexp from "escape-string-regexp";
+import { StudentThunkAction } from "../../redux/slices/studentSlice";
 
 export default () => {
     const dispatch = useAppDispatch();
+    const studentIds = useAppSelector(s => s.student.students.ids)
     const ids = useAppSelector((s) => s.student.students.ids) || [];
     const [filter, setFilter] = useState("");
     const idToStudent = useAppSelector((s) => s.student.students.idToStudent);
-
     const openAddUserDialog = () => {
         AddStudentDialog.setContent(() => () => <AddStudentForm />);
         AddStudentDialog.setOpen(true);
     };
-
-    useEffect(() => {
-        dispatch(StudentThunkAction.getStudents());
-    }, [dispatch]);
 
     const filterRegex = new RegExp(escapeStringRegexp(filter), "i");
     const filteredIds = ids.filter((id) => {
@@ -63,6 +59,11 @@ export default () => {
 
     console.log("filteredIds", filteredIds);
 
+
+    useEffect(() => {
+        dispatch(StudentThunkAction.getStudents());
+    }, [])
+
     return (
         <div>
             <SectionTitle style={{ marginBottom: 20 }}>Students</SectionTitle>
@@ -85,7 +86,6 @@ export default () => {
                     return searchDisplay;
                 })}
                 onInputChange={(_, newValue) => {
-                    console.log("newValuenewValuenewValue", newValue);
                     setFilter(newValue || "");
                 }}
                 renderInput={(params) => (
@@ -102,10 +102,11 @@ export default () => {
             <Spacer />
 
             <Box>
-                {filteredIds.map((id) => (
-                    <StudentRow id={id} key={id} />
+                {filteredIds?.map((studentId) => (
+                    <StudentRow studentId={studentId} />
                 ))}
             </Box>
+
             <AddStudentDialog.render />
             <EditStudentDialog.render />
         </div>

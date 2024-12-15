@@ -11,9 +11,9 @@ import Label from "../../Label";
 const gridHeight = 30;
 
 export default ({ index, hourUnixTimestamp, hoursColumnGrid }: { index: number; hourUnixTimestamp: string; hoursColumnGrid: string[] }) => {
-    const selectedDate = useAppSelector((s) => s.student.allStudents.selectedDate);
+    const selectedDate = useAppSelector((s) => s.student.massTimetablePage.selectedDate);
     const timeColumnRef = useRef<HTMLDivElement>(null);
-    const numberOfClassesInHighlight = useAppSelector((s) => s.student.allStudents.totalClassesInHighlight.numberOfClassesInHighlight);
+    const numberOfClassesInHighlight = useAppSelector((s) => s.student.massTimetablePage.totalClassesInHighlight.numberOfClassesInHighlight);
     const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
     const [isHovered, setIsHovered] = useState(false);
     const open = Boolean(anchorEl);

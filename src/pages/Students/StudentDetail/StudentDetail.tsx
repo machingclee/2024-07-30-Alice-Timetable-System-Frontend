@@ -20,19 +20,14 @@ import ViewClassDialog from "../../../components/ViewClassDialog";
 import EditPackageDialog from "./components/EditPackageDialog";
 import { FaChevronLeft } from "react-icons/fa6";
 import { Box, Collapse } from "@mui/material";
-import { transform } from "lodash";
-import dayjs from "dayjs";
-
 export default () => {
     const { studentId, timestamp } = useParams<{ studentId: string; timestamp: string }>();
     if (!timestamp) return;
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [collapseTimetable, setCollapseTimetable] = useState(false);
-    const rightColumnCollapsed = useAppSelector((s) => s.app.rightColumnCollapsed);
-
-    const studentDetail = useAppSelector((s) => s.student.studentDetail.detail);
-    const { first_name, last_name } = studentDetail || {};
+    const studentDetail = useAppSelector((s) => s.student.studentDetailTimetablePage.detail);
+    const { firstName, lastName } = studentDetail || {};
 
     useEffect(() => {
         if (studentId) {
@@ -80,7 +75,7 @@ export default () => {
                                 <IoMdArrowBack />
                             </Button>
                             <Spacer height={1} />
-                            {`${first_name} ${last_name}`}
+                            {`${firstName} ${lastName}`}
                         </SectionTitle>
                         <WeeklyTimetable />
                     </div>

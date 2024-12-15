@@ -190,7 +190,7 @@ const competitionSlice = createSlice({
             }
         },
     },
-    extraReducers: (builder) => {},
+    extraReducers: (builder) => { },
 });
 
 export class UserThunkAction {

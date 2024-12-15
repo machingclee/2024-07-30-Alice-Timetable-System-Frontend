@@ -1,6 +1,5 @@
 import { Box, Button } from "@mui/material";
 import boxShadow from "../../../constant/boxShadow";
-import { useAppSelector } from "../../../redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { FaChevronRight } from "react-icons/fa";
 import Label from "../../../components/Label";
@@ -9,15 +8,17 @@ import EditStudentDialog from "./EditStudentDialog";
 import EditStudentForm from "./EditStudentForm";
 import RouteEnum from "../../../enum/RouteEnum";
 import dayjs from "dayjs";
+import { useAppSelector } from "../../../redux/hooks";
 
-export default (props: { id: string }) => {
-    const { id } = props;
+export default (props: { studentId: string }) => {
+    const { studentId } = props;
+    const student = useAppSelector(s => s.student.students.idToStudent?.[studentId])
     const navigate = useNavigate();
-    const student = useAppSelector((s) => s.student.students?.idToStudent?.[id]);
+
     const goDetailPage = () => {
-        navigate(`${RouteEnum.DASHBOARD_STUDENTS}/${id}/${dayjs(new Date()).unix() * 1000}`);
+        navigate(`${RouteEnum.DASHBOARD_STUDENTS}/${studentId}/${new Date().getTime()}`);
     };
-    const contextMenuId = props.id;
+    const contextMenuId = studentId;
 
     if (!student) {
         return null;

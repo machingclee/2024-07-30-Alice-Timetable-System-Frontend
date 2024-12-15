@@ -22,21 +22,21 @@ import { $Enums, Class_status } from "../../../prismaTypes/types";
 
 export default (props: { dayUnixTimestamp: number; hourUnixTimestamp: number; activeDraggableId: string; colIndex: number }) => {
     const dispatch = useAppDispatch();
-    const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
+    const selectedPackageId = useAppSelector((s) => s.student.studentDetailTimetablePage.selectedPackageId);
     const { activeDraggableId, hourUnixTimestamp, colIndex, dayUnixTimestamp } = props;
     const { studentId } = useParams<{ studentId: string }>();
-    const hours = useAppSelector((s) => s.student.studentDetail.weeklyTimetable?.hrUnixTimestamps);
+    const hours = useAppSelector((s) => s.student.studentDetailTimetablePage.weeklyTimetable?.hrUnixTimestamps);
     const [classStatusMenuOptionsExpand, setClassStatusMenuOptionsExpand] = useState<boolean>(false);
     const targetHit = hours?.includes(String(hourUnixTimestamp));
     if (targetHit) {
         console.log("targetHit", hourUnixTimestamp, hours);
     }
-    const studentClass = useAppSelector((s) => s.student.studentDetail.weeklyTimetable?.hrUnixTimestampToClass?.[String(hourUnixTimestamp)]);
+    const studentClass = useAppSelector((s) => s.student.studentDetailTimetablePage.weeklyTimetable?.hrUnixTimestampToClass?.[String(hourUnixTimestamp)]);
     if (studentClass) {
         console.log("studentClassstudentClass", studentClass);
     }
-    const showAll = useAppSelector((s) => s.student.studentDetail.showAllClassesForOneStudent);
-    const timetable = useAppSelector((s) => s.student.studentDetail.weeklyTimetable);
+    const showAll = useAppSelector((s) => s.student.studentDetailTimetablePage.showAllClassesForOneStudent);
+    const timetable = useAppSelector((s) => s.student.studentDetailTimetablePage.weeklyTimetable);
     const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
 

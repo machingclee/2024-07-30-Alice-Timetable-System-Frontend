@@ -25,10 +25,10 @@ export type WeeklyCoordinate = {
 
 export default () => {
     const dispatch = useAppDispatch();
-    const studentId = useAppSelector((s) => s.student.studentDetail.detail?.id) || "";
+    const studentId = useAppSelector((s) => s.student.studentDetailTimetablePage.detail?.id) || "";
     const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
-    const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
-    const courseStartDate = useAppSelector((s) => s.student.studentDetail.weeklyTimetable.selectedDate);
+    const selectedPackageId = useAppSelector((s) => s.student.studentDetailTimetablePage.selectedPackageId);
+    const courseStartDate = useAppSelector((s) => s.student.studentDetailTimetablePage.weeklyTimetable.selectedDate);
     const currDraggingId = useRef("");
     const [activeDraggableId, setActiveDraggableId] = useState("");
     const [offset, setOffset] = useState(0);
@@ -205,7 +205,7 @@ export default () => {
                         const { destination } = result;
                         const { droppableId: toDayUnixTimestamp, index: toIndex } = destination!;
                         const toHourUnixTimestamp = Object.keys(timeGrid?.[toDayUnixTimestamp]).sort()[toIndex];
-                        const fromClz = store.getState().student.studentDetail.weeklyTimetable.hrUnixTimestampToClass?.[currDraggingId.current];
+                        const fromClz = store.getState().student.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClass?.[currDraggingId.current];
                         if (!fromClz) {
                             return;
                         }

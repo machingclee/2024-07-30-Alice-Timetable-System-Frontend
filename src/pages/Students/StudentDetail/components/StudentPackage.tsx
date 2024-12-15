@@ -20,9 +20,9 @@ import RouteEnum from "../../../../enum/RouteEnum";
 export default (props: { packageId: string }) => {
     const { packageId } = props;
     const dispatch = useAppDispatch();
-    const selectedPackageId = useAppSelector((s) => s.student.studentDetail.selectedPackageId);
+    const selectedPackageId = useAppSelector((s) => s.student.studentDetailTimetablePage.selectedPackageId);
     const { studentId } = useParams<{ studentId: string }>();
-    const pkg = useAppSelector((s) => s.student.studentDetail.packages.idToPackage?.[packageId]);
+    const pkg = useAppSelector((s) => s.student.studentDetailTimetablePage.packages.idToPackage?.[packageId]);
     const { course_id, min, official_end_date, expiry_date, start_date, num_of_classes, scheduled_minutes, paid_at, default_classroom, consumed_minutes } = pkg || {};
     const assignedClasses = Math.floor(((scheduled_minutes?.count || 0) / (pkg?.min || 1)) * 10) / 10;
     console.log("consumed_minutes:", consumed_minutes);

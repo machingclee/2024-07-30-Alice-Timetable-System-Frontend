@@ -8,7 +8,7 @@ import { useState } from "react";
 
 export default ({ id }: { id: number }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const filterCourseIds = useAppSelector((s) => s.student.allStudents.filter.courseIds);
+    const filterCourseIds = useAppSelector((s) => s.student.massTimetablePage.filter.courseIds);
     const [checked, setChecked] = useState(filterCourseIds.includes(id) ? true : false);
     const course = useAppSelector((s) => s.class.courses.idToCourse?.[id]);
 

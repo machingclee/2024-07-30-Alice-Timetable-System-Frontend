@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 export default (props: { moveClassesAction: () => Promise<void> }) => {
     const { moveClassesAction: moveClasses } = props;
     const dispatch = useAppDispatch();
-    const studentId = useAppSelector((s) => s.student.studentDetail.detail?.id) || "";
+    const studentId = useAppSelector((s) => s.student.studentDetailTimetablePage.detail?.id) || "";
     return (
         <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60 }}>
             <SectionTitle>Are you sure to move the classes?</SectionTitle>
