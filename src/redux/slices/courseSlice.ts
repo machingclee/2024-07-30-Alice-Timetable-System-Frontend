@@ -4,7 +4,7 @@ import apiClient from '../../axios/apiClient';
 import { CustomResponse } from '../../axios/responseTypes';
 import apiRoutes from '../../axios/apiRoutes';
 import { processRes } from '../../utils/processRes';
-import { Course, CreateCourseRequest } from '../../dto/dto';
+import { CourseResponse, CreateCourseRequest } from '../../dto/dto';
 import normalizeUtil from '../../utils/normalizeUtil';
 import { loadingActions } from '../../utils/loadingActions';
 import { Class } from '../../prismaTypes/types';
@@ -12,7 +12,7 @@ import { Class } from '../../prismaTypes/types';
 export type ClassSliceState = {
     courses: {
         ids?: number[];
-        idToCourse?: { [id: number]: Course };
+        idToCourse?: { [id: number]: CourseResponse };
     };
     classTimetable: Class[];
 };
@@ -42,9 +42,9 @@ const classSlice = createSlice({
                 state.courses.idToCourse = idToObject;
             })
             .addCase(CourseThunkAction.updateCourse.fulfilled, (state, action) => {
-                const id = action.payload.course.id;
+                const id = action.payload.id;
                 if (state.courses.idToCourse?.[id]) {
-                    state.courses.idToCourse[id] = action.payload.course;
+                    state.courses.idToCourse[id] = action.payload;
                 }
             });
     },
@@ -52,7 +52,7 @@ const classSlice = createSlice({
 
 export class CourseThunkAction {
     public static getCourses = createAsyncThunk('courseSlice/getClasses', async (_: undefined, api) => {
-        const res = await apiClient.get<CustomResponse<Course[]>>(apiRoutes.GET_COURSES);
+        const res = await apiClient.get<CustomResponse<CourseResponse[]>>(apiRoutes.GET_COURSES);
         return processRes(res, api);
     });
     public static createCourse = createAsyncThunk(
@@ -62,8 +62,8 @@ export class CourseThunkAction {
             return processRes(res, api);
         }
     );
-    public static updateCourse = createAsyncThunk('courseSlice/updateCourse', async (props: Course, api) => {
-        const res = await apiClient.put<CustomResponse<{ course: Course }>>(apiRoutes.PUT_UPDATE_COURSE, props);
+    public static updateCourse = createAsyncThunk('courseSlice/updateCourse', async (props: CourseResponse, api) => {
+        const res = await apiClient.put<CustomResponse<CourseResponse>>(apiRoutes.PUT_UPDATE_COURSE, props);
         return processRes(res, api);
     });
 }

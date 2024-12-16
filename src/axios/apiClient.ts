@@ -33,7 +33,7 @@ export const configApiClient = (apiClient: AxiosInstance, store: ReduxToolkitSto
         response => response,
         async error => {
             const originalConfig = error.config;
-            if (error?.response?.status === 403 || error?.response?.status === 401) {
+            if ((error?.response?.status === 403 || error?.response?.status === 401) && !originalConfig._retry) {
                 const errorMessage = error?.response?.data?.errorMessage || '';
                 if (errorMessage === 'JWT_EXPIRED') {
                     originalConfig._retry = true;

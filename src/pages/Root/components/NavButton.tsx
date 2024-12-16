@@ -15,12 +15,13 @@ export default function NavButton(props: { activeNavigationRegex: RegExp; title:
             <Label label="NavButton.tsx" offsetLeft={10} offsetTop={-10} />
             <Button
                 block
+                style={{ paddingTop: 18, paddingBottom: 18 }}
                 type={active ? 'primary' : 'default'}
                 onClick={() => {
                     navigate(routeEnum);
                 }}
             >
-                <div key={path} style={{ textTransform: 'capitalize' }}>
+                <div key={path} style={{ textTransform: 'capitalize', fontSize: 16 }}>
                     {title}
                 </div>
             </Button>

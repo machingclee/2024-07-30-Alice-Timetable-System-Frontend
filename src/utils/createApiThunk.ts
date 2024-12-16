@@ -10,6 +10,7 @@ export const createApiThunk = <T, R>(prefix: string, callback: (input: T, api: A
             return res;
         } catch (err) {
             if (isAxiosError(err) && err.response) {
+                console.log('errerrerrerr', err);
                 const errorMessage = err?.response?.data?.errorMessage || '';
                 return api.rejectWithValue(errorMessage);
             } else {

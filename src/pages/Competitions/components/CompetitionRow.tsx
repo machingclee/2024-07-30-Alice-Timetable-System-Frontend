@@ -3,7 +3,7 @@ import boxShadow from "../../../constant/boxShadow";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Spacer from "../../../components/Spacer";
-import { Competition, Course } from "../../../dto/dto";
+import { Competition, CourseResponse } from "../../../dto/dto";
 import Label from "../../../components/Label";
 import { CourseThunkAction } from "../../../redux/slices/courseSlice";
 import { debounce } from "lodash";

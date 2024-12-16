@@ -16,6 +16,7 @@ export type TokenPayload = {
 };
 
 export type CreateStudentRequest = {
+    student_code: string;
     first_name: string;
     last_name: string;
     chinese_first_name: string;
@@ -92,8 +93,10 @@ export type CreateCourseRequest = {
     course_name: string;
 };
 
-export type Course = {
-    course_name: string;
+export type CourseResponse = {
+    courseName: string;
+    createdAt: number;
+    createdAtHk: string;
     id: number;
 };
 

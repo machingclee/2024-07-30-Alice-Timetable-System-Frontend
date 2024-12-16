@@ -61,18 +61,20 @@ export default function Root() {
                     }}
                 >
                     <Collapse style={{ height: '100vh' }} in={!leftNavigatorCollapsed} orientation="horizontal">
-                        <Spacer />
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'flex-end',
-                            }}
-                        >
-                            <CloseLeftColumnButton />
-                        </div>
-                        <div>
-                            <LeftNavigation />
+                        <div style={{ height: '100%', flexDirection: 'column', display: 'flex' }}>
+                            <Spacer />
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'flex-end',
+                                }}
+                            >
+                                <CloseLeftColumnButton />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <LeftNavigation />
+                            </div>
                         </div>
                     </Collapse>
                     <Collapse style={{ height: '100vh' }} in={leftNavigatorCollapsed} orientation="horizontal">

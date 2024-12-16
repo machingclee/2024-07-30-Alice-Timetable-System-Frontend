@@ -79,6 +79,9 @@ export default function LeftNavigation() {
         >
             <div
                 style={{
+                    height: '100%',
+
+                    flexDirection: 'column',
                     transition: 'opacity 0.4s ease-in-out',
                     opacity: leftNavigatorCollapsed ? 0 : 1,
                 }}
@@ -171,6 +174,7 @@ export default function LeftNavigation() {
                         }}
                     >{`${first_name} ${last_name}`}</div>
                 </div>
+                <div style={{ flex: 1 }}></div>
                 <Spacer />
                 <Button block onClick={logout}>
                     Logout

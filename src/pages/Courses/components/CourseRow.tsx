@@ -3,7 +3,7 @@ import boxShadow from '../../../constant/boxShadow';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Spacer from '../../../components/Spacer';
-import { Course } from '../../../dto/dto';
+import { CourseResponse } from '../../../dto/dto';
 import Label from '../../../components/Label';
 import { CourseThunkAction } from '../../../redux/slices/courseSlice';
 import { debounce } from 'lodash';
@@ -31,11 +31,11 @@ export default function CourseRow(props: { id: number }) {
 
     const [editing, setEditing] = useState(false);
     const formData = useRef(course);
-    const updateField = (update: Partial<Course>) => {
+    const updateField = (update: Partial<CourseResponse>) => {
         formData.current = { ...formData.current, ...update };
         checkDataDistinction();
     };
-    const { course_name } = course || {};
+    const { courseName } = course || {};
     const submitUpdate = async () => {
         const updatedClass = { ...course, ...formData.current };
         await dispatch(CourseThunkAction.updateCourse(updatedClass));
@@ -59,6 +59,7 @@ export default function CourseRow(props: { id: number }) {
     return (
         <div
             style={{
+                background: 'white',
                 boxShadow: boxShadow.SHADOW_62,
                 padding: '20px 30px',
                 borderRadius: '8px',
@@ -68,20 +69,21 @@ export default function CourseRow(props: { id: number }) {
                 marginBottom: '15px',
             }}
         >
-            <div>
+            <div style={{ flex: 1 }}>
                 <table>
                     <Label label="CourseRow.tsx" offsetTop={-20} />
                     <tbody>
                         <tr>
                             <td>Course Name:</td>
-                            {!editing && <td>{course_name}</td>}
+                            {!editing && <td>{courseName}</td>}
                             {editing && (
-                                <td>
+                                <td style={{}}>
                                     <Input
-                                        defaultValue={course_name}
+                                        style={{ flex: 1 }}
+                                        defaultValue={courseName}
                                         onChange={e => {
                                             updateField({
-                                                course_name: e.target.value,
+                                                courseName: e.target.value,
                                             });
                                         }}
                                     />

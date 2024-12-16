@@ -63,12 +63,11 @@ export default function AddStudentForm() {
             <Label label="AddStudentForm.tsx" offsetTop={-20} />
             <SectionTitle>Add Student</SectionTitle>
             <Spacer />
-            <FormInputField
-                title="First Name"
-                onChange={t => update({ first_name: t })}
-                error={error?.['first_name']}
-            />
-            <FormInputField title="Last Name" onChange={t => update({ last_name: t })} error={error?.['last_name']} />
+            <FormInputField title="Student Code" onChange={t => update({ student_code: t })} />
+            <FormInputField title="Chinese First Name" onChange={t => update({ chinese_first_name: t })} />
+            <FormInputField title="Chiese Last Name" onChange={t => update({ chinese_last_name: t })} />
+            <FormInputField title="First Name" onChange={t => update({ first_name: t })} />
+            <FormInputField title="Last Name" onChange={t => update({ last_name: t })} />
             <div style={{ display: 'flex' }}>
                 <div>
                     <FormInputTitle>Gender</FormInputTitle>

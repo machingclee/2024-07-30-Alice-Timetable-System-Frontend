@@ -1,5 +1,5 @@
 import { createListenerMiddleware, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import registerDialogAndActions from '../../utils/registerEffects';
+import registerEffects from '../../utils/registerEffects';
 import apiClient from '../../axios/apiClient';
 import { CustomResponse } from '../../axios/responseTypes';
 import apiRoutes from '../../axios/apiRoutes';
@@ -402,7 +402,7 @@ export class StudentThunkAction {
             return processRes(res, api);
         }
     );
-    public static createUser = createApiThunk(
+    public static createStudent = createApiThunk(
         'studentSlice/createStudent',
         async (props: CreateStudentRequest, api) => {
             const res = await apiClient.post<CustomResponse<StudentResponse>>(apiRoutes.POST_CREATE_STUDNET, props);
@@ -625,7 +625,8 @@ export class StudentThunkAction {
 }
 
 export const studentMiddleware = createListenerMiddleware();
-registerDialogAndActions(studentMiddleware, [
+
+registerEffects(studentMiddleware, [
     ...loadingActions(StudentThunkAction.getStudentDetail),
     ...loadingActions(StudentThunkAction.getStudents),
     ...loadingActions(StudentThunkAction.updateClass),
@@ -634,6 +635,7 @@ registerDialogAndActions(studentMiddleware, [
         rejections: [
             StudentThunkAction.getStudentDetail.rejected,
             StudentThunkAction.getStudents.rejected,
+            StudentThunkAction.createStudent.rejected,
             StudentThunkAction.duplicateClases.rejected,
             StudentThunkAction.updateClass.rejected,
             StudentThunkAction.createStudentPackage.rejected,
