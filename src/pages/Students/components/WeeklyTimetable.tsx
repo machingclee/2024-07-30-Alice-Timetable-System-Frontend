@@ -226,7 +226,7 @@ export default function WeeklyTimeTable() {
                         const toHourUnixTimestamp = Object.keys(timeGrid?.[toDayUnixTimestamp]).sort()[toIndex];
                         const fromClz =
                             store.getState().student.studentDetailTimetablePage.weeklyTimetable
-                                .hrUnixTimestampToClass?.[currDraggingId.current];
+                                .hrUnixTimestampToClassEvent?.[currDraggingId.current];
                         if (!fromClz) {
                             return;
                         }
@@ -243,13 +243,13 @@ export default function WeeklyTimeTable() {
                                     hrTimestamp: currDraggingId.current,
                                 })
                             );
-                            if (fromClz.class_group_id) {
+                            if (fromClz.classGroup) {
                                 setTimeout(() => {
                                     dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
                                 }, 1000);
                             }
                         };
-                        if (fromClz.class_group_id) {
+                        if (fromClz.classGroup) {
                             dispatch(
                                 studentSlice.actions.hideClass({
                                     hrTimestamp: currDraggingId.current,

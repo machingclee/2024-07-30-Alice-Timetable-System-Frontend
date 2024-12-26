@@ -15,12 +15,12 @@ export default {
     GET_USERS: '/user/users',
     GET_STUDENTS: `/students`,
     GET_COURSES: '/courses',
-    GET_STUDENT_DETAIL: (studentId: string) => `/students/student-detail/${studentId}`,
+    GET_STUDENT_DETAIL: (studentId: string) => `/students/${studentId}/student-detail`,
     GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE: (studentId: string) =>
-        `/students/student-classes-for-weekly-timteable/${studentId}`,
+        `/students/${studentId}/student-classes-for-weekly-timetable`,
     GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: (dateUnixTimestamp: string, classRoom: Classroom) =>
         `/students/student-classes-for-daily-timteable/${dateUnixTimestamp}/${classRoom}`,
-    GET_STUDENT_PACKAGES: (studentId: string) => `/students/student-packages/${studentId}`,
+    GET_STUDENT_PACKAGES: (studentId: string) => `/students/${studentId}/student-packages`,
     GET_LOGGING: (props: { page: number; limit: number }) =>
         `/logging/get-logs?page=${props.page}&limit=${props.limit}`,
 

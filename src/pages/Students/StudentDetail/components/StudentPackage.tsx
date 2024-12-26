@@ -16,31 +16,24 @@ import AddPaymentDetailForm from './AddPaymentDetailForm';
 import EditPackageDialog from './EditPackageDialog';
 import EditPackageForm from './EditPackageForm';
 import RouteEnum from '../../../../enum/RouteEnum';
+import classnames from 'classnames';
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;
     const dispatch = useAppDispatch();
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const { studentId } = useParams<{ studentId: string }>();
-    const pkg = useAppSelector(s => s.student.studentDetailTimetablePage.packages.idToPackage?.[packageId]);
-    const {
-        course_id,
-        min,
-        official_end_date,
-        expiry_date,
-        start_date,
-        num_of_classes,
-        scheduled_minutes,
-        paid_at,
-        default_classroom,
-        consumed_minutes,
-    } = pkg || {};
-    const course = useAppSelector(s => s.class.courses?.idToCourse?.[course_id || -1]);
-    const assignedClasses = Math.floor(((scheduled_minutes?.count || 0) / (pkg?.min || 1)) * 10) / 10;
-    console.log('consumed_minutes:', consumed_minutes);
-    const finishedClasses = Math.floor(((consumed_minutes?.count || 0) / (pkg?.min || 1)) * 10) / 10;
+    const pkgResonse = useAppSelector(
+        s => s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[packageId]
+    );
+    const { consumedMinutes, schedumeMinutes, studentPackage: studentPkg, student } = pkgResonse || {};
+    const courseId = studentPkg?.courseId;
+    const course = useAppSelector(s => s.class.courses?.idToCourse?.[courseId || -1]);
+    const assignedClasses = Math.floor(((schedumeMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
+    console.log('consumed_minutes:', consumedMinutes);
+    const finishedClasses = Math.floor(((consumedMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
 
-    if (!course_id) {
+    if (!courseId) {
         return null;
     }
 
@@ -89,7 +82,7 @@ export default function StudentPackage(props: { packageId: string }) {
     };
 
     const showAttendence = async () => {
-        const route = `${RouteEnum.CLASS_STATUS}/${pkg?.uuid}`;
+        const route = `${RouteEnum.CLASS_STATUS}/${student?.id}`;
         window.open(route, '_blank');
     };
 
@@ -106,7 +99,9 @@ export default function StudentPackage(props: { packageId: string }) {
                     <div>
                         <span style={{ color: colors.GREEN, fontWeight: 500 }}>Paid At</span>
                     </div>
-                    <div style={{ fontSize: 12, color: colors.GREEN }}>{dayjs(paid_at).format('YYYY-MM-DD')}</div>
+                    <div style={{ fontSize: 12, color: colors.GREEN }}>
+                        {dayjs(studentPkg.paidAt).format('YYYY-MM-DD')}
+                    </div>
                 </div>
             </div>
         );
@@ -122,83 +117,64 @@ export default function StudentPackage(props: { packageId: string }) {
         );
     };
 
-    const isPaid = paid_at != null;
+    const isPaid = studentPkg.paidAt != null;
 
     return (
-        <Box
+        <div
             style={{
-                margin: '5px',
                 boxShadow: boxShadow.SHADOW_60,
-                borderRadius: 0,
-                padding: 6,
             }}
-            sx={{
-                cursor: 'pointer',
-                outline: isSelected ? `${colors.BLUE} solid 2px` : '',
-                '& table': {
-                    width: '100%',
-                    borderSpacing: '6px',
-                },
-                '& td': {
-                    whiteSpace: 'nowrap',
-                },
-                '& td:first-child': {
-                    width: '0.1%',
-                },
-                '& td:nth-child(2)': {
-                    padding: '4px 6px',
-                    borderRadius: '4px',
-                    backgroundColor: 'rgba(0,0,0,0.05)',
-                },
-            }}
+            className={classnames(
+                'cursor-pointer',
+                'bg-white',
+                isSelected ? `outline outline-2 outline-blue-600` : '',
+                '[&_table]:w-full [&_table]:border-separate [&_table]:border-spacing-1',
+                '[&_td]:whitespace-nowrap',
+                '[&_td:first-child]:w-[0.1%]',
+                '[&_td:nth-child(2)]:p-[4px_6px] [&_td:nth-child(2)]:rounded-[4px] [&_td:nth-child(2)]:bg-gray-200',
+                'p-[10px] rounded-none m-1'
+            )}
         >
             <Label label="StudentPackage.tsx" offsetLeft={10} />
             {/* @ts-expect-error - context menu trigger has problem in typing */}
             <ContextMenuTrigger id={packageId}>
                 <div onClick={selectHandler}>
-                    <div
-                        style={{
-                            padding: 10,
-                            display: 'flex',
-                            justifyContent: 'center',
-                            fontWeight: 600,
-                        }}
-                    >
-                        {course?.course_name}
-                    </div>
+                    <div className="p-[10px] flex justify-center font-[600]">{course?.courseName}</div>
                     <Sep />
                     <Spacer height={5} />
-                    <table>
+                    <table className="[&_td]:pr-[10px]">
                         <tbody>
                             <tr>
                                 <td>Classroom</td>
-                                <td>{default_classroom}</td>
+                                <td>{studentPkg.defaultClassroom}</td>
                             </tr>
                             <tr>
                                 <td>Duration</td>
-                                <td>{min}</td>
+                                <td>{studentPkg.min}</td>
                             </tr>
                             <tr>
                                 <td>Start</td>
-                                <td>{dayjs(start_date).format('YYYY-MM-DD')}</td>
+                                <td>{dayjs(studentPkg.startDate).format('YYYY-MM-DD')}</td>
                             </tr>
                             <tr>
                                 <td>End Date</td>
                                 <td>
-                                    {official_end_date === 0 ? '???' : dayjs(official_end_date).format('YYYY-MM-DD')}
+                                    {studentPkg.officialEndDate === 0
+                                        ? '???'
+                                        : dayjs(studentPkg.officialEndDate).format('YYYY-MM-DD')}
                                 </td>
                             </tr>
                             <tr>
                                 <td>Expiry Date</td>
-                                <td>{dayjs(expiry_date).format('YYYY-MM-DD')}</td>
+                                <td>{dayjs(studentPkg.expiryDate).format('YYYY-MM-DD')}</td>
                             </tr>
                             <tr>
                                 <td>Scheduled Classes</td>
-                                <td>{`${assignedClasses}/${num_of_classes}`}</td>
+                                <td>{`${assignedClasses}/${studentPkg.numOfClasses}`}</td>
                             </tr>
                             <tr>
                                 <td>Finished Classes</td>
-                                <td>{`${finishedClasses}/${num_of_classes}`}</td>
+                                <td>{`${finishedClasses}/${studentPkg.numOfClasses}`}</td>
                             </tr>
                             <tr>
                                 <td>Payment Status</td>
@@ -269,6 +245,6 @@ export default function StudentPackage(props: { packageId: string }) {
                     )}
                 </Box>
             </ContextMenu>
-        </Box>
+        </div>
     );
 }

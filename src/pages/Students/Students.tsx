@@ -90,6 +90,8 @@ export default function Students() {
                     <TextField
                         {...params}
                         label="Find the student"
+                        size="small"
+                        style={{ backgroundColor: 'white' }}
                         placeholder="Chinese Name, English Name, School Name, Parent Email, etc."
                         variant="outlined"
                     />

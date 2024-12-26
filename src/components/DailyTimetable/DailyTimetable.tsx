@@ -31,7 +31,7 @@ export default function DailyTimetable({
     const hrUnixTimestampOnClick = useAppSelector(
         s => s.student.massTimetablePage.totalClassesInHighlight.hrUnixTimestampOnClick
     );
-    const hrUnixTimestampToClasses = useAppSelector(s => s.student.massTimetablePage.hrUnixTimestampToClasses);
+    const hrUnixTimestampToClasses = useAppSelector(s => s.student.massTimetablePage.hrUnixTimestampToTimetableClasses);
 
     // Memoize the half-hour intervals to prevent recalculation on every render
     const oneForthHourIntervals = useMemo(() => {
@@ -146,7 +146,7 @@ export default function DailyTimetable({
                                 })
                             );
                             dispatch(
-                                StudentThunkAction.getStudentClassesForDailyTimetable({
+                                StudentThunkAction.getMassiveStudentsClassesForDailyTimetable({
                                     dateUnixTimestamp: prevDayjs.startOf('day').valueOf().toString(),
                                     classRoom: classRoom,
                                 })

@@ -18,7 +18,7 @@ import colors from '../../../constant/colors';
 import Label from '../../../components/Label';
 import ViewClassDialog from '../../../components/ViewClassDialog';
 import ViewClassForm from '../../../components/ViewClassForm';
-import { $Enums, Class_status } from '../../../prismaTypes/types';
+import { Class_status, Classroom } from '../../../prismaTypes/types';
 
 export default function StudentClassForWeeklyTimetable(props: {
     dayUnixTimestamp: number;
@@ -36,20 +36,25 @@ export default function StudentClassForWeeklyTimetable(props: {
     if (targetHit) {
         console.log('targetHit', hourUnixTimestamp, hours);
     }
-    const studentClass = useAppSelector(
-        s => s.student.studentDetailTimetablePage.weeklyTimetable?.hrUnixTimestampToClass?.[String(hourUnixTimestamp)]
+    const classEvent = useAppSelector(
+        s =>
+            s.student.studentDetailTimetablePage.weeklyTimetable?.hrUnixTimestampToClassEvent?.[
+                String(hourUnixTimestamp)
+            ]
     );
-    if (studentClass) {
-        console.log('studentClassstudentClass', studentClass);
+    if (classEvent) {
+        console.log('studentClassstudentClass', classEvent);
     }
     const showAll = useAppSelector(s => s.student.studentDetailTimetablePage.showAllClassesForOneStudent);
     const timetable = useAppSelector(s => s.student.studentDetailTimetablePage.weeklyTimetable);
     const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
 
-    const { day_unix_timestamp = 0, hour_unix_timestamp = 0, class_group_id } = studentClass || {};
+    const { dayUnixTimestamp: day_unix_timestamp = 0, hourUnixTimestamp: classUnixTimestamp = 0 } =
+        classEvent?.class || {};
+    const { id: class_group_id } = classEvent?.classGroup || {};
     const hasDuplicationGroup = class_group_id != null;
-    const disableDraggable = !(studentClass != null);
+    const disableDraggable = !(classEvent != null);
     const createEvent = () => {
         AddClassEventDialog.setContent(() => () => (
             <AddClassEventForm
@@ -61,11 +66,11 @@ export default function StudentClassForWeeklyTimetable(props: {
         AddClassEventDialog.setOpen(true);
     };
 
-    const invalidData = day_unix_timestamp >= hour_unix_timestamp;
-    const contextMenuId = `${studentClass?.student_id || ''}-${studentClass?.hour_unix_timestamp || ''}`;
-    const rightClickable = !(studentClass != null);
+    const invalidData = day_unix_timestamp >= classUnixTimestamp;
+    const contextMenuId = `${classEvent?.student.id || ''}-${classEvent?.class.hourUnixTimestamp || ''}`;
+    const rightClickable = !(classEvent != null);
     const dayAndTime = dayjs(hourUnixTimestamp).format('ddd, HH:mm');
-    const disableDuplicate = studentClass?.class_group_id != null;
+    const disableDuplicate = classEvent?.classGroup != null;
     // To adjust place a thick line to indicate the hour unit
     const time = dayjs(hourUnixTimestamp);
     const isFullHour = time.minute() === 0;
@@ -146,32 +151,36 @@ export default function StudentClassForWeeklyTimetable(props: {
                   );
               }
             : ({ children }: PropsWithChildren) => children,
-        [studentClass, selectedPackageId]
+        [classEvent, selectedPackageId]
     );
 
-    const showLabel = studentClass?.hide != null;
+    const showLabel = classEvent?.hide != null;
 
     const updateClassStatusHandle = (status: Class_status) => {
-        console.log('studentClass?.class_number:', studentClass?.class_number);
-        console.log('studentClass?.min:', studentClass?.min);
-        console.log('studentClass?.remark:', studentClass?.remark);
-        console.log('studentClass?.actual_classroom:', studentClass?.actual_classroom);
-        if (studentClass?.class_number && studentClass?.min && studentClass?.actual_classroom) {
+        const cls = classEvent?.class;
+        console.log('studentClass?.class_number:', cls?.classNumber);
+        console.log('studentClass?.min:', cls?.min);
+        console.log('studentClass?.remark:', cls?.remark);
+        console.log('studentClass?.actual_classroom:', cls?.actualClassroom);
+        if (cls?.classNumber && cls?.min && cls?.actualClassroom) {
             dispatch(
                 StudentThunkAction.updateClass({
                     class_status: status,
-                    classId: studentClass?.id,
-                    min: studentClass?.min,
+                    classId: cls?.id,
+                    min: cls?.min,
                     reason_for_absence: '',
-                    remark: studentClass?.remark ? studentClass?.remark : '',
-                    actual_classroom: studentClass?.actual_classroom as $Enums.Classroom,
+                    remark: cls?.remark ? cls?.remark : '',
+                    actual_classroom: cls?.actualClassroom as Classroom,
                 })
             )
                 .unwrap()
                 .then(() => {
+                    if (!classEvent) {
+                        return;
+                    }
                     dispatch(
                         StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                            studentId: studentClass.student_id,
+                            studentId: classEvent.student.id,
                         })
                     );
                 });
@@ -180,28 +189,27 @@ export default function StudentClassForWeeklyTimetable(props: {
 
     // To account for the numbering of classes
     useEffect(() => {
-        if (studentClass && timetable.hrUnixTimestampToClass) {
+        if (classEvent && timetable.hrUnixTimestampToClassEvent) {
             let currentClassNumber = 0;
 
-            const sortedClasses = Object.values(timetable.hrUnixTimestampToClass).sort((a, b) => {
-                return a.hour_unix_timestamp - b.hour_unix_timestamp;
+            const sortedClasses = Object.values(timetable.hrUnixTimestampToClassEvent).sort((a, b) => {
+                return a.class.hourUnixTimestamp - b.class.hourUnixTimestamp;
             });
 
             sortedClasses.forEach(item => {
+                const classStatus = item.class.classStatus;
                 if (
-                    item.course_name === studentClass.course_name &&
-                    (item.class_status === 'PRESENT' ||
-                        item.class_status === 'MAKEUP' ||
-                        item.class_status === 'ILLEGIT_ABSENCE')
+                    item.course.courseName === classEvent.course.courseName &&
+                    (classStatus === 'PRESENT' || classStatus === 'MAKEUP' || classStatus === 'ILLEGIT_ABSENCE')
                 ) {
                     currentClassNumber++;
-                    if (item.hour_unix_timestamp === studentClass.hour_unix_timestamp) {
+                    if (item.class.hourUnixTimestamp === classEvent.class.hourUnixTimestamp) {
                         setClassNumber(currentClassNumber);
                     }
                 }
             });
         }
-    }, [studentClass, timetable.hrUnixTimestampToClass]);
+    }, [classEvent, timetable.hrUnixTimestampToClassEvent]);
 
     return (
         <>
@@ -215,14 +223,14 @@ export default function StudentClassForWeeklyTimetable(props: {
                 {provided_ => {
                     const { dragHandleProps, draggableProps, innerRef } = provided_;
                     const { style, ..._draggableProps } = draggableProps;
-                    const course_name = studentClass?.course_name;
+                    const courseName = classEvent?.course.courseName;
                     const shouldFreeze = parseInt(activeDraggableId) !== hourUnixTimestamp;
 
                     return (
                         <div
                             className="draggable-container"
                             style={{
-                                opacity: studentClass?.hide ? 0 : 1,
+                                opacity: classEvent?.hide ? 0 : 1,
                                 position: 'relative',
                             }}
                         >
@@ -247,11 +255,9 @@ export default function StudentClassForWeeklyTimetable(props: {
                                         }}
                                     >
                                         {/* Control what to show on the entire timetable */}
-                                        {course_name &&
+                                        {courseName &&
                                             (showAll ||
-                                                (!showAll &&
-                                                    Number(selectedPackageId) ===
-                                                        studentClass?.student_package_id)) && (
+                                                (!showAll && Number(selectedPackageId) === classEvent?.package.id)) && (
                                                 <div>
                                                     {/*@ts-expect-error - context menu has problem in typing */}
                                                     <ContextMenuTrigger id={contextMenuId}>
@@ -274,12 +280,12 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                                 width: 'calc(100% - 20px)',
                                                                 height:
                                                                     classEventHeight ||
-                                                                    1.2 * (studentClass.min || 0) - 10,
+                                                                    1.2 * (classEvent.class.min || 0) - 10,
                                                                 backgroundColor: (() => {
                                                                     if (invalidData) {
                                                                         return 'red';
                                                                     } else {
-                                                                        switch (studentClass.class_status) {
+                                                                        switch (classEvent.class.classStatus) {
                                                                             case 'PRESENT':
                                                                                 return colors.GREEN_BLUE;
                                                                             case 'TRIAL':
@@ -313,7 +319,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                                     padding: 4,
                                                                 }}
                                                             >
-                                                                {studentClass.course_name}
+                                                                {classEvent.course.courseName}
                                                             </div>
                                                             {classNumber !== 0 && (
                                                                 <div
@@ -366,7 +372,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                                 className="menu-item"
                                                                 onClick={() => {
                                                                     ViewClassDialog.setContent(() => () => (
-                                                                        <ViewClassForm classEvent={studentClass} />
+                                                                        <ViewClassForm classEvent={classEvent} />
                                                                     ));
                                                                     ViewClassDialog.setOpen(true);
                                                                 }}
@@ -380,7 +386,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                                     ViewClassDialog.setContent(() => () => (
                                                                         <ViewClassForm
                                                                             isEditing={true}
-                                                                            classEvent={studentClass}
+                                                                            classEvent={classEvent}
                                                                         />
                                                                     ));
                                                                     ViewClassDialog.setOpen(true);
@@ -397,7 +403,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                                 )}
                                                                 onClick={() => {
                                                                     DuplicateClassDialog.setContent(() => () => (
-                                                                        <DuplicateClassForm classEvent={studentClass} />
+                                                                        <DuplicateClassForm class={classEvent.class} />
                                                                     ));
                                                                     DuplicateClassDialog.setOpen(true);
                                                                 }}
@@ -412,7 +418,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                                         onClick={async () => {
                                                                             await dispatch(
                                                                                 StudentThunkAction.detachFromGroup({
-                                                                                    classId: studentClass.id,
+                                                                                    classId: classEvent.class.id,
                                                                                 })
                                                                             ).unwrap();
                                                                         }}
@@ -426,7 +432,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                                 className={classnames('menu-item')}
                                                                 onClick={() => {
                                                                     DeleteClassDialog.setContent(() => () => (
-                                                                        <DeleteClassForm classEvent={studentClass} />
+                                                                        <DeleteClassForm classEvent={classEvent} />
                                                                     ));
                                                                     DeleteClassDialog.setOpen(true);
                                                                 }}

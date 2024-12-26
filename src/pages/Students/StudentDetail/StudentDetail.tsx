@@ -64,7 +64,6 @@ export default function StudentDetail() {
         <div
             style={{
                 marginLeft: '10px',
-                marginRight: '50px',
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',

@@ -14,11 +14,11 @@ import Label from '../../../../components/Label';
 import { useDispatch } from 'react-redux';
 import studentSlice from '../../../../redux/slices/studentSlice';
 import { MdOutlineEventNote } from 'react-icons/md';
-import { Augmented_Student_package } from '../../../../dto/dto';
+import { StudentPackageRepsonse } from '../../../../dto/kotlinDto';
 
 export default function StudentPackageColumn(props: { packagesOffsetY: number; collapseTimtable: boolean }) {
     const { packagesOffsetY, collapseTimtable } = props;
-    const packages = useAppSelector(s => s.student.studentDetailTimetablePage.packages);
+    const packagesRes = useAppSelector(s => s.student.studentDetailTimetablePage.studentPackages);
     const dispatch = useDispatch();
     const { studentId } = useParams<{ studentId: string }>();
     const studentDetail = useAppSelector(s => s.student.studentDetailTimetablePage.detail);
@@ -27,14 +27,15 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
     const handleShowAllClassesOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(studentSlice.actions.setShowAllClassesForOneStudent(event.target.checked));
     };
-    const flattedPackages = packages?.ids?.map(id => packages?.idToPackage?.[id || '']) as Augmented_Student_package[];
-    const courseNames = Array.from(new Set(flattedPackages?.map(pkg => pkg.course_name)));
+    const flattedPackages = packagesRes?.ids?.map(
+        id => packagesRes?.idToPackageResponse?.[id || '']
+    ) as StudentPackageRepsonse[];
+    const courseNames = Array.from(new Set(flattedPackages?.map(pkg => pkg.course.courseName)));
 
     return (
         <div
             style={{
                 flex: 1,
-                paddingRight: 100,
                 display: 'flex',
                 flexDirection: 'column',
                 position: 'relative',
@@ -85,22 +86,13 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                         defaultChecked
                     />
                 </div>
-                <CustomScrollbarContainer
-                    style={{
-                        height: `calc(100vh - ${packagesOffsetY}px)`,
-                        width: '100%',
-                    }}
-                >
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            width: '100%',
-                        }}
-                    >
+                <CustomScrollbarContainer className={`w-full h-[calc(100vh-${packagesOffsetY}px)]`}>
+                    <div className="flex justify-center w-full">
                         <div style={{ width: '100%' }}>
                             {courseNames.map(courseName => {
-                                const packages = flattedPackages.filter(pkg => pkg.course_name === courseName);
+                                const packagesRes = flattedPackages.filter(
+                                    pkgRes => pkgRes.course.courseName === courseName
+                                );
                                 return (
                                     <div>
                                         <div
@@ -123,8 +115,13 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                                                 display: collapseTimtable ? 'flex' : 'unset',
                                             }}
                                         >
-                                            {packages?.map(pkg => {
-                                                return <StudentPackage packageId={String(pkg.id)} key={pkg.id} />;
+                                            {packagesRes?.map(pkgRes => {
+                                                return (
+                                                    <StudentPackage
+                                                        packageId={String(pkgRes.studentPackage.id)}
+                                                        key={pkgRes.studentPackage.id}
+                                                    />
+                                                );
                                             })}
                                         </div>
                                         <Spacer />

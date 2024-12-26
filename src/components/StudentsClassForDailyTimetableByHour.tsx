@@ -16,7 +16,8 @@ export default function StudentsClassForDailyTimetableByHour(props: {
 }) {
     const { currHourUnixTimestamp, dayUnixTimestamp } = props;
     const classesThisHour =
-        useAppSelector(s => s.student.massTimetablePage?.hrUnixTimestampToClasses?.[currHourUnixTimestamp]) || [];
+        useAppSelector(s => s.student.massTimetablePage?.hrUnixTimestampToTimetableClasses?.[currHourUnixTimestamp]) ||
+        [];
     const time = dayjs(currHourUnixTimestamp);
     const isFullHour = time.minute() === 0;
     const timeSlotStyle: React.CSSProperties = {

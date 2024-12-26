@@ -18,7 +18,9 @@ import dayjs from 'dayjs';
 export default function EditPackageForm(props: { packageId: string }) {
     const { packageId } = props;
     const { studentId } = useParams<{ studentId: string }>();
-    const currentPackage = useAppSelector(s => s.student.studentDetailTimetablePage.packages.idToPackage?.[packageId]);
+    const currentPackage = useAppSelector(
+        s => s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[packageId]
+    );
 
     const [error, _] = useState<Partial<UpdateStudentPackageRequest>>({});
     const dispatch = useAppDispatch();

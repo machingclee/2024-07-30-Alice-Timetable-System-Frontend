@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import FadeIn from '../../../components/FadeIn';
 import Label from '../../../components/Label';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
@@ -32,20 +33,31 @@ export default function CloseLeftColumnButton() {
             )}
             {!leftNavigatorCollapsed && (
                 <FadeIn>
-                    <FaAngleLeft
+                    <Button
+                        sx={{
+                            marginRight: '20px',
+                            padding: 0,
+                            textTransform: 'none',
+                        }}
                         onClick={() => {
                             dispatch(appSlice.actions.setleftNavigatorCollapsed(!leftNavigatorCollapsed));
                         }}
-                        size={24}
-                        style={{
-                            marginLeft: 20,
-                            marginRight: 20,
-                            cursor: 'pointer',
-                            transition: 'transform 0.3s ease-out-in',
-                            zIndex: 10 ** 100,
-                            transform: leftNavigatorCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
-                        }}
-                    />
+                    >
+                        <div style={{ fontSize: 18, display: 'flex', alignItems: 'center', marginRight: 20 }}>
+                            <FaAngleLeft
+                                size={20}
+                                style={{
+                                    marginLeft: 20,
+                                    marginRight: 10,
+                                    cursor: 'pointer',
+                                    transition: 'transform 0.3s ease-out-in',
+                                    zIndex: 10 ** 100,
+                                    transform: leftNavigatorCollapsed ? 'rotate(180deg)' : 'rotate(0deg)',
+                                }}
+                            />
+                            Close
+                        </div>
+                    </Button>
                 </FadeIn>
             )}
         </>

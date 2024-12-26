@@ -29,16 +29,22 @@ export default function AddClassEventForm(props: {
     const [error, setError] = useState<Partial<CreateClassRequest>>({});
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const defaultClassroom = useAppSelector(
-        s => s.student.studentDetailTimetablePage.packages.idToPackage?.[selectedPackageId]?.default_classroom
+        s =>
+            s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[selectedPackageId]
+                ?.default_classroom
     );
     const defaultCourseId = useAppSelector(
-        s => s.student.studentDetailTimetablePage.packages.idToPackage?.[selectedPackageId]?.course_id || 0
+        s =>
+            s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[selectedPackageId]?.course_id ||
+            0
     );
     const defaultMin = useAppSelector(
-        s => s.student.studentDetailTimetablePage.packages.idToPackage?.[selectedPackageId]?.min || 0
+        s => s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[selectedPackageId]?.min || 0
     );
     const defaultNumOfClasses = useAppSelector(
-        s => s.student.studentDetailTimetablePage.packages.idToPackage?.[selectedPackageId]?.num_of_classes || 1
+        s =>
+            s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[selectedPackageId]
+                ?.num_of_classes || 1
     );
     const dispatch = useAppDispatch();
     const courses = useAppSelector(s => s.class.courses);

@@ -108,10 +108,10 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
                     updateFormData({ course_id: value });
                 }}
                 options={classes.ids?.map(id_ => {
-                    const { course_name, id } = classes.idToCourse?.[id_] || {};
+                    const { courseName, id } = classes.idToCourse?.[id_] || {};
                     return {
                         value: id || 0,
-                        label: course_name || '',
+                        label: courseName || '',
                     };
                 })}
             />

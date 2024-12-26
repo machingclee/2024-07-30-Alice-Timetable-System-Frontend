@@ -6,10 +6,10 @@ import { Button, Select } from 'antd';
 import { useAppDispatch } from '../redux/hooks';
 import { StudentThunkAction } from '../redux/slices/studentSlice';
 import DuplicateClassDialog from './DuplicateClassDialog';
-import { Class } from '../prismaTypes/types';
+import { ClassDTO } from '../dto/kotlinDto';
 
-export default function DuplicateClassForm(props: { classEvent: Class }) {
-    const { classEvent } = props;
+export default function DuplicateClassForm(props: { class: ClassDTO }) {
+    const { class: classEvent } = props;
     const dispatch = useAppDispatch();
     const { id } = classEvent;
     const [week, setWeek] = useState(2);

@@ -1,4 +1,4 @@
-import { Class, Classroom, Student_package } from '../prismaTypes/types';
+import { Classroom, Student_package } from '../prismaTypes/types';
 
 export type Gender = 'MALE' | 'FEMALE';
 export type RoleInSystem = 'SUPER_ADMIN' | 'ADMIN' | 'STAFF' | 'STUDENT';
@@ -68,25 +68,6 @@ export type User = {
     role_in_system: RoleInSystem;
     role_in_company: string;
     id: string;
-};
-
-export type StudentResponse = {
-    id: string;
-    firstName: string;
-    lastName: string;
-    chineseFirstName?: string;
-    chineseLastName?: string;
-    schoolName: string;
-    studentCode?: string;
-    grade: string;
-    phoneNumber?: string;
-    wechatId?: string;
-    birthdate: number; // Double in Kotlin becomes number in TypeScript
-    parentEmail: string;
-    createdAt?: number;
-    createdAtHk?: string;
-    parentId?: string;
-    gender: Gender;
 };
 
 export type CreateCourseRequest = {
@@ -241,25 +222,6 @@ export type Augmented_Student_package = Student_package & {
     scheduled_minutes: { count: number };
     consumed_minutes: { count: number };
     course_name: string;
-};
-
-export type Augmented_Class = Class & {
-    course_name: string;
-    student_id: string;
-};
-
-export type TimetableClass = Class & {
-    student_package_id: number;
-    course_id: number;
-    course_name: string;
-    student_id: string;
-    student_code: string;
-    default_classroom: Classroom;
-    first_name: string; // student name
-    last_name: string; // student name
-    chinese_first_name: string; // student name
-    chinese_last_name: string; // student name
-    id: number;
 };
 
 export type SummaryOfClassStatues = {

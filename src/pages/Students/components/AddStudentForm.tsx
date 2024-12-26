@@ -1,10 +1,7 @@
 import { Button, Select } from 'antd';
 import Spacer from '../../../components/Spacer';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { CreateStudentRequest, Gender } from '../../../dto/dto';
-import apiClient from '../../../axios/apiClient';
-import apiRoutes from '../../../axios/apiRoutes';
-import { CustomResponse } from '../../../axios/responseTypes';
 import FormInputField from '../../../components/FormInputField';
 import toastUtil from '../../../utils/toastUtil';
 import SectionTitle from '../../../components/SectionTitle';
@@ -21,31 +18,29 @@ const initialDate = '2015-01-01';
 
 export default function AddStudentForm() {
     const dispatch = useAppDispatch();
-    const formData = useRef<Partial<CreateStudentRequest>>({
+    const formData = useRef<CreateStudentRequest>({
         gender: 'MALE',
         birthdate: dayjs(new Date(initialDate)).valueOf(),
+        chinese_first_name: '',
+        chinese_last_name: '',
+        first_name: '',
+        grade: '',
+        last_name: '',
+        parent_email: '',
+        phone_number: '',
+        school_name: '',
+        student_code: '',
+        wechat_id: '',
     });
-    const [error, setError] = useState<Partial<CreateStudentRequest>>({});
     const update = (update_: Partial<CreateStudentRequest>) => {
         formData.current = { ...formData.current, ...update_ };
     };
 
     const submit = async () => {
-        const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_STUDNET, formData.current);
-        if (!res.data.success) {
-            const errorMessage = res.data?.errorMessage;
-            const errorObject = res.data?.errorObject;
-            if (errorMessage) {
-                toastUtil.error(errorMessage);
-            }
-            if (errorObject) {
-                setError(errorObject);
-            }
-        } else {
-            toastUtil.success('User Created');
-            AddUserDialog.setOpen(false);
-            dispatch(StudentThunkAction.getStudents());
-        }
+        await dispatch(StudentThunkAction.createStudent(formData.current)).unwrap();
+        toastUtil.success('User Created');
+        AddUserDialog.setOpen(false);
+        dispatch(StudentThunkAction.getStudents());
     };
 
     const dateFormat = 'YYYY-MM-DD';
@@ -64,10 +59,10 @@ export default function AddStudentForm() {
             <SectionTitle>Add Student</SectionTitle>
             <Spacer />
             <FormInputField title="Student Code" onChange={t => update({ student_code: t })} />
-            <FormInputField title="Chinese First Name" onChange={t => update({ chinese_first_name: t })} />
-            <FormInputField title="Chiese Last Name" onChange={t => update({ chinese_last_name: t })} />
-            <FormInputField title="First Name" onChange={t => update({ first_name: t })} />
+            <FormInputField title="Chinese Surname" onChange={t => update({ chinese_last_name: t })} />
+            <FormInputField title="Chinese Name" onChange={t => update({ chinese_first_name: t })} />
             <FormInputField title="Last Name" onChange={t => update({ last_name: t })} />
+            <FormInputField title="First Name" onChange={t => update({ first_name: t })} />
             <div style={{ display: 'flex' }}>
                 <div>
                     <FormInputTitle>Gender</FormInputTitle>
@@ -99,32 +94,15 @@ export default function AddStudentForm() {
                 </div>
             </div>
             <Spacer />
-            <FormInputField
-                title="Parent Email"
-                onChange={t => update({ parent_email: t })}
-                error={error?.['parent_email']}
-            />
-            <FormInputField
-                title="School Name"
-                onChange={t => update({ school_name: t })}
-                error={error?.['school_name']}
-            />
+            <FormInputField title="Parent Email" onChange={t => update({ parent_email: t })} />
+            <FormInputField title="School Name" onChange={t => update({ school_name: t })} />
             <FormInputField
                 title="Grade"
                 onChange={t => update({ grade: t })}
-                error={error?.['grade']}
                 remark={`(before ${dayjs(new Date()).format('YYYY')}-09-01)`}
             />
-            <FormInputField
-                title="Phone Number"
-                onChange={t => update({ phone_number: t })}
-                error={error?.['phone_number']}
-            />
-            <FormInputField
-                title="Wechat Id (Optional)"
-                onChange={t => update({ wechat_id: t })}
-                error={error?.['wechat_id']}
-            />
+            <FormInputField title="Phone Number" onChange={t => update({ phone_number: t })} />
+            <FormInputField title="Wechat Id (Optional)" onChange={t => update({ wechat_id: t })} />
             <Spacer />
             <Spacer />
             <Button type="primary" block onClick={submit}>

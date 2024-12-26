@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify';
 import ConfigAxios from './components/ConfigAxios';
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import toastUtil from './utils/toastUtil';
+import './index.css';
 
 const queryClient = new QueryClient({
     queryCache: new QueryCache({
