@@ -67,7 +67,7 @@ const Calendar: React.FC = () => {
 
     const { studentId } = useParams<{ studentId: string }>();
     const hrUnixTimestampdToObject = useAppSelector(
-        s => s.student.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClassEvent
+        s => s.student.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent
     );
 
     // Clicking behavior

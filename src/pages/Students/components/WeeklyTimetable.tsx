@@ -2,19 +2,14 @@ import { Box } from '@mui/material';
 import { startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 import dayjs, { Dayjs } from 'dayjs';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import SectionTitle from '../../../components/SectionTitle';
 import Spacer from '../../../components/Spacer';
 import lodash from 'lodash';
-import StudentClass from './StudentClassForWeeklyTimetable';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import studentSlice, { StudentThunkAction } from '../../../redux/slices/studentSlice';
+import StudentClass from './ClassEventForWeeklyTimetable';
+import { useAppSelector } from '../../../redux/hooks';
 import { PiArrowRightBold } from 'react-icons/pi';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { Button } from 'antd';
-import { store } from '../../../redux/store';
-import MoveConfirmationDialog from './MoveConfirmationDialog';
-import MoveConfirmationForm from './MoveConfirmationForm';
 import CustomScrollbarContainer from '../../../components/CustomScrollbarContainer';
 import colors from '../../../constant/colors';
 
@@ -25,13 +20,9 @@ export type WeeklyCoordinate = {
 };
 
 export default function WeeklyTimeTable() {
-    const dispatch = useAppDispatch();
-    const studentId = useAppSelector(s => s.student.studentDetailTimetablePage.detail?.id) || '';
     const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
-    const courseStartDate = useAppSelector(s => s.student.studentDetailTimetablePage.weeklyTimetable.selectedDate);
-    const currDraggingId = useRef('');
-    const [activeDraggableId, setActiveDraggableId] = useState('');
+    const courseStartDate = useAppSelector(s => s.student.studentDetailTimetablePage.weeklyClassEvent.selectedDate);
     const [offset, setOffset] = useState(0);
 
     const getHalfHourTimeIntervalsForDay = useCallback((date: Date) => {
@@ -214,159 +205,74 @@ export default function WeeklyTimeTable() {
 
             <CustomScrollbarContainer style={{ height: 'calc(100vh - 120px)', width: '100%' }}>
                 <Spacer />
-                <DragDropContext
-                    onBeforeCapture={e => {
-                        const { draggableId } = e;
-                        setActiveDraggableId(draggableId);
-                        currDraggingId.current = draggableId;
-                    }}
-                    onDragEnd={async result => {
-                        const { destination } = result;
-                        const { droppableId: toDayUnixTimestamp, index: toIndex } = destination!;
-                        const toHourUnixTimestamp = Object.keys(timeGrid?.[toDayUnixTimestamp]).sort()[toIndex];
-                        const fromClz =
-                            store.getState().student.studentDetailTimetablePage.weeklyTimetable
-                                .hrUnixTimestampToClassEvent?.[currDraggingId.current];
-                        if (!fromClz) {
-                            return;
-                        }
-                        const move = async () => {
-                            await dispatch(
-                                StudentThunkAction.moveStudentEvent({
-                                    fromHourTimestamp: currDraggingId.current,
-                                    toDayTimestamp: toDayUnixTimestamp,
-                                    toHourTimestamp: toHourUnixTimestamp,
-                                })
-                            ).unwrap();
-                            dispatch(
-                                studentSlice.actions.unHideClass({
-                                    hrTimestamp: currDraggingId.current,
-                                })
-                            );
-                            if (fromClz.classGroup) {
-                                setTimeout(() => {
-                                    dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
-                                }, 1000);
-                            }
-                        };
-                        if (fromClz.classGroup) {
-                            dispatch(
-                                studentSlice.actions.hideClass({
-                                    hrTimestamp: currDraggingId.current,
-                                })
-                            );
-                            MoveConfirmationDialog.setContent(() => () => (
-                                <MoveConfirmationForm moveClassesAction={move} />
-                            ));
-                            MoveConfirmationDialog.setOpen(true);
-                        } else {
-                            await move();
-                        }
-                        setActiveDraggableId('');
-                    }}
-                >
-                    <div style={{ display: 'flex' }}>
-                        <div style={{ flex: 1 }}>
-                            <div style={{ display: 'flex' }}>
-                                <div>
-                                    <Spacer
-                                        height={gridTimeColTop}
-                                        style={{
-                                            position: 'sticky',
-                                            top: 0,
-                                            background: colors.BACKGORUND_GREY,
-                                            width: '100%',
-                                        }}
-                                    />
-                                    {getHalfHourTimeIntervalsForDay(weekStart).map((dayJS, index) => {
-                                        return (
-                                            <div
-                                                style={{
-                                                    fontSize: 13,
-                                                    opacity: index % 2 === 0 ? 1 : 0,
-                                                }}
-                                                className="grid-time"
-                                                key={dayJS.valueOf().toString()}
-                                            >
-                                                {dayJS.format('HH:mm')}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                                {Object.keys(timeGrid)
-                                    .sort()
-                                    .map(dayUnixTimestamp => {
-                                        const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
-                                        return (
-                                            <div key={dayUnixTimestamp} className="day-column">
-                                                <div
-                                                    className="grid-hour header"
-                                                    style={{
-                                                        width: '100%',
-                                                        fontWeight: 400,
-                                                        textAlign: 'center',
-                                                    }}
-                                                >
-                                                    {timetableAvailableWidth >= 85 && dayDayJS.format('ddd, MMM D')}
-                                                    {timetableAvailableWidth < 85 && dayDayJS.format('ddd')}
-                                                </div>
-                                                <Spacer height={5} />
-                                                <Droppable droppableId={dayUnixTimestamp} mode="virtual">
-                                                    {provided => {
-                                                        return (
-                                                            <div
-                                                                ref={provided.innerRef}
-                                                                {...provided.droppableProps}
-                                                                className="droppable"
-                                                            >
-                                                                {Object.keys(timeGrid[dayUnixTimestamp])
-                                                                    .sort()
-                                                                    .map((hourUnixTimestamp, index) => {
-                                                                        // const time = dayjs(parseInt(hourUnixTimestamp));
-                                                                        // const isFullHour = time.minute() === 0; // Check if it's a full hour (minute is 0)
-                                                                        // console.log("time:", time);
-                                                                        // console.log("isFullHour:", isFullHour);
-                                                                        // // Apply thicker border for full hours
-                                                                        // const timeSlotStyle: React.CSSProperties = {
-                                                                        //     height: isFullHour ? "2px" : "0",
-                                                                        //     width: "100%",
-                                                                        //     backgroundColor: "black",
-                                                                        //     position: "absolute",
-                                                                        // };
-                                                                        return (
-                                                                            <React.Fragment key={hourUnixTimestamp}>
-                                                                                <StudentClass
-                                                                                    colIndex={index}
-                                                                                    dayUnixTimestamp={parseInt(
-                                                                                        dayUnixTimestamp
-                                                                                    )}
-                                                                                    hourUnixTimestamp={parseInt(
-                                                                                        hourUnixTimestamp
-                                                                                    )}
-                                                                                    activeDraggableId={
-                                                                                        activeDraggableId
-                                                                                    }
-                                                                                />
-                                                                                {activeDraggableId ===
-                                                                                    hourUnixTimestamp &&
-                                                                                    provided.placeholder}
-                                                                                {/* </div> */}
-                                                                            </React.Fragment>
-                                                                        );
-                                                                    })}
-                                                                {provided.placeholder}
-                                                            </div>
-                                                        );
-                                                    }}
-                                                </Droppable>
-                                            </div>
-                                        );
-                                    })}
+                <div style={{ display: 'flex' }}>
+                    <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex' }}>
+                            <div>
+                                <Spacer
+                                    height={gridTimeColTop}
+                                    style={{
+                                        position: 'sticky',
+                                        top: 0,
+                                        background: colors.BACKGORUND_GREY,
+                                        width: '100%',
+                                    }}
+                                />
+                                {getHalfHourTimeIntervalsForDay(weekStart).map((dayJS, index) => {
+                                    return (
+                                        <div
+                                            style={{
+                                                fontSize: 13,
+                                                opacity: index % 2 === 0 ? 1 : 0,
+                                            }}
+                                            className="grid-time"
+                                            key={dayJS.valueOf().toString()}
+                                        >
+                                            {dayJS.format('HH:mm')}
+                                        </div>
+                                    );
+                                })}
                             </div>
+                            {Object.keys(timeGrid)
+                                .sort()
+                                .map(dayUnixTimestamp => {
+                                    const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
+                                    return (
+                                        <div key={dayUnixTimestamp} className="day-column">
+                                            <div
+                                                className="grid-hour header"
+                                                style={{
+                                                    width: '100%',
+                                                    fontWeight: 400,
+                                                    textAlign: 'center',
+                                                }}
+                                            >
+                                                {timetableAvailableWidth >= 85 && dayDayJS.format('ddd, MMM D')}
+                                                {timetableAvailableWidth < 85 && dayDayJS.format('ddd')}
+                                            </div>
+                                            <Spacer height={5} />
+                                            <div>
+                                                {Object.keys(timeGrid[dayUnixTimestamp])
+                                                    .sort()
+                                                    .map((hourUnixTimestamp, index) => {
+                                                        return (
+                                                            <React.Fragment key={hourUnixTimestamp}>
+                                                                <StudentClass
+                                                                    colIndex={index}
+                                                                    dayUnixTimestamp={parseInt(dayUnixTimestamp)}
+                                                                    hourUnixTimestamp={parseInt(hourUnixTimestamp)}
+                                                                />
+                                                            </React.Fragment>
+                                                        );
+                                                    })}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                         </div>
-                        <Spacer />
                     </div>
-                </DragDropContext>
+                    <Spacer />
+                </div>
                 <Spacer />
             </CustomScrollbarContainer>
         </Box>

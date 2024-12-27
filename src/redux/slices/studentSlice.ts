@@ -21,10 +21,15 @@ import normalizeUtil from '../../utils/normalizeUtil';
 import { loadingActions } from '../../utils/loadingActions';
 import { RootState } from '../store';
 import lodash from 'lodash';
-import { Classroom, Student_package } from '../../prismaTypes/types';
+import { Classroom } from '../../prismaTypes/types';
 import MoveClassStatus from '../../enum/MoveClassStatus';
 import { createApiThunk } from '../../utils/createApiThunk';
-import { StudentDTO, StudentPackageRepsonse, TimetableClass as ClassEvent } from '../../dto/kotlinDto';
+import {
+    StudentDTO,
+    StudentPackageRepsonse,
+    TimetableClass as ClassEvent,
+    StudentPackageDTO,
+} from '../../dto/kotlinDto';
 
 export type StudentSliceState = {
     students: {
@@ -41,7 +46,7 @@ export type StudentSliceState = {
             ids?: string[];
             idToPackageResponse?: { [id: string]: StudentPackageRepsonse };
         };
-        weeklyTimetable: {
+        weeklyClassEvent: {
             selectedDate: Date; // we will list the timetables of the week containing this date (timestamp)
             hrUnixTimestamps?: string[];
             hrUnixTimestampToClassEvent?: {
@@ -77,7 +82,7 @@ const initialState: StudentSliceState = {
         selectedPackageId: '',
         studentPackages: {},
         detail: null,
-        weeklyTimetable: {
+        weeklyClassEvent: {
             selectedDate: new Date(),
         },
         showAllClassesForOneStudent: true,
@@ -151,39 +156,39 @@ const studentSlice = createSlice({
             state.studentDetailTimetablePage.selectedPackageId = packageId;
 
             // select the first date so that UI can start from the first class:
-            const availableFirstDate = state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestamps
+            const availableFirstDate = state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestamps
                 ?.filter(timestamp => {
                     return (
-                        state.studentDetailTimetablePage.weeklyTimetable?.hrUnixTimestampToClassEvent?.[timestamp]
+                        state.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestampToClassEvent?.[timestamp]
                             .package.id == Number(packageId)
                     );
                 })
                 .sort((a, b) => Number(a) - Number(b))
                 .slice(0, 1)?.[0];
             if (availableFirstDate) {
-                state.studentDetailTimetablePage.weeklyTimetable.selectedDate = new Date(Number(availableFirstDate));
+                state.studentDetailTimetablePage.weeklyClassEvent.selectedDate = new Date(Number(availableFirstDate));
             }
         },
         setDailyTimetableSelectedDate: (state, action: PayloadAction<{ date: Date }>) => {
             state.massTimetablePage.selectedDate = action.payload.date;
         },
         setWeeklyTimetableSelectedDate: (state, action: PayloadAction<{ date: Date }>) => {
-            state.studentDetailTimetablePage.weeklyTimetable.selectedDate = action.payload.date;
+            state.studentDetailTimetablePage.weeklyClassEvent.selectedDate = action.payload.date;
         },
         unsetStudentEvent: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
-            lodash.unset(state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClassEvent, hrTimestamp);
+            lodash.unset(state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent, hrTimestamp);
         },
         hideClass: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
-            if (state.studentDetailTimetablePage.weeklyTimetable?.hrUnixTimestampToClassEvent?.[hrTimestamp]) {
-                state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClassEvent[hrTimestamp].hide = true;
+            if (state.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestampToClassEvent?.[hrTimestamp]) {
+                state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent[hrTimestamp].hide = true;
             }
         },
         unHideClass: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
-            if (state.studentDetailTimetablePage.weeklyTimetable?.hrUnixTimestampToClassEvent?.[hrTimestamp]) {
-                state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClassEvent[hrTimestamp].hide = false;
+            if (state.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestampToClassEvent?.[hrTimestamp]) {
+                state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent[hrTimestamp].hide = false;
             }
         },
         updateStudent: (state, action: PayloadAction<{ student: StudentDTO }>) => {
@@ -239,9 +244,9 @@ const studentSlice = createSlice({
                             packageIdToChangeOfficialEndDate
                         ].studentPackage.officialEndDate = newOfficialEndDate;
                     }
-                    if (state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClassEvent) {
+                    if (state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent) {
                         lodash.setWith(
-                            state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClassEvent,
+                            state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent,
                             hourUnixTimestamp, // the key
                             classEvent // the value
                         );
@@ -251,11 +256,11 @@ const studentSlice = createSlice({
             .addCase(StudentThunkAction.detachFromGroup.fulfilled, (state, action) => {
                 const hourTimeStamp = action.payload.hour_unix_timestamp;
                 if (
-                    state.studentDetailTimetablePage?.weeklyTimetable.hrUnixTimestampToClassEvent?.[
+                    state.studentDetailTimetablePage?.weeklyClassEvent.hrUnixTimestampToClassEvent?.[
                         String(hourTimeStamp)
                     ]
                 ) {
-                    state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClassEvent[
+                    state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent[
                         String(hourTimeStamp)
                     ].classGroup = null;
                 }
@@ -391,8 +396,8 @@ const studentSlice = createSlice({
                     idAttribute: 'hourUnixTimestamp',
                     targetArr: classes,
                 });
-                state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestamps = ids;
-                state.studentDetailTimetablePage.weeklyTimetable.hrUnixTimestampToClassEvent = idToObject;
+                state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestamps = ids;
+                state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent = idToObject;
             });
     },
 });
@@ -455,14 +460,14 @@ export class StudentThunkAction {
             api
         ) => {
             const { fromHourTimestamp: fromTimestamp, toDayTimestamp, toHourTimestamp } = props;
-            const existingRecord = (api.getState() as RootState).student.studentDetailTimetablePage.weeklyTimetable
+            const existingRecord = (api.getState() as RootState).student.studentDetailTimetablePage.weeklyClassEvent
                 .hrUnixTimestampToClassEvent?.[toHourTimestamp];
             const currStudentId = (api.getState() as RootState).student.studentDetailTimetablePage.detail?.id || '';
             if (existingRecord) {
                 return { type: 'skipped' };
             }
             const classEvent = lodash.cloneDeep(
-                (api.getState() as RootState).student?.studentDetailTimetablePage.weeklyTimetable
+                (api.getState() as RootState).student?.studentDetailTimetablePage.weeklyClassEvent
                     .hrUnixTimestampToClassEvent?.[fromTimestamp]
             )!;
             classEvent.class.dayUnixTimestamp = Number(toDayTimestamp);
@@ -581,7 +586,7 @@ export class StudentThunkAction {
     public static createStudentPackage = createApiThunk(
         'studentSlice/createStudentPackage',
         async (props: CreateStudentPackageRequest, api) => {
-            const res = await apiClient.post<CustomResponse<Student_package>>(
+            const res = await apiClient.post<CustomResponse<StudentPackageDTO>>(
                 apiRoutes.POST_CREATE_STUDENT_PACKAGE,
                 props
             );

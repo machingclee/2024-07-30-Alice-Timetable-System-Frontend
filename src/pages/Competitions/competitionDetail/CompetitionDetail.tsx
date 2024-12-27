@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import competitionSlice from "../../../redux/slices/competitionSlice";
 import SectionTitle from "../../../components/SectionTitle";
@@ -9,7 +8,6 @@ import { Button } from "antd";
 import AddQuestionForm from "../competitionDetail/components/AddQuestionForm";
 import AddQuestionDialog from "../competitionDetail/components/AddQuestionDialog";
 import { useNavigate, useParams } from "react-router-dom";
-import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 
 const reorder = (list: string[], startIndex: number, endIndex: number): string[] => {
     const result = Array.from(list);
@@ -26,7 +24,7 @@ export default () => {
     const dispatch = useAppDispatch();
 
     // Handle drag end event
-    const onDragEnd = (result: DropResult) => {
+    const onDragEnd = (result: any) => {
         console.log("Hi!!!!!!");
         if (!result.destination || !competition) return; // Check for valid destination
 
@@ -48,32 +46,19 @@ export default () => {
             <TitleAndIntroduction competitionId={competitionId} title={competition?.name || "Untitled Table"} intro={competition?.intro || "Table Description"} />
 
             {/* DragDropContext to handle drag-and-drop */}
-            <DragDropContext onDragEnd={onDragEnd}>
+            <div
+                // onDragEnd={onDragEnd}
+            >
                 {competition?.questionIds?.map((id, index) => (
-                    <Droppable droppableId={id}>
-                        {(provided) => (
-                            <div ref={provided.innerRef} {...provided.droppableProps}>
-                                <Draggable key={id} draggableId={id} index={index}>
-                                    {(provided, snapshot) => (
-                                        <div
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                            style={{
-                                                userSelect: "none",
-                                                ...provided.draggableProps.style,
-                                            }}
-                                        >
-                                            <GeneralQuestion competitionId={competitionId} questionId={id} index={index} />
-                                        </div>
-                                    )}
-                                </Draggable>
-                                {provided.placeholder}
+                    <div>
+                        <div key={id}>
+                            <div style={{userSelect: "none"}}>
+                                <GeneralQuestion competitionId={competitionId} questionId={id} index={index} />
                             </div>
-                        )}
-                    </Droppable>
+                        </div>
+                    </div>
                 ))}
-            </DragDropContext>
+            </div>
 
             <Spacer />
             <div style={{ display: "flex", gap: "10px" }}>
