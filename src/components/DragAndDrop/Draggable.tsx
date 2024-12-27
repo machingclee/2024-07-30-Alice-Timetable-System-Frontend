@@ -7,9 +7,10 @@ export const TimetableDraggable = <T extends Record<string, any>>(
     props: {
         children: ReactNode;
         data: T;
+        canDrag: boolean;
     } & HTMLAttributes<HTMLDivElement>
 ) => {
-    const { children, data, ..._props } = props;
+    const { children, data, canDrag, ..._props } = props;
     const ref = useRef(null);
     const [dragging, setDragging] = useState<boolean>(false);
     useEffect(() => {
@@ -17,13 +18,19 @@ export const TimetableDraggable = <T extends Record<string, any>>(
         invariant(el);
         return draggable({
             element: el,
+            canDrag: () => canDrag,
             getInitialData: () => data,
             onDragStart: () => setDragging(true),
-            onDrop: () => setDragging(false),
+            onDropTargetChange: () => {
+                setDragging(false);
+            },
+            onDrop: () => {
+                setDragging(false);
+            },
         });
-    }, [data]);
+    }, [data, canDrag]);
     return (
-        <div ref={ref} {..._props} style={{ opacity: dragging ? 0.4 : 1 }}>
+        <div ref={ref} {..._props} style={{ display: dragging ? 'none' : 'auto' }}>
             {children}
         </div>
     );

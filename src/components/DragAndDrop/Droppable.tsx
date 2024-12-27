@@ -13,8 +13,8 @@ enum HoveredState {
 export const TimetableDroppable = <T extends Record<string, any>>(
     props: {
         children: ReactNode;
-        isValidMove?: (data: T) => boolean;
-        onValidDrop?: (data: T) => void | Promise<void>;
+        isValidMove: (data: T) => boolean;
+        onValidDrop: (data: T) => void | Promise<void>;
     } & HTMLAttributes<HTMLDivElement>
 ) => {
     const { children, isValidMove, onValidDrop, ..._props } = props;
@@ -43,7 +43,7 @@ export const TimetableDroppable = <T extends Record<string, any>>(
                     // if dropped outside of any drop targets
                     return;
                 }
-                const validMove = isValidMove?.(data);
+                const validMove = isValidMove(data);
                 if (validMove) {
                     setHoveredState(HoveredState.VALID_MOVE);
                 } else {
@@ -52,21 +52,15 @@ export const TimetableDroppable = <T extends Record<string, any>>(
             },
             onDragLeave: () => setHoveredState(HoveredState.IDLE),
             canDrop: ({ source }) => {
-                if (!isValidMove) {
-                    return true;
-                }
                 const data = source.data as T;
-                return isValidMove?.(data);
+                return isValidMove(data);
             },
             onDrop: async ({ source }) => {
-                if (!isValidMove) {
-                    return;
-                }
                 const data = source.data as T;
                 try {
-                    const validMove = isValidMove?.(data);
+                    const validMove = isValidMove(data);
                     if (validMove) {
-                        await onValidDrop?.(data);
+                        await onValidDrop(data);
                     }
                 } catch (error) {
                     toastUtil.error(JSON.stringify(error));

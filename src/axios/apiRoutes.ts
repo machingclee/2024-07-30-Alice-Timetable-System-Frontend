@@ -5,7 +5,7 @@ export default {
     POST_LOGIN: '/auth/login',
     POST_CREATE_USER: '/user/create-user',
     POST_CREATE_STUDNET: '/students',
-    POST_CREATE_COURSE: '/course/create-course',
+    POST_CREATE_COURSE: '/courses/create-course',
     POST_CREATE_STUDENT_CLASS: '/students/create-student-class',
     POST_DUPLICATE_CLASSES: '/students/duplicate-classes',
     POST_CREATE_STUDENT_PACKAGE: '/students/create-student-package',
@@ -26,7 +26,7 @@ export default {
 
     PUT_UPDATE_USER: '/user/update-user',
     PUT_UPDATE_STUDENT: '/students/update-student',
-    PUT_UPDATE_COURSE: '/course/update-course',
+    PUT_UPDATE_COURSE: '/courses/update-course',
     PUT_MOVE_STUDNET_CLASS: '/students/move-class',
     PUT_DETACH_CLASS_FROM_GROUP: '/students/detach-from-group',
     PUT_UPDATE_CLASS: '/students/update-class',

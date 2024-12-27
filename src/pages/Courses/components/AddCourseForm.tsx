@@ -17,7 +17,7 @@ import Label from '../../../components/Label';
 export default function AddCourseForm() {
     const dispatch = useAppDispatch();
     const formData = useRef<Partial<CreateCourseRequest>>({
-        course_name: '',
+        courseName: '',
     });
     const [error, setError] = useState<Partial<CreateCourseRequest>>({});
     const update = (update_: Partial<CreateCourseRequest>) => {
@@ -55,8 +55,8 @@ export default function AddCourseForm() {
             <Spacer />
             <FormInputField
                 title="Course Name"
-                onChange={t => update({ course_name: t })}
-                error={error?.['course_name']}
+                onChange={t => update({ courseName: t })}
+                error={error?.['courseName']}
             />
             <Spacer />
             <Spacer />

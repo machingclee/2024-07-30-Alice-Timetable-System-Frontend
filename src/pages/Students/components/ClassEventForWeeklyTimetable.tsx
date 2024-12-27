@@ -4,7 +4,6 @@ import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import boxShadow from '../../../constant/boxShadow';
 import { Box } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { useParams } from 'react-router-dom';
 import AddClassEventDialog from '../../../components/AddClassEventDialog';
 import AddClassEventForm from '../../../components/AddClassEventForm';
 import { PropsWithChildren, useCallback, useEffect, useState } from 'react';
@@ -18,9 +17,13 @@ import Label from '../../../components/Label';
 import ViewClassDialog from '../../../components/ViewClassDialog';
 import ViewClassForm from '../../../components/ViewClassForm';
 import { Class_status, Classroom } from '../../../prismaTypes/types';
-import { TimetableDroppable } from '../../../components/DragAndDrop/TimetableDroppable';
-import { TimetableDraggable } from '../../../components/DragAndDrop/TimetableDraggable';
-import { TimetableClass as TimetableClassEvent } from '../../../dto/kotlinDto';
+import { TimetableDroppable } from '../../../components/DragAndDrop/Droppable';
+import { TimetableDraggable } from '../../../components/DragAndDrop/Draggable';
+import { TimetableClassEvent as TimetableClassEvent } from '../../../dto/kotlinDto';
+import { store } from '../../../redux/store';
+import MoveConfirmationForm from './MoveConfirmationForm';
+import MoveConfirmationDialog from './MoveConfirmationDialog';
+import useGetStudentIdFromParam from '../../../hooks/useGetStudentIdFromParam';
 
 export default function StudentClassForWeeklyTimetable(props: {
     dayUnixTimestamp: number;
@@ -28,21 +31,17 @@ export default function StudentClassForWeeklyTimetable(props: {
     colIndex: number;
 }) {
     const dispatch = useAppDispatch();
+    const { studentId } = useGetStudentIdFromParam();
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
-    const { hourUnixTimestamp, dayUnixTimestamp } = props;
-    const { studentId } = useParams<{ studentId: string }>();
-    const hours = useAppSelector(s => s.student.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestamps);
+    const { hourUnixTimestamp: currGridHourUnixTimestamp, dayUnixTimestamp: currGridDayUnixTimestamp } = props;
     const [classStatusMenuOptionsExpand, setClassStatusMenuOptionsExpand] = useState<boolean>(false);
-    const targetHit = hours?.includes(String(hourUnixTimestamp));
-    if (targetHit) {
-        console.log('targetHit', hourUnixTimestamp, hours);
-    }
     const classEvent = useAppSelector(
         s =>
             s.student.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestampToClassEvent?.[
-                String(hourUnixTimestamp)
+                String(currGridHourUnixTimestamp)
             ]
     );
+    const showLabel = classEvent != null;
     if (classEvent) {
         console.log('studentClassstudentClass', classEvent);
     }
@@ -58,8 +57,8 @@ export default function StudentClassForWeeklyTimetable(props: {
     const createEvent = () => {
         AddClassEventDialog.setContent(() => () => (
             <AddClassEventForm
-                dayUnixTimestamp={dayUnixTimestamp}
-                hourUnixTimestamp={hourUnixTimestamp}
+                dayUnixTimestamp={currGridDayUnixTimestamp}
+                hourUnixTimestamp={currGridHourUnixTimestamp}
                 studentId={studentId || ''}
             />
         ));
@@ -69,10 +68,10 @@ export default function StudentClassForWeeklyTimetable(props: {
     const invalidData = day_unix_timestamp >= classUnixTimestamp;
     const contextMenuId = `${classEvent?.student.id || ''}-${classEvent?.class.hourUnixTimestamp || ''}`;
     const hasClassEvent = !!classEvent;
-    const dayAndTime = dayjs(hourUnixTimestamp).format('ddd, HH:mm');
+    const dayAndTime = dayjs(currGridHourUnixTimestamp).format('ddd, HH:mm');
     const disableDuplicate = classEvent?.classGroup != null;
     // To adjust place a thick line to indicate the hour unit
-    const time = dayjs(hourUnixTimestamp);
+    const time = dayjs(currGridHourUnixTimestamp);
     const isFullHour = time.minute() === 0;
     const timeSlotStyle: React.CSSProperties = {
         height: isFullHour ? '2px' : '0',
@@ -108,10 +107,10 @@ export default function StudentClassForWeeklyTimetable(props: {
                   return (
                       <>
                           {/*@ts-expect-error - context menu has problem in typing */}
-                          <ContextMenuTrigger id={hourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
+                          <ContextMenuTrigger id={currGridHourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
                           {/*@ts-expect-error - context menu has problem in typing */}
                           <ContextMenu
-                              id={hourUnixTimestamp.toString()}
+                              id={currGridHourUnixTimestamp.toString()}
                               style={{
                                   zIndex: 10 ** 7,
                                   borderRadius: 8,
@@ -153,8 +152,6 @@ export default function StudentClassForWeeklyTimetable(props: {
             : ({ children }: PropsWithChildren) => children,
         [classEvent, selectedPackageId]
     );
-
-    const showLabel = classEvent?.hide != null;
 
     const updateClassStatusHandle = (status: Class_status) => {
         const cls = classEvent?.class;
@@ -211,17 +208,43 @@ export default function StudentClassForWeeklyTimetable(props: {
         }
     }, [classEvent, timetable.hrUnixTimestampToClassEvent]);
 
+    const onValidDrop = async (fromClassEvent: TimetableClassEvent) => {
+        const fromClassEventHrUnixTimestamp = fromClassEvent.hourUnixTimestamp;
+        const fromClz =
+            store.getState().student.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent?.[
+                fromClassEventHrUnixTimestamp
+            ];
+        if (!fromClz) {
+            return;
+        }
+        const move = async () => {
+            await dispatch(
+                StudentThunkAction.moveStudentEvent({
+                    fromHourTimestamp: String(fromClassEventHrUnixTimestamp),
+                    toDayTimestamp: String(currGridDayUnixTimestamp),
+                    toHourTimestamp: String(currGridHourUnixTimestamp),
+                })
+            ).unwrap();
+            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
+        };
+        if (fromClz?.classGroup) {
+            MoveConfirmationDialog.setContent(() => () => <MoveConfirmationForm moveClassesAction={move} />);
+            MoveConfirmationDialog.setOpen(true);
+        } else {
+            await move();
+        }
+    };
+
     return (
         <TimetableDroppable
             className="draggable-container"
             style={{
-                opacity: classEvent?.hide ? 0 : 1,
                 position: 'relative',
             }}
             isValidMove={(_data: TimetableClassEvent) => {
                 return true;
             }}
-            onValidDrop={(_data: TimetableClassEvent) => {}}
+            onValidDrop={onValidDrop}
         >
             {showLabel && <Label label="StudentClassForWeeklyTimetable.tsx" />}
             {/* wrapper: simply return null when no classEvent is found: */}
@@ -239,349 +262,355 @@ export default function StudentClassForWeeklyTimetable(props: {
                         }}
                     >
                         {/* Control what to show on the entire timetable */}
-                        {(showAll || (!showAll && Number(selectedPackageId) === classEvent?.package.id)) && (
-                            <>
-                                {/*@ts-expect-error - context menu has problem in typing */}
-                                <ContextMenuTrigger id={contextMenuId}>
-                                    {/* eslint-disable-next-line */}
-                                    <TimetableDraggable data={classEvent!!}>
-                                        <Box
-                                            onMouseEnter={() => {
-                                                setClassEventHeight(120);
-                                            }}
-                                            onMouseLeave={() => {
-                                                setClassEventHeight(null);
-                                            }}
-                                            style={{
-                                                border: classEvent ? '1px solid rgba(0,0,0,0.2)' : '',
-                                                position: 'absolute',
-                                                boxShadow: classEvent ? boxShadow.SHADOW_62 : '',
-                                                transition: 'height 0.18s ease-in-out',
-                                                zIndex: classEventHeight ? 10 ** 7 : 10 ** 5,
-                                                overflow: 'hidden',
-                                                top: 5,
-                                                left: 5,
-                                                width: 'calc(100% - 20px)',
-                                                height: classEventHeight || 1.2 * (classEvent?.class.min || 0) - 10,
-                                                backgroundColor: (() => {
-                                                    if (!classEvent) {
-                                                        return '';
-                                                    }
-                                                    if (invalidData) {
-                                                        return 'red';
-                                                    } else {
-                                                        switch (classEvent?.class.classStatus) {
-                                                            case 'PRESENT':
-                                                                return colors.GREEN_BLUE;
-                                                            case 'TRIAL':
-                                                                return colors.PINK;
-                                                            case 'RESERVED':
-                                                                return colors.CYAN;
-                                                            case 'SUSPICIOUS_ABSENCE':
-                                                                return colors.ORANGE;
-                                                            case 'ILLEGIT_ABSENCE':
-                                                                return colors.RED;
-                                                            case 'LEGIT_ABSENCE':
-                                                                return colors.GREY;
-                                                            case 'MAKEUP':
-                                                                return colors.BLUE;
-                                                            case 'CHANGE_OF_CLASSROOM':
-                                                                return colors.PURPLE;
-                                                        }
-                                                    }
-                                                })(),
-
-                                                borderRadius: 4,
-                                                fontSize: 14,
-                                                color: 'white',
-                                                textAlign: 'center',
-                                            }}
-                                            key={hourUnixTimestamp}
+                        {(showAll || (!showAll && Number(selectedPackageId) === classEvent?.package.id)) &&
+                            classEvent && (
+                                <>
+                                    {/*@ts-expect-error - context menu has problem in typing */}
+                                    <ContextMenuTrigger id={contextMenuId}>
+                                        <TimetableDraggable
+                                            // eslint-disable-next-line
+                                            data={classEvent!!}
+                                            key={classEvent?.class.id}
+                                            canDrag={!!classEvent}
                                         >
-                                            {showLabel && groupedLabel()}
-                                            <div
-                                                style={{
-                                                    padding: 4,
+                                            <Box
+                                                onMouseEnter={() => {
+                                                    setClassEventHeight(120);
                                                 }}
+                                                onMouseLeave={() => {
+                                                    setClassEventHeight(null);
+                                                }}
+                                                style={{
+                                                    border: classEvent ? '1px solid rgba(0,0,0,0.2)' : '',
+                                                    position: 'absolute',
+                                                    boxShadow: classEvent ? boxShadow.SHADOW_62 : '',
+                                                    transition: 'height 0.18s ease-in-out',
+                                                    zIndex: classEventHeight ? 10 ** 7 : 10 ** 5,
+                                                    overflow: 'hidden',
+                                                    top: 5,
+                                                    left: 5,
+                                                    width: 'calc(100% - 20px)',
+                                                    height: classEventHeight || 1.2 * (classEvent?.class.min || 0) - 10,
+                                                    backgroundColor: (() => {
+                                                        if (!classEvent) {
+                                                            return '';
+                                                        }
+                                                        if (invalidData) {
+                                                            return 'red';
+                                                        } else {
+                                                            switch (classEvent?.class.classStatus) {
+                                                                case 'PRESENT':
+                                                                    return colors.GREEN_BLUE;
+                                                                case 'TRIAL':
+                                                                    return colors.PINK;
+                                                                case 'RESERVED':
+                                                                    return colors.CYAN;
+                                                                case 'SUSPICIOUS_ABSENCE':
+                                                                    return colors.ORANGE;
+                                                                case 'ILLEGIT_ABSENCE':
+                                                                    return colors.RED;
+                                                                case 'LEGIT_ABSENCE':
+                                                                    return colors.GREY;
+                                                                case 'MAKEUP':
+                                                                    return colors.BLUE;
+                                                                case 'CHANGE_OF_CLASSROOM':
+                                                                    return colors.PURPLE;
+                                                            }
+                                                        }
+                                                    })(),
+
+                                                    borderRadius: 4,
+                                                    fontSize: 14,
+                                                    color: 'white',
+                                                    textAlign: 'center',
+                                                }}
+                                                key={currGridHourUnixTimestamp}
                                             >
-                                                {classEvent?.course.courseName}
-                                            </div>
-                                            {classNumber !== 0 && (
+                                                {showLabel && groupedLabel()}
                                                 <div
                                                     style={{
-                                                        marginTop: 5,
-                                                        paddingTop: 5,
-                                                        paddingBottom: 5,
-                                                        marginLeft: 10,
-                                                        width: '80%',
-                                                        backgroundColor: 'white',
-                                                        color: 'black',
-                                                        borderRadius: '5px',
-                                                        display: 'flex',
-                                                        justifyContent: 'center',
-                                                        alignItems: 'center',
+                                                        padding: 4,
                                                     }}
                                                 >
-                                                    Class: {classNumber}
+                                                    {classEvent?.course.courseName}
                                                 </div>
-                                            )}
-                                        </Box>
-                                    </TimetableDraggable>
-                                </ContextMenuTrigger>
-                                {/*@ts-expect-error - context menu has problem in typing */}
-                                <ContextMenu
-                                    id={contextMenuId}
-                                    style={{
-                                        zIndex: 10 ** 7,
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            backgroundColor: 'white',
-                                            borderRadius: '8px',
-                                            boxShadow: boxShadow.SHADOW_62,
-                                            '& .menu-item': {
-                                                padding: '10px',
-                                                cursor: 'pointer',
-                                                '&:hover': {
-                                                    color: 'rgb(64, 150, 255)',
-                                                },
-                                                '&.disabled': {
-                                                    opacity: 0.3,
-                                                    pointerEvents: 'none',
-                                                },
-                                            },
+                                                {classNumber !== 0 && (
+                                                    <div
+                                                        style={{
+                                                            marginTop: 5,
+                                                            paddingTop: 5,
+                                                            paddingBottom: 5,
+                                                            marginLeft: 10,
+                                                            width: '80%',
+                                                            backgroundColor: 'white',
+                                                            color: 'black',
+                                                            borderRadius: '5px',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                        }}
+                                                    >
+                                                        Class: {classNumber}
+                                                    </div>
+                                                )}
+                                            </Box>
+                                        </TimetableDraggable>
+                                    </ContextMenuTrigger>
+                                    {/*@ts-expect-error - context menu has problem in typing */}
+                                    <ContextMenu
+                                        id={contextMenuId}
+                                        style={{
+                                            zIndex: 10 ** 7,
                                         }}
                                     >
-                                        {/*@ts-expect-error - context menu has problem in typing */}
-                                        <MenuItem
-                                            className="menu-item"
-                                            onClick={() => {
-                                                ViewClassDialog.setContent(() => () => (
-                                                    <ViewClassForm classEvent={classEvent} />
-                                                ));
-                                                ViewClassDialog.setOpen(true);
+                                        <Box
+                                            sx={{
+                                                backgroundColor: 'white',
+                                                borderRadius: '8px',
+                                                boxShadow: boxShadow.SHADOW_62,
+                                                '& .menu-item': {
+                                                    padding: '10px',
+                                                    cursor: 'pointer',
+                                                    '&:hover': {
+                                                        color: 'rgb(64, 150, 255)',
+                                                    },
+                                                    '&.disabled': {
+                                                        opacity: 0.3,
+                                                        pointerEvents: 'none',
+                                                    },
+                                                },
                                             }}
                                         >
-                                            View Class
-                                        </MenuItem>
-                                        {/*@ts-expect-error - context menu has problem in typing */}
-                                        <MenuItem
-                                            className="menu-item"
-                                            onClick={() => {
-                                                ViewClassDialog.setContent(() => () => (
-                                                    <ViewClassForm isEditing={true} classEvent={classEvent} />
-                                                ));
-                                                ViewClassDialog.setOpen(true);
-                                            }}
-                                        >
-                                            Edit Class
-                                        </MenuItem>
-                                        {/*@ts-expect-error - context menu has problem in typing */}
-                                        <MenuItem
-                                            disabled={disableDuplicate || !classEvent}
-                                            className={classnames('menu-item', disableDuplicate ? 'disabled' : '')}
-                                            onClick={() => {
-                                                if (!classEvent?.class) {
-                                                    return;
-                                                }
-                                                DuplicateClassDialog.setContent(() => () => (
-                                                    <DuplicateClassForm class={classEvent?.class} />
-                                                ));
-                                                DuplicateClassDialog.setOpen(true);
-                                            }}
-                                        >
-                                            Duplicate Class
-                                        </MenuItem>
-                                        {disableDuplicate && (
-                                            <>
-                                                {/*@ts-expect-error - context menu has problem in typing */}
-                                                <MenuItem
-                                                    className={classnames('menu-item')}
-                                                    onClick={async () => {
-                                                        await dispatch(
-                                                            StudentThunkAction.detachFromGroup({
-                                                                classId: classEvent.class.id,
-                                                            })
-                                                        ).unwrap();
-                                                    }}
-                                                >
-                                                    Detach from Group
-                                                </MenuItem>
-                                            </>
-                                        )}
-                                        {/*@ts-expect-error - context menu has problem in typing */}
-                                        <MenuItem
-                                            className={classnames('menu-item')}
-                                            onClick={() => {
-                                                DeleteClassDialog.setContent(() => () => (
-                                                    <DeleteClassForm classEvent={classEvent} />
-                                                ));
-                                                DeleteClassDialog.setOpen(true);
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    color: 'red',
+                                            {/*@ts-expect-error - context menu has problem in typing */}
+                                            <MenuItem
+                                                className="menu-item"
+                                                onClick={() => {
+                                                    ViewClassDialog.setContent(() => () => (
+                                                        <ViewClassForm classEvent={classEvent} />
+                                                    ));
+                                                    ViewClassDialog.setOpen(true);
                                                 }}
                                             >
-                                                Delete Class
-                                            </span>
-                                        </MenuItem>
-                                        <div
-                                            className={classnames('menu-item')}
-                                            onClick={() => {
-                                                setClassStatusMenuOptionsExpand(!classStatusMenuOptionsExpand);
-                                            }}
-                                        >
-                                            <span
-                                                style={{
-                                                    color: 'yellowgreen',
+                                                View Class
+                                            </MenuItem>
+                                            {/*@ts-expect-error - context menu has problem in typing */}
+                                            <MenuItem
+                                                className="menu-item"
+                                                onClick={() => {
+                                                    ViewClassDialog.setContent(() => () => (
+                                                        <ViewClassForm isEditing={true} classEvent={classEvent} />
+                                                    ));
+                                                    ViewClassDialog.setOpen(true);
                                                 }}
                                             >
-                                                Change Status
-                                            </span>
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '1px',
-                                                opacity: 0.1,
-                                                backgroundColor: 'black',
-                                            }}
-                                        />
-                                        <div
-                                            style={{
-                                                transition: 'width 0.7s ease-in-out, ' + 'max-height 0.5s ease-in-out',
-                                                overflow: 'hidden',
-                                                maxHeight: classStatusMenuOptionsExpand ? '500px' : '0px',
-                                                width: classStatusMenuOptionsExpand ? '150px' : '0px',
-                                            }}
-                                        >
-                                            {classStatusMenuOptionsExpand && (
+                                                Edit Class
+                                            </MenuItem>
+                                            {/*@ts-expect-error - context menu has problem in typing */}
+                                            <MenuItem
+                                                disabled={disableDuplicate || !classEvent}
+                                                className={classnames('menu-item', disableDuplicate ? 'disabled' : '')}
+                                                onClick={() => {
+                                                    if (!classEvent?.class) {
+                                                        return;
+                                                    }
+                                                    DuplicateClassDialog.setContent(() => () => (
+                                                        <DuplicateClassForm class={classEvent?.class} />
+                                                    ));
+                                                    DuplicateClassDialog.setOpen(true);
+                                                }}
+                                            >
+                                                Duplicate Class
+                                            </MenuItem>
+                                            {disableDuplicate && (
                                                 <>
                                                     {/*@ts-expect-error - context menu has problem in typing */}
                                                     <MenuItem
                                                         className={classnames('menu-item')}
-                                                        onClick={() => {
-                                                            updateClassStatusHandle('PRESENT');
+                                                        onClick={async () => {
+                                                            await dispatch(
+                                                                StudentThunkAction.detachFromGroup({
+                                                                    classId: classEvent.class.id,
+                                                                })
+                                                            ).unwrap();
                                                         }}
                                                     >
-                                                        <div
-                                                            style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'space-between',
-                                                            }}
-                                                        >
-                                                            <span>Present</span>
-                                                            <div
-                                                                style={{
-                                                                    background: colors.GREEN_BLUE,
-                                                                    width: '15px',
-                                                                    height: '15px',
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    </MenuItem>
-                                                    {/*@ts-expect-error - context menu has problem in typing */}
-                                                    <MenuItem
-                                                        className={classnames('menu-item')}
-                                                        onClick={() => {
-                                                            updateClassStatusHandle('SUSPICIOUS_ABSENCE');
-                                                        }}
-                                                    >
-                                                        <div
-                                                            style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'space-between',
-                                                                alignItems: 'center',
-                                                            }}
-                                                        >
-                                                            <span>Suspicious Absence</span>
-                                                            <div
-                                                                style={{
-                                                                    background: colors.ORANGE,
-                                                                    width: '15px',
-                                                                    height: '15px',
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    </MenuItem>
-                                                    {/*@ts-expect-error - context menu has problem in typing */}
-                                                    <MenuItem
-                                                        className={classnames('menu-item')}
-                                                        onClick={() => {
-                                                            updateClassStatusHandle('ILLEGIT_ABSENCE');
-                                                        }}
-                                                    >
-                                                        <div
-                                                            style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'space-between',
-                                                            }}
-                                                        >
-                                                            <span>Illegit Absence</span>
-                                                            <div
-                                                                style={{
-                                                                    background: colors.RED,
-                                                                    width: '15px',
-                                                                    height: '15px',
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    </MenuItem>
-                                                    {/*@ts-expect-error - context menu has problem in typing */}
-                                                    <MenuItem
-                                                        className={classnames('menu-item')}
-                                                        onClick={() => {
-                                                            updateClassStatusHandle('LEGIT_ABSENCE');
-                                                        }}
-                                                    >
-                                                        <div
-                                                            style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'space-between',
-                                                            }}
-                                                        >
-                                                            <span>Legit Absence</span>
-                                                            <div
-                                                                style={{
-                                                                    background: colors.GREY,
-                                                                    width: '15px',
-                                                                    height: '15px',
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    </MenuItem>
-                                                    {/*@ts-expect-error - context menu has problem in typing */}
-                                                    <MenuItem
-                                                        className={classnames('menu-item')}
-                                                        onClick={() => {
-                                                            updateClassStatusHandle('MAKEUP');
-                                                        }}
-                                                    >
-                                                        <div
-                                                            style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'space-between',
-                                                            }}
-                                                        >
-                                                            <span>Makeup</span>
-                                                            <div
-                                                                style={{
-                                                                    background: colors.BLUE,
-                                                                    width: '15px',
-                                                                    height: '15px',
-                                                                }}
-                                                            />
-                                                        </div>
+                                                        Detach from Group
                                                     </MenuItem>
                                                 </>
                                             )}
-                                        </div>
-                                    </Box>
-                                </ContextMenu>
-                            </>
-                        )}
+                                            {/*@ts-expect-error - context menu has problem in typing */}
+                                            <MenuItem
+                                                className={classnames('menu-item')}
+                                                onClick={() => {
+                                                    DeleteClassDialog.setContent(() => () => (
+                                                        <DeleteClassForm classEvent={classEvent} />
+                                                    ));
+                                                    DeleteClassDialog.setOpen(true);
+                                                }}
+                                            >
+                                                <span
+                                                    style={{
+                                                        color: 'red',
+                                                    }}
+                                                >
+                                                    Delete Class
+                                                </span>
+                                            </MenuItem>
+                                            <div
+                                                className={classnames('menu-item')}
+                                                onClick={() => {
+                                                    setClassStatusMenuOptionsExpand(!classStatusMenuOptionsExpand);
+                                                }}
+                                            >
+                                                <span
+                                                    style={{
+                                                        color: 'yellowgreen',
+                                                    }}
+                                                >
+                                                    Change Status
+                                                </span>
+                                            </div>
+                                            <div
+                                                style={{
+                                                    height: '1px',
+                                                    opacity: 0.1,
+                                                    backgroundColor: 'black',
+                                                }}
+                                            />
+                                            <div
+                                                style={{
+                                                    transition:
+                                                        'width 0.7s ease-in-out, ' + 'max-height 0.5s ease-in-out',
+                                                    overflow: 'hidden',
+                                                    maxHeight: classStatusMenuOptionsExpand ? '500px' : '0px',
+                                                    width: classStatusMenuOptionsExpand ? '150px' : '0px',
+                                                }}
+                                            >
+                                                {classStatusMenuOptionsExpand && (
+                                                    <>
+                                                        {/*@ts-expect-error - context menu has problem in typing */}
+                                                        <MenuItem
+                                                            className={classnames('menu-item')}
+                                                            onClick={() => {
+                                                                updateClassStatusHandle('PRESENT');
+                                                            }}
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    justifyContent: 'space-between',
+                                                                }}
+                                                            >
+                                                                <span>Present</span>
+                                                                <div
+                                                                    style={{
+                                                                        background: colors.GREEN_BLUE,
+                                                                        width: '15px',
+                                                                        height: '15px',
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        </MenuItem>
+                                                        {/*@ts-expect-error - context menu has problem in typing */}
+                                                        <MenuItem
+                                                            className={classnames('menu-item')}
+                                                            onClick={() => {
+                                                                updateClassStatusHandle('SUSPICIOUS_ABSENCE');
+                                                            }}
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    justifyContent: 'space-between',
+                                                                    alignItems: 'center',
+                                                                }}
+                                                            >
+                                                                <span>Suspicious Absence</span>
+                                                                <div
+                                                                    style={{
+                                                                        background: colors.ORANGE,
+                                                                        width: '15px',
+                                                                        height: '15px',
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        </MenuItem>
+                                                        {/*@ts-expect-error - context menu has problem in typing */}
+                                                        <MenuItem
+                                                            className={classnames('menu-item')}
+                                                            onClick={() => {
+                                                                updateClassStatusHandle('ILLEGIT_ABSENCE');
+                                                            }}
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    justifyContent: 'space-between',
+                                                                }}
+                                                            >
+                                                                <span>Illegit Absence</span>
+                                                                <div
+                                                                    style={{
+                                                                        background: colors.RED,
+                                                                        width: '15px',
+                                                                        height: '15px',
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        </MenuItem>
+                                                        {/*@ts-expect-error - context menu has problem in typing */}
+                                                        <MenuItem
+                                                            className={classnames('menu-item')}
+                                                            onClick={() => {
+                                                                updateClassStatusHandle('LEGIT_ABSENCE');
+                                                            }}
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    justifyContent: 'space-between',
+                                                                }}
+                                                            >
+                                                                <span>Legit Absence</span>
+                                                                <div
+                                                                    style={{
+                                                                        background: colors.GREY,
+                                                                        width: '15px',
+                                                                        height: '15px',
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        </MenuItem>
+                                                        {/*@ts-expect-error - context menu has problem in typing */}
+                                                        <MenuItem
+                                                            className={classnames('menu-item')}
+                                                            onClick={() => {
+                                                                updateClassStatusHandle('MAKEUP');
+                                                            }}
+                                                        >
+                                                            <div
+                                                                style={{
+                                                                    display: 'flex',
+                                                                    justifyContent: 'space-between',
+                                                                }}
+                                                            >
+                                                                <span>Makeup</span>
+                                                                <div
+                                                                    style={{
+                                                                        background: colors.BLUE,
+                                                                        width: '15px',
+                                                                        height: '15px',
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        </MenuItem>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </Box>
+                                    </ContextMenu>
+                                </>
+                            )}
                     </div>
                 </div>
             </ClassEventWrapper>

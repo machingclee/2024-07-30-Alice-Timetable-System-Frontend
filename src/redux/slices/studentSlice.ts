@@ -22,14 +22,14 @@ import { loadingActions } from '../../utils/loadingActions';
 import { RootState } from '../store';
 import lodash from 'lodash';
 import { Classroom } from '../../prismaTypes/types';
-import MoveClassStatus from '../../enum/MoveClassStatus';
 import { createApiThunk } from '../../utils/createApiThunk';
 import {
     StudentDTO,
     StudentPackageRepsonse,
-    TimetableClass as ClassEvent,
+    TimetableClassEvent as ClassEvent,
     StudentPackageDTO,
 } from '../../dto/kotlinDto';
+import { omit } from 'lodash';
 
 export type StudentSliceState = {
     students: {
@@ -50,7 +50,7 @@ export type StudentSliceState = {
             selectedDate: Date; // we will list the timetables of the week containing this date (timestamp)
             hrUnixTimestamps?: string[];
             hrUnixTimestampToClassEvent?: {
-                [id: string]: ClassEvent & { hide: boolean };
+                [id: string]: ClassEvent;
             };
         };
     };
@@ -179,18 +179,6 @@ const studentSlice = createSlice({
             const { hrTimestamp } = action.payload;
             lodash.unset(state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent, hrTimestamp);
         },
-        hideClass: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
-            const { hrTimestamp } = action.payload;
-            if (state.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestampToClassEvent?.[hrTimestamp]) {
-                state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent[hrTimestamp].hide = true;
-            }
-        },
-        unHideClass: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
-            const { hrTimestamp } = action.payload;
-            if (state.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestampToClassEvent?.[hrTimestamp]) {
-                state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent[hrTimestamp].hide = false;
-            }
-        },
         updateStudent: (state, action: PayloadAction<{ student: StudentDTO }>) => {
             const { student } = action.payload;
             if (state.students.idToStudent && student.id) {
@@ -227,31 +215,6 @@ const studentSlice = createSlice({
             .addCase(StudentThunkAction.getStudentDetail.fulfilled, (state, action) => {
                 const studentDetail = action.payload;
                 state.studentDetailTimetablePage.detail = studentDetail;
-            })
-            .addCase(StudentThunkAction.moveStudentEvent.fulfilled, (state, action) => {
-                if (action.payload?.type === MoveClassStatus.PROCEED) {
-                    console.log('now proceed');
-                    const { result, newOfficialEndDate, packageIdToChangeOfficialEndDate } = action.payload;
-                    const { event: classEvent } = result || {};
-                    const hourUnixTimestamp = classEvent?.hourUnixTimestamp || '';
-
-                    if (
-                        newOfficialEndDate &&
-                        packageIdToChangeOfficialEndDate &&
-                        state.studentDetailTimetablePage.studentPackages.idToPackageResponse
-                    ) {
-                        state.studentDetailTimetablePage.studentPackages.idToPackageResponse[
-                            packageIdToChangeOfficialEndDate
-                        ].studentPackage.officialEndDate = newOfficialEndDate;
-                    }
-                    if (state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent) {
-                        lodash.setWith(
-                            state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent,
-                            hourUnixTimestamp, // the key
-                            classEvent // the value
-                        );
-                    }
-                }
             })
             .addCase(StudentThunkAction.detachFromGroup.fulfilled, (state, action) => {
                 const hourTimeStamp = action.payload.hour_unix_timestamp;
@@ -398,6 +361,20 @@ const studentSlice = createSlice({
                 });
                 state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestamps = ids;
                 state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent = idToObject;
+            })
+            .addCase(StudentThunkAction.moveStudentEvent.fulfilled, (state, action) => {
+                const { fromTimestamp = '' } = action.payload;
+                // remove the key and value
+                const index = state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestamps?.findIndex(
+                    t => t === String(fromTimestamp)
+                );
+                if (index != null) {
+                    state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestamps?.splice(index, 1);
+                }
+                omit(
+                    state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent,
+                    String(fromTimestamp)
+                );
             });
     },
 });
@@ -462,10 +439,11 @@ export class StudentThunkAction {
             const { fromHourTimestamp: fromTimestamp, toDayTimestamp, toHourTimestamp } = props;
             const existingRecord = (api.getState() as RootState).student.studentDetailTimetablePage.weeklyClassEvent
                 .hrUnixTimestampToClassEvent?.[toHourTimestamp];
-            const currStudentId = (api.getState() as RootState).student.studentDetailTimetablePage.detail?.id || '';
+
             if (existingRecord) {
                 return { type: 'skipped' };
             }
+
             const classEvent = lodash.cloneDeep(
                 (api.getState() as RootState).student?.studentDetailTimetablePage.weeklyClassEvent
                     .hrUnixTimestampToClassEvent?.[fromTimestamp]
@@ -484,39 +462,10 @@ export class StudentThunkAction {
                 toDayTimestamp: parseInt(toDayTimestamp),
                 toHourTimestamp: parseInt(toHourTimestamp),
             };
-            const res = await apiClient.put<
-                CustomResponse<{
-                    eventDetatil: {
-                        student_id: string;
-                        class_id: number;
-                        day_unix_timestamp: number;
-                        hour_unix_timestamp: number;
-                    };
-                    packageIdToChangeOfficialEndDate: number;
-                    newOfficialEndDate: number;
-                }>
-            >(apiRoutes.PUT_MOVE_STUDNET_CLASS, requestBody);
-            if (!res.data.success) {
-                api.dispatch(
-                    StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                        studentId: currStudentId,
-                    })
-                );
-                return {
-                    type: MoveClassStatus.PROCEED,
-                    fromTimestamp,
-                    result: { event: classEvent },
-                };
-            } else {
-                const { packageIdToChangeOfficialEndDate, newOfficialEndDate } = res.data.result;
-                return {
-                    type: MoveClassStatus.PROCEED,
-                    fromTimestamp,
-                    result: { event: classEvent },
-                    packageIdToChangeOfficialEndDate,
-                    newOfficialEndDate,
-                };
-            }
+            await apiClient.put<CustomResponse<null>>(apiRoutes.PUT_MOVE_STUDNET_CLASS, requestBody);
+            return {
+                fromTimestamp,
+            };
         }
     );
     public static updateStudent = createApiThunk(
@@ -645,6 +594,8 @@ registerEffects(studentMiddleware, [
     ...loadingActions(StudentThunkAction.getStudents),
     ...loadingActions(StudentThunkAction.updateClass),
     ...loadingActions(StudentThunkAction.createStudentEvent),
+    ...loadingActions(StudentThunkAction.createStudentPackage),
+    ...loadingActions(StudentThunkAction.moveStudentEvent),
     {
         rejections: [
             StudentThunkAction.getStudentDetail.rejected,

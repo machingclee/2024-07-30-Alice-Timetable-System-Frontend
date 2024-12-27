@@ -1,11 +1,11 @@
 import { Box } from '@mui/material';
 import { startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 import dayjs, { Dayjs } from 'dayjs';
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import SectionTitle from '../../../components/SectionTitle';
 import Spacer from '../../../components/Spacer';
 import lodash from 'lodash';
-import StudentClass from './ClassEventForWeeklyTimetable';
+import ClassEventForWeeklyTimetable from './ClassEventForWeeklyTimetable';
 import { useAppSelector } from '../../../redux/hooks';
 import { PiArrowRightBold } from 'react-icons/pi';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
@@ -42,11 +42,11 @@ export default function WeeklyTimeTable() {
     const weekEnd = dayjs(endOfWeek(courseStartDate, { weekStartsOn: 1 }))
         .add(offset, 'day')
         .toDate();
-    const daysOfWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
     const [timeGrid, setTimegrid] = useState<WeeklyCoordinate>({});
 
     useEffect(() => {
         const timetable_: WeeklyCoordinate = {};
+        const daysOfWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
         daysOfWeek.forEach(dateObj => {
             const timeOfTheDay = dateObj.getTime();
             const hoursOfTheDay = getHalfHourTimeIntervalsForDay(dateObj).map(dayJS => dayJS.valueOf());
@@ -55,7 +55,8 @@ export default function WeeklyTimeTable() {
             });
         });
         setTimegrid(timetable_);
-    }, [offset, courseStartDate, selectedPackageId, daysOfWeek, getHalfHourTimeIntervalsForDay]);
+        // eslint-disable-next-line
+    }, [offset, courseStartDate, selectedPackageId, getHalfHourTimeIntervalsForDay]);
 
     useEffect(() => {
         setOffset(0);
@@ -256,13 +257,12 @@ export default function WeeklyTimeTable() {
                                                     .sort()
                                                     .map((hourUnixTimestamp, index) => {
                                                         return (
-                                                            <React.Fragment key={hourUnixTimestamp}>
-                                                                <StudentClass
-                                                                    colIndex={index}
-                                                                    dayUnixTimestamp={parseInt(dayUnixTimestamp)}
-                                                                    hourUnixTimestamp={parseInt(hourUnixTimestamp)}
-                                                                />
-                                                            </React.Fragment>
+                                                            <ClassEventForWeeklyTimetable
+                                                                key={hourUnixTimestamp}
+                                                                colIndex={index}
+                                                                dayUnixTimestamp={parseInt(dayUnixTimestamp)}
+                                                                hourUnixTimestamp={parseInt(hourUnixTimestamp)}
+                                                            />
                                                         );
                                                     })}
                                             </div>

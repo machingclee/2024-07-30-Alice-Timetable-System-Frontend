@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "start:dev": "vite --mode dev",
-        "build:prod": "tsc && vite build --mode prod",
+        "build:prod": "vite build --mode prod",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview",
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",

@@ -71,7 +71,7 @@ export type User = {
 };
 
 export type CreateCourseRequest = {
-    course_name: string;
+    courseName: string;
 };
 
 export type CourseResponse = {
