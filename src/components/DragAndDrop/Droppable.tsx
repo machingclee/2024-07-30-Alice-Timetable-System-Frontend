@@ -22,7 +22,7 @@ export const TimetableDroppable = <T extends Record<string, any>>(
     const [hoveredState, setHoveredState] = useState<HoveredState>(HoveredState.IDLE);
     const getColor = () => {
         if (hoveredState === HoveredState.IDLE) {
-            return 'transparent';
+            return 'white';
         } else if (hoveredState === HoveredState.INVALID_MOVE) {
             return 'red';
         } else if (hoveredState === HoveredState.VALID_MOVE) {

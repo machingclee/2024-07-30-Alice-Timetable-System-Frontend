@@ -64,12 +64,12 @@ export default function WeeklyTimeTable() {
 
     const timetableContainerRef = useRef<HTMLDivElement | null>(null);
 
-    const gridHeight = 18;
+    const gridHeight = 20;
     const gridTimeColTop = 18;
 
     const adjustWidth = useCallback(() => {
         const width = window.innerWidth;
-        const columnWidth = Math.min((width - 660) / 7, 200);
+        const columnWidth = Math.min((width - 720) / 7, 200);
         setTimetableAvailableWidth(columnWidth);
     }, []);
 
@@ -87,73 +87,8 @@ export default function WeeklyTimeTable() {
         };
     }, [adjustWidth]);
 
-    return (
-        <Box
-            ref={timetableContainerRef}
-            style={{ width: '100%' }}
-            sx={{
-                overflowY: 'hidden',
-                height: '1000px',
-                '& .draggable-container': {
-                    borderTop: '1px solid rgba(0,0,0,0.1)',
-                    borderLeft: '2px solid rgba(0, 0, 0, 0.1)',
-                },
-                '& .draggable-container:nth-child(n+1)': {
-                    borderTop: '2px dashed rgba(0,0,0,0.15)',
-                },
-                '& .day-column': {
-                    flex: 1,
-                },
-                '& .day-column:last-child': {
-                    '& .draggable-container': {
-                        borderRight: '2px solid rgba(0, 0, 0, 0.1)',
-                    },
-                },
-                '& .draggable-container:last-child': {
-                    borderBottom: '1px solid rgba(0,0,0,0.1)',
-                },
-                '& .freeze': {
-                    transform: 'translate(0px,0px) !important',
-                },
-                '& .grid-time: nth-child(n+2)': {
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    paddingRight: '14px',
-                    height: `${gridHeight + 0.8}px`,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    whiteSpace: 'nowrap',
-                },
-                '& .grid-hour: nth-child(n+1)': {
-                    width: `${timetableAvailableWidth}px`,
-                    height: `${gridHeight - 1}px`,
-                },
-                '& .grid-hour.header': {
-                    top: 0,
-                    position: 'sticky',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    padding: 0,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    margin: 0,
-                    backgroundColor: colors.BACKGORUND_GREY,
-                    zIndex: 10 ** 7,
-                },
-                '& .droppable': {
-                    '& .grid-hour': {
-                        '&.disbaletransform': { transform: 'none !important' },
-                        '&:hover': {
-                            cursor: 'pointer',
-                            // backgroundColor: "rgba(22,119,255,0.2)",
-                        },
-                    },
-                },
-            }}
-        >
+    const weekNavigator = () => {
+        return (
             <SectionTitle>
                 <div
                     style={{
@@ -203,7 +138,75 @@ export default function WeeklyTimeTable() {
                     </Button>
                 </div>
             </SectionTitle>
+        );
+    };
 
+    return (
+        <Box
+            ref={timetableContainerRef}
+            style={{ width: '100%' }}
+            sx={{
+                overflowY: 'hidden',
+                '& .draggable-container': {
+                    position: 'relative',
+                    borderTop: '1px solid rgba(0,0,0,0.1)',
+                    borderLeft: '2px solid rgba(0, 0, 0, 0.1)',
+                },
+                '& .draggable-container:nth-child(n+1)': {
+                    borderTop: '0.12rem solid rgba(0,0,0,0.15)',
+                },
+                '& .day-column': {
+                    flex: 1,
+                },
+                '& .day-column:last-child': {
+                    '& .draggable-container': {
+                        borderRight: '2px solid rgba(0, 0, 0, 0.1)',
+                    },
+                },
+                '& .draggable-container:last-child': {
+                    borderBottom: '1px solid rgba(0,0,0,0.1)',
+                },
+                '& .freeze': {
+                    transform: 'translate(0px,0px) !important',
+                },
+                '& .grid-time:nth-child(n+2)': {
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    paddingRight: '14px',
+                    height: `${gridHeight + 0.8}px`,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    whiteSpace: 'nowrap',
+                },
+                '& .grid-hour': {
+                    '&:nth-child(n+1)': {
+                        width: '100%',
+                        height: `${gridHeight - 1}px`,
+                    },
+
+                    '&:hover': {
+                        cursor: 'pointer',
+                        backgroundColor: 'rgba(22,119,255,0.2)',
+                    },
+                },
+                '& .grid-hour.header': {
+                    top: 0,
+                    position: 'sticky',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    padding: 0,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    margin: 0,
+                    backgroundColor: colors.BACKGORUND_GREY,
+                    zIndex: 10 ** 7,
+                },
+            }}
+        >
+            <div className="flex justify-center">{weekNavigator()}</div>
             <CustomScrollbarContainer style={{ height: 'calc(100vh - 120px)', width: '100%' }}>
                 <Spacer />
                 <div style={{ display: 'flex' }}>
@@ -219,24 +222,11 @@ export default function WeeklyTimeTable() {
                                         width: '100%',
                                     }}
                                 />
-                                {getHalfHourTimeIntervalsForDay(weekStart).map((dayJS, index) => {
-                                    return (
-                                        <div
-                                            style={{
-                                                fontSize: 13,
-                                                opacity: index % 2 === 0 ? 1 : 0,
-                                            }}
-                                            className="grid-time"
-                                            key={dayJS.valueOf().toString()}
-                                        >
-                                            {dayJS.format('HH:mm')}
-                                        </div>
-                                    );
-                                })}
+                                <div className="grid-time" style={{ width: 60 }}></div>
                             </div>
                             {Object.keys(timeGrid)
                                 .sort()
-                                .map(dayUnixTimestamp => {
+                                .map((dayUnixTimestamp, colIndex) => {
                                     const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
                                     return (
                                         <div key={dayUnixTimestamp} className="day-column">
@@ -255,11 +245,12 @@ export default function WeeklyTimeTable() {
                                             <div>
                                                 {Object.keys(timeGrid[dayUnixTimestamp])
                                                     .sort()
-                                                    .map((hourUnixTimestamp, index) => {
+                                                    .map((hourUnixTimestamp, rowIndex) => {
                                                         return (
                                                             <ClassEventForWeeklyTimetable
                                                                 key={hourUnixTimestamp}
-                                                                colIndex={index}
+                                                                colIndex={colIndex}
+                                                                rowIndex={rowIndex}
                                                                 dayUnixTimestamp={parseInt(dayUnixTimestamp)}
                                                                 hourUnixTimestamp={parseInt(hourUnixTimestamp)}
                                                             />

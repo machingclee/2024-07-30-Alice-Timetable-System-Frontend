@@ -29,11 +29,17 @@ export default function StudentClassForWeeklyTimetable(props: {
     dayUnixTimestamp: number;
     hourUnixTimestamp: number;
     colIndex: number;
+    rowIndex: number;
 }) {
     const dispatch = useAppDispatch();
     const { studentId } = useGetStudentIdFromParam();
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
-    const { hourUnixTimestamp: currGridHourUnixTimestamp, dayUnixTimestamp: currGridDayUnixTimestamp } = props;
+    const {
+        hourUnixTimestamp: currGridHourUnixTimestamp,
+        dayUnixTimestamp: currGridDayUnixTimestamp,
+        colIndex,
+        rowIndex,
+    } = props;
     const [classStatusMenuOptionsExpand, setClassStatusMenuOptionsExpand] = useState<boolean>(false);
     const classEvent = useAppSelector(
         s =>
@@ -71,17 +77,6 @@ export default function StudentClassForWeeklyTimetable(props: {
     const dayAndTime = dayjs(currGridHourUnixTimestamp).format('ddd, HH:mm');
     const disableDuplicate = classEvent?.classGroup != null;
     // To adjust place a thick line to indicate the hour unit
-    const time = dayjs(currGridHourUnixTimestamp);
-    const isFullHour = time.minute() === 0;
-    const timeSlotStyle: React.CSSProperties = {
-        height: isFullHour ? '2px' : '0',
-        opacity: 0.2,
-        top: -2,
-        width: '100%',
-        backgroundColor: 'black',
-        position: 'absolute',
-    };
-
     const groupedLabel = () => {
         if (!hasDuplicationGroup) {
             return null;
@@ -102,7 +97,7 @@ export default function StudentClassForWeeklyTimetable(props: {
     };
     // eslint-disable-next-line
     const ClassEventWrapper = useCallback(
-        hasClassEvent
+        !hasClassEvent
             ? ({ children }: PropsWithChildren) => {
                   return (
                       <>
@@ -226,8 +221,10 @@ export default function StudentClassForWeeklyTimetable(props: {
                 })
             ).unwrap();
             dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
+            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
         };
         if (fromClz?.classGroup) {
+            MoveConfirmationDialog.setWidth('sm');
             MoveConfirmationDialog.setContent(() => () => <MoveConfirmationForm moveClassesAction={move} />);
             MoveConfirmationDialog.setOpen(true);
         } else {
@@ -247,13 +244,27 @@ export default function StudentClassForWeeklyTimetable(props: {
             onValidDrop={onValidDrop}
         >
             {showLabel && <Label label="StudentClassForWeeklyTimetable.tsx" />}
+            {/* we translate the current cell and print the time in HH:mm format to avoid unnecessarily difficult calculation of height */}
+            {colIndex === 0 && rowIndex % 2 === 0 && (
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: -5,
+                        left: -50,
+                        fontSize: 14,
+                    }}
+                >
+                    {dayjs(currGridHourUnixTimestamp).format('HH:mm')}
+                </div>
+            )}
             {/* wrapper: simply return null when no classEvent is found: */}
             <ClassEventWrapper>
                 {/* Place a thick line to indicate the hour unit */}
-                <div style={timeSlotStyle} />
                 <div className={classnames('grid-hour')}>
                     <div
                         style={{
+                            borderTop:
+                                rowIndex > 0 && (rowIndex + 0) % 4 === 0 ? '1px solid rgba(0,0,0,0.4)' : 'inherit',
                             display: 'flex',
                             justifyContent: 'flex-start',
                             alignItems: 'center',
@@ -274,6 +285,9 @@ export default function StudentClassForWeeklyTimetable(props: {
                                             canDrag={!!classEvent}
                                         >
                                             <Box
+                                                sx={{
+                                                    '&:hover': { cursor: 'pointer' },
+                                                }}
                                                 onMouseEnter={() => {
                                                     setClassEventHeight(120);
                                                 }}

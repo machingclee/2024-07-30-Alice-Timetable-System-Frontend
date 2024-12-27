@@ -1,11 +1,9 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import SectionTitle from '../../../components/SectionTitle';
 import { useEffect, useState } from 'react';
 import studentSlice, { StudentThunkAction } from '../../../redux/slices/studentSlice';
 import Spacer from '../../../components/Spacer';
-import { IoMdArrowBack } from 'react-icons/io';
-import { Button } from 'antd';
 import WeeklyTimetable from '../components/WeeklyTimetable';
 import Label from '../../../components/Label';
 import AddClassEventDialog from '../../../components/AddClassEventDialog';
@@ -26,10 +24,9 @@ export default function StudentDetail() {
     const { studentId } = useParams<{ studentId: string }>();
 
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
     const [collapseTimetable, setCollapseTimetable] = useState(false);
     const studentDetail = useAppSelector(s => s.student.studentDetailTimetablePage.detail);
-    const { firstName, lastName } = studentDetail || {};
+    const { firstName, lastName, chineseFirstName, chineseLastName, studentCode } = studentDetail || {};
 
     useEffect(() => {
         if (studentId) {
@@ -56,6 +53,40 @@ export default function StudentDetail() {
         };
     }, [userOnClickTimestamp, dispatch]);
 
+    const studentNameDisplay = () => {
+        return (
+            <>
+                <SectionTitle style={{ fontSize: 30 }}>
+                    <div>{`${chineseLastName} ${chineseFirstName}`}</div>
+                    <Spacer width={20} />
+                    {`${firstName} ${lastName}`}
+                    <Spacer width={20} />
+                </SectionTitle>
+                <Box
+                    sx={{
+                        '& td:nth-child(1)': {
+                            paddingRight: '8px',
+                        },
+                        '& td:nth-child(2)': {
+                            padding: '1px 4px',
+                            borderRadius: '4px',
+                            background: 'rgba(0,0,0,0.1)',
+                        },
+                    }}
+                >
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Student Code:</td>
+                                <td>{studentCode}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </Box>
+            </>
+        );
+    };
+
     if (!studentDetail) {
         return null;
     }
@@ -78,26 +109,13 @@ export default function StudentDetail() {
                     }}
                     style={{
                         width: collapseTimetable ? 'unset' : '100%',
-                        height: 'calc(100vh - 70px)',
                         overflow: 'hidden',
                     }}
                     in={!collapseTimetable}
                     orientation="horizontal"
                 >
+                    <div className="w-full mb-4">{studentNameDisplay()}</div>
                     <div style={{ width: '100%' }}>
-                        <SectionTitle>
-                            <Label label="StudenDetail.tsx" offsetTop={-20} />
-                            <Button
-                                shape="circle"
-                                onClick={() => {
-                                    navigate(-1);
-                                }}
-                            >
-                                <IoMdArrowBack />
-                            </Button>
-                            <Spacer height={1} />
-                            {`${firstName} ${lastName}`}
-                        </SectionTitle>
                         <WeeklyTimetable />
                     </div>
                 </Collapse>
@@ -111,13 +129,13 @@ export default function StudentDetail() {
             </div>
 
             {/* <Calendar /> */}
-            <MoveConfirmationDialog.render />
             <DuplicateClassDialog.render />
             <ViewClassDialog.render />
             <DeleteClassDialog.render />
             <AddClassEventDialog.render />
             <AddPackageDialog.render />
             <EditPackageDialog.render />
+            <MoveConfirmationDialog.render />
             <AddPaymentDetailDialog.render />
         </div>
     );
