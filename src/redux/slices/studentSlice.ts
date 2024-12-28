@@ -532,16 +532,17 @@ export class StudentThunkAction {
         }
     );
     public static updateClass = createApiThunk('studentSlice/updateClass', async (props: UpdateClassRequest, api) => {
-        const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PUT_UPDATE_CLASS, props);
+        const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PATCH_UPDATE_CLASS, props);
         return processRes(res, api);
     });
 
     public static createStudentPackage = createApiThunk(
         'studentSlice/createStudentPackage',
-        async (props: CreateStudentPackageRequest, api) => {
+        async (props: { req: CreateStudentPackageRequest; studentId: string }, api) => {
+            const { studentId, req } = props;
             const res = await apiClient.post<CustomResponse<StudentPackageDTO>>(
-                apiRoutes.POST_CREATE_STUDENT_PACKAGE,
-                props
+                apiRoutes.POST_CREATE_STUDENT_PACKAGE(studentId),
+                req
             );
             return processRes(res, api);
         }
@@ -600,6 +601,7 @@ registerEffects(studentMiddleware, [
     ...loadingActions(StudentThunkAction.createStudentClassEvent),
     ...loadingActions(StudentThunkAction.createStudentPackage),
     ...loadingActions(StudentThunkAction.moveStudentEvent),
+    ...loadingActions(StudentThunkAction.deletePackage),
     {
         rejections: [
             StudentThunkAction.getStudentDetail.rejected,
@@ -612,6 +614,7 @@ registerEffects(studentMiddleware, [
             StudentThunkAction.markPackageAsUnPaid.rejected,
             StudentThunkAction.deletePackage.rejected,
             StudentThunkAction.createStudentClassEvent.rejected,
+            StudentThunkAction.moveStudentEvent.rejected,
         ],
     },
     {

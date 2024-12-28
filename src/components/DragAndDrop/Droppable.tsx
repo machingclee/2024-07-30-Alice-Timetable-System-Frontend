@@ -2,6 +2,7 @@ import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element
 import { ReactNode, HTMLAttributes, useRef, useState, useEffect } from 'react';
 import invariant from 'tiny-invariant';
 import toastUtil from '../../utils/toastUtil';
+import { DraggableDropData } from './Draggable';
 
 enum HoveredState {
     IDLE = 'IDLE',
@@ -10,7 +11,7 @@ enum HoveredState {
 }
 
 // eslint-disable-next-line
-export const TimetableDroppable = <T extends Record<string, any>>(
+export const Droppable = <T extends Record<string, any>>(
     props: {
         children: ReactNode;
         isValidMove: (data: T) => boolean;
@@ -37,10 +38,9 @@ export const TimetableDroppable = <T extends Record<string, any>>(
         return dropTargetForElements({
             element: el,
             onDragEnter: ({ source, location }) => {
-                const data = source.data as T;
+                const { data } = source.data as DraggableDropData<T>;
                 const destination = location.current.dropTargets[0];
                 if (!destination) {
-                    // if dropped outside of any drop targets
                     return;
                 }
                 const validMove = isValidMove(data);
@@ -50,13 +50,22 @@ export const TimetableDroppable = <T extends Record<string, any>>(
                     setHoveredState(HoveredState.INVALID_MOVE);
                 }
             },
-            onDragLeave: () => setHoveredState(HoveredState.IDLE),
+            onDragLeave: ({ source, location }) => {
+                const destination = location.current.dropTargets[0];
+                const { setDragging } = source.data as DraggableDropData<T>;
+                if (!destination) {
+                    setDragging(false);
+                } else {
+                    setDragging(true);
+                }
+                setHoveredState(HoveredState.IDLE);
+            },
             canDrop: ({ source }) => {
-                const data = source.data as T;
+                const { data } = source.data as DraggableDropData<T>;
                 return isValidMove(data);
             },
             onDrop: async ({ source }) => {
-                const data = source.data as T;
+                const { data, setDragging } = source.data as DraggableDropData<T>;
                 try {
                     const validMove = isValidMove(data);
                     if (validMove) {
@@ -66,6 +75,7 @@ export const TimetableDroppable = <T extends Record<string, any>>(
                     toastUtil.error(JSON.stringify(error));
                 } finally {
                     setHoveredState(HoveredState.IDLE);
+                    setDragging(false);
                 }
             },
         });

@@ -152,7 +152,6 @@ export type CreateStudentPackageRequest = {
     start_time: number;
     min: number;
     course_id: number;
-    student_id: string;
     default_classroom: Classroom;
 };
 

@@ -12,10 +12,11 @@ import classStatuses from '../constant/classStatuses';
 import ViewClassDialog from './ViewClassDialog';
 import getColorForClassStatus from '../utils/getColorForClassStatus';
 import getNumberSuffix from '../utils/getNumberSuffix';
-import { TimetableClass } from '../dto/dto';
+import { TimetableClassEvent } from '../dto/kotlinDto';
+import boxShadow from '../constant/boxShadow';
 
 export default function ViewClassForm(props: {
-    classEvent: TimetableClass;
+    classEvent: TimetableClassEvent;
     dateUnixTimestamp?: number;
     isEditing?: boolean;
 }) {
@@ -23,14 +24,13 @@ export default function ViewClassForm(props: {
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const [editing, setEditing] = useState(props.isEditing || false);
     const { classEvent, dateUnixTimestamp } = props;
-    const { id, min, class_status, reason_for_absence, remark, actual_classroom, class_number } = classEvent;
-    const courseInfo = useAppSelector(s => s.class.courses?.idToCourse?.[classEvent.course_id || 0]);
+    const { class: cls, course } = classEvent;
     const formData = useRef({
-        min: min,
-        class_status: class_status,
-        remark: remark,
-        actual_classroom: actual_classroom,
-        reason_for_absence: reason_for_absence,
+        min: cls.min,
+        class_status: cls.classStatus,
+        remark: cls.remark,
+        actual_classroom: cls.actualClassroom,
+        reason_for_absence: cls.reasonForAbsence,
     });
     const dispatch = useAppDispatch();
 
@@ -39,8 +39,6 @@ export default function ViewClassForm(props: {
     return (
         <Box
             style={{
-                maxWidth: 400,
-                width: 600,
                 padding: '40px 40px',
                 overflowY: 'auto',
                 paddingBottom: 60,
@@ -48,6 +46,7 @@ export default function ViewClassForm(props: {
             }}
         >
             <Label label="ViewClassForm.tsx" offsetTop={0} offsetLeft={380} />
+
             <div
                 style={{
                     display: 'flex',
@@ -57,17 +56,15 @@ export default function ViewClassForm(props: {
                 }}
             >
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <div style={{ fontWeight: 'bold', fontSize: '23px' }}>{courseInfo?.course_name}</div>
-                    {class_number !== 0 && (
-                        <span style={{ fontWeight: 'lighter', fontSize: '12px' }}>{getNumberSuffix(class_number)}</span>
-                    )}
+                    <div style={{ fontWeight: 'bold', fontSize: '23px' }}>{course?.courseName}</div>
+                    <Spacer />
                 </div>
                 <div
                     style={{
                         display: 'inline-block',
                         cursor: 'pointer',
                         padding: '5px',
-                        width: '20px',
+                        width: 35,
                         height: 'auto',
                         transition: 'background-color 0.3s',
                     }}
@@ -77,7 +74,15 @@ export default function ViewClassForm(props: {
                         setEditing(!editing);
                     }}
                 >
-                    <MdEdit style={{ width: '100%', height: '100%' }} />
+                    <MdEdit style={{ width: '100%', height: '100%', opacity: editing ? 1 : 0.5 }} />
+                </div>
+            </div>
+            <Spacer height={10} />
+            <div style={{ display: 'flex' }}>
+                <div style={{ boxShadow: boxShadow.SHADOW_60, padding: '0px 10px', borderRadius: 4, marginBottom: 10 }}>
+                    {cls.classNumber !== 0 && (
+                        <span style={{ fontWeight: 'lighter', fontSize: 18 }}>{getNumberSuffix(cls.classNumber)}</span>
+                    )}
                 </div>
             </div>
             <Spacer />
@@ -92,13 +97,13 @@ export default function ViewClassForm(props: {
                 >
                     Duration:
                 </div>
-                {!editing && <DisplayResult>{min}</DisplayResult>}
+                {!editing && <DisplayResult>{cls.min}</DisplayResult>}
                 {editing && (
                     <Select
                         disabled={!editing}
                         dropdownStyle={{ zIndex: 10 ** 4 }}
                         style={{ width: '100%' }}
-                        defaultValue={min}
+                        defaultValue={cls.min}
                         onChange={value => {
                             formData.current = {
                                 ...formData.current,
@@ -121,13 +126,13 @@ export default function ViewClassForm(props: {
                 >
                     Classroom:
                 </div>
-                {!editing && <DisplayResult>{classEvent.actual_classroom}</DisplayResult>}
+                {!editing && <DisplayResult>{cls.actualClassroom}</DisplayResult>}
                 {editing && (
                     <Select
                         disabled={!editing}
                         dropdownStyle={{ zIndex: 10 ** 4 }}
                         style={{ width: '100%' }}
-                        defaultValue={classEvent.actual_classroom}
+                        defaultValue={cls.actualClassroom}
                         onChange={value => {
                             console.log('value:', value);
                             formData.current = {
@@ -166,7 +171,7 @@ export default function ViewClassForm(props: {
                             paddingLeft: 10,
                         }}
                     >
-                        {class_status}
+                        {cls.classStatus}
                         <div
                             style={{
                                 display: 'flex',
@@ -176,7 +181,7 @@ export default function ViewClassForm(props: {
                         >
                             <div
                                 style={{
-                                    background: getColorForClassStatus(class_status),
+                                    background: getColorForClassStatus(cls.classStatus),
                                     width: '15px',
                                     height: '15px',
                                 }}
@@ -189,7 +194,7 @@ export default function ViewClassForm(props: {
                         disabled={!editing}
                         dropdownStyle={{ zIndex: 10 ** 4 }}
                         style={{ width: '100%' }}
-                        defaultValue={class_status}
+                        defaultValue={cls.classStatus}
                         onChange={value => {
                             formData.current = {
                                 ...formData.current,
@@ -212,11 +217,11 @@ export default function ViewClassForm(props: {
                 >
                     Remark:
                 </div>
-                {!editing && <DisplayResult>{remark || ''}</DisplayResult>}
+                {!editing && <DisplayResult>{cls.remark || ''}</DisplayResult>}
                 {editing && (
                     <Input
                         disabled={!editing}
-                        defaultValue={remark || ''}
+                        defaultValue={cls.remark || ''}
                         onChange={value => {
                             formData.current = {
                                 ...formData.current,
@@ -236,7 +241,7 @@ export default function ViewClassForm(props: {
                         onClick={async () => {
                             await dispatch(
                                 StudentThunkAction.updateClass({
-                                    classId: id,
+                                    classId: cls.id,
                                     min: formData.current.min,
                                     class_status: formData.current.class_status,
                                     reason_for_absence: '',
@@ -257,14 +262,14 @@ export default function ViewClassForm(props: {
                                     } else {
                                         dispatch(
                                             StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                                                studentId: classEvent.student_id,
+                                                studentId: classEvent.student.id,
                                             })
                                         );
                                     }
                                 });
                             dispatch(
                                 StudentThunkAction.getStudentPackages({
-                                    studentId: classEvent.student_id,
+                                    studentId: classEvent.student.id,
                                 })
                             );
                             ViewClassDialog.setOpen(false);

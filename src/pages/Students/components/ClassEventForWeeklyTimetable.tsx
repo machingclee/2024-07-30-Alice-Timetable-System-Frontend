@@ -17,8 +17,8 @@ import Label from '../../../components/Label';
 import ViewClassDialog from '../../../components/ViewClassDialog';
 import ViewClassForm from '../../../components/ViewClassForm';
 import { Class_status, Classroom } from '../../../prismaTypes/types';
-import { TimetableDroppable } from '../../../components/DragAndDrop/Droppable';
-import { TimetableDraggable } from '../../../components/DragAndDrop/Draggable';
+import { Droppable } from '../../../components/DragAndDrop/Droppable';
+import { Draggable } from '../../../components/DragAndDrop/Draggable';
 import { TimetableClassEvent as TimetableClassEvent } from '../../../dto/kotlinDto';
 import { store } from '../../../redux/store';
 import MoveConfirmationForm from './MoveConfirmationForm';
@@ -214,15 +214,19 @@ export default function StudentClassForWeeklyTimetable(props: {
             return;
         }
         const move = async () => {
-            await dispatch(
-                StudentThunkAction.moveStudentEvent({
-                    fromHourTimestamp: String(fromClassEventHrUnixTimestamp),
-                    toDayTimestamp: String(currGridDayUnixTimestamp),
-                    toHourTimestamp: String(currGridHourUnixTimestamp),
-                })
-            ).unwrap();
-            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
-            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
+            try {
+                await dispatch(
+                    StudentThunkAction.moveStudentEvent({
+                        fromHourTimestamp: String(fromClassEventHrUnixTimestamp),
+                        toDayTimestamp: String(currGridDayUnixTimestamp),
+                        toHourTimestamp: String(currGridHourUnixTimestamp),
+                    })
+                ).unwrap();
+            } finally {
+                dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
+                dispatch(StudentThunkAction.getStudentPackages({ studentId }));
+                MoveConfirmationDialog.setOpen(false);
+            }
         };
         if (fromClz?.classGroup) {
             MoveConfirmationDialog.setWidth('sm');
@@ -236,7 +240,7 @@ export default function StudentClassForWeeklyTimetable(props: {
     const isInTheFuture = () => (classEvent?.class?.hourUnixTimestamp || 0) >= new Date().getTime();
 
     return (
-        <TimetableDroppable
+        <Droppable
             className="draggable-container"
             style={{
                 position: 'relative',
@@ -295,7 +299,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                 <>
                                     {/*@ts-expect-error - context menu has problem in typing */}
                                     <ContextMenuTrigger id={contextMenuId}>
-                                        <TimetableDraggable
+                                        <Draggable
                                             // eslint-disable-next-line
                                             data={classEvent!!}
                                             key={classEvent?.class.id}
@@ -386,13 +390,13 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     </div>
                                                 )}
                                             </Box>
-                                        </TimetableDraggable>
+                                        </Draggable>
                                     </ContextMenuTrigger>
                                     {/*@ts-expect-error - context menu has problem in typing */}
                                     <ContextMenu
                                         id={contextMenuId}
                                         style={{
-                                            zIndex: 10 ** 7,
+                                            zIndex: 10 ** 7 + 1,
                                         }}
                                     >
                                         <Box
@@ -429,6 +433,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                             <MenuItem
                                                 className="menu-item"
                                                 onClick={() => {
+                                                    ViewClassDialog.setWidth('sm');
                                                     ViewClassDialog.setContent(() => () => (
                                                         <ViewClassForm isEditing={true} classEvent={classEvent} />
                                                     ));
@@ -646,6 +651,6 @@ export default function StudentClassForWeeklyTimetable(props: {
                     </div>
                 </div>
             </ClassEventWrapper>
-        </TimetableDroppable>
+        </Droppable>
     );
 }

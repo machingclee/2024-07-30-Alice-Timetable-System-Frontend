@@ -1,9 +1,8 @@
 import { Collapse, Container } from '@mui/material';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import LeftNavigation from './components/LeftNavigation';
-import { OverlayScrollbarsComponent, OverlayScrollbarsComponentRef } from 'overlayscrollbars-react';
 import appSlice from '../../redux/slices/appSlice';
 import AppLoading from '../../components/AppLoading';
 import CloseLeftColumnButton from './components/CloseLeftColumnButton';
@@ -15,9 +14,6 @@ export default function Root() {
     const location = useLocation();
     const navigiate = useNavigate();
     const leftNavigatorCollapsed = useAppSelector(s => s.app.leftNavigatorCollapsed);
-
-    const ref = useRef<OverlayScrollbarsComponentRef<'div'> | null>(null);
-    console.log('This is root');
 
     useEffect(() => {
         // document.title = titles?.[location.pathname as RouteEnum] || ""
@@ -34,50 +30,24 @@ export default function Root() {
 
     return (
         <>
-            <OverlayScrollbarsComponent
-                style={{ height: '100vh', width: '100%', overflowY: 'auto' }}
-                ref={ref}
-                options={{
-                    scrollbars: {
-                        autoHide: 'scroll',
-                        autoHideDelay: 100,
+            <Container
+                sx={{
+                    background: colors.BACKGORUND_GREY,
+                    '@media (min-width: 1200px)': {
+                        maxWidth: 'none',
+                    },
+                    '&.MuiContainer-root': {
+                        paddingLeft: '0',
+                        paddingRight: '0',
                     },
                 }}
+                style={{
+                    display: 'flex',
+                    position: 'relative',
+                }}
             >
-                <Container
-                    sx={{
-                        background: colors.BACKGORUND_GREY,
-                        '@media (min-width: 1200px)': {
-                            maxWidth: 'none',
-                        },
-                        '&.MuiContainer-root': {
-                            paddingLeft: '0',
-                            paddingRight: '0',
-                        },
-                    }}
-                    style={{
-                        display: 'flex',
-                        position: 'relative',
-                    }}
-                >
-                    <Collapse style={{ height: '100vh' }} in={!leftNavigatorCollapsed} orientation="horizontal">
-                        <div style={{ height: '100%', flexDirection: 'column', display: 'flex' }}>
-                            <Spacer />
-                            <div
-                                style={{
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'flex-end',
-                                }}
-                            >
-                                <CloseLeftColumnButton />
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                <LeftNavigation />
-                            </div>
-                        </div>
-                    </Collapse>
-                    <Collapse style={{ height: '100vh' }} in={leftNavigatorCollapsed} orientation="horizontal">
+                <Collapse style={{ height: '100vh' }} in={!leftNavigatorCollapsed} orientation="horizontal">
+                    <div style={{ height: '100%', flexDirection: 'column', display: 'flex' }}>
                         <Spacer />
                         <div
                             style={{
@@ -88,10 +58,25 @@ export default function Root() {
                         >
                             <CloseLeftColumnButton />
                         </div>
-                    </Collapse>
-                    <RootOutlet />
-                </Container>
-            </OverlayScrollbarsComponent>
+                        <div style={{ flex: 1 }}>
+                            <LeftNavigation />
+                        </div>
+                    </div>
+                </Collapse>
+                <Collapse style={{ height: '100vh' }} in={leftNavigatorCollapsed} orientation="horizontal">
+                    <Spacer />
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'flex-end',
+                        }}
+                    >
+                        <CloseLeftColumnButton />
+                    </div>
+                </Collapse>
+                <RootOutlet />
+            </Container>
             <AppLoading />
         </>
     );

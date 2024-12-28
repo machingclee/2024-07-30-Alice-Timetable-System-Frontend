@@ -8,7 +8,7 @@ export default {
     POST_CREATE_COURSE: '/courses/create-course',
     POST_CREATE_STUDENT_CLASS: (studentId: string) => `/students/${studentId}/classes/create`,
     POST_DUPLICATE_CLASSES: '/students/duplicate-classes',
-    POST_CREATE_STUDENT_PACKAGE: '/students/create-student-package',
+    POST_CREATE_STUDENT_PACKAGE: (studentId: string) => `/students/${studentId}/student-packages/create`,
     POST_GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: '/students/get-filtered-student-classes-for-daily-timteable',
 
     GET_PACKAGE_CLASS_STATUS: (pkgUUID: string) => `/public/student-class-status/${pkgUUID}`,
@@ -26,13 +26,14 @@ export default {
 
     PUT_UPDATE_USER: '/user/update-user',
     PUT_UPDATE_STUDENT: '/students/update-student',
-    PUT_UPDATE_COURSE: '/courses/update-course',
-    PUT_MOVE_STUDNET_CLASS: '/students/move-class',
+    PUT_MOVE_STUDNET_CLASS: '/students/classes/move',
     PUT_DETACH_CLASS_FROM_GROUP: '/students/detach-from-group',
-    PUT_UPDATE_CLASS: '/students/update-class',
     PUT_MARK_PACAKGE_AS_PAID: '/students/mark-package-as-paid',
     PUT_MARK_PACAKGE_AS_UNPAID: '/students/mark-package-as-unpaid',
     PUT_UPDATE_PACKAGE: '/students/update-package',
+
+    PATCH_UPDATE_COURSE: '/courses/update',
+    PATCH_UPDATE_CLASS: '/students/classes/update',
 
     DELETE_PACKAGE: (studentId: string, packageId: number) =>
         `/students/delete-package?studentId=${studentId}&packageId=${packageId}`,

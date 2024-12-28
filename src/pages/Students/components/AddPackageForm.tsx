@@ -61,11 +61,10 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
             start_date: chosenStartDateResolvingUndefinedIssue,
             start_time: realStartTime,
             default_classroom,
-            student_id: studentId,
         };
         console.log('reqBody:', reqBody);
         AddPackageDialog.setOpen(false);
-        await dispatch(StudentThunkAction.createStudentPackage(reqBody)).unwrap();
+        await dispatch(StudentThunkAction.createStudentPackage({ req: reqBody, studentId })).unwrap();
         dispatch(StudentThunkAction.getStudentPackages({ studentId })).unwrap();
         dispatch(
             StudentThunkAction.getStudentClassesForWeeklyTimetable({
@@ -85,8 +84,6 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
     return (
         <Box
             style={{
-                maxWidth: 400,
-                width: 600,
                 padding: '40px 80px',
                 overflowY: 'auto',
                 paddingBottom: 60,

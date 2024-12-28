@@ -8,6 +8,7 @@ import { CourseResponse, CreateCourseRequest } from '../../dto/dto';
 import normalizeUtil from '../../utils/normalizeUtil';
 import { loadingActions } from '../../utils/loadingActions';
 import { Class } from '../../prismaTypes/types';
+import { CourseDTO } from '../../dto/kotlinDto';
 
 export type ClassSliceState = {
     courses: {
@@ -63,7 +64,7 @@ export class CourseThunkAction {
         }
     );
     public static updateCourse = createAsyncThunk('courseSlice/updateCourse', async (props: CourseResponse, api) => {
-        const res = await apiClient.put<CustomResponse<CourseResponse>>(apiRoutes.PUT_UPDATE_COURSE, props);
+        const res = await apiClient.patch<CustomResponse<CourseDTO>>(apiRoutes.PATCH_UPDATE_COURSE, props);
         return processRes(res, api);
     });
 }

@@ -3,14 +3,10 @@ import Spacer from '../../../components/Spacer';
 import { Button } from 'antd';
 
 import MoveConfirmationDialog from './MoveConfirmationDialog';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import { StudentThunkAction } from '../../../redux/slices/studentSlice';
 import SectionTitle from '../../../components/SectionTitle';
 
 export default function MoveConfirmationForm(props: { moveClassesAction: () => Promise<void> }) {
     const { moveClassesAction: moveClasses } = props;
-    const dispatch = useAppDispatch();
-    const studentId = useAppSelector(s => s.student.studentDetailTimetablePage.detail?.id) || '';
     return (
         <Box
             style={{
@@ -47,7 +43,7 @@ export default function MoveConfirmationForm(props: { moveClassesAction: () => P
                     type="text"
                     block
                     onClick={async () => {
-                        dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
+                        // dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
                         MoveConfirmationDialog.setOpen(false);
                     }}
                 >

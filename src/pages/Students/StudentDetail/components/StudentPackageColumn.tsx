@@ -43,6 +43,7 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
         >
             <div
                 style={{
+                    minWidth: 300,
                     height: 'calc(100vh - 40px)',
                     overflow: 'hidden',
                     display: 'flex',
@@ -62,6 +63,7 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                     <Button
                         style={{ minWidth: 40, minHeight: 40 }}
                         onClick={() => {
+                            AddPackageDialog.setWidth('sm');
                             AddPackageDialog.setContent(() => () => (
                                 <AddPackageForm studentId={studentId || ''} studentName={`${firstName} ${lastName}`} />
                             ));

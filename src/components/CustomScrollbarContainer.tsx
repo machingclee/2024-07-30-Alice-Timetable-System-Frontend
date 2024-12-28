@@ -13,7 +13,7 @@ export default function CustomScrollbarContainer(
     return (
         <div {...props_}>
             <OverlayScrollbarsComponent
-                style={{ height: '100%', width: '100%', overflowY: 'auto' }}
+                style={{ height: '100%', width: '100%', overflowY: 'auto', zIndex: 1 }}
                 ref={ref}
                 options={{
                     scrollbars: {

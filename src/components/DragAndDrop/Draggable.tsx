@@ -3,7 +3,13 @@ import { ReactNode, HTMLAttributes, useRef, useState, useEffect } from 'react';
 import invariant from 'tiny-invariant';
 
 // eslint-disable-next-line
-export const TimetableDraggable = <T extends Record<string, any>>(
+export type DraggableDropData<T extends Record<string, any>> = {
+    data: T;
+    setDragging: (dragging: boolean) => void;
+};
+
+// eslint-disable-next-line
+export const Draggable = <T extends Record<string, any>>(
     props: {
         children: ReactNode;
         data: T;
@@ -19,15 +25,28 @@ export const TimetableDraggable = <T extends Record<string, any>>(
         return draggable({
             element: el,
             canDrag: () => canDrag,
-            getInitialData: () => data,
+            getInitialData: () => ({ data, setDragging }),
             onDragStart: () => setDragging(true),
             onDrop: () => {
                 setDragging(false);
             },
         });
     }, [data, canDrag]);
+
     return (
-        <div ref={ref} {..._props} style={{ display: dragging ? 'none' : 'auto' }}>
+        <div
+            ref={ref}
+            {..._props}
+            style={{
+                opacity: dragging ? 0.4 : 1,
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                zIndex: 10 ** 7,
+                top: 0,
+                left: 0,
+            }}
+        >
             {children}
         </div>
     );
