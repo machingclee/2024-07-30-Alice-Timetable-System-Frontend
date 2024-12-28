@@ -19,6 +19,7 @@ export default function Students() {
     const [filter, setFilter] = useState('');
     const idToStudent = useAppSelector(s => s.student.students.idToStudent);
     const openAddUserDialog = () => {
+        AddStudentDialog.setWidth('sm');
         AddStudentDialog.setContent(() => () => <AddStudentForm />);
         AddStudentDialog.setOpen(true);
     };

@@ -3,7 +3,6 @@ import Title from '../../../../components/Title';
 import AddPackageForm from '../../components/AddPackageForm';
 import AddPackageDialog from '../../components/AddPackageDialog';
 import { useParams } from 'react-router-dom';
-import { LuPlusCircle } from 'react-icons/lu';
 import Spacer from '../../../../components/Spacer';
 import Sep from '../../../../components/Sep';
 import { Switch } from '@mui/material';
@@ -35,7 +34,7 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
     return (
         <div
             style={{
-                flex: 1,
+                flex: collapseTimtable ? 1 : 0,
                 display: 'flex',
                 flexDirection: 'column',
                 position: 'relative',
@@ -61,7 +60,7 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                     <Label label="StudentPackageColumn.tsx" offsetTop={-15} offsetLeft={20} />
                     <Title>Student Packages</Title>
                     <Button
-                        style={{ width: 40, height: 40 }}
+                        style={{ minWidth: 40, minHeight: 40 }}
                         onClick={() => {
                             AddPackageDialog.setContent(() => () => (
                                 <AddPackageForm studentId={studentId || ''} studentName={`${firstName} ${lastName}`} />
@@ -70,7 +69,7 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                         }}
                         shape="circle"
                     >
-                        <LuPlusCircle size={30} />
+                        Add
                     </Button>
                 </div>
                 <Spacer height={5} />
@@ -86,7 +85,12 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                         defaultChecked
                     />
                 </div>
-                <CustomScrollbarContainer className={`w-full h-[calc(100vh-${packagesOffsetY}px)]`}>
+                <CustomScrollbarContainer
+                    style={{
+                        width: '100%',
+                        height: `calc(100vh-${packagesOffsetY}px)`,
+                    }}
+                >
                     <div className="flex justify-center w-full">
                         <div style={{ width: '100%' }}>
                             {courseNames.map(courseName => {

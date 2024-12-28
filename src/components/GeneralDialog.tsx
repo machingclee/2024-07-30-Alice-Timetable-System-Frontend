@@ -27,7 +27,13 @@ export default class GeneralDialog {
 
         return (
             <Dialog
-                PaperProps={{ style: { backgroundColor: bgColor, zIndex: 10 ** 7 + 1 } }}
+                PaperProps={{
+                    style: {
+                        borderRadius: 20,
+                        backgroundColor: bgColor,
+                        zIndex: 10 ** 7 + 1,
+                    },
+                }}
                 maxWidth={width}
                 fullWidth={true}
                 onClose={() => {

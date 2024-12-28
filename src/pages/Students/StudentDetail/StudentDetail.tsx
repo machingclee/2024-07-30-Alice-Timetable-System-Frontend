@@ -17,12 +17,11 @@ import AddPaymentDetailDialog from './components/AddPaymentDetailDialog';
 import ViewClassDialog from '../../../components/ViewClassDialog';
 import EditPackageDialog from './components/EditPackageDialog';
 import { FaChevronLeft } from 'react-icons/fa6';
-import { Box, Collapse } from '@mui/material';
+import { Box } from '@mui/material';
 
 export default function StudentDetail() {
     const [userOnClickTimestamp, _] = useState(new Date());
     const { studentId } = useParams<{ studentId: string }>();
-
     const dispatch = useAppDispatch();
     const [collapseTimetable, setCollapseTimetable] = useState(false);
     const studentDetail = useAppSelector(s => s.student.studentDetailTimetablePage.detail);
@@ -101,7 +100,7 @@ export default function StudentDetail() {
             }}
         >
             <div style={{ display: 'flex' }}>
-                <Collapse
+                <Box
                     sx={{
                         '& .MuiCollapse-wrapperInner': {
                             width: '100%',
@@ -111,14 +110,16 @@ export default function StudentDetail() {
                         width: collapseTimetable ? 'unset' : '100%',
                         overflow: 'hidden',
                     }}
-                    in={!collapseTimetable}
-                    orientation="horizontal"
                 >
-                    <div className="w-full mb-4">{studentNameDisplay()}</div>
-                    <div style={{ width: '100%' }}>
-                        <WeeklyTimetable />
-                    </div>
-                </Collapse>
+                    {!collapseTimetable && (
+                        <>
+                            <div className="w-full mb-4">{studentNameDisplay()}</div>
+                            <div style={{ width: '100%' }}>
+                                <WeeklyTimetable />
+                            </div>
+                        </>
+                    )}
+                </Box>
                 <CollapseTriggerBar
                     collapseTimetable={collapseTimetable}
                     onClick={() => {

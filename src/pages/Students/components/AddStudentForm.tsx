@@ -48,8 +48,6 @@ export default function AddStudentForm() {
     return (
         <Box
             style={{
-                maxWidth: 400,
-                width: 600,
                 padding: '40px 80px',
                 overflowY: 'auto',
                 paddingBottom: 60,

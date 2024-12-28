@@ -15,7 +15,7 @@ export default function Label(props: { label: string; offsetTop?: number; offset
                     left: 0,
                     top: 0,
                     backgroundColor: 'rgba(255,255,255,0.7)',
-                    padding: '4px 10px',
+                    padding: '0px 10px',
                     border: '1px solid rgb(0,0,255,0.4)',
                     color: 'rgb(0,0,255,0.4)',
                     borderRadius: 4,

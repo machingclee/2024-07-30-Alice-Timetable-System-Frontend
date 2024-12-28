@@ -21,9 +21,6 @@ export const TimetableDraggable = <T extends Record<string, any>>(
             canDrag: () => canDrag,
             getInitialData: () => data,
             onDragStart: () => setDragging(true),
-            onDropTargetChange: () => {
-                setDragging(false);
-            },
             onDrop: () => {
                 setDragging(false);
             },

@@ -198,6 +198,7 @@ export default function StudenRow(props: { studentId: string }) {
                     <MenuItem
                         className="menu-item"
                         onClick={() => {
+                            EditStudentDialog.setWidth('sm');
                             EditStudentDialog.setContent(() => () => <EditStudentForm studentId={student.id} />);
                             EditStudentDialog.setOpen(true);
                         }}

@@ -11,8 +11,6 @@ import studentSlice, { StudentThunkAction } from '../redux/slices/studentSlice';
 import timeUtil from '../utils/timeUtil';
 import { AppDispatch } from '../redux/store';
 import { FilterToGetClassesForDailyTimetableWithoutCourseIds } from '../dto/dto';
-import appSlice from '../redux/slices/appSlice';
-import CollapseButton from '../assets/collapse-button.png';
 import { FaFilter } from 'react-icons/fa';
 import Checkbox from '@mui/material/Checkbox';
 import colors from '../constant/colors';
@@ -26,7 +24,6 @@ export default function RightColumn() {
     const courseIds = useAppSelector(s => s.class.courses.ids);
     const filterCourseIds = useAppSelector(s => s.student.massTimetablePage.filter.courseIds);
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
-    const rightColumnCollapsed = useAppSelector(s => s.app.rightColumnCollapsed);
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const dispatch = useDispatch<AppDispatch>();
     const [filterByClassStatusOnPress, setFilterByClassStatusOnPress] = useState<boolean>(false);
@@ -80,7 +77,6 @@ export default function RightColumn() {
     return (
         <div
             style={{
-                width: rightColumnCollapsed ? '0px' : '300px',
                 marginRight: '50px',
                 transition: 'width 0.3s ease-in-out',
             }}
@@ -93,7 +89,6 @@ export default function RightColumn() {
                     display: 'flex',
                     flexDirection: 'column',
                     transition: 'opacity 0.3s ease-in-out',
-                    opacity: rightColumnCollapsed ? 0 : 1,
                 }}
             >
                 <div
@@ -627,23 +622,6 @@ export default function RightColumn() {
                     </Button>
                 </div>
             </div>
-            <img
-                onClick={() => {
-                    dispatch(appSlice.actions.setRightColumnCollapsed(!rightColumnCollapsed));
-                }}
-                style={{
-                    position: 'absolute',
-                    bottom: '50%',
-                    right: rightColumnCollapsed ? '0%' : '25%',
-                    width: 30,
-                    height: 30,
-                    cursor: 'pointer',
-                    transition: 'right 0.5s ease-out, transform 1s ease-out',
-                    zIndex: 10 ** 100,
-                    transform: rightColumnCollapsed ? 'rotate(0deg)' : 'rotate(180deg)',
-                }}
-                src={CollapseButton}
-            />
         </div>
     );
 }

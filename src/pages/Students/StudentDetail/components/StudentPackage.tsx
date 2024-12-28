@@ -123,6 +123,7 @@ export default function StudentPackage(props: { packageId: string }) {
         <div
             style={{
                 boxShadow: boxShadow.SHADOW_60,
+                maxWidth: 300,
             }}
             className={classnames(
                 'cursor-pointer',

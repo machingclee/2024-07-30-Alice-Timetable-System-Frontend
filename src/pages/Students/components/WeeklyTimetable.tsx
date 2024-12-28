@@ -87,6 +87,12 @@ export default function WeeklyTimeTable() {
         };
     }, [adjustWidth]);
 
+    // useEffect(() => {
+    //     if (rightColumnCollapsed) {
+    //         adjustWidth();
+    //     }
+    // }, [rightColumnCollapsed]);
+
     const weekNavigator = () => {
         return (
             <SectionTitle>

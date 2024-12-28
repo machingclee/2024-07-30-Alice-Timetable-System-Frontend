@@ -233,6 +233,8 @@ export default function StudentClassForWeeklyTimetable(props: {
         }
     };
 
+    const isInTheFuture = () => (classEvent?.class?.hourUnixTimestamp || 0) >= new Date().getTime();
+
     return (
         <TimetableDroppable
             className="draggable-container"
@@ -249,13 +251,27 @@ export default function StudentClassForWeeklyTimetable(props: {
             {colIndex === 0 && rowIndex % 2 === 0 && (
                 <div
                     style={{
+                        transform: 'translateY(50%)',
                         position: 'absolute',
-                        top: -5,
-                        left: -50,
+                        top: 'calc(-100% - 2px)',
+                        left: -60,
                         fontSize: 14,
+                        display: 'flex',
+                        alignItems: 'center',
                     }}
                 >
-                    {dayjs(currGridHourUnixTimestamp).format('HH:mm')}
+                    <div
+                        style={{
+                            backgroundColor: 'white',
+                            boxShadow: boxShadow.SHADOW_62,
+                            padding: '0px 8px',
+                            borderRadius: 8,
+                        }}
+                    >
+                        {rowIndex === 0 && <Label label="time!" offsetLeft={10} offsetTop={-5} />}
+                        {dayjs(currGridHourUnixTimestamp).format('HH:mm')}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', color: 'rgb(150,150,150)' }}>--</div>
                 </div>
             )}
             {/* wrapper: simply return null when no classEvent is found: */}
@@ -283,7 +299,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                             // eslint-disable-next-line
                                             data={classEvent!!}
                                             key={classEvent?.class.id}
-                                            canDrag={!!classEvent}
+                                            canDrag={!!classEvent && isInTheFuture()}
                                         >
                                             <Box
                                                 sx={{
@@ -305,7 +321,8 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     top: 5,
                                                     left: 5,
                                                     width: 'calc(100% - 20px)',
-                                                    height: classEventHeight || 1.2 * (classEvent?.class.min || 0) - 10,
+                                                    height:
+                                                        classEventHeight || 1.35 * (classEvent?.class.min || 0) - 10,
                                                     backgroundColor: (() => {
                                                         if (!classEvent) {
                                                             return '';
