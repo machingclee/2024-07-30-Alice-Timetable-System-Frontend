@@ -419,10 +419,14 @@ export class StudentThunkAction {
             return processRes(res, api);
         }
     );
-    public static createStudentEvent = createApiThunk(
+    public static createStudentClassEvent = createApiThunk(
         'studentSlice/createStudentEvent',
-        async (props: CreateClassRequest, api) => {
-            const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_STUDENT_CLASS, props);
+        async (props: { studentId: string; req: CreateClassRequest }, api) => {
+            const { req, studentId } = props;
+            const res = await apiClient.post<CustomResponse<undefined>>(
+                apiRoutes.POST_CREATE_STUDENT_CLASS(studentId),
+                req
+            );
             return processRes(res, api);
         }
     );
@@ -593,7 +597,7 @@ registerEffects(studentMiddleware, [
     ...loadingActions(StudentThunkAction.getStudentDetail),
     ...loadingActions(StudentThunkAction.getStudents),
     ...loadingActions(StudentThunkAction.updateClass),
-    ...loadingActions(StudentThunkAction.createStudentEvent),
+    ...loadingActions(StudentThunkAction.createStudentClassEvent),
     ...loadingActions(StudentThunkAction.createStudentPackage),
     ...loadingActions(StudentThunkAction.moveStudentEvent),
     {
@@ -607,6 +611,7 @@ registerEffects(studentMiddleware, [
             StudentThunkAction.markPackageAsPaid.rejected,
             StudentThunkAction.markPackageAsUnPaid.rejected,
             StudentThunkAction.deletePackage.rejected,
+            StudentThunkAction.createStudentClassEvent.rejected,
         ],
     },
     {

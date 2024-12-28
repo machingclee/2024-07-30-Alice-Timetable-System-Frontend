@@ -93,14 +93,12 @@ export type MoveClassRequest = {
 };
 
 export type CreateClassRequest = {
-    num_of_classes: number;
-    student_id: string;
-    course_id: number;
-    day_unix_timestamp: number;
-    hour_unix_timestamp: number;
+    numOfClasses: number;
+    dayUnixTimestamp: number;
+    hourUnixTimestamp: number;
     min: number;
-    student_package_id: number;
-    actual_classroom: Classroom;
+    studentPackageId: number;
+    actualClassroom: Classroom;
 };
 
 export type FilterToGetClassesForDailyTimetable = {

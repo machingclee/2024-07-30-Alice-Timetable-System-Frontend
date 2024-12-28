@@ -61,6 +61,7 @@ export default function StudentClassForWeeklyTimetable(props: {
     const { id: class_group_id } = classEvent?.classGroup || {};
     const hasDuplicationGroup = class_group_id != null;
     const createEvent = () => {
+        AddClassEventDialog.setWidth('sm');
         AddClassEventDialog.setContent(() => () => (
             <AddClassEventForm
                 dayUnixTimestamp={currGridDayUnixTimestamp}

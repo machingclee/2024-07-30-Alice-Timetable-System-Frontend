@@ -33,9 +33,9 @@ export default function AddClassEventPopover({
     const dispatch = useAppDispatch();
     const classes = useAppSelector(s => s.class.courses);
     const formData = useRef<Partial<CreateClassRequest>>({
-        day_unix_timestamp: dayUnixTimestamp,
-        hour_unix_timestamp: hourUnixTimestamp,
-        student_id: studentId,
+        dayUnixTimestamp: dayUnixTimestamp,
+        hourUnixTimestamp: hourUnixTimestamp,
+        studentId: studentId,
     });
     const updateFormData = (update: Partial<CreateClassRequest>) => {
         formData.current = { ...formData.current, ...update };
@@ -91,14 +91,14 @@ export default function AddClassEventPopover({
             <div style={{ display: 'flex' }}>
                 <FormInputTitle>Select a Class </FormInputTitle>
                 <Spacer />
-                {error.course_id && <div>{error.course_id}</div>}
+                {error.courseId && <div>{error.courseId}</div>}
             </div>
             <Spacer height={5} />
             <Select
                 dropdownStyle={{ zIndex: 10 ** 4 }}
                 style={{ width: '100%' }}
                 onChange={value => {
-                    updateFormData({ course_id: value });
+                    updateFormData({ courseId: value });
                 }}
                 options={classes.ids?.map(id_ => {
                     const { course_name, id } = classes.idToCourse?.[id_] || {};

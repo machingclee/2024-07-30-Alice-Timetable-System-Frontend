@@ -6,7 +6,7 @@ export default {
     POST_CREATE_USER: '/user/create-user',
     POST_CREATE_STUDNET: '/students',
     POST_CREATE_COURSE: '/courses/create-course',
-    POST_CREATE_STUDENT_CLASS: '/students/create-student-class',
+    POST_CREATE_STUDENT_CLASS: (studentId: string) => `/students/${studentId}/classes/create`,
     POST_DUPLICATE_CLASSES: '/students/duplicate-classes',
     POST_CREATE_STUDENT_PACKAGE: '/students/create-student-package',
     POST_GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: '/students/get-filtered-student-classes-for-daily-timteable',
