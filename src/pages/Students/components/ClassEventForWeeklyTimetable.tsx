@@ -24,6 +24,7 @@ import { store } from '../../../redux/store';
 import MoveConfirmationForm from './MoveConfirmationForm';
 import MoveConfirmationDialog from './MoveConfirmationDialog';
 import useGetStudentIdFromParam from '../../../hooks/useGetStudentIdFromParam';
+import classNames from 'classnames';
 
 export default function StudentClassForWeeklyTimetable(props: {
     dayUnixTimestamp: number;
@@ -238,10 +239,13 @@ export default function StudentClassForWeeklyTimetable(props: {
     };
 
     const isInTheFuture = () => (classEvent?.class?.hourUnixTimestamp || 0) >= new Date().getTime();
+    const getHeight = () => {
+        return classEventHeight || 1.35 * (classEvent?.class.min || 0) - 10;
+    };
 
     return (
         <Droppable
-            className="draggable-container"
+            className={classNames('draggable-container')}
             style={{
                 position: 'relative',
             }}
@@ -325,8 +329,8 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     top: 5,
                                                     left: 5,
                                                     width: 'calc(100% - 20px)',
-                                                    height:
-                                                        classEventHeight || 1.35 * (classEvent?.class.min || 0) - 10,
+                                                    height: getHeight(),
+                                                    filter: isInTheFuture() ? '' : 'grayscale(80%) brightness(120%)',
                                                     backgroundColor: (() => {
                                                         if (!classEvent) {
                                                             return '';
@@ -354,7 +358,6 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                             }
                                                         }
                                                     })(),
-
                                                     borderRadius: 4,
                                                     fontSize: 14,
                                                     color: 'white',
@@ -362,33 +365,46 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                 }}
                                                 key={currGridHourUnixTimestamp}
                                             >
-                                                {showLabel && groupedLabel()}
-                                                <div
-                                                    style={{
-                                                        padding: 4,
-                                                    }}
-                                                >
-                                                    {classEvent?.course.courseName}
-                                                </div>
-                                                {classNumber !== 0 && (
+                                                <div style={{ position: 'relative' }}>
+                                                    {/* <div
+                                                        style={{
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            height: getHeight(),
+                                                            transition: 'height 0.18s ease-in-out',
+                                                            width: '100%',
+                                                      
+                                                        }}
+                                                    ></div> */}
+                                                    {showLabel && groupedLabel()}
                                                     <div
                                                         style={{
-                                                            marginTop: 5,
-                                                            paddingTop: 5,
-                                                            paddingBottom: 5,
-                                                            marginLeft: 10,
-                                                            width: '80%',
-                                                            backgroundColor: 'white',
-                                                            color: 'black',
-                                                            borderRadius: '5px',
-                                                            display: 'flex',
-                                                            justifyContent: 'center',
-                                                            alignItems: 'center',
+                                                            padding: 4,
                                                         }}
                                                     >
-                                                        Class: {classNumber}
+                                                        {classEvent?.course.courseName}
                                                     </div>
-                                                )}
+                                                    {classNumber !== 0 && (
+                                                        <div
+                                                            style={{
+                                                                marginTop: 5,
+                                                                paddingTop: 5,
+                                                                paddingBottom: 5,
+                                                                marginLeft: 10,
+                                                                width: '80%',
+                                                                backgroundColor: 'white',
+                                                                color: 'black',
+                                                                borderRadius: '5px',
+                                                                display: 'flex',
+                                                                justifyContent: 'center',
+                                                                alignItems: 'center',
+                                                            }}
+                                                        >
+                                                            Class: {classNumber}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </Box>
                                         </Draggable>
                                     </ContextMenuTrigger>
