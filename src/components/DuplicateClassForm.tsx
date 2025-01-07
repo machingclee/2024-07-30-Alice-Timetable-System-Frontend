@@ -7,9 +7,11 @@ import { useAppDispatch } from '../redux/hooks';
 import { StudentThunkAction } from '../redux/slices/studentSlice';
 import DuplicateClassDialog from './DuplicateClassDialog';
 import { ClassDTO } from '../dto/kotlinDto';
+import useGetStudentIdFromParam from '../hooks/useGetStudentIdFromParam';
 
 export default function DuplicateClassForm(props: { class: ClassDTO }) {
     const { class: classEvent } = props;
+    const { studentId } = useGetStudentIdFromParam();
     const dispatch = useAppDispatch();
     const { id } = classEvent;
     const [week, setWeek] = useState(2);
@@ -17,15 +19,13 @@ export default function DuplicateClassForm(props: { class: ClassDTO }) {
     return (
         <Box
             style={{
-                maxWidth: 400,
-                width: 600,
-                padding: '40px 80px',
+                padding: '40px',
                 overflowY: 'auto',
                 paddingBottom: 60,
             }}
         >
             <Label label="UpdateClassForm.tsx" offsetTop={0} offsetLeft={180} />
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ alignItems: 'center', display: 'flex' }}>
                 <div>Duplicate To</div>
                 <Spacer height={5} />
                 <Select
@@ -57,7 +57,8 @@ export default function DuplicateClassForm(props: { class: ClassDTO }) {
                             numberOfWeeks: week,
                         })
                     ).unwrap();
-                    DuplicateClassDialog.setOpen(false);
+                    await dispatch(StudentThunkAction.getStudentPackages({ studentId }));
+                    DuplicateClassDialog.close();
                 }}
             >
                 Submit

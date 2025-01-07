@@ -449,7 +449,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                             <MenuItem
                                                 className="menu-item"
                                                 onClick={() => {
-                                                    ViewClassDialog.setWidth('sm');
+                                                    ViewClassDialog.setWidth('xs');
                                                     ViewClassDialog.setContent(() => () => (
                                                         <ViewClassForm isEditing={true} classEvent={classEvent} />
                                                     ));
@@ -466,6 +466,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     if (!classEvent?.class) {
                                                         return;
                                                     }
+                                                    DuplicateClassDialog.setWidth('xs');
                                                     DuplicateClassDialog.setContent(() => () => (
                                                         <DuplicateClassForm class={classEvent?.class} />
                                                     ));

@@ -1,5 +1,4 @@
 import { Box } from '@mui/material';
-import Label from './Label';
 import Spacer from './Spacer';
 import { PropsWithChildren, useRef, useState } from 'react';
 import { Button, Select, Input } from 'antd';
@@ -39,20 +38,18 @@ export default function ViewClassForm(props: {
     return (
         <Box
             style={{
+                width: '100%',
                 padding: '40px 40px',
-                overflowY: 'auto',
                 paddingBottom: 60,
-                marginLeft: '10px',
             }}
         >
-            <Label label="ViewClassForm.tsx" offsetTop={0} offsetLeft={380} />
+            {/* <Label label="ViewClassForm.tsx" offsetTop={0} offsetLeft={380} /> */}
 
             <div
                 style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'flex-end',
-                    width: '100%',
                 }}
             >
                 <div style={{ display: 'flex', alignItems: 'center' }}>
