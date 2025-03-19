@@ -1,50 +1,63 @@
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import AddStudentDialog from "./components/AddStudentDialog";
-import { Button } from "antd";
-import AddStudentForm from "./components/AddStudentForm";
-import Spacer from "../../components/Spacer";
-import { Box } from "@mui/material";
-import SectionTitle from "../../components/SectionTitle";
-import StudentRow from "./components/StudentRow";
-import { StudentThunkAction } from "../../redux/slices/studentSlice";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import EditStudentDialog from "./components/EditStudentDialog";
+import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import AddStudentDialog from './components/AddStudentDialog';
+import { Button } from 'antd';
+import AddStudentForm from './components/AddStudentForm';
+import Spacer from '../../components/Spacer';
+import { Box } from '@mui/material';
+import SectionTitle from '../../components/SectionTitle';
+import StudentRow from './components/StudentRow';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import EditStudentDialog from './components/EditStudentDialog';
+import escapeStringRegexp from 'escape-string-regexp';
+import { StudentThunkAction } from '../../redux/slices/studentSlice';
 
-export default () => {
+export default function Students() {
     const dispatch = useAppDispatch();
-    const ids = useAppSelector((s) => s.student.students.ids) || [];
-    const [idSelected, setIdSelected] = useState<string[]>([]);
-    const idToStudent = useAppSelector((s) => s.student.students.idToStudent);
-
+    const ids = useAppSelector(s => s.student.students.ids) || [];
+    const [filter, setFilter] = useState('');
+    const idToStudent = useAppSelector(s => s.student.students.idToStudent);
     const openAddUserDialog = () => {
+        AddStudentDialog.setWidth('sm');
         AddStudentDialog.setContent(() => () => <AddStudentForm />);
         AddStudentDialog.setOpen(true);
     };
 
-    // Function to handle Autocomplete value change
-    const handleAutocompleteOnChange = (newValue: string | null) => {
-        if (newValue === null) {
-            setIdSelected([]);
-            return;
-        }
-        if (!newValue || !idToStudent) return;
+    const filterRegex = new RegExp(escapeStringRegexp(filter), 'i');
+    const filteredIds = ids.filter(id => {
+        const student = idToStudent?.[id];
+        const {
+            studentCode = '',
+            chineseFirstName = '',
+            chineseLastName = '',
+            firstName = '',
+            lastName = '',
+            parentEmail = '',
+            schoolName = '',
+            phoneNumber = '',
+        } = student || {};
 
-        const studentList: string[] = [];
+        const sum = [
+            studentCode,
+            chineseFirstName,
+            chineseLastName,
+            `${chineseLastName} ${chineseFirstName}`,
+            `${firstName} ${lastName}`,
+            firstName,
+            lastName,
+            parentEmail,
+            phoneNumber,
+            schoolName,
+        ].reduce((acc, curr) => {
+            const sum = acc + Number(filterRegex.test(curr));
+            return sum;
+        }, 0);
 
-        // Search through students and find matches
-        Object.values(idToStudent).forEach((student) => {
-            const fullName = `${student.first_name} ${student.last_name} ${student.chinese_first_name}${student.chinese_last_name}`;
-            const fullNameLower = fullName.toLowerCase(); // Convert to lower case for case-insensitive search
+        return sum >= 1;
+    });
 
-            if (fullNameLower.includes(newValue.toLowerCase())) {
-                studentList.push(student.id);
-            }
-        });
-
-        setIdSelected(studentList);
-    };
+    console.log('filteredIds', filteredIds);
 
     useEffect(() => {
         dispatch(StudentThunkAction.getStudents());
@@ -57,17 +70,42 @@ export default () => {
             {/* Autocomplete for searching students */}
             <Autocomplete
                 freeSolo // Allows arbitrary input not limited to the options
-                options={ids.map((id) => {
+                options={filteredIds.map(id => {
                     const student = idToStudent?.[id];
-                    return `${student?.first_name} ${student?.last_name} ${student?.chinese_first_name}${student?.chinese_last_name}`;
+                    const searchDisplay = (() => {
+                        let result = '';
+                        if (student?.firstName) {
+                            result += student.firstName;
+                        }
+                        if (student?.lastName) {
+                            result += ' ' + student.lastName;
+                        }
+                        return result;
+                    })();
+                    return searchDisplay;
                 })}
-                onChange={(event, newValue) => {
-                    handleAutocompleteOnChange(newValue);
+                onInputChange={(_, newValue) => {
+                    setFilter(newValue || '');
                 }}
-                renderInput={(params) => <TextField {...params} label="Find the student" variant="outlined" />}
+                renderInput={params => (
+                    <TextField
+                        {...params}
+                        label="Find the student"
+                        size="small"
+                        style={{ backgroundColor: 'white' }}
+                        placeholder="Chinese Name, English Name, School Name, Parent Email, etc."
+                        variant="outlined"
+                    />
+                )}
             />
 
-            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 20 }}>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    marginTop: 20,
+                }}
+            >
                 <Button type="primary" onClick={openAddUserDialog}>
                     Add Student
                 </Button>
@@ -75,10 +113,10 @@ export default () => {
 
             <Spacer />
 
-            <Box>{idSelected.length > 0 ? idSelected.map((id) => <StudentRow id={id} key={id} />) : ids.map((id) => <StudentRow id={id} key={id} />)}</Box>
+            <Box>{filteredIds?.map(studentId => <StudentRow studentId={studentId} />)}</Box>
 
             <AddStudentDialog.render />
             <EditStudentDialog.render />
         </div>
     );
-};
+}

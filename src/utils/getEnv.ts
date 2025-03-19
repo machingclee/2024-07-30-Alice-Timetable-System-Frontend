@@ -1,5 +1,5 @@
-const env = import.meta.env
+const env = import.meta.env;
 
 export default () => {
     return env;
-}
+};

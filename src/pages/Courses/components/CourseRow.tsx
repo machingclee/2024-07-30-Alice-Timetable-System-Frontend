@@ -1,79 +1,90 @@
-import { Button, Input } from "antd";
-import boxShadow from "../../../constant/boxShadow";
-import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
-import { useCallback, useEffect, useRef, useState } from "react";
-import Spacer from "../../../components/Spacer";
-import { Course } from "../../../dto/dto";
-import Label from "../../../components/Label";
-import { CourseThunkAction } from "../../../redux/slices/courseSlice";
-import { debounce } from "lodash";
-import lodash from "lodash";
+import { Button, Input } from 'antd';
+import boxShadow from '../../../constant/boxShadow';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Spacer from '../../../components/Spacer';
+import { CourseResponse } from '../../../dto/dto';
+import Label from '../../../components/Label';
+import { CourseThunkAction } from '../../../redux/slices/courseSlice';
+import { debounce } from 'lodash';
+import lodash from 'lodash';
 
-export default (props: { id: number }) => {
+export default function CourseRow(props: { id: number }) {
     const { id } = props;
     const dispatch = useAppDispatch();
-    const class_ = useAppSelector(s => s.class.courses.idToCourse?.[id]);
-    if (!class_) {
-        return null;
-    }
+    const course = useAppSelector(s => s.class.courses.idToCourse?.[id])!;
+
     const [hasDistinction, setHasDistinction] = useState(false);
 
-    const checkDataDistinction = useCallback(debounce(() => {
-        const oldData = class_;
-        const newData = formData.current;
-        const hasDistinction_ = !lodash.isEqual(oldData, newData);
-        console.log("oldData", oldData);
-        console.log("newData", newData);
-        setHasDistinction(hasDistinction_);
-    }, 300), [class_])
+    // eslint-disable-next-line
+    const checkDataDistinction = useCallback(
+        debounce(() => {
+            const oldData = course;
+            const newData = formData.current;
+            const hasDistinction_ = !lodash.isEqual(oldData, newData);
+            console.log('oldData', oldData);
+            console.log('newData', newData);
+            setHasDistinction(hasDistinction_);
+        }, 300),
+        [course]
+    );
 
     const [editing, setEditing] = useState(false);
-    const formData = useRef(class_);
-    const updateField = (update: Partial<Course>) => {
+    const formData = useRef(course);
+    const updateField = (update: Partial<CourseResponse>) => {
         formData.current = { ...formData.current, ...update };
         checkDataDistinction();
-    }
-    const { course_name } = class_ || {};
+    };
+    const { courseName } = course || {};
     const submitUpdate = async () => {
-        const updatedClass = { ...class_, ...formData.current };
+        const updatedClass = { ...course, ...formData.current };
         await dispatch(CourseThunkAction.updateCourse(updatedClass));
         setEditing(false);
-    }
+    };
 
     useEffect(() => {
         if (editing) {
-            formData.current = class_;
+            formData.current = course;
         }
-    }, [editing])
+    }, [editing, course]);
 
     useEffect(() => {
-        checkDataDistinction()
-    }, [editing])
+        checkDataDistinction();
+    }, [editing, checkDataDistinction]);
 
+    if (!course) {
+        return null;
+    }
 
     return (
-        <div style={{
-            boxShadow: boxShadow.SHADOW_62,
-            padding: "20px 30px",
-            borderRadius: "8px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "15px",
-        }}>
-            <div>
+        <div
+            style={{
+                background: 'white',
+                boxShadow: boxShadow.SHADOW_62,
+                padding: '20px 30px',
+                borderRadius: '8px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '15px',
+            }}
+        >
+            <div style={{ flex: 1 }}>
                 <table>
                     <Label label="CourseRow.tsx" offsetTop={-20} />
                     <tbody>
                         <tr>
                             <td>Course Name:</td>
-                            {!editing && <td>{course_name}</td>}
+                            {!editing && <td>{courseName}</td>}
                             {editing && (
-                                <td>
+                                <td style={{}}>
                                     <Input
-                                        defaultValue={course_name}
-                                        onChange={(e) => {
-                                            updateField({ course_name: e.target.value })
+                                        style={{ flex: 1 }}
+                                        defaultValue={courseName}
+                                        onChange={e => {
+                                            updateField({
+                                                courseName: e.target.value,
+                                            });
                                         }}
                                     />
                                 </td>
@@ -82,20 +93,28 @@ export default (props: { id: number }) => {
                     </tbody>
                 </table>
             </div>
-            <div style={{ display: "flex" }}>
-                {editing && <>
-                    <Button onClick={submitUpdate} disabled={!hasDistinction} >Update</Button>
-                    <Spacer />
-                </>}
-                <Button onClick={() => {
-                    setEditing(editing => {
-                        if (editing) {
-                            formData.current = class_;
-                        }
-                        return !editing
-                    });
-                }}>{editing ? "Cancel" : "Edit"}</Button>
+            <div style={{ display: 'flex' }}>
+                {editing && (
+                    <>
+                        <Button onClick={submitUpdate} disabled={!hasDistinction}>
+                            Update
+                        </Button>
+                        <Spacer />
+                    </>
+                )}
+                <Button
+                    onClick={() => {
+                        setEditing(editing => {
+                            if (editing) {
+                                formData.current = course;
+                            }
+                            return !editing;
+                        });
+                    }}
+                >
+                    {editing ? 'Cancel' : 'Edit'}
+                </Button>
             </div>
         </div>
-    )
+    );
 }

@@ -1,16 +1,30 @@
 <!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Painting Timetable System</title>
+        <style>
+            .ant-picker-time-panel-column:nth-child(1) .ant-picker-time-panel-cell:nth-child(-n + 9),
+            .ant-picker-time-panel-column:nth-child(1) .ant-picker-time-panel-cell:nth-child(n + 19) {
+                display: none;
+            }
+        </style>
+    </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painting Timetable System</title>
-</head>
-
-<body style="margin:0; font-family: Roboto; font-size: 95%">
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
-</body>
-
+    <body
+        style="
+            margin: 0;
+            font-family: Roboto;
+            font-size: 95%;
+            height: 100vh !important;
+            overflow: hidden;
+            position: fixed;
+            width: 100vw !important;
+        "
+    >
+        <div id="root"></div>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
 </html>

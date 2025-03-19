@@ -1,86 +1,90 @@
-import { Container } from "@mui/material";
-import { useEffect, useRef } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { RouteEnum } from "../../router/router";
-import LeftNavigation from "./components/LeftNavigation";
-import { OverlayScrollbarsComponent, OverlayScrollbarsComponentRef } from "overlayscrollbars-react";
-import appSlice from "../../redux/slices/appSlice";
-import AppLoading from "../../components/AppLoading";
+import { Collapse, Container } from '@mui/material';
+import { useEffect } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import LeftNavigation from './components/LeftNavigation';
+import appSlice from '../../redux/slices/appSlice';
+import AppLoading from '../../components/AppLoading';
+import CloseLeftColumnButton from './components/CloseLeftColumnButton';
+import Spacer from '../../components/Spacer';
+import colors from '../../constant/colors';
 
-export default () => {
+export default function Root() {
     const dispatch = useAppDispatch();
     const location = useLocation();
-    const navgiate = useNavigate();
-    const accessToken = useAppSelector((s) => s.auth.accessToken);
-    const ref = useRef<OverlayScrollbarsComponentRef<"div"> | null>(null);
-    console.log("This is root");
+    const navigiate = useNavigate();
+    const leftNavigatorCollapsed = useAppSelector(s => s.app.leftNavigatorCollapsed);
 
     useEffect(() => {
         // document.title = titles?.[location.pathname as RouteEnum] || ""
     }, [location.pathname]);
 
     useEffect(() => {
-        if (location.pathname === "/") {
-            navgiate("/login");
+        if (location.pathname === '/') {
+            navigiate('/login');
         }
-        if (location.pathname === "/login") {
-            dispatch(appSlice.actions.setActivePath("/login"));
+        if (location.pathname === '/login') {
+            dispatch(appSlice.actions.setActivePath('/login'));
         }
-    }, [location.pathname]);
-
-    useEffect(() => {
-        if (!accessToken) {
-            navgiate("/login");
-        } else {
-            const inDashboard = location.pathname.includes("/dashboard");
-            if (!inDashboard) {
-                navgiate(RouteEnum.DASHBOARD_STUDENTS);
-            }
-        }
-    }, [accessToken, location.pathname]);
+    }, [location.pathname, dispatch, navigiate]);
 
     return (
         <>
-            <OverlayScrollbarsComponent
-                style={{ height: "100vh", width: "100%", overflowY: "auto" }}
-                ref={ref}
-                options={{
-                    scrollbars: {
-                        autoHide: "scroll",
-                        autoHideDelay: 100,
+            <Container
+                sx={{
+                    background: colors.BACKGORUND_GREY,
+                    '@media (min-width: 1200px)': {
+                        maxWidth: 'none',
+                    },
+                    '&.MuiContainer-root': {
+                        paddingLeft: '0',
+                        paddingRight: '0',
                     },
                 }}
+                style={{
+                    display: 'flex',
+                    position: 'relative',
+                }}
             >
-                <Container
-                    sx={{
-                        "@media (min-width: 1200px)": {
-                            maxWidth: "none",
-                        },
-                        "&.MuiContainer-root": {
-                            paddingLeft: "0",
-                            paddingRight: "0",
-                        },
-                    }}
-                    style={{ display: "flex", position: "relative" }}
-                >
-                    <div style={{ position: "fixed", height: "100%" }}>
-                        <LeftNavigation />
+                <Collapse style={{ height: '100vh' }} in={!leftNavigatorCollapsed} orientation="horizontal">
+                    <div style={{ height: '100%', flexDirection: 'column', display: 'flex' }}>
+                        <Spacer />
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'flex-end',
+                            }}
+                        >
+                            <CloseLeftColumnButton />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <LeftNavigation />
+                        </div>
                     </div>
-                    <RootOutlet />
-                </Container>
-            </OverlayScrollbarsComponent>
+                </Collapse>
+                <Collapse style={{ height: '100vh' }} in={leftNavigatorCollapsed} orientation="horizontal">
+                    <Spacer />
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'flex-end',
+                        }}
+                    >
+                        <CloseLeftColumnButton />
+                    </div>
+                </Collapse>
+                <RootOutlet />
+            </Container>
             <AppLoading />
         </>
     );
-};
+}
 
-const RootOutlet = () => {
-    const { pathname } = useLocation();
-    const islogin = pathname === "/login";
-    const leftNavigatorCollapsed = useAppSelector((s) => s.app.leftNavigatorCollapsed);
+export const RootOutlet = () => {
     return (
-        <div style={{ flex: 1, marginLeft: islogin ? 0 : leftNavigatorCollapsed ? 40 : 200, height: "100vh", width: "100%" }}>
+        <div style={{ flex: 1, height: '100vh', width: '100%' }}>
             <Outlet />
         </div>
     );

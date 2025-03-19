@@ -1,142 +1,229 @@
-import { Box } from "@mui/material";
-import Label from "./Label";
-import Spacer from "./Spacer";
-import { useEffect, useRef, useState } from "react";
-import { Button, Select, Input } from "antd";
-import durations from "../constant/durations";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { StudentThunkAction } from "../redux/slices/studentSlice";
-import { $Enums, Class, Classroom, Course, Student_package } from "../prismaTypes/types";
-import { MdEdit } from "react-icons/md";
-import classStatuses from "../constant/classStatuses";
-import ViewClassDialog from "./ViewClassDialog";
-import getColorForClassStatus from "../utils/getColorForClassStatus";
-import getNumberSuffix from "../utils/getNumberSuffix";
-import useGetStudentIdFromParam from "../hooks/useGetStudentIdFromParam";
+import { Box } from '@mui/material';
+import Spacer from './Spacer';
+import { PropsWithChildren, useRef, useState } from 'react';
+import { Button, Select, Input } from 'antd';
+import durations from '../constant/durations';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { StudentThunkAction } from '../redux/slices/studentSlice';
+import { $Enums, Classroom } from '../prismaTypes/types';
+import { MdEdit } from 'react-icons/md';
+import classStatuses from '../constant/classStatuses';
+import ViewClassDialog from './ViewClassDialog';
+import getColorForClassStatus from '../utils/getColorForClassStatus';
+import getNumberSuffix from '../utils/getNumberSuffix';
+import { TimetableClassEvent } from '../dto/kotlinDto';
+import boxShadow from '../constant/boxShadow';
+import Label from './Label';
 
-export default (props: { classEvent: Class & Course & Student_package & { hide: boolean }; classNumber: number; course_id: number; student_id: string }) => {
-    const [editing, setEditing] = useState(false);
-    const { studentId } = useGetStudentIdFromParam();
-    const { classEvent, classNumber } = props;
-    const { id, min, class_status, reason_for_absence, remark, actual_classroom, default_classroom } = classEvent;
-    const courseInfo = useAppSelector((s) => s.class.courses?.idToCourse?.[props.course_id || 0]);
-    const status = class_status.toString();
-    const formData = useRef({ min: min, class_status: status, reason_for_absence: reason_for_absence, remark: remark, actual_classroom: actual_classroom });
-    const [hasAbsence, setHasAbsence] = useState<boolean>(class_status === "PRESENT" || class_status === "CHANGE_OF_CLASSROOM" ? false : true);
+export default function ViewClassForm(props: {
+    classEvent: TimetableClassEvent;
+    dateUnixTimestamp?: number;
+    isEditing?: boolean;
+}) {
+    const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
+    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
+    const [editing, setEditing] = useState(props.isEditing || false);
+    const { classEvent, dateUnixTimestamp } = props;
+    const { class: cls, course } = classEvent;
+    const formData = useRef({
+        min: cls.min,
+        class_status: cls.classStatus,
+        remark: cls.remark,
+        actual_classroom: cls.actualClassroom,
+        reason_for_absence: cls.reasonForAbsence,
+    });
     const dispatch = useAppDispatch();
 
-    useEffect(() => { }, []);
-
-    const classroomOptions: Classroom[] = ["PRINCE_EDWARD", "CAUSEWAY_BAY"];
+    const classroomOptions: Classroom[] = ['PRINCE_EDWARD', 'CAUSEWAY_BAY'];
 
     return (
-        <Box style={{ maxWidth: 400, width: 600, padding: "40px 80px", overflowY: "auto", paddingBottom: 60, marginLeft: "10px" }}>
+        <Box
+            style={{
+                width: '100%',
+                padding: '40px 40px',
+                paddingBottom: 60,
+            }}
+        >
             <Label label="ViewClassForm.tsx" offsetTop={0} offsetLeft={380} />
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", width: "100%" }}>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ fontWeight: "bold", fontSize: "23px" }}>{courseInfo?.course_name}</div>
-                    {classNumber !== 0 && <span style={{ fontWeight: "lighter", fontSize: "12px" }}>{getNumberSuffix(classNumber)}</span>}
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-end',
+                }}
+            >
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '23px' }}>{course?.courseName}</div>
+                    <Spacer />
                 </div>
                 <div
                     style={{
-                        display: "inline-block",
-                        cursor: "pointer",
-                        padding: "5px",
-                        width: "20px",
-                        height: "auto",
-                        transition: "background-color 0.3s",
+                        display: 'inline-block',
+                        cursor: 'pointer',
+                        padding: '5px',
+                        width: 35,
+                        height: 'auto',
+                        transition: 'background-color 0.3s',
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f0f0f0")}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#f0f0f0')}
+                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
                     onClick={() => {
                         setEditing(!editing);
                     }}
                 >
-                    <MdEdit style={{ width: "100%", height: "100%" }} />
+                    <MdEdit style={{ width: '100%', height: '100%', opacity: editing ? 1 : 0.5 }} />
+                </div>
+            </div>
+            <Spacer height={10} />
+            <div style={{ display: 'flex' }}>
+                <div style={{ boxShadow: boxShadow.SHADOW_60, padding: '0px 10px', borderRadius: 4, marginBottom: 10 }}>
+                    {cls.classNumber !== 0 && (
+                        <span style={{ fontWeight: 'lighter', fontSize: 18 }}>{getNumberSuffix(cls.classNumber)}</span>
+                    )}
                 </div>
             </div>
             <Spacer />
             <div>
-                <div style={{ marginBottom: "10px", marginTop: "5px", fontSize: "16px", fontWeight: "bold" }}>Duration:</div>
-                {!editing && <div style={{ width: "100%", height: "32px", fontWeight: "lighter" }}>{min} minutes</div>}
+                <div
+                    style={{
+                        marginBottom: '10px',
+                        marginTop: '5px',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                    }}
+                >
+                    Duration:
+                </div>
+                {!editing && <DisplayResult>{cls.min}</DisplayResult>}
                 {editing && (
                     <Select
+                        disabled={!editing}
                         dropdownStyle={{ zIndex: 10 ** 4 }}
-                        style={{ width: "100%" }}
-                        defaultValue={min}
-                        onChange={(value) => {
-                            formData.current = { ...formData.current, min: value };
+                        style={{ width: '100%' }}
+                        defaultValue={cls.min}
+                        onChange={value => {
+                            formData.current = {
+                                ...formData.current,
+                                min: value,
+                            };
                         }}
                         options={durations}
                     />
                 )}
             </div>
-
+            <Spacer height={5} />
             <div>
-                <div style={{ marginBottom: "10px", marginTop: "5px", fontSize: "16px", fontWeight: "bold" }}>Classroom:</div>
-                {!editing && <div style={{ width: "100%", height: "32px", fontWeight: "lighter" }}>{actual_classroom ? actual_classroom : default_classroom}</div>}
+                <div
+                    style={{
+                        marginBottom: '10px',
+                        marginTop: '5px',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                    }}
+                >
+                    Classroom:
+                </div>
+                {!editing && <DisplayResult>{cls.actualClassroom}</DisplayResult>}
                 {editing && (
                     <Select
+                        disabled={!editing}
                         dropdownStyle={{ zIndex: 10 ** 4 }}
-                        style={{ width: "100%" }}
-                        defaultValue={classEvent.actual_classroom}
-                        onChange={(value) => {
-                            console.log("value:", value);
-                            formData.current = { ...formData.current, actual_classroom: value };
+                        style={{ width: '100%' }}
+                        defaultValue={cls.actualClassroom}
+                        onChange={value => {
+                            console.log('value:', value);
+                            formData.current = {
+                                ...formData.current,
+                                actual_classroom: value,
+                            };
                         }}
-                        options={classroomOptions.map((classroom) => {
+                        options={classroomOptions.map(classroom => {
                             return { value: classroom, label: classroom };
                         })}
                     />
                 )}
             </div>
+            <Spacer height={5} />
             <div>
-                <div style={{ marginBottom: "10px", marginTop: "5px", fontSize: "16px", fontWeight: "bold" }}>Class Status:</div>
+                <div
+                    style={{
+                        marginBottom: '10px',
+                        marginTop: '5px',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                    }}
+                >
+                    Class Status:
+                </div>
                 {!editing && (
-                    <div style={{ width: "100%", height: "32px", fontWeight: "lighter", display: "flex" }}>
-                        {status}
-                        <div style={{ display: "flex", justifyContent: "center", marginLeft: "10px" }}>
-                            <div style={{ background: getColorForClassStatus(class_status), width: "15px", height: "15px" }} />
+                    <div
+                        style={{
+                            borderRadius: 6,
+                            flex: 1,
+                            height: '32px',
+                            fontWeight: 'lighter',
+                            display: 'flex',
+                            alignItems: 'center',
+                            border: '1px solid rgba(0,0,0,0.1)',
+                            paddingLeft: 10,
+                        }}
+                    >
+                        {cls.classStatus}
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                marginLeft: '10px',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    background: getColorForClassStatus(cls.classStatus),
+                                    width: '15px',
+                                    height: '15px',
+                                }}
+                            />
                         </div>
                     </div>
                 )}
                 {editing && (
                     <Select
+                        disabled={!editing}
                         dropdownStyle={{ zIndex: 10 ** 4 }}
-                        style={{ width: "100%" }}
-                        defaultValue={status}
-                        onChange={(value) => {
-                            setHasAbsence(!(value === "PRESENT" || value === "MAKEUP"));
-                            formData.current = { ...formData.current, class_status: value };
+                        style={{ width: '100%' }}
+                        defaultValue={cls.classStatus}
+                        onChange={value => {
+                            formData.current = {
+                                ...formData.current,
+                                class_status: value,
+                            };
                         }}
                         options={classStatuses}
                     />
                 )}
             </div>
+            <Spacer height={5} />
             <div>
-                {hasAbsence && (
-                    <>
-                        <div style={{ margin: "10px 0", fontWeight: "bold", fontSize: "16px" }}>Reason for Absence</div>
-                        {!editing && <div style={{ width: "100%", height: "32px", fontWeight: "lighter" }}>{reason_for_absence === "" ? "Null" : reason_for_absence}</div>}
-                        {editing && (
-                            <Input
-                                defaultValue={reason_for_absence || ""}
-                                onChange={(value) => {
-                                    formData.current = { ...formData.current, reason_for_absence: value.target.value };
-                                }}
-                            />
-                        )}
-                    </>
-                )}
-            </div>
-            <div>
-                <div style={{ marginBottom: "10px", marginTop: "5px", fontWeight: "bold", fontSize: "16px" }}>Remark:</div>
-                {!editing && <div style={{ width: "100%", height: "32px", fontWeight: "lighter" }}>{remark === "" || remark === null ? "Null" : remark}</div>}
+                <div
+                    style={{
+                        marginBottom: '10px',
+                        marginTop: '5px',
+                        fontWeight: 'bold',
+                        fontSize: '16px',
+                    }}
+                >
+                    Remark:
+                </div>
+                {!editing && <DisplayResult>{cls.remark || ''}</DisplayResult>}
                 {editing && (
                     <Input
-                        defaultValue={remark || ""}
-                        onChange={(value) => {
-                            formData.current = { ...formData.current, remark: value.target.value };
+                        disabled={!editing}
+                        defaultValue={cls.remark || ''}
+                        onChange={value => {
+                            formData.current = {
+                                ...formData.current,
+                                remark: value.target.value,
+                            };
                         }}
                     />
                 )}
@@ -149,18 +236,39 @@ export default (props: { classEvent: Class & Course & Student_package & { hide: 
                         type="primary"
                         block
                         onClick={async () => {
-                            await dispatch(StudentThunkAction.updateClass({
-                                classId: id,
-                                min: formData.current.min,
-                                class_status: formData.current.class_status,
-                                reason_for_absence: formData.current.reason_for_absence || "",
-                                remark: formData.current.remark || "",
-                                actual_classroom: formData.current.actual_classroom as $Enums.Classroom,
-                                student_package_id: classEvent.student_package_id,
-                            })
-                            ).unwrap();
-                            dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId: studentId }))
-                            dispatch(StudentThunkAction.getStudentPackages({ studentId: studentId }));
+                            await dispatch(
+                                StudentThunkAction.updateClass({
+                                    classId: cls.id,
+                                    min: formData.current.min,
+                                    class_status: formData.current.class_status,
+                                    reason_for_absence: '',
+                                    remark: formData.current.remark || '',
+                                    actual_classroom: formData.current.actual_classroom as $Enums.Classroom,
+                                })
+                            )
+                                .unwrap()
+                                .finally(() => {
+                                    if (classRoom && dateUnixTimestamp) {
+                                        dispatch(
+                                            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
+                                                classRoom: classRoom,
+                                                dateUnixTimestamp: dateUnixTimestamp.toString(),
+                                                filter: filter,
+                                            })
+                                        );
+                                    } else {
+                                        dispatch(
+                                            StudentThunkAction.getStudentClassesForWeeklyTimetable({
+                                                studentId: classEvent.student.id,
+                                            })
+                                        );
+                                    }
+                                });
+                            dispatch(
+                                StudentThunkAction.getStudentPackages({
+                                    studentId: classEvent.student.id,
+                                })
+                            );
                             ViewClassDialog.setOpen(false);
                         }}
                     >
@@ -169,5 +277,24 @@ export default (props: { classEvent: Class & Course & Student_package & { hide: 
                 </div>
             )}
         </Box>
+    );
+}
+
+export const DisplayResult = (props: PropsWithChildren) => {
+    return (
+        <div
+            style={{
+                borderRadius: 6,
+                flex: 1,
+                height: '32px',
+                fontWeight: 'lighter',
+                display: 'flex',
+                alignItems: 'center',
+                border: '1px solid rgba(0,0,0,0.1)',
+                paddingLeft: 10,
+            }}
+        >
+            {props.children}
+        </div>
     );
 };

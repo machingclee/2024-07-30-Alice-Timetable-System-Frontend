@@ -1,4 +1,4 @@
-import GeneralDialog from "../../../../components/GeneralDialog"
+import GeneralDialog from '../../../../components/GeneralDialog';
 
-const AddPaymentDetailDialog = new GeneralDialog()
-export default AddPaymentDetailDialog
+const AddPaymentDetailDialog = new GeneralDialog();
+export default AddPaymentDetailDialog;

@@ -1,4 +1,4 @@
-import GeneralDialog from "../../../components/GeneralDialog";
+import GeneralDialog from '../../../components/GeneralDialog';
 
-const AddClassDialog = new GeneralDialog()
-export default AddClassDialog
+const AddClassDialog = new GeneralDialog();
+export default AddClassDialog;

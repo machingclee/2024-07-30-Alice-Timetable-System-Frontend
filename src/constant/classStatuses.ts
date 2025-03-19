@@ -1,7 +1,16 @@
-export default [
-    { value: "PRESENT", label: "PRESENT" },
-    { value: "MAKEUP", label: "MAKEUP" },
-    { value: "SUSPICIOUS_ABSENCE", label: "SUSPICIOUS_ABSENCE" },
-    { value: "ILLEGIT_ABSENCE", label: "ILLEGIT_ABSENCE" },
-    { value: "LEGIT_ABSENCE", label: "LEGIT_ABSENCE" },
+import { Class_status } from '../prismaTypes/types';
+
+const classStatues: {
+    value: Class_status;
+    label: Class_status;
+}[] = [
+    { value: 'PRESENT', label: 'PRESENT' },
+    { value: 'MAKEUP', label: 'MAKEUP' },
+    { value: 'SUSPICIOUS_ABSENCE', label: 'SUSPICIOUS_ABSENCE' },
+    { value: 'ILLEGIT_ABSENCE', label: 'ILLEGIT_ABSENCE' },
+    { value: 'LEGIT_ABSENCE', label: 'LEGIT_ABSENCE' },
+    { value: 'TRIAL', label: 'TRIAL' },
+    { value: 'RESERVED', label: 'RESERVED' },
 ];
+
+export default classStatues;

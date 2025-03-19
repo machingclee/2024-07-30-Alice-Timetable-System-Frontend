@@ -1,7 +1,7 @@
-import { Class, Classroom, Student_package } from "../prismaTypes/types";
+import { Classroom, Student_package } from '../prismaTypes/types';
 
-export type Gender = "MALE" | "FEMALE";
-export type RoleInSystem = "SUPER_ADMIN" | "ADMIN" | "STAFF" | "STUDENT";
+export type Gender = 'MALE' | 'FEMALE';
+export type RoleInSystem = 'SUPER_ADMIN' | 'ADMIN' | 'STAFF' | 'STUDENT';
 
 export type TokenPayload = {
     first_name: string;
@@ -16,6 +16,7 @@ export type TokenPayload = {
 };
 
 export type CreateStudentRequest = {
+    student_code: string;
     first_name: string;
     last_name: string;
     chinese_first_name: string;
@@ -31,6 +32,7 @@ export type CreateStudentRequest = {
 
 export type UpdateStudentRequest = {
     id: string;
+    student_code: string;
     first_name: string;
     last_name: string;
     chinese_first_name: string;
@@ -68,27 +70,14 @@ export type User = {
     id: string;
 };
 
-export type Student = {
-    id: string;
-    first_name: string;
-    last_name: string;
-    chinese_first_name: string;
-    chinese_last_name: string;
-    gender: Gender;
-    birthdate: number;
-    parent_email: string;
-    school_name: string;
-    grade: string;
-    phone_number?: string;
-    wechat_id?: string;
-};
-
 export type CreateCourseRequest = {
-    course_name: string;
+    courseName: string;
 };
 
-export type Course = {
-    course_name: string;
+export type CourseResponse = {
+    courseName: string;
+    createdAt: number;
+    createdAtHk: string;
     id: number;
 };
 
@@ -104,26 +93,36 @@ export type MoveClassRequest = {
 };
 
 export type CreateClassRequest = {
-    num_of_classes: number;
-    student_id: string;
-    course_id: number;
-    day_unix_timestamp: number;
-    hour_unix_timestamp: number;
+    numOfClasses: number;
+    dayUnixTimestamp: number;
+    hourUnixTimestamp: number;
     min: number;
-    student_package_id: number;
-    actual_classroom: Classroom;
+    studentPackageId: number;
+    actualClassroom: Classroom;
 };
 
 export type FilterToGetClassesForDailyTimetable = {
     present: boolean;
+    reserved: boolean;
     suspicious_absence: boolean;
     illegit_absence: boolean;
     legit_absence: boolean;
     makeup: boolean;
     changeOfClassroom: boolean;
+    trial: boolean;
+    courseIds: number[];
 };
 
-export type TimetableType = "Prince_Edward_Timetable" | "Causeway_Bay_Timetable";
+export type FilterToGetClassesForDailyTimetableWithoutCourseIds = {
+    present: boolean;
+    reserved: boolean;
+    suspicious_absence: boolean;
+    illegit_absence: boolean;
+    legit_absence: boolean;
+    makeup: boolean;
+    changeOfClassroom: boolean;
+    trial: boolean;
+};
 
 export type DeleteClassRequest = {
     classId: number;
@@ -145,17 +144,14 @@ export type UpdateClassRequest = {
     reason_for_absence: string;
     remark: string;
     actual_classroom: Classroom;
-    student_package_id: number;
 };
 
 export type CreateStudentPackageRequest = {
     num_of_classes: number;
     start_date: number;
     start_time: number;
-    expiry_date: number;
     min: number;
     course_id: number;
-    student_id: string;
     default_classroom: Classroom;
 };
 
@@ -170,11 +166,60 @@ export type UpdateStudentPackageRequest = {
     student_id: string;
 };
 
-export type Augmented_Student_package = Student_package & { scheduled_minutes: { count: number } & { consumed_minutes: { count: number } } };
+export type Competition = {
+    name: string;
+    intro: string;
+    questionIds: string[];
+    IdToQuestion: { [id: string]: Question };
+};
 
-export type Augmented_Class = Class & { course_name: string; student_id: string };
+// 多選/單選/短答
+export type Question = MultipleChoiceQuestion | SingleChoiceQuestion | ShortQuestion;
+export type QuestionType = Question['type'];
 
-export type WeeklyTimetableClass = Omit<Student_package, "id"> & { student_package_id: number } & Class & Omit<Course, "id"> & { course_id: number };
+export type MultipleChoiceQuestion = {
+    questionId: string;
+    type: 'MultipleChoiceQuestion';
+    question: string;
+    optionIds: string[];
+    optionIdToOption: { [id: string]: MultipleChoiceOption };
+    compulsory: boolean;
+};
+
+export type MultipleChoiceOption = {
+    id: string;
+    option: string;
+    chosen: boolean;
+};
+
+export type SingleChoiceQuestion = {
+    questionId: string;
+    type: 'SingleChoiceQuestion';
+    question: string;
+    optionIds: string[];
+    optionIdToOption: { [id: string]: SingleChoiceOption };
+    compulsory: boolean;
+};
+
+export type SingleChoiceOption = {
+    id: string;
+    option: string;
+    chosen: boolean;
+};
+
+export type ShortQuestion = {
+    questionId: string;
+    type: 'ShortQuestion';
+    question: string;
+    response: string;
+    compulsory: boolean;
+};
+
+export type Augmented_Student_package = Student_package & {
+    scheduled_minutes: { count: number };
+    consumed_minutes: { count: number };
+    course_name: string;
+};
 
 export type SummaryOfClassStatues = {
     present: number;
@@ -183,3 +228,12 @@ export type SummaryOfClassStatues = {
     makeup: number;
     changeOfClassroom: number;
 };
+
+export type Loggings = {
+    id: number;
+    // eslint-disable-next-line
+    payload: { ctx: { userEmail: string }; data: any };
+    event_type: string;
+    created_at: number;
+    created_at_hk: string;
+}[];

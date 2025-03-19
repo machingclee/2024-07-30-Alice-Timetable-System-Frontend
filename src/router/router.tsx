@@ -1,54 +1,59 @@
-import { createBrowserRouter, createRoutesFromElements, Outlet, Route } from "react-router-dom";
-import Root from "../pages/Root/Root";
-import Students from "../pages/Students/Students.tsx";
-import Users from "../pages/Users/Users";
-import PrinceEdwardTimetable from "../pages/PrinceEdwardTimetable/PrinceEdwardTimetable.tsx";
-import Login from "../pages/Login/Login";
-import StudentDetail from "../pages/Students/StudentDetail/StudentDetail.tsx";
-import RouteIndex from "../components/RouteIndex.tsx";
-import Classes from "../pages/Courses/Courses.tsx";
-import CausewayBayTimetable from "../pages/CausewayBayTimetable/CausewayBayTimetable.tsx";
+import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
+import Root from '../pages/Root/Root';
+import Students from '../pages/Students/Students.tsx';
+import Users from '../pages/Users/Users';
+import PrinceEdwardTimetable from '../pages/PrinceEdwardTimetable/PrinceEdwardTimetable.tsx';
+import Login from '../pages/Login/Login';
+import StudentDetail from '../pages/Students/StudentDetail/StudentDetail.tsx';
+import RouteIndex from '../components/RouteIndex.tsx';
+import Classes from '../pages/Courses/Courses.tsx';
+import CausewayBayTimetable from '../pages/CausewayBayTimetable/CausewayBayTimetable.tsx';
+import PackageClassesStatus from '../pages/Students/components/PackageClassesStatus.tsx';
+import Competitions from '../pages/Competitions/Competitions.tsx';
+import CompetitionDetail from '../pages/Competitions/competitionDetail/CompetitionDetail.tsx';
+import Logging from '../pages/Logging/Logging.tsx';
+import type { Store } from '@reduxjs/toolkit';
+import Dashboard from './indexPages/Dashboard.tsx';
+import AllStudentsIndex from './indexPages/AllStudentsIndex.tsx';
+import CausewaybayIndex from './indexPages/CausewaybayIndex.tsx';
+import LogginIndex from './indexPages/LogginIndex.tsx';
+import ClassStatusIndex from './indexPages/ClassStatusIndex.tsx';
+import PrinceEdwardIndex from './indexPages/PrinceEdwardIndex.tsx';
 
-export enum RouteEnum {
-    LOGIN = "/login",
-    DASHBOARD_STUDENTS = "/dashboard/students",
-    DASHBOARD_COURSES = "/dashboard/courses",
-    DASHBOARD_USERS = "/dashboard/users",
-    DASHBOARD_PRINCE_EDWARD_TIMETABLE = "/dashboard/PE-timetable",
-    DASHBOARD_CWB_TIMETABLE = "/dashboard/CWB-timetable",
-}
-
-const getRouter = (_store: any) => {
+function getRouter(_store: Store) {
     return createBrowserRouter(
         createRoutesFromElements(
-            <Route path={"/"} element={<Root />}>
+            <Route path="/" element={<Root />}>
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<Dashboard />}>
-                    <Route path={"students"} element={<RouteIndex />}>
+                    <Route path={'students'} element={<RouteIndex />}>
                         <Route index element={<Students />} />
                         <Route path=":studentId" element={<StudentDetail />} />
                     </Route>
-                    <Route />
-                    <Route path={"courses"} element={<Classes />} />
-                    <Route path={"users"} element={<Users />} />
-                    <Route path={"PE-timetable"} element={<PrinceEdwardTimetable />} />
-                    <Route path={"CWB-timetable"} element={<CausewayBayTimetable />} />
+                    <Route path="courses" element={<Classes />} />
+                    <Route path={'competitions'} element={<RouteIndex />}>
+                        <Route index element={<Competitions />} />
+                        <Route path=":competitionId" element={<CompetitionDetail />} />
+                    </Route>
+                    <Route path="users" element={<Users />} />
+                    <Route path="all-students" element={<AllStudentsIndex />}>
+                        <Route path="prince-edward" element={<PrinceEdwardIndex />}>
+                            <Route index element={<PrinceEdwardTimetable />} />
+                        </Route>
+                        <Route path="causeway-bay" element={<CausewaybayIndex />}>
+                            <Route index element={<CausewayBayTimetable />} />
+                        </Route>
+                    </Route>
+                    <Route path="logging" element={<LogginIndex />}>
+                        <Route element={<Logging />} index />
+                    </Route>
+                </Route>
+                <Route path="/class-status" element={<ClassStatusIndex />}>
+                    <Route path=":packageUUID" element={<PackageClassesStatus />} />
                 </Route>
             </Route>
         )
     );
-};
-
-const Dashboard = () => {
-    return (
-        <div style={{ display: "flex", flexDirection: "row", height: "100vh" }}>
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", width: "100%" }}>
-                <div style={{ flex: 1, padding: "0px 10px", paddingTop: 20, position: "relative" }}>
-                    <Outlet />
-                </div>
-            </div>
-        </div>
-    );
-};
+}
 
 export default getRouter;

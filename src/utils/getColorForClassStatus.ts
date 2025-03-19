@@ -1,17 +1,21 @@
-import colors from "../constant/colors";
-import { Class_status } from "../prismaTypes/types";
+import colors from '../constant/colors';
+import { Class_status } from '../prismaTypes/types';
 
 export default (class_status: Class_status) => {
     switch (class_status) {
-        case "PRESENT":
-            return colors.blue;
-        case "SUSPICIOUS_ABSENCE":
-            return colors.amber;
-        case "ILLEGIT_ABSENCE":
-            return colors.red;
-        case "LEGIT_ABSENCE":
-            return colors.grey;
-        case "MAKEUP":
-            return colors.green;
+        case 'PRESENT':
+            return colors.GREEN_BLUE;
+        case 'TRIAL':
+            return colors.PINK;
+        case 'SUSPICIOUS_ABSENCE':
+            return colors.ORANGE;
+        case 'ILLEGIT_ABSENCE':
+            return colors.RED;
+        case 'LEGIT_ABSENCE':
+            return colors.GREY;
+        case 'MAKEUP':
+            return colors.BLUE;
+        case 'RESERVED':
+            return colors.CYAN;
     }
 };
