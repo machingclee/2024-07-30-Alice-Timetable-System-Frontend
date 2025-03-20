@@ -27,6 +27,9 @@ export default defineConfig(({ command: _command, mode }) => {
                 emitWarning: true, // This will show warnings
             }),
         ],
+        server: {
+            port: 4001,
+        },
         optimizeDeps: {
             include: ['@emotion/styled'],
         },
