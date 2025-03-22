@@ -21,7 +21,7 @@ import {
 import normalizeUtil from '../../utils/normalizeUtil';
 import { loadingActions } from '../../utils/loadingActions';
 import { RootState } from '../store';
-import lodash from 'lodash';
+import lodash, { cloneDeep } from 'lodash';
 import { Classroom } from '../../prismaTypes/types';
 import { createApiThunk } from '../../utils/createApiThunk';
 import {
@@ -131,27 +131,23 @@ const studentSlice = createSlice({
         setHrUnixTimestampOnClick: (state, action: PayloadAction<number | null>) => {
             state.massTimetablePage.totalClassesInHighlight.hrUnixTimestampOnClick = action.payload;
         },
-        setFilter: (state, action: PayloadAction<FilterToGetClassesForDailyTimetable>) => {
-            state.massTimetablePage.filter = action.payload;
+        setMassTimetableFilter: (state, action: PayloadAction<FilterToGetClassesForDailyTimetable>) => {
+            state.massTimetablePage.filter = cloneDeep(action.payload);
         },
         updateFilterDate: (state, action: PayloadAction<Date>) => {
             state.massTimetablePage.selectedDate = action.payload;
         },
-        setCourseFilterItem: (state, action: PayloadAction<number[]>) => {
+        setCourseIds: (state, action: PayloadAction<number[]>) => {
             state.massTimetablePage.filter.courseIds = action.payload;
         },
-        addCourseFilterItem: (state, action: PayloadAction<number>) => {
+        addFilterCourseId: (state, action: PayloadAction<number>) => {
             state.massTimetablePage.filter.courseIds.push(action.payload);
         },
-        dropCourseFilterItem: (state, action: PayloadAction<number>) => {
-            const newArray: number[] = [];
-            state.massTimetablePage.filter.courseIds.forEach(id => {
-                if (id !== action.payload) {
-                    newArray.push(id);
-                }
-            });
-            console.log('newArray:', newArray);
-            state.massTimetablePage.filter.courseIds = newArray;
+        dropFilterCourseId: (state, action: PayloadAction<number>) => {
+            const targetId = action.payload;
+            const index = state.massTimetablePage.filter.courseIds.findIndex(id => id === targetId);
+
+            state.massTimetablePage.filter.courseIds.splice(index, 1);
         },
         setClassroom: (state, action: PayloadAction<Classroom>) => {
             state.massTimetablePage.classRoom = action.payload;

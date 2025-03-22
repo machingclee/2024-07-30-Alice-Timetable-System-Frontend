@@ -17,6 +17,7 @@ export default <T>(props: {
         queryKey,
         gcTime,
         staleTime,
+        refetchOnWindowFocus: false,
     });
 
     const invalidation = async () => await queryClient.invalidateQueries({ queryKey });
@@ -25,7 +26,8 @@ export default <T>(props: {
         if (query.data) {
             onDataChanged?.(query.data);
         }
-    }, [query.data, onDataChanged]);
+        // eslint-disable-next-line
+    }, [query.data]);
 
     return { query, invalidation };
 };

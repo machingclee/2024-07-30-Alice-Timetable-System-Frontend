@@ -20,38 +20,36 @@ export default function RightColumn() {
     const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
     const summaryOfClassStatues = useAppSelector(s => s.student.massTimetablePage.summaryOfClassStatuses);
     const courseIds = useAppSelector(s => s.class.courses.ids);
-    const filterCourseIds = useAppSelector(s => s.student.massTimetablePage.filter.courseIds);
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
-    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const dispatch = useDispatch<AppDispatch>();
     const [filterByClassStatusOnPress, setFilterByClassStatusOnPress] = useState<boolean>(false);
     const [filterByCourseOnPress, setFilterByCourseOnPress] = useState<boolean>(false);
 
     const [formData, setFormData] = React.useState<FilterToGetClassesForDailyTimetableWithoutCourseIds>({
-        present: filter.present,
-        suspicious_absence: filter.suspicious_absence,
-        illegit_absence: filter.illegit_absence,
-        legit_absence: filter.legit_absence,
-        makeup: filter.makeup,
-        changeOfClassroom: filter.changeOfClassroom,
-        trial: filter.trial,
-        reserved: filter.reserved,
+        present: true,
+        suspicious_absence: true,
+        illegit_absence: true,
+        legit_absence: true,
+        makeup: true,
+        changeOfClassroom: true,
+        trial: true,
+        reserved: true,
     });
+    const [selectedCourseIds, setSelectedCourseIds] = useState<number[]>([]);
 
     const submit = () => {
         if (!classRoom) return;
-        dispatch(
-            studentSlice.actions.setFilter({
-                ...formData,
-                courseIds: filterCourseIds,
-            })
-        );
+        const newFilter = {
+            ...formData,
+            courseIds: selectedCourseIds,
+        };
+        dispatch(studentSlice.actions.setMassTimetableFilter(newFilter));
         const currentTimestamp = dayjs(selectedDate.getTime()).startOf('day').valueOf();
         dispatch(
             StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
                 dateUnixTimestamp: currentTimestamp,
                 classRoom: classRoom,
-                filter: filter,
+                filter: newFilter,
             })
         );
     };
@@ -64,7 +62,8 @@ export default function RightColumn() {
 
     useEffect(() => {
         if (courseIds) {
-            dispatch(studentSlice.actions.setCourseFilterItem(courseIds));
+            dispatch(studentSlice.actions.setCourseIds(courseIds));
+            setSelectedCourseIds(courseIds);
         }
     }, [courseIds, dispatch]);
 
@@ -180,6 +179,7 @@ export default function RightColumn() {
                                         >
                                             <Checkbox
                                                 onChange={event => {
+                                                    console.log('event.target.checked', event.target.checked);
                                                     setFormData(prev => ({
                                                         ...prev,
                                                         present: event.target.checked,
@@ -594,7 +594,7 @@ export default function RightColumn() {
                     >
                         {filterByCourseOnPress &&
                             courseIds?.map(id => {
-                                return <ClassFilterItem key={id} id={id} />;
+                                return <ClassFilterItem key={id} id={id} setSelectedCourseIds={setSelectedCourseIds} />;
                             })}
                     </div>
                     <Button type="primary" block onClick={submit} style={{ marginTop: '10px' }}>

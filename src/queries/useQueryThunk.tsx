@@ -16,7 +16,7 @@ export default <T,>(param: { thunk: AsyncThunk<any, T, any>; staleTime?: number 
         const { thunk, staleTime = 1000 } = param;
         const dispatch = useAppDispatch();
         return useBaseQuery({
-            queryKey: [thunk.typePrefix, hashUtil.hash(req || '')],
+            queryKey: [thunk.typePrefix, hashUtil.hash(req || {})],
             queryFn: async () => {
                 // @ts-expect-error, don't try to handle the error
                 const res = await dispatch(req ? thunk(req) : thunk()).unwrap();
