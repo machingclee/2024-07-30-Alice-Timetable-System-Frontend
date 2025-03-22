@@ -7,7 +7,6 @@ import { useRef } from 'react';
 import { useAppDispatch } from '../../../../redux/hooks';
 import { StudentThunkAction } from '../../../../redux/slices/studentSlice';
 import AddPaymentDetailDialog from './AddPaymentDetailDialog';
-import Label from '../../../../components/Label';
 import { useParams } from 'react-router-dom';
 
 export default function AddPaymentDetailForm(props: { packageId: number }) {
@@ -42,7 +41,6 @@ export default function AddPaymentDetailForm(props: { packageId: number }) {
                 paddingBottom: 60,
             }}
         >
-            <Label label="AddPaymentDetailForm.tsx" offsetTop={-20} />
             <SectionTitle>Add Payment Detail </SectionTitle>
             <Spacer />
             Date of Payment Confirmation

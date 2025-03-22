@@ -3,7 +3,6 @@ import Spacer from '../components/Spacer';
 import { useAppSelector } from '../redux/hooks';
 import { useDispatch } from 'react-redux';
 import Sep from '../components/Sep';
-import Label from '../components/Label';
 import { Button, Calendar } from 'antd';
 import type { CalendarProps } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
@@ -98,7 +97,6 @@ export default function RightColumn() {
                         alignItems: 'center',
                     }}
                 >
-                    <Label label="RightColumn.tsx" offsetTop={0} offsetLeft={-70} />
                     <Title>Calendar</Title>
                 </div>
                 <Calendar

@@ -2,7 +2,6 @@ import { Box, Button } from '@mui/material';
 import boxShadow from '../../../constant/boxShadow';
 import { useNavigate } from 'react-router-dom';
 import { FaChevronRight } from 'react-icons/fa';
-import Label from '../../../components/Label';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import EditStudentDialog from './EditStudentDialog';
 import EditStudentForm from './EditStudentForm';
@@ -104,7 +103,6 @@ export default function StudenRow(props: { studentId: string }) {
                     >
                         <table style={{ width: '100%' }}>
                             <tbody>
-                                <Label label="StudentRow.tsx" offsetTop={-20} />
                                 <tr>
                                     <td>Student Code:</td>
                                     <td>{studentCode}</td>

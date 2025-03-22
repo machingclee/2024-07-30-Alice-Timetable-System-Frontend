@@ -1,6 +1,5 @@
 import { Button } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Label from '../../../components/Label';
 import RouteEnum from '../../../enum/RouteEnum';
 
 export default function NavButton(props: { activeNavigationRegex: RegExp; title: string; routeEnum: RouteEnum }) {
@@ -12,7 +11,6 @@ export default function NavButton(props: { activeNavigationRegex: RegExp; title:
 
     return (
         <>
-            <Label label="NavButton.tsx" offsetLeft={10} offsetTop={-10} />
             <Button
                 block
                 style={{ paddingTop: 18, paddingBottom: 18 }}

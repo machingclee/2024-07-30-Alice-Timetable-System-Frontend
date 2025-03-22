@@ -1,7 +1,6 @@
 import { IoMdArrowBack } from 'react-icons/io';
 import SectionTitle from '../../components/SectionTitle';
 import DailyTimetable from '../../components/DailyTimetable/DailyTimetable';
-import Label from '../../components/Label';
 import { Button } from 'antd';
 import Spacer from '../../components/Spacer';
 import { useNavigate } from 'react-router-dom';
@@ -37,7 +36,6 @@ export default function PrinceEdwardTimetable() {
                         }}
                     >
                         <SectionTitle>
-                            <Label label="PrinceEdwardTimetable.tsx" offsetTop={-20} />
                             <Button
                                 shape="circle"
                                 onClick={() => {

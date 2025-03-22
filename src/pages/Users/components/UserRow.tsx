@@ -7,7 +7,6 @@ import { Button, Select } from 'antd';
 import Spacer from '../../../components/Spacer';
 import { UserThunkAction } from '../../../redux/slices/userSlice';
 import lodash, { debounce } from 'lodash';
-import Label from '../../../components/Label';
 
 export default function UserRow(props: { id: string }) {
     const { id } = props;
@@ -100,7 +99,6 @@ export default function UserRow(props: { id: string }) {
             }}
         >
             <table>
-                <Label label="UserRow.tsx" offsetTop={-20} />
                 <tbody>
                     <tr>
                         <td>English Name:</td>

@@ -98,7 +98,6 @@ export default ({ title, intro, competitionId }: { title: string; intro: string;
                     setStartEdit(true);
                 }}
             >
-                <Label label="ShortQuestionComponent.tsx" offsetTop={-20} />
                 <tbody>
                     {/* Title */}
                     <tr>

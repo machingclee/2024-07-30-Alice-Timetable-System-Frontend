@@ -5,7 +5,6 @@ import SectionTitle from '../components/SectionTitle';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { Box } from '@mui/material';
 import FormInputTitle from '../components/FormInputTitle';
-import Label from '../components/Label';
 import { CourseThunkAction } from '../redux/slices/courseSlice';
 import { StudentThunkAction } from '../redux/slices/studentSlice';
 import toastUtil from '../utils/toastUtil';
@@ -97,7 +96,6 @@ export default function AddClassEventForm(props: {
                 paddingBottom: 60,
             }}
         >
-            <Label label="AddClassEventForm.tsx" offsetTop={0} offsetLeft={180} />
             <SectionTitle>Add Class at {dayjs(hourUnixTimestamp).format('HH:mm')}</SectionTitle>
             <Spacer />
             <div style={{ display: 'flex' }}>

@@ -1,5 +1,4 @@
 import { Box } from '@mui/material';
-import Label from './Label';
 import Spacer from './Spacer';
 import { useState } from 'react';
 import { Button, Select } from 'antd';
@@ -24,7 +23,6 @@ export default function DuplicateClassForm(props: { class: ClassDTO }) {
                 paddingBottom: 60,
             }}
         >
-            <Label label="UpdateClassForm.tsx" offsetTop={0} offsetLeft={180} />
             <div style={{ alignItems: 'center', display: 'flex' }}>
                 <div>Duplicate To</div>
                 <Spacer height={5} />

@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { TimetableClass } from '../dto/dto';
 import { Box } from '@mui/material';
 import colors from '../constant/colors';
 import boxShadow from '../constant/boxShadow';
 import getEnv from '../utils/getEnv';
+import { TimetableClassEvent } from '../dto/kotlinDto';
 
 const FRONTEND_URL = getEnv().VITE_FRONTEND_URL;
 
 export default function StudentClassCard(props: {
-    classEvent: TimetableClass;
+    classEvent: TimetableClassEvent;
     dayUnixTimestamp: number;
     currHourUnixTimestamp: number;
     classminToHeight?: (min: number) => number;
@@ -16,9 +16,11 @@ export default function StudentClassCard(props: {
     const { classEvent, currHourUnixTimestamp, dayUnixTimestamp, classminToHeight: minToHeight } = props;
     const [displayOnlyclassEventHeight, setDisplayOnlyClassEventHeight] = useState<number | null>(null);
     const invalidData = dayUnixTimestamp >= currHourUnixTimestamp;
-    const { first_name, last_name, chinese_first_name, chinese_last_name } = classEvent;
-    const engName = `${last_name} ${first_name}`;
-    const chiName = chinese_first_name && chinese_last_name ? `${chinese_first_name}${chinese_last_name}` : '';
+    const { student } = classEvent;
+
+    const engName = `${student.lastName} ${student.firstName}`;
+    const chiName =
+        student.chineseFirstName && student.chineseLastName ? `${student.firstName}${student.lastName}` : '';
 
     return (
         <Box
@@ -30,9 +32,9 @@ export default function StudentClassCard(props: {
             }}
             onClick={() => {
                 console.log('FRONTEND_URL:', FRONTEND_URL);
-                console.log('studentId:', classEvent.student_id);
+                console.log('studentId:', classEvent.student.id);
                 window.open(
-                    FRONTEND_URL + `/dashboard/students/${classEvent.student_id}/${currHourUnixTimestamp}`,
+                    FRONTEND_URL + `/dashboard/students/${classEvent.student.id}/${currHourUnixTimestamp}`,
                     '_blank'
                 );
             }}
@@ -49,12 +51,14 @@ export default function StudentClassCard(props: {
                 width: 150,
                 height:
                     displayOnlyclassEventHeight ||
-                    (minToHeight ? minToHeight(classEvent.min) : 1.2 * (classEvent.min || 0) - 10),
+                    (minToHeight
+                        ? minToHeight(classEvent.studentPackage.min)
+                        : 1.2 * (classEvent.studentPackage.min || 0) - 10),
                 backgroundColor: (() => {
                     if (invalidData) {
                         return 'red';
                     } else {
-                        switch (classEvent.class_status) {
+                        switch (classEvent.class.classStatus) {
                             case 'PRESENT':
                                 return colors.GREEN_BLUE;
                             case 'TRIAL':
@@ -81,7 +85,7 @@ export default function StudentClassCard(props: {
             }}
         >
             {/* <div style={{ padding: 4 }}>{classEvent.course_name}</div> */}
-            <div style={{ padding: 4 }}>{classEvent.student_code}</div>
+            <div style={{ padding: 4 }}>{classEvent.student.studentCode}</div>
             {chiName ? <div style={{ padding: 4 }}>{chiName}</div> : <div style={{ padding: 4 }}>{engName}</div>}
         </Box>
     );

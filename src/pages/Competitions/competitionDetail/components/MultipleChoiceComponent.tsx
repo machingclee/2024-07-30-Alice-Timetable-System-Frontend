@@ -1,10 +1,9 @@
-import { Box, Checkbox, Radio, Switch, TextField } from "@mui/material";
+import { Box, Checkbox } from "@mui/material";
 import boxShadow from "../../../../constant/boxShadow";
-import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
+import { useAppDispatch } from "../../../../redux/hooks";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MultipleChoiceOption, MultipleChoiceQuestion, RoleInSystem, User } from "../../../../dto/dto";
+import { MultipleChoiceOption, MultipleChoiceQuestion } from "../../../../dto/dto";
 import lodash, { debounce } from "lodash";
-import Label from "../../../../components/Label";
 import competitionSlice from "../../../../redux/slices/competitionSlice";
 import UpdateTextField from "./UpdateTextField";
 import Spacer from "../../../../components/Spacer";
@@ -153,7 +152,6 @@ export default ({ question, competitionId }: { competitionId: string; question: 
                 setStartEdit(true);
             }}
         >
-            <Label label="MultipleChoiceComponent.tsx" offsetTop={-20} />
             <div>
                 {/* Question */}
                 {!startEdit && <div style={{ color: "dark", fontSize: 18, fontStyle: "normal", paddingTop: 10, width: "100%" }}>{question.question}</div>}

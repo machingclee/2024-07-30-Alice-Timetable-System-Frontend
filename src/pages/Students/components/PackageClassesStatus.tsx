@@ -5,9 +5,8 @@ import SectionTitle from '../../../components/SectionTitle';
 import dayjs from 'dayjs';
 import { Box } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import Label from '../../../components/Label';
-import { TimetableClass } from '../../../dto/dto';
 import { PublicThunkAction } from '../../../redux/slices/publicSlice';
+import { TimetableClassEvent } from '../../../dto/kotlinDto';
 
 export const Container = (props: PropsWithChildren) => {
     return (
@@ -21,7 +20,6 @@ export const Container = (props: PropsWithChildren) => {
             }}
             style={{ padding: 30 }}
         >
-            <Label label="PackageClassesStatus.tsx" />
             {props.children}
         </Box>
     );
@@ -57,22 +55,22 @@ export default function PackageClassesStatus() {
                     <th>Time</th>
                     <th>Status</th>
                 </thead>
-                <tbody>{classes?.map(cls => <ClassRow cls={cls} />) || []}</tbody>
+                <tbody>{classes?.map(cls => <ClassRow event={cls} />) || []}</tbody>
             </table>
         </Container>
     );
 }
 
-export const ClassRow = (props: { cls: TimetableClass }) => {
-    const { cls } = props;
-    const { class_status, hour_unix_timestamp } = cls;
-    const formattedDay = dayjs(hour_unix_timestamp).format('YYYY-MM-DD');
-    const formattedTime = dayjs(hour_unix_timestamp).format('HH:mm');
+export const ClassRow = (props: { event: TimetableClassEvent }) => {
+    const { event: event } = props;
+    const { class: class_ } = event;
+    const formattedDay = dayjs(class_.hourUnixTimestamp).format('YYYY-MM-DD');
+    const formattedTime = dayjs(class_.hourUnixTimestamp).format('HH:mm');
     return (
         <tr>
             <td>{formattedDay}</td>
             <td>{formattedTime}</td>
-            <td>{class_status}</td>
+            <td>{class_.classStatus}</td>
         </tr>
     );
 };

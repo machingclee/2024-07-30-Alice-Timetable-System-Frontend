@@ -12,7 +12,6 @@ import FormInputTitle from '../../../components/FormInputTitle';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { StudentThunkAction } from '../../../redux/slices/studentSlice';
-import Label from '../../../components/Label';
 
 const initialDate = '2015-01-01';
 
@@ -53,7 +52,6 @@ export default function AddStudentForm() {
                 paddingBottom: 60,
             }}
         >
-            <Label label="AddStudentForm.tsx" offsetTop={-20} />
             <SectionTitle>Add Student</SectionTitle>
             <Spacer />
             <FormInputField title="Student Code" onChange={t => update({ student_code: t })} />

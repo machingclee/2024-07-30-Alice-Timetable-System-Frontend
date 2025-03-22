@@ -12,7 +12,6 @@ import FormInputTitle from '../../../components/FormInputTitle';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import studentSlice, { StudentThunkAction } from '../../../redux/slices/studentSlice';
-import Label from '../../../components/Label';
 import EditStudentDialog from './EditStudentDialog';
 
 export default function EditStudentForm({ studentId }: { studentId: string }) {
@@ -59,7 +58,7 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
             .then(() => {
                 toastUtil.success('User Created');
                 EditStudentDialog.setOpen(false);
-                dispatch(studentSlice.actions.resetStudentDetail);
+                dispatch(studentSlice.actions.resetStudentDetail());
             });
     };
 
@@ -71,7 +70,6 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
                 paddingBottom: 60,
             }}
         >
-            <Label label="EditStudentForm.tsx" offsetTop={-20} />
             <SectionTitle>Edit Student Info</SectionTitle>
             <Spacer />
             <FormInputField

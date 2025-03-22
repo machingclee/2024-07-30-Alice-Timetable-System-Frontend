@@ -1,6 +1,5 @@
 import { Button } from '@mui/material';
 import FadeIn from '../../../components/FadeIn';
-import Label from '../../../components/Label';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import appSlice from '../../../redux/slices/appSlice';
 import { FaAngleLeft } from 'react-icons/fa6';
@@ -12,7 +11,6 @@ export default function CloseLeftColumnButton() {
 
     return (
         <>
-            <Label label="CloseLeftColumnButton" />
             {leftNavigatorCollapsed && (
                 <FadeIn>
                     <IoMenu

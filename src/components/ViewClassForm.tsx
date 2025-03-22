@@ -13,7 +13,6 @@ import getColorForClassStatus from '../utils/getColorForClassStatus';
 import getNumberSuffix from '../utils/getNumberSuffix';
 import { TimetableClassEvent } from '../dto/kotlinDto';
 import boxShadow from '../constant/boxShadow';
-import Label from './Label';
 
 export default function ViewClassForm(props: {
     classEvent: TimetableClassEvent;
@@ -44,7 +43,6 @@ export default function ViewClassForm(props: {
                 paddingBottom: 60,
             }}
         >
-            <Label label="ViewClassForm.tsx" offsetTop={0} offsetLeft={380} />
             <div
                 style={{
                     display: 'flex',

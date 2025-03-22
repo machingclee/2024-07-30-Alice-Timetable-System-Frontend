@@ -8,7 +8,6 @@ import boxShadow from '../../../constant/boxShadow';
 import { useEffect } from 'react';
 import NavButton from './NavButton';
 import appSlice from '../../../redux/slices/appSlice';
-import Label from '../../../components/Label';
 
 import escapeStringRegexp from 'escape-string-regexp';
 import RouteEnum from '../../../enum/RouteEnum';
@@ -87,7 +86,6 @@ export default function LeftNavigation() {
                 }}
             >
                 <Spacer />
-                <Label label="LeftNavigation.tsx" offsetTop={-10} />
                 <NavButton
                     activeNavigationRegex={pathRegex.STUDENTS}
                     routeEnum={RouteEnum.DASHBOARD_STUDENTS}

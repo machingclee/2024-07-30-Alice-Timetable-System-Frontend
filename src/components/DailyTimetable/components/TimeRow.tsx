@@ -7,7 +7,6 @@ import React from 'react';
 import studentSlice from '../../../redux/slices/studentSlice';
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import boxShadow from '../../../constant/boxShadow';
-import Label from '../../Label';
 const gridHeight = 30;
 
 export default function TimeRow({
@@ -106,7 +105,6 @@ export default function TimeRow({
                     }}
                 />
                 <BasePopup id={id} open={open} anchor={anchorEl} placement="left">
-                    <Label label="count number of classes" />
                     <div
                         style={{
                             backgroundColor: 'white',

@@ -41,7 +41,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
         >
             <div style={timeSlotStyle} />
             {classesThisHour.map(classEvent => {
-                const contextMenuId = `${classEvent?.student_id || ''}-${classEvent?.hour_unix_timestamp || ''}`;
+                const contextMenuId = `${classEvent?.student.id || ''}-${classEvent?.class.hourUnixTimestamp || ''}`;
                 return (
                     <div
                         key={contextMenuId}
@@ -54,7 +54,6 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                         }}
                     >
                         <div>
-                            {/* {showLabel && index === 0 && <Label label="StudentsClassForDailyTimetableByHour.tsx" />} */}
                             {/* @ts-expect-error - ignore for context menu incorrect typing*/}
                             <ContextMenuTrigger id={contextMenuId}>
                                 <StudentClassCard

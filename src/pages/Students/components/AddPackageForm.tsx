@@ -5,7 +5,6 @@ import SectionTitle from '../../../components/SectionTitle';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { Autocomplete, Box, TextField } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
-import Label from '../../../components/Label';
 import { CourseThunkAction } from '../../../redux/slices/courseSlice';
 import { StudentThunkAction } from '../../../redux/slices/studentSlice';
 import { TimePicker } from 'antd';
@@ -89,7 +88,6 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
                 paddingBottom: 60,
             }}
         >
-            <Label label="AddPackageForm.tsx" offsetTop={0} offsetLeft={180} />
             <SectionTitle>Add Student Package for {studentName}</SectionTitle>
             <Spacer />
             <div style={{ display: 'flex' }}>

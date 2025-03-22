@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import studentSlice, { StudentThunkAction } from '../../../redux/slices/studentSlice';
 import Spacer from '../../../components/Spacer';
 import WeeklyTimetable from '../components/WeeklyTimetable';
-import Label from '../../../components/Label';
 import AddClassEventDialog from '../../../components/AddClassEventDialog';
 import { CourseThunkAction } from '../../../redux/slices/courseSlice';
 import DuplicateClassDialog from '../../../components/DuplicateClassDialog';
@@ -161,7 +160,6 @@ const CollapseTriggerBar = (props: { collapseTimetable: boolean; onClick: () => 
                 position: 'relative',
             }}
         >
-            <Label label="const CollapseTriggerBar" offsetTop={60} />
             <div
                 style={{
                     height: '100%',

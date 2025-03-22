@@ -206,7 +206,7 @@ export default function StudentClassForWeeklyTimetable(props: {
     }, [classEvent, timetable.hrUnixTimestampToClassEvent]);
 
     const onValidDrop = async (fromClassEvent: TimetableClassEvent) => {
-        const fromClassEventHrUnixTimestamp = fromClassEvent.hourUnixTimestamp;
+        const fromClassEventHrUnixTimestamp = fromClassEvent.class.hourUnixTimestamp;
         const fromClz =
             store.getState().student.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent?.[
                 fromClassEventHrUnixTimestamp
@@ -298,7 +298,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                         }}
                     >
                         {/* Control what to show on the entire timetable */}
-                        {(showAll || (!showAll && Number(selectedPackageId) === classEvent?.package.id)) &&
+                        {(showAll || (!showAll && Number(selectedPackageId) === classEvent?.studentPackage.id)) &&
                             classEvent && (
                                 <>
                                     {/*@ts-expect-error - context menu has problem in typing */}

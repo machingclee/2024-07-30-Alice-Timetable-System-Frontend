@@ -9,10 +9,9 @@ export default {
     POST_CREATE_STUDENT_CLASS: (studentId: string) => `/students/${studentId}/classes/create`,
     POST_DUPLICATE_CLASSES: '/students/classes/duplicate',
     POST_CREATE_STUDENT_PACKAGE: (studentId: string) => `/students/${studentId}/student-packages/create`,
-    POST_GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: '/students/get-filtered-student-classes-for-daily-timteable',
-
+    POST_GET_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: '/students/get-filtered-student-classes-for-daily-timetable',
     GET_PACKAGE_CLASS_STATUS: (pkgUUID: string) => `/public/student-class-status/${pkgUUID}`,
-    GET_USERS: '/user/users',
+    GET_USERS: '/users',
     GET_STUDENTS: `/students`,
     GET_COURSES: '/courses',
     GET_STUDENT_DETAIL: (studentId: string) => `/students/${studentId}/student-detail`,

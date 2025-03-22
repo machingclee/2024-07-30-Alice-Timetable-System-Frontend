@@ -48,7 +48,7 @@ export type StudentDTO = {
 export type StudentPackageRepsonse = {
     packageId: number;
     studentPackage: StudentPackageDTO;
-    schedumeMinutes: number;
+    scheduledMinutes: number;
     consumedMinutes: number;
     student: StudentDTO;
     course: CourseDTO;
@@ -64,7 +64,7 @@ export type TimetableClassEvent = {
     student: StudentDTO;
     course: CourseDTO;
     class: ClassDTO;
-    package: StudentPackageDTO;
+    studentPackage: StudentPackageDTO;
 };
 
 export type ClassDTO = {

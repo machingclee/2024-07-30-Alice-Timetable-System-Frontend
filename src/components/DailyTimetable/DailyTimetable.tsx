@@ -10,7 +10,6 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import studentSlice, { StudentThunkAction } from '../../redux/slices/studentSlice';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import timeUtil from '../../utils/timeUtil';
-import Label from '../Label';
 import ViewClassDialog from '../ViewClassDialog';
 import TimeRow from './components/TimeRow';
 import { PrintHandler } from '../PrintButton';
@@ -31,7 +30,7 @@ export default function DailyTimetable({
     const hrUnixTimestampOnClick = useAppSelector(
         s => s.student.massTimetablePage.totalClassesInHighlight.hrUnixTimestampOnClick
     );
-    const hrUnixTimestampToClasses = useAppSelector(s => s.student.massTimetablePage.hrUnixTimestampToClasses);
+    const hrUnixTimestampToClasses = useAppSelector(s => s.student.massTimetablePage.hrUnixTimestampToTimetableClasses);
 
     // Memoize the half-hour intervals to prevent recalculation on every render
     const oneForthHourIntervals = useMemo(() => {
@@ -60,10 +59,12 @@ export default function DailyTimetable({
 
             Object.values(hrUnixTimestampToClasses).forEach(timetableClass => {
                 timetableClass.forEach(timetableClass => {
-                    const { hour_unix_timestamp, min } = timetableClass;
+                    const hourUnixTimestamp = timetableClass.class.hourUnixTimestamp;
+                    const package_ = timetableClass.studentPackage;
+                    const min = package_.min;
                     const classInterval = new Interval(
-                        hour_unix_timestamp,
-                        dayjs(hour_unix_timestamp).add(min, 'minute').valueOf() - 1
+                        hourUnixTimestamp,
+                        dayjs(hourUnixTimestamp).add(min, 'minute').valueOf() - 1
                     );
                     const intersection = classInterval.intersect(intervalOnClick);
                     if (intersection) {
@@ -117,7 +118,6 @@ export default function DailyTimetable({
                 },
             }}
         >
-            <Label label="DailyTimetable.tsx" offsetLeft={40} offsetTop={20} />
             <SectionTitle style={{ justifyContent: 'center' }}>
                 <div
                     style={{
@@ -146,7 +146,8 @@ export default function DailyTimetable({
                                 })
                             );
                             dispatch(
-                                StudentThunkAction.getStudentClassesForDailyTimetable({
+                                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
+                                    filter,
                                     dateUnixTimestamp: prevDayjs.startOf('day').valueOf().toString(),
                                     classRoom: classRoom,
                                 })

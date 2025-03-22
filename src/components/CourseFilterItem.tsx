@@ -37,7 +37,7 @@ export default function CourseFilterItem({ id }: { id: number }) {
                 checked={checked}
                 {...Label}
             />
-            {course?.course_name}
+            {course?.courseName}
         </div>
     );
 }

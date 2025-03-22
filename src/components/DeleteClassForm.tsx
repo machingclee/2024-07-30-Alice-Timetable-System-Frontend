@@ -1,6 +1,5 @@
 import { Alert, Box } from '@mui/material';
 import SectionTitle from './SectionTitle';
-import Label from './Label';
 import Spacer from './Spacer';
 import { useEffect } from 'react';
 import { Button } from 'antd';
@@ -9,18 +8,18 @@ import { StudentThunkAction } from '../redux/slices/studentSlice';
 import DeleteClassDialog from './DeleteClassDialog';
 import colors from '../constant/colors';
 import dayjs from 'dayjs';
-import { TimetableClass } from '../dto/dto';
 import useGetStudentIdFromParam from '../hooks/useGetStudentIdFromParam';
+import { TimetableClassEvent } from '../dto/kotlinDto';
 
-export default function DeleteClassForm(props: { classEvent: TimetableClass }) {
+export default function DeleteClassForm(props: { classEvent: TimetableClassEvent }) {
     const { classEvent } = props;
     const { studentId: student_id } = useGetStudentIdFromParam();
-    const { id, class_group_id, course_id, hour_unix_timestamp, day_unix_timestamp } = classEvent;
-    const courseName = useAppSelector(s => s.class.courses.idToCourse?.[course_id || 0])?.course_name;
-    const classAt = dayjs(hour_unix_timestamp).format('HH:mm');
-    const classOn = dayjs(day_unix_timestamp).format('dddd');
+    const { course, classGroup, class: class_ } = classEvent;
+    const courseName = useAppSelector(s => s.class.courses.idToCourse?.[course.id || 0])?.courseName;
+    const classAt = dayjs(class_.hourUnixTimestamp).format('HH:mm');
+    const classOn = dayjs(class_.dayUnixTimestamp).format('dddd');
     const dispatch = useAppDispatch();
-    const hasDuplicationGroup = class_group_id != null;
+    const hasDuplicationGroup = classGroup?.id != null;
 
     useEffect(() => {
         console.log(DeleteClassDialog);
@@ -36,7 +35,6 @@ export default function DeleteClassForm(props: { classEvent: TimetableClass }) {
                 paddingBottom: 60,
             }}
         >
-            <Label label="DeleteClassForm.tsx" offsetTop={0} offsetLeft={300} />
             <SectionTitle>Are you sure to delete this class?</SectionTitle>
             <Spacer />
             Class Detail:
@@ -65,7 +63,7 @@ export default function DeleteClassForm(props: { classEvent: TimetableClass }) {
                 onClick={async () => {
                     await dispatch(
                         StudentThunkAction.deleteClass({
-                            classId: id,
+                            classId: class_.id,
                         })
                     ).unwrap();
                     dispatch(

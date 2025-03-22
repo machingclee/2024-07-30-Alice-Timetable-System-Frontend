@@ -27,7 +27,6 @@ export default function Courses() {
             <SectionTitle>Courses</SectionTitle>
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button type="primary" onClick={openAddClassDialog}>
-                    {/* <Label label="add course button here" offsetTop={-30} /> */}
                     Add Course
                 </Button>
             </div>

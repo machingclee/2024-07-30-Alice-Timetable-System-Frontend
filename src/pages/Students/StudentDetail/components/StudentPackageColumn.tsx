@@ -9,7 +9,6 @@ import { Switch } from '@mui/material';
 import CustomScrollbarContainer from '../../../../components/CustomScrollbarContainer';
 import { useAppSelector } from '../../../../redux/hooks';
 import StudentPackage from './StudentPackage';
-import Label from '../../../../components/Label';
 import { useDispatch } from 'react-redux';
 import studentSlice from '../../../../redux/slices/studentSlice';
 import { MdOutlineEventNote } from 'react-icons/md';
@@ -58,7 +57,6 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                         alignItems: 'center',
                     }}
                 >
-                    <Label label="StudentPackageColumn.tsx" offsetTop={-15} offsetLeft={20} />
                     <Title>Student Packages</Title>
                     <Button
                         style={{ minWidth: 40, minHeight: 40 }}

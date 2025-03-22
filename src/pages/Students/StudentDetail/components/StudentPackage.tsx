@@ -5,7 +5,6 @@ import { Box } from '@mui/material';
 import studentSlice, { StudentThunkAction } from '../../../../redux/slices/studentSlice';
 import Sep from '../../../../components/Sep';
 import Spacer from '../../../../components/Spacer';
-import Label from '../../../../components/Label';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import colors from '../../../../constant/colors';
 import { useParams } from 'react-router-dom';
@@ -26,7 +25,12 @@ export default function StudentPackage(props: { packageId: string }) {
     const pkgResonse = useAppSelector(
         s => s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[packageId]
     );
-    const { consumedMinutes, schedumeMinutes, studentPackage: studentPkg, student } = pkgResonse || {};
+    const {
+        consumedMinutes,
+        scheduledMinutes: schedumeMinutes,
+        studentPackage: studentPkg,
+        student,
+    } = pkgResonse || {};
     const courseId = studentPkg?.courseId;
     const course = useAppSelector(s => s.class.courses?.idToCourse?.[courseId || -1]);
     const assignedClasses = Math.floor(((schedumeMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
@@ -136,7 +140,6 @@ export default function StudentPackage(props: { packageId: string }) {
                 'p-[10px] rounded-none m-1'
             )}
         >
-            <Label label="StudentPackage.tsx" offsetLeft={10} />
             {/* @ts-expect-error - context menu trigger has problem in typing */}
             <ContextMenuTrigger id={packageId}>
                 <div onClick={selectHandler}>
