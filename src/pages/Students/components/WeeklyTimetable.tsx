@@ -176,6 +176,7 @@ export default function WeeklyTimeTable() {
                     transform: 'translate(0px,0px) !important',
                 },
                 '& .grid-time:nth-child(n+2)': {
+                    zIndex: '5 !important',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     paddingRight: '14px',

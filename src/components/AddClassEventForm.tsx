@@ -1,6 +1,6 @@
 import { Button, Select } from 'antd';
 import Spacer from '../components/Spacer';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import SectionTitle from '../components/SectionTitle';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { Box } from '@mui/material';
@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import range from '../utils/range';
 import { Classroom } from '../prismaTypes/types';
 import appSlice from '../redux/slices/appSlice';
+import useQueryThunk from '../queries/useQueryThunk';
 
 export default function AddClassEventForm(props: {
     dayUnixTimestamp: number;
@@ -82,9 +83,7 @@ export default function AddClassEventForm(props: {
         }
     };
 
-    useEffect(() => {
-        dispatch(CourseThunkAction.getCourses());
-    }, [dispatch]);
+    useQueryThunk({ thunk: CourseThunkAction.getCourses, staleTime: 1000 })();
 
     const classroomOptions: Classroom[] = ['PRINCE_EDWARD', 'CAUSEWAY_BAY'];
 

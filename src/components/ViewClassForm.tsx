@@ -250,7 +250,7 @@ export default function ViewClassForm(props: {
                                         dispatch(
                                             StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
                                                 classRoom: classRoom,
-                                                dateUnixTimestamp: dateUnixTimestamp.toString(),
+                                                dateUnixTimestamp: dateUnixTimestamp,
                                                 filter: filter,
                                             })
                                         );

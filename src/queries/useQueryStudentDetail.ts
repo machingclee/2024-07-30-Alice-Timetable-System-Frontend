@@ -1,16 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
 import apiClient from '../axios/apiClient';
 import apiRoutes from '../axios/apiRoutes';
 import { CustomResponse } from '../axios/responseTypes';
-import { StudentResponse } from '../dto/dto';
+import {} from '../dto/dto';
+import { UIStudentDetail } from '../dto/kotlinDto';
 import queryKeys from './queryKeys';
+import useBaseQuery from './useBaseQuery';
 
 export default (props: { studentId: string }) => {
     const { studentId } = props;
-    return useQuery({
+    return useBaseQuery({
         queryKey: queryKeys.STUDENT_DETAIL(studentId),
         queryFn: async () => {
-            const res = await apiClient.get<CustomResponse<StudentResponse>>(apiRoutes.GET_STUDENT_DETAIL(studentId));
+            const res = await apiClient.get<CustomResponse<UIStudentDetail>>(apiRoutes.GET_STUDENT_DETAIL(studentId));
             if (res.data.success) {
                 return res.data.result;
             } else {

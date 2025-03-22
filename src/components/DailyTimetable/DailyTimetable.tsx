@@ -7,9 +7,8 @@ import SectionTitle from '../SectionTitle';
 import Spacer from '../Spacer';
 
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import studentSlice, { StudentThunkAction } from '../../redux/slices/studentSlice';
+import studentSlice from '../../redux/slices/studentSlice';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import timeUtil from '../../utils/timeUtil';
 import ViewClassDialog from '../ViewClassDialog';
 import TimeRow from './components/TimeRow';
 import { PrintHandler } from '../PrintButton';
@@ -26,7 +25,6 @@ export default function DailyTimetable({
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
     const [hoursColumnGrid, setHoursColumn] = useState<string[]>([]);
     const selectedDay = useAppSelector(s => s.student.massTimetablePage.selectedDate);
-    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const hrUnixTimestampOnClick = useAppSelector(
         s => s.student.massTimetablePage.totalClassesInHighlight.hrUnixTimestampOnClick
     );
@@ -136,22 +134,6 @@ export default function DailyTimetable({
                             }
                             const prevDayjs = dayjs(selectedDate).subtract(1, 'day');
                             dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDayjs.toDate() }));
-                            dispatch(
-                                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                                    dateUnixTimestamp: timeUtil
-                                        .getDayUnixTimestamp(dayjs(selectedDate).subtract(1, 'day').toDate().getTime())
-                                        .toString(),
-                                    classRoom: classRoom,
-                                    filter: filter,
-                                })
-                            );
-                            dispatch(
-                                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                                    filter,
-                                    dateUnixTimestamp: prevDayjs.startOf('day').valueOf().toString(),
-                                    classRoom: classRoom,
-                                })
-                            );
                         }}
                     >
                         <div
@@ -174,21 +156,6 @@ export default function DailyTimetable({
                             }
                             const nextDayjs = dayjs(selectedDate).add(1, 'day');
                             dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDayjs.toDate() }));
-                            dispatch(
-                                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                                    dateUnixTimestamp: timeUtil
-                                        .getDayUnixTimestamp(dayjs(selectedDate).add(1, 'day').toDate().getTime())
-                                        .toString(),
-                                    classRoom: classRoom,
-                                    filter: filter,
-                                })
-                            );
-                            // dispatch(
-                            //     StudentThunkAction.getStudentClassesForDailyTimetable({
-                            //         dateUnixTimestamp: nextDayjs.valueOf().toString(),
-                            //         classRoom: classRoom,
-                            //     })
-                            // );
                         }}
                     >
                         <div
@@ -205,7 +172,7 @@ export default function DailyTimetable({
             </SectionTitle>
 
             <CustomScrollbarContainer
-                style={{ height: 'calc(100vh - 120px)' }}
+                style={{ height: 'calc(100vh - 210px)' }}
                 setPrintContent={(content: HTMLDivElement | null) => {
                     printButtonRef?.current?.setPrintTarget(content);
                 }}

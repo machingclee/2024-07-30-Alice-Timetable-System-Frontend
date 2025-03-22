@@ -38,7 +38,7 @@ export default forwardRef<PrintHandler, {}>((_, ref) => {
     return (
         <div style={{ padding: 30 }}>
             <IoPrint
-                size={21}
+                size={50}
                 style={{
                     padding: '8px',
                     borderRadius: '100%',

@@ -17,6 +17,7 @@ import ViewClassDialog from '../../../components/ViewClassDialog';
 import EditPackageDialog from './components/EditPackageDialog';
 import { FaChevronLeft } from 'react-icons/fa6';
 import { Box } from '@mui/material';
+import useQueryThunk from '../../../queries/useQueryThunk';
 
 export default function StudentDetail() {
     const [userOnClickTimestamp, _] = useState(new Date());
@@ -26,26 +27,22 @@ export default function StudentDetail() {
     const studentDetail = useAppSelector(s => s.student.studentDetailTimetablePage.detail);
     const { firstName, lastName, chineseFirstName, chineseLastName, studentCode } = studentDetail || {};
 
-    useEffect(() => {
-        if (studentId) {
-            dispatch(StudentThunkAction.getStudentDetail({ studentId }));
-            dispatch(
-                StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                    studentId,
-                })
-            );
-            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
-        }
-    }, [studentId, dispatch]);
+    useQueryThunk({ thunk: StudentThunkAction.getStudentDetail })({ studentId: studentId || '' });
+    useQueryThunk({ thunk: StudentThunkAction.getStudentPackages })({ studentId: studentId || '' });
+    useQueryThunk({ thunk: StudentThunkAction.getStudentClassesForWeeklyTimetable })({
+        studentId: studentId || '',
+    });
 
     // To get courses in case the user wants to add a course to the timetable
+
+    useQueryThunk({ thunk: CourseThunkAction.getCourses })();
+
     useEffect(() => {
         dispatch(
             studentSlice.actions.setWeeklyTimetableSelectedDate({
                 date: userOnClickTimestamp,
             })
         );
-        dispatch(CourseThunkAction.getCourses());
         return () => {
             dispatch(studentSlice.actions.reset());
         };

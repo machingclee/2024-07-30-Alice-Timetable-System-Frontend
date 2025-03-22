@@ -58,6 +58,21 @@ export type CreateUserRequest = {
     role_in_company: string;
 };
 
+//   public val id: UUID?,
+//   public val firstName: String,
+//   public val lastName: String,
+//   public val chineseFirstName: String?,
+//   public val chineseLastName: String?,
+//   public val isBlocked: Boolean,
+//   public val companyEmail: String,
+//   public val passwordHash: String,
+//   public val avatarFileUrl: String,
+//   public val createdAt: Double?,
+//   public val mobileNumber: String,
+//   public val roleInSystem: Role,
+//   public val roleInCompany: String,
+//   public val createdAtHk: String?,
+
 export type User = {
     first_name: string;
     last_name: string;
@@ -237,3 +252,9 @@ export type Loggings = {
     created_at: number;
     created_at_hk: string;
 }[];
+
+export type DailyTimetableRequest = {
+    dateUnixTimestamp: number;
+    classRoom: Classroom;
+    filter: FilterToGetClassesForDailyTimetable;
+};

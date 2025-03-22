@@ -496,6 +496,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                             <MenuItem
                                                 className={classnames('menu-item')}
                                                 onClick={() => {
+                                                    DeleteClassDialog.setWidth('xs');
                                                     DeleteClassDialog.setContent(() => () => (
                                                         <DeleteClassForm classEvent={classEvent} />
                                                     ));

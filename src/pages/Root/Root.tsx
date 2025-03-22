@@ -14,6 +14,7 @@ export default function Root() {
     const location = useLocation();
     const navigiate = useNavigate();
     const leftNavigatorCollapsed = useAppSelector(s => s.app.leftNavigatorCollapsed);
+    const isInDashboard = /dashboard/.test(location.pathname);
 
     useEffect(() => {
         // document.title = titles?.[location.pathname as RouteEnum] || ""
@@ -46,23 +47,25 @@ export default function Root() {
                     position: 'relative',
                 }}
             >
-                <Collapse style={{ height: '100vh' }} in={!leftNavigatorCollapsed} orientation="horizontal">
-                    <div style={{ height: '100%', flexDirection: 'column', display: 'flex' }}>
-                        <Spacer />
-                        <div
-                            style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'flex-end',
-                            }}
-                        >
-                            <CloseLeftColumnButton />
+                {isInDashboard && (
+                    <Collapse style={{ height: '100vh' }} in={!leftNavigatorCollapsed} orientation="horizontal">
+                        <div style={{ height: '100%', flexDirection: 'column', display: 'flex' }}>
+                            <Spacer />
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'flex-end',
+                                }}
+                            >
+                                <CloseLeftColumnButton />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <LeftNavigation />
+                            </div>
                         </div>
-                        <div style={{ flex: 1 }}>
-                            <LeftNavigation />
-                        </div>
-                    </div>
-                </Collapse>
+                    </Collapse>
+                )}
                 <Collapse style={{ height: '100vh' }} in={leftNavigatorCollapsed} orientation="horizontal">
                     <Spacer />
                     <div

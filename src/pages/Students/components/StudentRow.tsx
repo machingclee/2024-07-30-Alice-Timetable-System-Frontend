@@ -203,6 +203,15 @@ export default function StudenRow(props: { studentId: string }) {
                     >
                         Edit Student
                     </MenuItem>
+                    {/* @ts-expect-error - context menu has probleming in typing */}
+                    <MenuItem
+                        className="menu-item"
+                        onClick={() => {
+                            navigate(`${RouteEnum.STUDENT_INFO}/${studentId}`);
+                        }}
+                    >
+                        View Attendences
+                    </MenuItem>
                     {/* <MenuItem
                         className="menu-item"
                         onClick={() => {

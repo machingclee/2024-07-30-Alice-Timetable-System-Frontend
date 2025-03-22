@@ -80,3 +80,14 @@ export type ClassDTO = {
     classNumber: number;
     actualClassroom: string;
 };
+
+export type UIStudentPackage = {
+    package: StudentPackageDTO;
+    course: CourseDTO;
+    classes: ClassDTO[];
+};
+
+export type UIStudentDetail = {
+    student: StudentDTO;
+    studentPackages: UIStudentPackage[];
+};

@@ -7,7 +7,6 @@ import { Button, Calendar } from 'antd';
 import type { CalendarProps } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import studentSlice, { StudentThunkAction } from '../redux/slices/studentSlice';
-import timeUtil from '../utils/timeUtil';
 import { AppDispatch } from '../redux/store';
 import { FilterToGetClassesForDailyTimetableWithoutCourseIds } from '../dto/dto';
 import { FaFilter } from 'react-icons/fa';
@@ -47,7 +46,7 @@ export default function RightColumn() {
                 courseIds: filterCourseIds,
             })
         );
-        const currentTimestamp = dayjs(selectedDate.getTime()).startOf('day').valueOf().toString();
+        const currentTimestamp = dayjs(selectedDate.getTime()).startOf('day').valueOf();
         dispatch(
             StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
                 dateUnixTimestamp: currentTimestamp,
@@ -58,11 +57,7 @@ export default function RightColumn() {
     };
 
     const onPanelChange = (value: Dayjs, _mode: CalendarProps<Dayjs>['mode']) => {
-        dispatch(
-            studentSlice.actions.setDailyTimetableSelectedDate({
-                date: value.toDate(),
-            })
-        );
+        onDateChanged(value.startOf('day').toDate());
     };
 
     const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
@@ -107,21 +102,8 @@ export default function RightColumn() {
                         if (!classRoom) {
                             return;
                         }
-                        dispatch(
-                            studentSlice.actions.setDailyTimetableSelectedDate({
-                                date: date.toDate(),
-                            })
-                        );
-                        dispatch(
-                            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                                dateUnixTimestamp: timeUtil.getDayUnixTimestamp(date.toDate().getTime()).toString(),
-                                classRoom,
-                                filter: {
-                                    ...formData,
-                                    courseIds: filterCourseIds,
-                                },
-                            })
-                        );
+                        const date_ = date.startOf('day').toDate();
+                        onDateChanged(date_);
                     }}
                     style={{ width: 290 }}
                 />
@@ -622,4 +604,9 @@ export default function RightColumn() {
             </div>
         </div>
     );
+
+    function onDateChanged(date_: Date) {
+        dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: date_ }));
+        dispatch(studentSlice.actions.updateFilterDate(date_));
+    }
 }

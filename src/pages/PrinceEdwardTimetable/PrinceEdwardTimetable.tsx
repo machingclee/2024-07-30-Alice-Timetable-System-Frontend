@@ -10,12 +10,21 @@ import DeleteClassDialog from '../../components/DeleteClassDialog';
 import AddClassEventDialog from '../../components/AddClassEventDialog';
 import PrintButton, { PrintHandler } from '../../components/PrintButton';
 import RightColumn from '../../components/RightColumn';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import RefreshDailyTimetableButton from '../../components/RefreshDailyTimetableButton';
+import { useAppDispatch } from '../../redux/hooks';
+import studentSlice from '../../redux/slices/studentSlice';
 
 export default function PrinceEdwardTimetable() {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const printButtonRef = useRef<PrintHandler>(null);
 
+    useEffect(() => {
+        return () => {
+            dispatch(studentSlice.actions.reset());
+        };
+    }, [dispatch]);
     return (
         <div
             style={{
@@ -47,7 +56,10 @@ export default function PrinceEdwardTimetable() {
                             <Spacer height={1} />
                             Prince Edward Daily Timetable
                         </SectionTitle>
-                        <PrintButton ref={printButtonRef} />
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <RefreshDailyTimetableButton />
+                            <PrintButton ref={printButtonRef} />
+                        </div>
                     </div>
                     <div
                         style={{

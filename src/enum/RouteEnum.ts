@@ -1,5 +1,6 @@
 enum RouteEnum {
     LOGIN = '/login',
+    STUDENT_INFO = '/student-info',
     DASHBOARD = '/dashboard',
     DASHBOARD_STUDENTS = '/dashboard/students',
     DASHBOARD_COURSES = '/dashboard/courses',

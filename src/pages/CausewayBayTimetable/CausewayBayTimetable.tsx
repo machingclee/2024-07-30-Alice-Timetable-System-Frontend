@@ -12,18 +12,13 @@ import AddClassEventDialog from '../../components/AddClassEventDialog';
 import { useEffect, useRef } from 'react';
 import studentSlice from '../../redux/slices/studentSlice';
 import { useAppDispatch } from '../../redux/hooks';
-import { CourseThunkAction } from '../../redux/slices/courseSlice';
 import PrintButton, { PrintHandler } from '../../components/PrintButton';
+import RefreshDailyTimetableButton from '../../components/RefreshDailyTimetableButton';
 
 export default function CausewayBayTimetable() {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const printButtonRef = useRef<PrintHandler>(null);
-
-    useEffect(() => {
-        dispatch(studentSlice.actions.setClassroom('CAUSEWAY_BAY'));
-        dispatch(CourseThunkAction.getCourses());
-    }, [dispatch]);
 
     useEffect(() => {
         return () => {
@@ -62,7 +57,10 @@ export default function CausewayBayTimetable() {
                             <Spacer height={1} />
                             Causeway Bay Daily Timetable
                         </SectionTitle>
-                        <PrintButton ref={printButtonRef} />
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <RefreshDailyTimetableButton />
+                            <PrintButton ref={printButtonRef} />
+                        </div>
                     </div>
                     <div
                         style={{

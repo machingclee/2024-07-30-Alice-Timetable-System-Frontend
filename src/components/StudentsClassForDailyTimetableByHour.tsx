@@ -23,7 +23,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
     const timeSlotStyle: React.CSSProperties = {
         height: isFullHour ? '2px' : '0',
         opacity: 0.2,
-        top: -4,
+        top: -1,
         width: isFullHour ? '100%' : '0',
         backgroundColor: 'black',
         position: 'absolute',
@@ -89,8 +89,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                     {/* @ts-expect-error - ignore for context menu incorrect typing*/}
                                     <MenuItem
                                         className="menu-item"
-                                        onClick={e => {
-                                            e.stopPropagation();
+                                        onClick={() => {
                                             ViewClassDialog.setContent(() => () => (
                                                 <ViewClassForm
                                                     classEvent={classEvent}
@@ -106,6 +105,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                     <MenuItem
                                         className={classnames('menu-item')}
                                         onClick={() => {
+                                            DeleteClassDialog.setWidth('sm');
                                             DeleteClassDialog.setContent(() => () => (
                                                 <DeleteClassForm classEvent={classEvent} />
                                             ));

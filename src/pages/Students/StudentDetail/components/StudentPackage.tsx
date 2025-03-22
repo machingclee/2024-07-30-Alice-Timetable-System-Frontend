@@ -91,6 +91,7 @@ export default function StudentPackage(props: { packageId: string }) {
     };
 
     const editPackage = async () => {
+        EditPackageDialog.setWidth('xs');
         EditPackageDialog.setContent(() => () => <EditPackageForm packageId={packageId} />);
         EditPackageDialog.setOpen(true);
     };

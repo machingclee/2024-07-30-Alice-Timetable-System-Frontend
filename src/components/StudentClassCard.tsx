@@ -85,8 +85,12 @@ export default function StudentClassCard(props: {
             }}
         >
             {/* <div style={{ padding: 4 }}>{classEvent.course_name}</div> */}
+            {chiName ? (
+                <div style={{ padding: 4, fontSize: 20 }}>{chiName}</div>
+            ) : (
+                <div style={{ padding: 4, fontSize: 20 }}>{engName}</div>
+            )}
             <div style={{ padding: 4 }}>{classEvent.student.studentCode}</div>
-            {chiName ? <div style={{ padding: 4 }}>{chiName}</div> : <div style={{ padding: 4 }}>{engName}</div>}
         </Box>
     );
 }

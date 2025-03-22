@@ -104,7 +104,7 @@ export default function TimeRow({
                         backgroundColor: isHovered ? '#9e9e9e' : 'transparent',
                     }}
                 />
-                <BasePopup id={id} open={open} anchor={anchorEl} placement="left">
+                <BasePopup id={id} open={open} anchor={anchorEl} placement="left" style={{ zIndex: 10 ** 7 }}>
                     <div
                         style={{
                             backgroundColor: 'white',
@@ -114,7 +114,7 @@ export default function TimeRow({
                             transform: 'translateX(-5px)',
                         }}
                     >
-                        {numberOfClassesInHighlight} class(es)
+                        {numberOfClassesInHighlight} {numberOfClassesInHighlight > 1 ? 'classes' : 'class'}
                     </div>
                 </BasePopup>
 
