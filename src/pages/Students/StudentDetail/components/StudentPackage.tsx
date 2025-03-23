@@ -228,7 +228,7 @@ export default function StudentPackage(props: { packageId: string }) {
                             Delete package
                         </MenuItem>
                     </>
-                    {/* @ts-expect-error - context menu trigger has problem in typing */}
+                    @ts-expect-error - context menu trigger has problem in typing
                     <MenuItem className="menu-item" onClick={showAttendence}>
                         Show Attendence
                     </MenuItem>

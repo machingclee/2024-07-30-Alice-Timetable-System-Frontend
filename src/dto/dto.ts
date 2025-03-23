@@ -1,3 +1,4 @@
+import statues from '../constant/statues';
 import { Classroom, Student_package } from '../prismaTypes/types';
 
 export type Gender = 'MALE' | 'FEMALE';
@@ -128,15 +129,8 @@ export type FilterToGetClassesForDailyTimetable = {
     courseIds: number[];
 };
 
-export type FilterToGetClassesForDailyTimetableWithoutCourseIds = {
-    present: boolean;
-    reserved: boolean;
-    suspicious_absence: boolean;
-    illegit_absence: boolean;
-    legit_absence: boolean;
-    makeup: boolean;
-    changeOfClassroom: boolean;
-    trial: boolean;
+export type StatuesFilter = {
+    [key in keyof typeof statues]: boolean;
 };
 
 export type DeleteClassRequest = {

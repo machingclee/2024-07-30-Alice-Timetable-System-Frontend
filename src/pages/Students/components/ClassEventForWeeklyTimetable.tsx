@@ -433,18 +433,20 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                 },
                                             }}
                                         >
-                                            {/*@ts-expect-error - context menu has problem in typing */}
-                                            <MenuItem
-                                                className="menu-item"
-                                                onClick={() => {
-                                                    ViewClassDialog.setContent(() => () => (
-                                                        <ViewClassForm classEvent={classEvent} />
-                                                    ));
-                                                    ViewClassDialog.setOpen(true);
-                                                }}
-                                            >
-                                                View Class
-                                            </MenuItem>
+                                            <>
+                                                {/*@ts-expect-error - context menu has problem in typing */}
+                                                <MenuItem
+                                                    className="menu-item"
+                                                    onClick={() => {
+                                                        ViewClassDialog.setContent(() => () => (
+                                                            <ViewClassForm classEvent={classEvent} />
+                                                        ));
+                                                        ViewClassDialog.setOpen(true);
+                                                    }}
+                                                >
+                                                    View Class
+                                                </MenuItem>
+                                            </>
                                             {/*@ts-expect-error - context menu has problem in typing */}
                                             <MenuItem
                                                 className="menu-item"

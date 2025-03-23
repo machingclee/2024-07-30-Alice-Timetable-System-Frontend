@@ -32,6 +32,7 @@ import {
     UIStudentDetail,
 } from '../../dto/kotlinDto';
 import { omit } from 'lodash';
+import statues from '../../constant/statues';
 
 export type StudentSliceState = {
     students: {
@@ -66,14 +67,7 @@ export type StudentSliceState = {
         };
         filter: FilterToGetClassesForDailyTimetable;
         summaryOfClassStatuses: {
-            present: number;
-            suspiciousAbsence: number;
-            illegitAbsence: number;
-            legitAbsence: number;
-            makeup: number;
-            changeOfClassroom: number;
-            trial: number;
-            reserved: number;
+            [key in keyof typeof statues]: number;
         };
     };
 };
@@ -110,9 +104,9 @@ const initialState: StudentSliceState = {
         },
         summaryOfClassStatuses: {
             present: 0,
-            suspiciousAbsence: 0,
-            illegitAbsence: 0,
-            legitAbsence: 0,
+            suspicious_absence: 0,
+            illegit_absence: 0,
+            legit_absence: 0,
             makeup: 0,
             changeOfClassroom: 0,
             trial: 0,
@@ -311,9 +305,9 @@ const studentSlice = createSlice({
                 });
                 state.massTimetablePage.summaryOfClassStatuses = {
                     present: presentClasses,
-                    suspiciousAbsence: suspiciousAbsenceClasses,
-                    illegitAbsence: illegitAbsenceClasses,
-                    legitAbsence: legitAbsenceClasses,
+                    suspicious_absence: suspiciousAbsenceClasses,
+                    illegit_absence: illegitAbsenceClasses,
+                    legit_absence: legitAbsenceClasses,
                     makeup: makeupClasses,
                     changeOfClassroom: changeOfClassroomClasses,
                     trial: trialClasses,
