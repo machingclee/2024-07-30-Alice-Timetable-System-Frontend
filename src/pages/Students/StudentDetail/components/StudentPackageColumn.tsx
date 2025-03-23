@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux';
 import studentSlice from '../../../../redux/slices/studentSlice';
 import { MdOutlineEventNote } from 'react-icons/md';
 import { StudentPackageRepsonse } from '../../../../dto/kotlinDto';
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 
 export default function StudentPackageColumn(props: { packagesOffsetY: number; collapseTimtable: boolean }) {
     const { packagesOffsetY, collapseTimtable } = props;
@@ -40,102 +41,119 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                 transition: 'width 0.3s ease-in-out',
             }}
         >
-            <div
+            <OverlayScrollbarsComponent
                 style={{
-                    minWidth: 300,
-                    height: 'calc(100vh - 40px)',
-                    overflow: 'hidden',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    transition: 'opacity 0.5s eas-in-out',
+                    height: '100%',
+                    overflowY: 'scroll',
+                }}
+                options={{
+                    scrollbars: {
+                        autoHide: 'leave',
+                        autoHideDelay: 100,
+                    },
                 }}
             >
                 <div
                     style={{
+                        overflowY: 'scroll',
+                        minWidth: 300,
+                        height: 'calc(100vh - 40px)',
+                        overflow: 'hidden',
                         display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
+                        flexDirection: 'column',
+                        transition: 'opacity 0.5s eas-in-out',
                     }}
                 >
-                    <Title>Student Packages</Title>
-                    <Button
-                        style={{ minWidth: 40, minHeight: 40 }}
-                        onClick={() => {
-                            AddPackageDialog.setWidth('sm');
-                            AddPackageDialog.setContent(() => () => (
-                                <AddPackageForm studentId={studentId || ''} studentName={`${firstName} ${lastName}`} />
-                            ));
-                            AddPackageDialog.setOpen(true);
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
                         }}
-                        shape="circle"
                     >
-                        Add
-                    </Button>
-                </div>
-                <Spacer height={5} />
-                <Sep />
-                <Spacer />
-                <div>
-                    <div style={{ marginLeft: '10px' }}>Show All Classes</div>
-                    <Switch
-                        onChange={event => {
-                            handleShowAllClassesOnChange(event);
-                        }}
-                        {...label}
-                        defaultChecked
-                    />
-                </div>
-                <CustomScrollbarContainer
-                    style={{
-                        width: '100%',
-                        height: `calc(100vh-${packagesOffsetY}px)`,
-                    }}
-                >
-                    <div className="flex justify-center w-full">
-                        <div style={{ width: '100%' }}>
-                            {courseNames.map(courseName => {
-                                const packagesRes = flattedPackages.filter(
-                                    pkgRes => pkgRes.course.courseName === courseName
-                                );
-                                return (
-                                    <div>
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                            }}
-                                        >
-                                            <MdOutlineEventNote
-                                                size={24}
-                                                style={{
-                                                    marginRight: 5,
-                                                    marginLeft: 5,
-                                                }}
-                                            />
-                                            {courseName}
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: collapseTimtable ? 'flex' : 'unset',
-                                            }}
-                                        >
-                                            {packagesRes?.map(pkgRes => {
-                                                return (
-                                                    <StudentPackage
-                                                        packageId={String(pkgRes.studentPackage.id)}
-                                                        key={pkgRes.studentPackage.id}
-                                                    />
-                                                );
-                                            })}
-                                        </div>
-                                        <Spacer />
-                                    </div>
-                                );
-                            })}
-                        </div>
+                        <Title>Student Packages</Title>
+                        <Button
+                            style={{ minWidth: 40, minHeight: 40 }}
+                            onClick={() => {
+                                AddPackageDialog.setWidth('sm');
+                                AddPackageDialog.setContent(() => () => (
+                                    <AddPackageForm
+                                        studentId={studentId || ''}
+                                        studentName={`${firstName} ${lastName}`}
+                                    />
+                                ));
+                                AddPackageDialog.setOpen(true);
+                            }}
+                            shape="circle"
+                        >
+                            Add
+                        </Button>
                     </div>
-                </CustomScrollbarContainer>
-            </div>
+                    <Spacer height={5} />
+                    <Sep />
+                    <Spacer />
+                    <div>
+                        <div style={{ marginLeft: '10px' }}>Show All Classes</div>
+                        <Switch
+                            onChange={event => {
+                                handleShowAllClassesOnChange(event);
+                            }}
+                            {...label}
+                            defaultChecked
+                        />
+                    </div>
+                    <CustomScrollbarContainer
+                        style={{
+                            width: '100%',
+                            height: `calc(100vh-${packagesOffsetY}px)`,
+                        }}
+                    >
+                        <div className="flex justify-center w-full">
+                            <div style={{ width: '100%' }}>
+                                {courseNames.map(courseName => {
+                                    const packagesRes = flattedPackages.filter(
+                                        pkgRes => pkgRes.course.courseName === courseName
+                                    );
+                                    return (
+                                        <div>
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                }}
+                                            >
+                                                <MdOutlineEventNote
+                                                    size={24}
+                                                    style={{
+                                                        marginRight: 5,
+                                                        marginLeft: 5,
+                                                    }}
+                                                />
+                                                {courseName}
+                                            </div>
+                                            <div
+                                                style={{
+                                                    display: collapseTimtable ? 'flex' : 'unset',
+                                                }}
+                                            >
+                                                {packagesRes?.map(pkgRes => {
+                                                    return (
+                                                        <StudentPackage
+                                                            packageId={String(pkgRes.studentPackage.id)}
+                                                            key={pkgRes.studentPackage.id}
+                                                        />
+                                                    );
+                                                })}
+                                            </div>
+                                            <Spacer />
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </CustomScrollbarContainer>
+                </div>
+            </OverlayScrollbarsComponent>
         </div>
     );
 }
