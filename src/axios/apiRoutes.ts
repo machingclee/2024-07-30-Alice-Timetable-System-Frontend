@@ -31,6 +31,7 @@ export default {
 
     DELETE_PACKAGE: (studentId: string, packageId: number) =>
         `/students/package?studentId=${studentId}&packageId=${packageId}`,
-    DELETE_CLASS: (classId: number) => `/students/delete-class/${classId}`,
+    DELETE_CLASSES_BY_GROUP: (classId: number) => `/students/classes/${classId}/group`,
+    DELETE_CLASS_BY_INDIVIDUAL: (classId: number) => `/students/classes/${classId}/single`,
     DELETE_STUDENT: (studentId: number) => `/students/delete-student/${studentId}`,
 };
