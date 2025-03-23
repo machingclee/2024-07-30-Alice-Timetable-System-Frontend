@@ -6,9 +6,10 @@ export default <T>(props: {
     queryFn: () => Promise<T>;
     onDataChanged?: (data: T) => void;
     gcTime?: number;
+    enabled: boolean;
     staleTime?: number;
 }) => {
-    const { queryFn, queryKey, gcTime = 100, staleTime = 100, onDataChanged } = props;
+    const { queryFn, queryKey, gcTime = 100, staleTime = 100, onDataChanged, enabled } = props;
     const queryClient = useQueryClient();
     const query = useQuery({
         queryFn: async () => {
@@ -17,6 +18,7 @@ export default <T>(props: {
         queryKey,
         gcTime,
         staleTime,
+        enabled,
         refetchOnWindowFocus: false,
     });
 

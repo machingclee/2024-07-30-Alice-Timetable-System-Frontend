@@ -1,29 +1,38 @@
-import { Alert, Box } from '@mui/material';
+import { Alert, Box, Table } from '@mui/material';
 import SectionTitle from './SectionTitle';
 import Spacer from './Spacer';
-import { useEffect } from 'react';
 import { Button } from 'antd';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { StudentThunkAction } from '../redux/slices/studentSlice';
 import DeleteClassDialog from './DeleteClassDialog';
 import colors from '../constant/colors';
 import dayjs from 'dayjs';
-import useGetStudentIdFromParam from '../hooks/useGetStudentIdFromParam';
-import { TimetableClassEvent } from '../dto/kotlinDto';
+import { ClassDTO, ClassGroupDTO, CourseDTO } from '../dto/kotlinDto';
+import Sep from './Sep';
 
-export default function DeleteClassForm(props: { classEvent: TimetableClassEvent }) {
-    const { classEvent } = props;
-    const { studentId: student_id } = useGetStudentIdFromParam();
-    const { course, classGroup, class: class_ } = classEvent;
+export default function DeleteClassForm(props: {
+    course: CourseDTO;
+    classGroup: ClassGroupDTO | null;
+    cls: ClassDTO;
+    onDeletion: () => Promise<void>;
+}) {
+    const { course, classGroup, cls: class_, onDeletion } = props;
     const courseName = useAppSelector(s => s.class.courses.idToCourse?.[course.id || 0])?.courseName;
     const classAt = dayjs(class_.hourUnixTimestamp).format('HH:mm');
     const classOn = dayjs(class_.dayUnixTimestamp).format('dddd');
+    const startedFromDate = dayjs(class_.hourUnixTimestamp).format('YYYY-MM-DD');
     const dispatch = useAppDispatch();
     const hasDuplicationGroup = classGroup?.id != null;
 
-    useEffect(() => {
-        console.log(DeleteClassDialog);
-    }, []);
+    const deleteClass = async () => {
+        await dispatch(
+            StudentThunkAction.deleteClass({
+                classId: class_.id,
+            })
+        ).unwrap();
+        onDeletion?.();
+        DeleteClassDialog.setOpen(false);
+    };
 
     return (
         <Box
@@ -40,9 +49,34 @@ export default function DeleteClassForm(props: { classEvent: TimetableClassEvent
             <Spacer height={10} />
             <div style={{ display: 'flex', justifyContent: 'center' }}>{courseName}</div>
             <Spacer height={10} />
-            <div>
-                scheduled at {classAt} on {hasDuplicationGroup ? `every ${classOn}` : classOn}
+            <Sep />
+            <Spacer height={10} />
+            <div style={{}}>
+                <Table
+                    sx={{
+                        '& td:nth-child(1)': {
+                            width: '120px',
+                        },
+                    }}
+                >
+                    <tbody>
+                        <tr>
+                            <td>Start From:</td>
+                            <td>{startedFromDate}</td>
+                        </tr>
+                        <tr>
+                            <td>Scheduled At:</td>
+                            <td>{classAt}</td>
+                        </tr>
+                        <tr>
+                            <td>On{hasDuplicationGroup ? ' every:' : ':'}</td>
+                            <td>{classOn}</td>
+                        </tr>
+                    </tbody>
+                </Table>
             </div>
+            <Spacer height={10} />
+            <Sep />
             <Spacer />
             {hasDuplicationGroup && (
                 <Alert severity="warning">
@@ -55,29 +89,7 @@ export default function DeleteClassForm(props: { classEvent: TimetableClassEvent
                 </Alert>
             )}
             <Spacer />
-            <Button
-                style={{ backgroundColor: colors.RED }}
-                type="primary"
-                block
-                onClick={async () => {
-                    await dispatch(
-                        StudentThunkAction.deleteClass({
-                            classId: class_.id,
-                        })
-                    ).unwrap();
-                    dispatch(
-                        StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                            studentId: student_id,
-                        })
-                    );
-                    dispatch(
-                        StudentThunkAction.getStudentPackages({
-                            studentId: student_id,
-                        })
-                    );
-                    DeleteClassDialog.setOpen(false);
-                }}
-            >
+            <Button style={{ backgroundColor: colors.RED }} type="primary" block onClick={deleteClass}>
                 Confirm
             </Button>
             <Spacer height={5} />

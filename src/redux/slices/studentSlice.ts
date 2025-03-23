@@ -30,9 +30,15 @@ import {
     TimetableClassEvent as TimetableClassEvent,
     StudentPackageDTO,
     UIStudentDetail,
+    GetPackageClassStatusResponse,
 } from '../../dto/kotlinDto';
 import { omit } from 'lodash';
 import statues from '../../constant/statues';
+
+export enum StudentDetailPage {
+    STUDENT_TIME_TABLE = 'STUDENT_TIME_TABLE',
+    STUDENT_PACKAGE_CLASS_STATUES = 'STUDENT_PACKAGE_CLASS_STATUES',
+}
 
 export type StudentSliceState = {
     students: {
@@ -42,6 +48,7 @@ export type StudentSliceState = {
         };
     };
     studentDetailTimetablePage: {
+        activePage: StudentDetailPage;
         showAllClassesForOneStudent: boolean;
         detail: StudentDTO | null;
         selectedPackageId: string;
@@ -75,6 +82,7 @@ export type StudentSliceState = {
 const initialState: StudentSliceState = {
     students: {},
     studentDetailTimetablePage: {
+        activePage: StudentDetailPage.STUDENT_TIME_TABLE,
         selectedPackageId: '',
         studentPackages: {},
         detail: null,
@@ -119,6 +127,9 @@ const studentSlice = createSlice({
     name: 'student',
     initialState,
     reducers: {
+        setDisplayType: (state, action: PayloadAction<StudentDetailPage>) => {
+            state.studentDetailTimetablePage.activePage = action.payload;
+        },
         setNumberOfClassesInHighlight: (state, action: PayloadAction<number>) => {
             state.massTimetablePage.totalClassesInHighlight.numberOfClassesInHighlight = action.payload;
         },
@@ -344,6 +355,17 @@ const studentSlice = createSlice({
 });
 
 export class StudentThunkAction {
+    public static getClassesStatus = createApiThunk(
+        'studentSlice/getClassesStatus',
+        async (props: { packageId: string }, api) => {
+            const { packageId } = props;
+            const res = await apiClient.get<CustomResponse<GetPackageClassStatusResponse[]>>(
+                apiRoutes.GET_PACKAGE_CLASS_STATUS(packageId)
+            );
+            return processRes(res, api);
+        }
+    );
+
     public static getStudents = createApiThunk('studentSlice/getStudents', async (_: undefined, api) => {
         const res = await apiClient.get<CustomResponse<{ students: StudentDTO[]; total: number }>>(
             apiRoutes.GET_STUDENTS

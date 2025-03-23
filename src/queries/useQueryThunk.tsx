@@ -15,9 +15,10 @@ export default <ThunkInputParam, ReturnType>(param: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         thunk: AsyncThunk<ReturnType, ThunkInputParam, any>;
         staleTime?: number;
+        enabled?: boolean;
     }) =>
     (inputParam?: ThunkInputParam) => {
-        const { thunk, staleTime = 1000 } = param;
+        const { thunk, staleTime = 1000, enabled = true } = param;
         const dispatch = useAppDispatch();
         return useBaseQuery({
             queryKey: [thunk.typePrefix, hashUtil.hash(inputParam || {})],
@@ -31,6 +32,7 @@ export default <ThunkInputParam, ReturnType>(param: {
                 // eslint-disable-next-line
                 dispatch(thunk.fulfilled(data, requestID, inputParam as any));
             },
+            enabled,
             gcTime: staleTime,
             staleTime: staleTime,
         });

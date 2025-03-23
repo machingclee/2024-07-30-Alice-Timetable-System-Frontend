@@ -209,9 +209,13 @@ export default function RightColumn() {
                                         <table>
                                             <tbody>
                                                 {Object.keys(statuesFilter).map(status => {
-                                                    return statusRow({
-                                                        updateKey: status as keyof typeof statuesFilter,
-                                                    });
+                                                    return (
+                                                        <React.Fragment key={status}>
+                                                            {statusRow({
+                                                                updateKey: status as keyof typeof statuesFilter,
+                                                            })}
+                                                        </React.Fragment>
+                                                    );
                                                 })}
                                             </tbody>
                                         </table>

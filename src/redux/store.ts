@@ -9,7 +9,6 @@ import authSlice, { authMiddleware } from './slices/authSlice';
 import userSlice, { userMiddleware } from './slices/userSlice';
 import studentSlice, { studentMiddleware } from './slices/studentSlice';
 import classSlice, { classMiddleware } from './slices/courseSlice';
-import publicSlice, { publicMiddleware } from './slices/publicSlice';
 import competitionSlice, { competitionMiddleware } from './slices/competitionSlice';
 
 // a fix following the guide from https://www.youtube.com/watch?v=fjPIJZ1Eokg
@@ -46,7 +45,6 @@ export const store = configureStore({
         user: userSlice.reducer,
         student: studentSlice.reducer,
         class: classSlice.reducer,
-        public: publicSlice.reducer,
         competition: competitionSlice.reducer,
     },
     middleware: getDefaultMiddleware =>
@@ -55,7 +53,6 @@ export const store = configureStore({
             userMiddleware.middleware,
             studentMiddleware.middleware,
             classMiddleware.middleware,
-            publicMiddleware.middleware,
             competitionMiddleware.middleware
         ),
 });

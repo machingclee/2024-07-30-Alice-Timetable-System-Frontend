@@ -12,6 +12,7 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { Button } from 'antd';
 import CustomScrollbarContainer from '../../../components/CustomScrollbarContainer';
 import colors from '../../../constant/colors';
+import FadeIn from '../../../components/FadeIn';
 
 export type WeeklyCoordinate = {
     [dateUnixTimestamp: string]: {
@@ -213,66 +214,68 @@ export default function WeeklyTimeTable() {
                 },
             }}
         >
-            <div className="flex justify-center">{weekNavigator()}</div>
-            <CustomScrollbarContainer style={{ height: 'calc(100vh - 120px)', width: '100%' }}>
-                <Spacer />
-                <div style={{ display: 'flex' }}>
-                    <div style={{ flex: 1 }}>
-                        <div style={{ display: 'flex' }}>
-                            <div>
-                                <Spacer
-                                    height={gridTimeColTop}
-                                    style={{
-                                        position: 'sticky',
-                                        top: 0,
-                                        background: colors.BACKGORUND_GREY,
-                                        width: '100%',
-                                    }}
-                                />
-                                <div className="grid-time" style={{ width: 60 }}></div>
+            <FadeIn>
+                <div className="flex justify-center">{weekNavigator()}</div>
+                <CustomScrollbarContainer style={{ height: 'calc(100vh - 120px)', width: '100%' }}>
+                    <Spacer />
+                    <div style={{ display: 'flex' }}>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex' }}>
+                                <div>
+                                    <Spacer
+                                        height={gridTimeColTop}
+                                        style={{
+                                            position: 'sticky',
+                                            top: 0,
+                                            background: colors.BACKGORUND_GREY,
+                                            width: '100%',
+                                        }}
+                                    />
+                                    <div className="grid-time" style={{ width: 60 }}></div>
+                                </div>
+                                {Object.keys(timeGrid)
+                                    .sort()
+                                    .map((dayUnixTimestamp, colIndex) => {
+                                        const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
+                                        return (
+                                            <div key={dayUnixTimestamp} className="day-column">
+                                                <div
+                                                    className="grid-hour header"
+                                                    style={{
+                                                        width: '100%',
+                                                        fontWeight: 400,
+                                                        textAlign: 'center',
+                                                    }}
+                                                >
+                                                    {timetableAvailableWidth >= 85 && dayDayJS.format('ddd, MMM D')}
+                                                    {timetableAvailableWidth < 85 && dayDayJS.format('ddd')}
+                                                </div>
+                                                <Spacer height={5} />
+                                                <div>
+                                                    {Object.keys(timeGrid[dayUnixTimestamp])
+                                                        .sort()
+                                                        .map((hourUnixTimestamp, rowIndex) => {
+                                                            return (
+                                                                <ClassEventForWeeklyTimetable
+                                                                    key={hourUnixTimestamp}
+                                                                    colIndex={colIndex}
+                                                                    rowIndex={rowIndex}
+                                                                    dayUnixTimestamp={parseInt(dayUnixTimestamp)}
+                                                                    hourUnixTimestamp={parseInt(hourUnixTimestamp)}
+                                                                />
+                                                            );
+                                                        })}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
                             </div>
-                            {Object.keys(timeGrid)
-                                .sort()
-                                .map((dayUnixTimestamp, colIndex) => {
-                                    const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
-                                    return (
-                                        <div key={dayUnixTimestamp} className="day-column">
-                                            <div
-                                                className="grid-hour header"
-                                                style={{
-                                                    width: '100%',
-                                                    fontWeight: 400,
-                                                    textAlign: 'center',
-                                                }}
-                                            >
-                                                {timetableAvailableWidth >= 85 && dayDayJS.format('ddd, MMM D')}
-                                                {timetableAvailableWidth < 85 && dayDayJS.format('ddd')}
-                                            </div>
-                                            <Spacer height={5} />
-                                            <div>
-                                                {Object.keys(timeGrid[dayUnixTimestamp])
-                                                    .sort()
-                                                    .map((hourUnixTimestamp, rowIndex) => {
-                                                        return (
-                                                            <ClassEventForWeeklyTimetable
-                                                                key={hourUnixTimestamp}
-                                                                colIndex={colIndex}
-                                                                rowIndex={rowIndex}
-                                                                dayUnixTimestamp={parseInt(dayUnixTimestamp)}
-                                                                hourUnixTimestamp={parseInt(hourUnixTimestamp)}
-                                                            />
-                                                        );
-                                                    })}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
                         </div>
+                        <Spacer />
                     </div>
                     <Spacer />
-                </div>
-                <Spacer />
-            </CustomScrollbarContainer>
+                </CustomScrollbarContainer>
+            </FadeIn>
         </Box>
     );
 }

@@ -8,7 +8,7 @@ export default {
     POST_DUPLICATE_CLASSES: '/students/classes/duplicate',
     POST_CREATE_STUDENT_PACKAGE: (studentId: string) => `/students/${studentId}/packages`,
     POST_GET_FILTERED_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: '/students/classes/daily/filtered',
-    GET_PACKAGE_CLASS_STATUS: (pkgUUID: string) => `/public/student-class-status/${pkgUUID}`,
+    GET_PACKAGE_CLASS_STATUS: (pkgId: string) => `/students/packages/${pkgId}/student-class-statuses`,
     GET_USERS: '/users',
     GET_STUDENTS: `/students`,
     GET_COURSES: '/courses',
