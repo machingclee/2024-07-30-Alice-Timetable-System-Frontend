@@ -7,16 +7,16 @@ import useQueryThunk from '../../queries/useQueryThunk';
 import { CourseThunkAction } from '../../redux/slices/courseSlice';
 
 const CausewaybayIndex = () => {
+    useQueryThunk({ thunk: CourseThunkAction.getCourses })();
+
     const dispatch = useAppDispatch();
-    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
-    const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
 
     useEffect(() => {
         dispatch(studentSlice.actions.setClassroom('CAUSEWAY_BAY'));
     }, [dispatch]);
 
-    useQueryThunk({ thunk: CourseThunkAction.getCourses })();
-
+    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
+    const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
     useQueryThunk({
         thunk: StudentThunkAction.getFilteredStudentClassesForDailyTimetable,
         staleTime: 5000,

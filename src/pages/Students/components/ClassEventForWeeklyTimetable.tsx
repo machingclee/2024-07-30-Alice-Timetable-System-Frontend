@@ -129,7 +129,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                       },
                                   }}
                               >
-                                  {/*@ts-expect-error - context menu has problem in typing */}
+                                  {/* @ts-expect-error - context menu has problem in typing */}
                                   <MenuItem
                                       className="menu-item"
                                       disabled={!selectedPackageId}
@@ -150,7 +150,7 @@ export default function StudentClassForWeeklyTimetable(props: {
         [classEvent, selectedPackageId]
     );
 
-    const updateClassStatusHandle = (status: Class_status) => {
+    const updateClassStatus = (status: Class_status) => {
         const cls = classEvent?.class;
         console.log('studentClass?.class_number:', cls?.classNumber);
         console.log('studentClass?.min:', cls?.min);
@@ -439,7 +439,12 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     className="menu-item"
                                                     onClick={() => {
                                                         ViewClassDialog.setContent(() => () => (
-                                                            <ViewClassForm classEvent={classEvent} />
+                                                            <ViewClassForm
+                                                                dateUnixTimestamp={classEvent.class.dayUnixTimestamp}
+                                                                cls={classEvent.class}
+                                                                course={classEvent.course}
+                                                                student={classEvent.student}
+                                                            />
                                                         ));
                                                         ViewClassDialog.setOpen(true);
                                                     }}
@@ -453,7 +458,13 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                 onClick={() => {
                                                     ViewClassDialog.setWidth('xs');
                                                     ViewClassDialog.setContent(() => () => (
-                                                        <ViewClassForm isEditing={true} classEvent={classEvent} />
+                                                        <ViewClassForm
+                                                            isEditing={true}
+                                                            dateUnixTimestamp={classEvent.class.dayUnixTimestamp}
+                                                            cls={classEvent.class}
+                                                            course={classEvent.course}
+                                                            student={classEvent.student}
+                                                        />
                                                     ));
                                                     ViewClassDialog.setOpen(true);
                                                 }}
@@ -500,7 +511,26 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                 onClick={() => {
                                                     DeleteClassDialog.setWidth('xs');
                                                     DeleteClassDialog.setContent(() => () => (
-                                                        <DeleteClassForm classEvent={classEvent} />
+                                                        <DeleteClassForm
+                                                            classGroup={classEvent.classGroup}
+                                                            cls={classEvent.class}
+                                                            course={classEvent.course}
+                                                            onDeletion={async () => {
+                                                                const studentId = classEvent.student.id;
+                                                                dispatch(
+                                                                    StudentThunkAction.getStudentClassesForWeeklyTimetable(
+                                                                        {
+                                                                            studentId: studentId,
+                                                                        }
+                                                                    )
+                                                                );
+                                                                dispatch(
+                                                                    StudentThunkAction.getStudentPackages({
+                                                                        studentId: studentId,
+                                                                    })
+                                                                );
+                                                            }}
+                                                        />
                                                     ));
                                                     DeleteClassDialog.setOpen(true);
                                                 }}
@@ -549,7 +579,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                         <MenuItem
                                                             className={classnames('menu-item')}
                                                             onClick={() => {
-                                                                updateClassStatusHandle('PRESENT');
+                                                                updateClassStatus('PRESENT');
                                                             }}
                                                         >
                                                             <div
@@ -572,7 +602,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                         <MenuItem
                                                             className={classnames('menu-item')}
                                                             onClick={() => {
-                                                                updateClassStatusHandle('SUSPICIOUS_ABSENCE');
+                                                                updateClassStatus('SUSPICIOUS_ABSENCE');
                                                             }}
                                                         >
                                                             <div
@@ -596,7 +626,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                         <MenuItem
                                                             className={classnames('menu-item')}
                                                             onClick={() => {
-                                                                updateClassStatusHandle('ILLEGIT_ABSENCE');
+                                                                updateClassStatus('ILLEGIT_ABSENCE');
                                                             }}
                                                         >
                                                             <div
@@ -619,7 +649,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                         <MenuItem
                                                             className={classnames('menu-item')}
                                                             onClick={() => {
-                                                                updateClassStatusHandle('LEGIT_ABSENCE');
+                                                                updateClassStatus('LEGIT_ABSENCE');
                                                             }}
                                                         >
                                                             <div
@@ -642,7 +672,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                         <MenuItem
                                                             className={classnames('menu-item')}
                                                             onClick={() => {
-                                                                updateClassStatusHandle('MAKEUP');
+                                                                updateClassStatus('MAKEUP');
                                                             }}
                                                         >
                                                             <div

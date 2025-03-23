@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import boxShadow from '../../../../constant/boxShadow';
 import { Box } from '@mui/material';
-import studentSlice, { StudentThunkAction } from '../../../../redux/slices/studentSlice';
+import studentSlice, { StudentDetailPage, StudentThunkAction } from '../../../../redux/slices/studentSlice';
 import Sep from '../../../../components/Sep';
 import Spacer from '../../../../components/Spacer';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
@@ -14,23 +14,20 @@ import AddPaymentDetailDialog from './AddPaymentDetailDialog';
 import AddPaymentDetailForm from './AddPaymentDetailForm';
 import EditPackageDialog from './EditPackageDialog';
 import EditPackageForm from './EditPackageForm';
-import RouteEnum from '../../../../enum/RouteEnum';
 import classnames from 'classnames';
+import { useState } from 'react';
+import { Modal } from 'antd';
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;
     const dispatch = useAppDispatch();
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const { studentId } = useParams<{ studentId: string }>();
     const pkgResonse = useAppSelector(
         s => s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[packageId]
     );
-    const {
-        consumedMinutes,
-        scheduledMinutes: schedumeMinutes,
-        studentPackage: studentPkg,
-        student,
-    } = pkgResonse || {};
+    const { consumedMinutes, scheduledMinutes: schedumeMinutes, studentPackage: studentPkg } = pkgResonse || {};
     const courseId = studentPkg?.courseId;
     const course = useAppSelector(s => s.class.courses?.idToCourse?.[courseId || -1]);
     const assignedClasses = Math.floor(((schedumeMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
@@ -42,7 +39,7 @@ export default function StudentPackage(props: { packageId: string }) {
     }
 
     const isSelected = selectedPackageId === packageId;
-    const selectHandler = () => {
+    const selectPackage = () => {
         dispatch(studentSlice.actions.setSelectedPackageId(packageId || ''));
     };
     const addPaymentDetail = async () => {
@@ -76,6 +73,7 @@ export default function StudentPackage(props: { packageId: string }) {
             })
         ).unwrap();
         if (studentId) {
+            dispatch(studentSlice.actions.setDisplayType(StudentDetailPage.STUDENT_TIME_TABLE));
             dispatch(StudentThunkAction.getStudentPackages({ studentId }));
             dispatch(
                 StudentThunkAction.getStudentClassesForWeeklyTimetable({
@@ -86,8 +84,8 @@ export default function StudentPackage(props: { packageId: string }) {
     };
 
     const showAttendence = async () => {
-        const route = `${RouteEnum.CLASS_STATUS}/${student?.id}`;
-        window.open(route, '_blank');
+        dispatch(studentSlice.actions.setSelectedPackageId(packageId || ''));
+        dispatch(studentSlice.actions.setDisplayType(StudentDetailPage.STUDENT_PACKAGE_CLASS_STATUES));
     };
 
     const editPackage = async () => {
@@ -95,6 +93,7 @@ export default function StudentPackage(props: { packageId: string }) {
         EditPackageDialog.setContent(() => () => <EditPackageForm packageId={packageId} />);
         EditPackageDialog.setOpen(true);
     };
+
     const paidIcon = () => {
         return (
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -143,7 +142,7 @@ export default function StudentPackage(props: { packageId: string }) {
         >
             {/* @ts-expect-error - context menu trigger has problem in typing */}
             <ContextMenuTrigger id={packageId}>
-                <div onClick={selectHandler}>
+                <div onClick={selectPackage}>
                     <div className="p-[10px] flex justify-center font-[600]">{course?.courseName}</div>
                     <Sep />
                     <Spacer height={5} />
@@ -224,14 +223,32 @@ export default function StudentPackage(props: { packageId: string }) {
                     </MenuItem>
                     <>
                         {/* @ts-expect-error - context menu trigger has problem in typing */}
-                        <MenuItem className="menu-item" onClick={deletePackage}>
+                        <MenuItem
+                            className="menu-item"
+                            onClick={() => {
+                                setShowDeleteConfirmation(true);
+                            }}
+                        >
                             Delete package
                         </MenuItem>
+                        <Modal
+                            closable={false}
+                            okText={'I do'}
+                            onOk={deletePackage}
+                            onCancel={() => setShowDeleteConfirmation(false)}
+                            onClose={() => setShowDeleteConfirmation(false)}
+                            centered
+                            open={showDeleteConfirmation}
+                        >
+                            <div>Are you sure to delete? Data will be lost and cannot be rolled back</div>
+                        </Modal>
                     </>
-                    @ts-expect-error - context menu trigger has problem in typing
-                    <MenuItem className="menu-item" onClick={showAttendence}>
-                        Show Attendence
-                    </MenuItem>
+                    <>
+                        {/* @ts-expect-error - context menu trigger has problem in typing */}
+                        <MenuItem className="menu-item" onClick={showAttendence}>
+                            Show Attendence
+                        </MenuItem>
+                    </>
                     {!isPaid && (
                         <>
                             {/* @ts-expect-error - context menu trigger has problem in typing */}

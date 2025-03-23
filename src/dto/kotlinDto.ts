@@ -67,6 +67,14 @@ export type TimetableClassEvent = {
     studentPackage: StudentPackageDTO;
 };
 
+export type GetPackageClassStatusResponse = {
+    dateUnixTimestamp: number;
+    classGroup: ClassGroupDTO;
+    cls: ClassDTO;
+    course: CourseDTO;
+    student: StudentDTO;
+};
+
 export type ClassDTO = {
     id: number;
     dayUnixTimestamp: number;

@@ -11,19 +11,20 @@ import classStatuses from '../constant/classStatuses';
 import ViewClassDialog from './ViewClassDialog';
 import getColorForClassStatus from '../utils/getColorForClassStatus';
 import getNumberSuffix from '../utils/getNumberSuffix';
-import { TimetableClassEvent } from '../dto/kotlinDto';
+import { ClassDTO, CourseDTO, StudentDTO } from '../dto/kotlinDto';
 import boxShadow from '../constant/boxShadow';
 
 export default function ViewClassForm(props: {
-    classEvent: TimetableClassEvent;
-    dateUnixTimestamp?: number;
+    student: StudentDTO;
+    cls: ClassDTO;
+    course: CourseDTO;
+    dateUnixTimestamp: number;
     isEditing?: boolean;
 }) {
     const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const [editing, setEditing] = useState(props.isEditing || false);
-    const { classEvent, dateUnixTimestamp } = props;
-    const { class: cls, course } = classEvent;
+    const { cls, course, dateUnixTimestamp, student } = props;
     const formData = useRef({
         min: cls.min,
         class_status: cls.classStatus,
@@ -257,14 +258,14 @@ export default function ViewClassForm(props: {
                                     } else {
                                         dispatch(
                                             StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                                                studentId: classEvent.student.id,
+                                                studentId: student.id,
                                             })
                                         );
                                     }
                                 });
                             dispatch(
                                 StudentThunkAction.getStudentPackages({
-                                    studentId: classEvent.student.id,
+                                    studentId: student.id,
                                 })
                             );
                             ViewClassDialog.setOpen(false);

@@ -9,6 +9,8 @@ import ViewClassForm from './ViewClassForm';
 import ViewClassDialog from './ViewClassDialog';
 import StudentClassCard from './StudentClassCard';
 import dayjs from 'dayjs';
+import useQueryThunk from '../queries/useQueryThunk';
+import { StudentThunkAction } from '../redux/slices/studentSlice';
 
 export default function StudentsClassForDailyTimetableByHour(props: {
     dayUnixTimestamp: number;
@@ -18,6 +20,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
     const classesThisHour =
         useAppSelector(s => s.student.massTimetablePage?.hrUnixTimestampToTimetableClasses?.[currHourUnixTimestamp]) ||
         [];
+    const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom);
     const time = dayjs(currHourUnixTimestamp);
     const isFullHour = time.minute() === 0;
     const timeSlotStyle: React.CSSProperties = {
@@ -28,6 +31,18 @@ export default function StudentsClassForDailyTimetableByHour(props: {
         backgroundColor: 'black',
         position: 'absolute',
     };
+    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
+    const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
+
+    const { query } = useQueryThunk({
+        thunk: StudentThunkAction.getFilteredStudentClassesForDailyTimetable,
+        staleTime: 5000,
+        enabled: false,
+    })({
+        dateUnixTimestamp: dayjs(selectedDate).startOf('day').toDate().getTime(),
+        classRoom: classroom || 'CAUSEWAY_BAY',
+        filter: filter,
+    });
 
     return (
         <div
@@ -92,7 +107,9 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                         onClick={() => {
                                             ViewClassDialog.setContent(() => () => (
                                                 <ViewClassForm
-                                                    classEvent={classEvent}
+                                                    cls={classEvent.class}
+                                                    course={classEvent.course}
+                                                    student={classEvent.student}
                                                     dateUnixTimestamp={dayUnixTimestamp}
                                                 />
                                             ));
@@ -107,7 +124,14 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                         onClick={() => {
                                             DeleteClassDialog.setWidth('sm');
                                             DeleteClassDialog.setContent(() => () => (
-                                                <DeleteClassForm classEvent={classEvent} />
+                                                <DeleteClassForm
+                                                    classGroup={classEvent.classGroup}
+                                                    cls={classEvent.class}
+                                                    course={classEvent.course}
+                                                    onDeletion={async () => {
+                                                        query.refetch();
+                                                    }}
+                                                />
                                             ));
                                             DeleteClassDialog.setOpen(true);
                                         }}
