@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import SectionTitle from '../../../components/SectionTitle';
 import { useEffect, useState } from 'react';
@@ -26,7 +26,6 @@ export default function StudentDetail() {
     const [userOnClickTimestamp, _] = useState(new Date());
     const { studentId } = useParams<{ studentId: string }>();
     const displayType = useAppSelector(s => s.student.studentDetailTimetablePage.activePage);
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [collapseTimetable, setCollapseTimetable] = useState(false);
     const studentDetail = useAppSelector(s => s.student.studentDetailTimetablePage.detail);
@@ -40,7 +39,8 @@ export default function StudentDetail() {
     });
 
     const navAttendences = () => {
-        navigate(`${RouteEnum.STUDENT_INFO}/${studentId}`);
+        const destination = `${RouteEnum.STUDENT_INFO}/${studentId}`;
+        window.open(destination, '_blank', 'noopener,noreferrer');
     };
 
     const navPackageAttendence = () => {
