@@ -47,7 +47,7 @@ export default function PackageClassesStatus() {
     })({ packageId });
     const classInfos = query.data;
     const backToTimetable = () => {
-        dispatch(studentSlice.actions.setDisplayType(StudentDetailPage.STUDENT_TIME_TABLE));
+        dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_TIME_TABLE));
     };
     const { isLoading } = query;
 
@@ -106,6 +106,7 @@ export const ClassStatusRow = (props: {
             <ContextMenuTrigger id={menuId}>
                 <div
                     style={{
+                        cursor: 'pointer',
                         boxShadow: boxShadow.SHADOW_61,
                         display: 'flex',
                         marginBottom: 10,
@@ -163,7 +164,7 @@ export const ClassStatusRow = (props: {
                             ViewClassDialog.setOpen(true);
                         }}
                     >
-                        View Class
+                        View class detail
                     </MenuItem>
                     {/*@ts-expect-error - context menu has problem in typing */}
                     <MenuItem
@@ -182,7 +183,7 @@ export const ClassStatusRow = (props: {
                             ViewClassDialog.setOpen(true);
                         }}
                     >
-                        Edit Class
+                        Edit class
                     </MenuItem>
                     {/*@ts-expect-error - context menu has problem in typing */}
                     <MenuItem
@@ -191,6 +192,7 @@ export const ClassStatusRow = (props: {
                             DeleteClassDialog.setWidth('xs');
                             DeleteClassDialog.setContent(() => () => (
                                 <DeleteClassForm
+                                    deleteSingleClass={true}
                                     classGroup={classGroup}
                                     cls={cls}
                                     course={course}
@@ -218,7 +220,45 @@ export const ClassStatusRow = (props: {
                                 color: 'red',
                             }}
                         >
-                            Delete Class
+                            Delete a class
+                        </span>
+                    </MenuItem>
+                    {/*@ts-expect-error - context menu has problem in typing */}
+                    <MenuItem
+                        className="menu-item"
+                        onClick={() => {
+                            DeleteClassDialog.setWidth('xs');
+                            DeleteClassDialog.setContent(() => () => (
+                                <DeleteClassForm
+                                    deleteSingleClass={false}
+                                    classGroup={classGroup}
+                                    cls={cls}
+                                    course={course}
+                                    onDeletion={async () => {
+                                        const studentId = student.id;
+                                        dispatch(
+                                            StudentThunkAction.getStudentClassesForWeeklyTimetable({
+                                                studentId,
+                                            })
+                                        );
+                                        dispatch(
+                                            StudentThunkAction.getStudentPackages({
+                                                studentId,
+                                            })
+                                        );
+                                        invalidateClassStatues();
+                                    }}
+                                />
+                            ));
+                            DeleteClassDialog.setOpen(true);
+                        }}
+                    >
+                        <span
+                            style={{
+                                color: 'red',
+                            }}
+                        >
+                            Delete a group of classes
                         </span>
                     </MenuItem>
                 </Box>

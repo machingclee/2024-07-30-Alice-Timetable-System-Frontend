@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import boxShadow from '../constant/boxShadow';
 import { Box } from '@mui/material';
-import { useAppSelector } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import DeleteClassForm from './DeleteClassForm';
 import DeleteClassDialog from './DeleteClassDialog';
 import ViewClassForm from './ViewClassForm';
@@ -10,13 +10,21 @@ import ViewClassDialog from './ViewClassDialog';
 import StudentClassCard from './StudentClassCard';
 import dayjs from 'dayjs';
 import useQueryThunk from '../queries/useQueryThunk';
-import { StudentThunkAction } from '../redux/slices/studentSlice';
+import studentSlice, { StudentThunkAction } from '../redux/slices/studentSlice';
+import { useNavigate } from 'react-router-dom';
+import RouteEnum from '../enum/RouteEnum';
+import appSlice from '../redux/slices/appSlice';
+import { Modal } from 'antd';
+import { useState } from 'react';
 
 export default function StudentsClassForDailyTimetableByHour(props: {
     dayUnixTimestamp: number;
     currHourUnixTimestamp: number;
 }) {
     const { currHourUnixTimestamp, dayUnixTimestamp } = props;
+    const [showSwitchStudentDetailPageConfirmation, setShowSwitchStudentDetailPageConfirmation] = useState(false);
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const classesThisHour =
         useAppSelector(s => s.student.massTimetablePage?.hrUnixTimestampToTimetableClasses?.[currHourUnixTimestamp]) ||
         [];
@@ -34,7 +42,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
 
-    const { query } = useQueryThunk({
+    const { invalidation: invalidateFilteredClasses } = useQueryThunk({
         thunk: StudentThunkAction.getFilteredStudentClassesForDailyTimetable,
         staleTime: 5000,
         enabled: false,
@@ -105,6 +113,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                     <MenuItem
                                         className="menu-item"
                                         onClick={() => {
+                                            ViewClassDialog.setWidth('xs');
                                             ViewClassDialog.setContent(() => () => (
                                                 <ViewClassForm
                                                     cls={classEvent.class}
@@ -116,7 +125,59 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                             ViewClassDialog.setOpen(true);
                                         }}
                                     >
-                                        View Class
+                                        View class detail
+                                    </MenuItem>
+                                    {/* @ts-expect-error - ignore for context menu incorrect typing*/}
+                                    <MenuItem
+                                        className="menu-item"
+                                        onClick={() => setShowSwitchStudentDetailPageConfirmation(true)}
+                                    >
+                                        View from student package
+                                    </MenuItem>
+                                    <Modal
+                                        closable={false}
+                                        okText={'I do'}
+                                        onOk={() => {
+                                            const { student, studentPackage } = classEvent;
+
+                                            navigate(`${RouteEnum.DASHBOARD_STUDENTS}/${student.id}`);
+                                            setTimeout(() => {
+                                                dispatch(appSlice.actions.setLoading(true));
+                                            }, 1000);
+                                            setTimeout(() => {
+                                                dispatch(
+                                                    studentSlice.actions.setSelectedPackageId(studentPackage.id + '')
+                                                );
+                                                dispatch(appSlice.actions.setLoading(false));
+                                            }, 1500);
+                                        }}
+                                        onCancel={() => setShowSwitchStudentDetailPageConfirmation(false)}
+                                        onClose={() => setShowSwitchStudentDetailPageConfirmation(false)}
+                                        centered
+                                        open={showSwitchStudentDetailPageConfirmation}
+                                    >
+                                        <div>Do you want to switch to student detail page?</div>
+                                    </Modal>
+                                    {/* @ts-expect-error - ignore for context menu incorrect typing*/}
+                                    <MenuItem
+                                        className={classnames('menu-item')}
+                                        onClick={() => {
+                                            DeleteClassDialog.setWidth('sm');
+                                            DeleteClassDialog.setContent(() => () => (
+                                                <DeleteClassForm
+                                                    deleteSingleClass={false}
+                                                    classGroup={classEvent.classGroup}
+                                                    cls={classEvent.class}
+                                                    course={classEvent.course}
+                                                    onDeletion={async () => {
+                                                        invalidateFilteredClasses();
+                                                    }}
+                                                />
+                                            ));
+                                            DeleteClassDialog.setOpen(true);
+                                        }}
+                                    >
+                                        <span style={{ color: 'red' }}>Delete a class</span>
                                     </MenuItem>
                                     {/* @ts-expect-error - ignore for context menu incorrect typing*/}
                                     <MenuItem
@@ -125,18 +186,19 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                             DeleteClassDialog.setWidth('sm');
                                             DeleteClassDialog.setContent(() => () => (
                                                 <DeleteClassForm
+                                                    deleteSingleClass={false}
                                                     classGroup={classEvent.classGroup}
                                                     cls={classEvent.class}
                                                     course={classEvent.course}
                                                     onDeletion={async () => {
-                                                        query.refetch();
+                                                        invalidateFilteredClasses();
                                                     }}
                                                 />
                                             ));
                                             DeleteClassDialog.setOpen(true);
                                         }}
                                     >
-                                        <span style={{ color: 'red' }}>Delete Class</span>
+                                        <span style={{ color: 'red' }}>Delete a group of classes</span>
                                     </MenuItem>
                                 </Box>
                             </ContextMenu>

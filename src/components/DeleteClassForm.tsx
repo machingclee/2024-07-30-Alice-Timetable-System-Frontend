@@ -11,12 +11,13 @@ import { ClassDTO, ClassGroupDTO, CourseDTO } from '../dto/kotlinDto';
 import Sep from './Sep';
 
 export default function DeleteClassForm(props: {
+    deleteSingleClass: boolean;
     course: CourseDTO;
     classGroup: ClassGroupDTO | null;
     cls: ClassDTO;
     onDeletion: () => Promise<void>;
 }) {
-    const { course, classGroup, cls: class_, onDeletion } = props;
+    const { course, classGroup, cls: class_, onDeletion, deleteSingleClass } = props;
     const courseName = useAppSelector(s => s.class.courses.idToCourse?.[course.id || 0])?.courseName;
     const classAt = dayjs(class_.hourUnixTimestamp).format('HH:mm');
     const classOn = dayjs(class_.dayUnixTimestamp).format('dddd');
@@ -25,11 +26,19 @@ export default function DeleteClassForm(props: {
     const hasDuplicationGroup = classGroup?.id != null;
 
     const deleteClass = async () => {
-        await dispatch(
-            StudentThunkAction.deleteClass({
-                classId: class_.id,
-            })
-        ).unwrap();
+        if (!deleteSingleClass) {
+            await dispatch(
+                StudentThunkAction.deleteClass({
+                    classId: class_.id,
+                })
+            ).unwrap();
+        } else {
+            await dispatch(
+                StudentThunkAction.deleteSingleClass({
+                    classId: class_.id,
+                })
+            ).unwrap();
+        }
         onDeletion?.();
         DeleteClassDialog.setOpen(false);
     };
@@ -78,7 +87,7 @@ export default function DeleteClassForm(props: {
             <Spacer height={10} />
             <Sep />
             <Spacer />
-            {hasDuplicationGroup && (
+            {hasDuplicationGroup && !deleteSingleClass && (
                 <Alert severity="warning">
                     <div>
                         This timeslot is <b>within a group of</b> duplicated classes, do you want to delete all of them?

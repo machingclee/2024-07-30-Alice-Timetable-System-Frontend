@@ -73,7 +73,7 @@ export default function StudentPackage(props: { packageId: string }) {
             })
         ).unwrap();
         if (studentId) {
-            dispatch(studentSlice.actions.setDisplayType(StudentDetailPage.STUDENT_TIME_TABLE));
+            dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_TIME_TABLE));
             dispatch(StudentThunkAction.getStudentPackages({ studentId }));
             dispatch(
                 StudentThunkAction.getStudentClassesForWeeklyTimetable({
@@ -85,7 +85,7 @@ export default function StudentPackage(props: { packageId: string }) {
 
     const showAttendence = async () => {
         dispatch(studentSlice.actions.setSelectedPackageId(packageId || ''));
-        dispatch(studentSlice.actions.setDisplayType(StudentDetailPage.STUDENT_PACKAGE_CLASS_STATUES));
+        dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_PACKAGE_CLASS_STATUES));
     };
 
     const editPackage = async () => {
@@ -246,14 +246,14 @@ export default function StudentPackage(props: { packageId: string }) {
                     <>
                         {/* @ts-expect-error - context menu trigger has problem in typing */}
                         <MenuItem className="menu-item" onClick={showAttendence}>
-                            Show Attendence
+                            Show attendence
                         </MenuItem>
                     </>
                     {!isPaid && (
                         <>
                             {/* @ts-expect-error - context menu trigger has problem in typing */}
                             <MenuItem className="menu-item" onClick={addPaymentDetail}>
-                                Add Payment Detail
+                                Add payment detail
                             </MenuItem>
                         </>
                     )}
@@ -261,7 +261,7 @@ export default function StudentPackage(props: { packageId: string }) {
                         <>
                             {/* @ts-expect-error - context menu trigger has problem in typing */}
                             <MenuItem className="menu-item" onClick={markAsUnPaid}>
-                                Mark as Unpaid
+                                Mark as unpaid
                             </MenuItem>
                         </>
                     )}

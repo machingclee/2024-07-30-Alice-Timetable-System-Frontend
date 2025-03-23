@@ -139,7 +139,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                   >
                                       {!selectedPackageId
                                           ? 'Please First Select a Package'
-                                          : `Add Class(es) at ${dayAndTime}`}
+                                          : `Add class(es) at ${dayAndTime}`}
                                   </MenuItem>
                               </Box>
                           </ContextMenu>
@@ -449,7 +449,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                         ViewClassDialog.setOpen(true);
                                                     }}
                                                 >
-                                                    View Class
+                                                    View class detail
                                                 </MenuItem>
                                             </>
                                             {/*@ts-expect-error - context menu has problem in typing */}
@@ -469,7 +469,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     ViewClassDialog.setOpen(true);
                                                 }}
                                             >
-                                                Edit Class
+                                                Edit class
                                             </MenuItem>
                                             {/*@ts-expect-error - context menu has problem in typing */}
                                             <MenuItem
@@ -486,7 +486,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     DuplicateClassDialog.setOpen(true);
                                                 }}
                                             >
-                                                Duplicate Class
+                                                Duplicate class
                                             </MenuItem>
                                             {disableDuplicate && (
                                                 <>
@@ -501,7 +501,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                             ).unwrap();
                                                         }}
                                                     >
-                                                        Detach from Group
+                                                        Detach from group
                                                     </MenuItem>
                                                 </>
                                             )}
@@ -512,6 +512,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     DeleteClassDialog.setWidth('xs');
                                                     DeleteClassDialog.setContent(() => () => (
                                                         <DeleteClassForm
+                                                            deleteSingleClass={true}
                                                             classGroup={classEvent.classGroup}
                                                             cls={classEvent.class}
                                                             course={classEvent.course}
@@ -540,7 +541,46 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                         color: 'red',
                                                     }}
                                                 >
-                                                    Delete Class
+                                                    Delete a class
+                                                </span>
+                                            </MenuItem>
+                                            {/*@ts-expect-error - context menu has problem in typing */}
+                                            <MenuItem
+                                                className={classnames('menu-item')}
+                                                onClick={() => {
+                                                    DeleteClassDialog.setWidth('xs');
+                                                    DeleteClassDialog.setContent(() => () => (
+                                                        <DeleteClassForm
+                                                            deleteSingleClass={false}
+                                                            classGroup={classEvent.classGroup}
+                                                            cls={classEvent.class}
+                                                            course={classEvent.course}
+                                                            onDeletion={async () => {
+                                                                const studentId = classEvent.student.id;
+                                                                dispatch(
+                                                                    StudentThunkAction.getStudentClassesForWeeklyTimetable(
+                                                                        {
+                                                                            studentId: studentId,
+                                                                        }
+                                                                    )
+                                                                );
+                                                                dispatch(
+                                                                    StudentThunkAction.getStudentPackages({
+                                                                        studentId: studentId,
+                                                                    })
+                                                                );
+                                                            }}
+                                                        />
+                                                    ));
+                                                    DeleteClassDialog.setOpen(true);
+                                                }}
+                                            >
+                                                <span
+                                                    style={{
+                                                        color: 'red',
+                                                    }}
+                                                >
+                                                    Delete a group of classes
                                                 </span>
                                             </MenuItem>
                                             <div

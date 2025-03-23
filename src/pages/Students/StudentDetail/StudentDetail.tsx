@@ -31,6 +31,7 @@ export default function StudentDetail() {
     const [collapseTimetable, setCollapseTimetable] = useState(false);
     const studentDetail = useAppSelector(s => s.student.studentDetailTimetablePage.detail);
     const { firstName, lastName, chineseFirstName, chineseLastName, studentCode } = studentDetail || {};
+    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
 
     useQueryThunk({ thunk: StudentThunkAction.getStudentDetail })({ studentId: studentId || '' });
     useQueryThunk({ thunk: StudentThunkAction.getStudentPackages })({ studentId: studentId || '' });
@@ -40,6 +41,13 @@ export default function StudentDetail() {
 
     const navAttendences = () => {
         navigate(`${RouteEnum.STUDENT_INFO}/${studentId}`);
+    };
+
+    const navPackageAttendence = () => {
+        if (!selectedPackageId) {
+            return;
+        }
+        dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_PACKAGE_CLASS_STATUES));
     };
 
     // To get courses in case the user wants to add a course to the timetable
@@ -85,7 +93,17 @@ export default function StudentDetail() {
                                 <td>{studentCode}</td>
                                 <td style={{ paddingLeft: 10 }}>
                                     <Button block type="default" onClick={navAttendences}>
-                                        Attendences
+                                        Attendences (Sharable)
+                                    </Button>
+                                </td>
+                                <td style={{ paddingLeft: 10 }}>
+                                    <Button
+                                        block
+                                        type="primary"
+                                        onClick={navPackageAttendence}
+                                        disabled={!selectedPackageId}
+                                    >
+                                        Show package attendences
                                     </Button>
                                 </td>
                             </tr>

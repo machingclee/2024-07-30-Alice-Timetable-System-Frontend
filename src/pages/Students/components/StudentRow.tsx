@@ -201,7 +201,7 @@ export default function StudenRow(props: { studentId: string }) {
                             EditStudentDialog.setOpen(true);
                         }}
                     >
-                        Edit Student
+                        Edit student
                     </MenuItem>
                 </Box>
             </ContextMenu>

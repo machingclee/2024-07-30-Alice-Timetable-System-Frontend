@@ -127,7 +127,7 @@ const studentSlice = createSlice({
     name: 'student',
     initialState,
     reducers: {
-        setDisplayType: (state, action: PayloadAction<StudentDetailPage>) => {
+        setStudentDetailPage: (state, action: PayloadAction<StudentDetailPage>) => {
             state.studentDetailTimetablePage.activePage = action.payload;
         },
         setNumberOfClassesInHighlight: (state, action: PayloadAction<number>) => {
@@ -480,9 +480,20 @@ export class StudentThunkAction {
         }
     );
     public static deleteClass = createApiThunk('studentSlice/deleteClass', async (props: DeleteClassRequest, api) => {
-        const res = await apiClient.delete<CustomResponse<{ classId: number }>>(apiRoutes.DELETE_CLASS(props.classId));
+        const res = await apiClient.delete<CustomResponse<{ classId: number }>>(
+            apiRoutes.DELETE_CLASSES_BY_GROUP(props.classId)
+        );
         return processRes(res, api);
     });
+    public static deleteSingleClass = createApiThunk(
+        'studentSlice/deleteSingleClass',
+        async (props: DeleteClassRequest, api) => {
+            const res = await apiClient.delete<CustomResponse<{ classId: number }>>(
+                apiRoutes.DELETE_CLASS_BY_INDIVIDUAL(props.classId)
+            );
+            return processRes(res, api);
+        }
+    );
     public static duplicateClases = createApiThunk(
         'studentSlice/duplicateClases',
         async (props: DuplicateClassRequest, api) => {
@@ -502,7 +513,7 @@ export class StudentThunkAction {
         }
     );
     public static updateClass = createApiThunk('studentSlice/updateClass', async (props: UpdateClassRequest, api) => {
-        const res = await apiClient.put<CustomResponse<undefined>>(apiRoutes.PATCH_UPDATE_CLASS, props);
+        const res = await apiClient.patch<CustomResponse<undefined>>(apiRoutes.PATCH_UPDATE_CLASS, props);
         return processRes(res, api);
     });
 
@@ -572,6 +583,8 @@ registerEffects(studentMiddleware, [
     ...loadingActions(StudentThunkAction.createStudentPackage),
     ...loadingActions(StudentThunkAction.moveStudentEvent),
     ...loadingActions(StudentThunkAction.deletePackage),
+    ...loadingActions(StudentThunkAction.deleteClass),
+    ...loadingActions(StudentThunkAction.deleteSingleClass),
     {
         rejections: [
             StudentThunkAction.getStudentDetail.rejected,
