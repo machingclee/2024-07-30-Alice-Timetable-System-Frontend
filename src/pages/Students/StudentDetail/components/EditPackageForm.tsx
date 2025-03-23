@@ -61,8 +61,7 @@ export default function EditPackageForm(props: { packageId: string }) {
     return (
         <Box
             style={{
-                maxWidth: 400,
-                width: 600,
+                width: '100%',
                 padding: '40px 80px',
                 overflowY: 'auto',
                 paddingBottom: 60,

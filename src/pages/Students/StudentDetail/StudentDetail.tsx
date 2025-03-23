@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import SectionTitle from '../../../components/SectionTitle';
 import { useEffect, useState } from 'react';
@@ -18,10 +18,13 @@ import EditPackageDialog from './components/EditPackageDialog';
 import { FaChevronLeft } from 'react-icons/fa6';
 import { Box } from '@mui/material';
 import useQueryThunk from '../../../queries/useQueryThunk';
+import { Button } from 'antd';
+import RouteEnum from '../../../enum/RouteEnum';
 
 export default function StudentDetail() {
     const [userOnClickTimestamp, _] = useState(new Date());
     const { studentId } = useParams<{ studentId: string }>();
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [collapseTimetable, setCollapseTimetable] = useState(false);
     const studentDetail = useAppSelector(s => s.student.studentDetailTimetablePage.detail);
@@ -32,6 +35,10 @@ export default function StudentDetail() {
     useQueryThunk({ thunk: StudentThunkAction.getStudentClassesForWeeklyTimetable })({
         studentId: studentId || '',
     });
+
+    const navAttendences = () => {
+        navigate(`${RouteEnum.STUDENT_INFO}/${studentId}`);
+    };
 
     // To get courses in case the user wants to add a course to the timetable
 
@@ -74,6 +81,11 @@ export default function StudentDetail() {
                             <tr>
                                 <td>Student Code:</td>
                                 <td>{studentCode}</td>
+                                <td style={{ paddingLeft: 10 }}>
+                                    <Button block type="default" onClick={navAttendences}>
+                                        Attendences
+                                    </Button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

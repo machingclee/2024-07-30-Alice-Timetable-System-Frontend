@@ -1,4 +1,4 @@
-import { Breakpoint, Dialog } from '@mui/material';
+import { Box, Breakpoint, Dialog } from '@mui/material';
 import { OverlayScrollbarsComponent, OverlayScrollbarsComponentRef } from 'overlayscrollbars-react';
 import { useRef, useState } from 'react';
 
@@ -41,18 +41,31 @@ export default class GeneralDialog {
                 }}
                 open={open}
             >
-                <OverlayScrollbarsComponent
-                    style={{ height: '100%', width: '100%', overflowY: 'auto' }}
-                    ref={ref}
-                    options={{
-                        scrollbars: {
-                            autoHide: 'leave',
-                            autoHideDelay: 100,
+                <Box
+                    sx={{
+                        '& .data-overlayscrollbars-contents': {
+                            display: 'flex',
+                            justifyContent: 'center',
                         },
                     }}
                 >
-                    <Content />
-                </OverlayScrollbarsComponent>
+                    <OverlayScrollbarsComponent
+                        style={{
+                            height: '100%',
+                            width: '100%',
+                            overflowY: 'auto',
+                        }}
+                        ref={ref}
+                        options={{
+                            scrollbars: {
+                                autoHide: 'leave',
+                                autoHideDelay: 100,
+                            },
+                        }}
+                    >
+                        <Content />
+                    </OverlayScrollbarsComponent>
+                </Box>
             </Dialog>
         );
     };
