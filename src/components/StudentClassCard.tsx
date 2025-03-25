@@ -25,7 +25,7 @@ export default function StudentClassCard(props: {
     return (
         <Box
             onMouseEnter={() => {
-                setDisplayOnlyClassEventHeight(120);
+                setDisplayOnlyClassEventHeight(180);
             }}
             onMouseLeave={() => {
                 setDisplayOnlyClassEventHeight(null);
@@ -86,11 +86,11 @@ export default function StudentClassCard(props: {
         >
             {/* <div style={{ padding: 4 }}>{classEvent.course_name}</div> */}
             {chiName ? (
-                <div style={{ padding: 4, fontSize: 20 }}>{chiName}</div>
+                <div style={{ padding: 4, fontSize: 18 }}>{chiName}</div>
             ) : (
-                <div style={{ padding: 4, fontSize: 20 }}>{engName}</div>
+                <div style={{ padding: 4, fontSize: 18 }}>{engName}</div>
             )}
-            <div style={{ padding: 4 }}>{classEvent.student.studentCode}</div>
+            <div style={{ padding: 4, fontSize: 16 }}>{classEvent.student.studentCode}</div>
         </Box>
     );
 }

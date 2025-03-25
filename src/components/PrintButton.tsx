@@ -36,9 +36,9 @@ export default forwardRef<PrintHandler, {}>((_, ref) => {
     }, [leftNavigatorCollapsed, printOnPressed]);
 
     return (
-        <div style={{ padding: 30 }}>
+        <div style={{ paddingLeft: 10, paddingRight: 30 }}>
             <IoPrint
-                size={50}
+                size={40}
                 style={{
                     padding: '8px',
                     borderRadius: '100%',

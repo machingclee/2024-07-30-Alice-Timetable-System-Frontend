@@ -33,7 +33,7 @@ export default function RefreshDailyTimetableButton() {
                 },
             }}
         >
-            <RiRefreshLine size={45} onClick={() => refresh()} />
+            <RiRefreshLine size={35} onClick={() => refresh()} />
         </Box>
     );
 }
