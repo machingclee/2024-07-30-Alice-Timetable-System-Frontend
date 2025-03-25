@@ -17,14 +17,14 @@ const gridHeight = 30;
 
 export default function DailyTimetable({
     printButtonRef: printButtonRef,
+    date,
 }: {
     printButtonRef?: React.RefObject<PrintHandler>;
+    date: Date;
 }) {
     const dispatch = useAppDispatch();
     const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
-    const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
     const [hoursColumnGrid, setHoursColumn] = useState<string[]>([]);
-    const selectedDay = useAppSelector(s => s.student.massTimetablePage.selectedDate);
     const hrUnixTimestampOnClick = useAppSelector(
         s => s.student.massTimetablePage.totalClassesInHighlight.hrUnixTimestampOnClick
     );
@@ -32,20 +32,20 @@ export default function DailyTimetable({
 
     // Memoize the half-hour intervals to prevent recalculation on every render
     const oneForthHourIntervals = useMemo(() => {
-        const startOfTodayDayjs = dayjs(selectedDate).startOf('day').add(9, 'hour'); // Start from 9 AM
+        const startOfTodayDayjs = dayjs(date).startOf('day').add(9, 'hour'); // Start from 9 AM
         const intervals: Dayjs[] = [];
         for (let offset = 0; offset < 44; offset++) {
             intervals.push(startOfTodayDayjs.add(offset * 0.25, 'hour'));
         }
         return intervals;
-    }, [selectedDate]);
+    }, [date]);
 
     // Initialize the time grid based on `hrUnixTimestamps`
     useEffect(() => {
         const hoursOfTheDay = oneForthHourIntervals.map(dayJS => String(dayJS.valueOf()));
         setHoursColumn(hoursOfTheDay);
         // Add another thing to listen to: change of the date (like next day and previous day)
-    }, [selectedDay, oneForthHourIntervals]);
+    }, [date, oneForthHourIntervals]);
 
     // Move to the parent component to do one operation of counting the number of classes starting on, progressing through or ending on a particular unix timestamp
     useEffect(() => {
@@ -132,7 +132,7 @@ export default function DailyTimetable({
                             if (!classRoom) {
                                 return;
                             }
-                            const prevDayjs = dayjs(selectedDate).subtract(1, 'day');
+                            const prevDayjs = dayjs(date).subtract(1, 'day');
                             dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDayjs.toDate() }));
                         }}
                     >
@@ -147,14 +147,13 @@ export default function DailyTimetable({
                         </div>
                     </Button>
                     <Spacer width={20} />
-                    <div>{dayjs(selectedDate).format('YYYY-MM-DD (ddd)')}</div>
                     <Spacer width={20} />
                     <Button
                         onClick={() => {
                             if (!classRoom) {
                                 return;
                             }
-                            const nextDayjs = dayjs(selectedDate).add(1, 'day');
+                            const nextDayjs = dayjs(date).add(1, 'day');
                             dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDayjs.toDate() }));
                         }}
                     >
@@ -172,7 +171,7 @@ export default function DailyTimetable({
             </SectionTitle>
 
             <CustomScrollbarContainer
-                style={{ height: 'calc(100vh - 210px)' }}
+                style={{ height: 'calc(100vh - 190px)' }}
                 setPrintContent={(content: HTMLDivElement | null) => {
                     printButtonRef?.current?.setPrintTarget(content);
                 }}
@@ -216,7 +215,7 @@ export default function DailyTimetable({
                                     {hoursColumnGrid.sort().map((hourUnixTimestamp, index) => {
                                         return (
                                             <TimeRow
-                                                key={`${hourUnixTimestamp}-${selectedDate.getTime()}`}
+                                                key={`${hourUnixTimestamp}-${date?.getTime() || 0}`}
                                                 index={index}
                                                 hourUnixTimestamp={hourUnixTimestamp}
                                                 hoursColumnGrid={hoursColumnGrid}
