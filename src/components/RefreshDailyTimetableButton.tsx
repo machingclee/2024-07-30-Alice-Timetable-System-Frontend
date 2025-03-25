@@ -1,19 +1,26 @@
-import dayjs from 'dayjs';
-import useQueryFilteredDailyTimetable from '../queries/useQueryFilteredDailyTimetable';
-import { useAppSelector } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { RiRefreshLine } from 'react-icons/ri';
 import { Box } from '@mui/material';
+import { StudentThunkAction } from '../redux/slices/studentSlice';
 
 export default function RefreshDailyTimetableButton() {
+    const dispatch = useAppDispatch();
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
+    const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom);
 
-    const { invalidation } = useQueryFilteredDailyTimetable({
-        dateUnixTimestamp: dayjs(selectedDate).startOf('day').toDate().getTime(),
-        classRoom: 'PRINCE_EDWARD',
-        filter: filter,
-    });
-
+    const refresh = () => {
+        if (!classroom) {
+            return;
+        }
+        dispatch(
+            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
+                classRoom: classroom,
+                dateUnixTimestamp: selectedDate.getTime(),
+                filter,
+            })
+        );
+    };
     return (
         <Box
             sx={{
@@ -26,7 +33,7 @@ export default function RefreshDailyTimetableButton() {
                 },
             }}
         >
-            <RiRefreshLine size={45} onClick={() => invalidation()} />
+            <RiRefreshLine size={45} onClick={() => refresh()} />
         </Box>
     );
 }

@@ -19,7 +19,8 @@ import { Box } from '@mui/material';
 import statues from '../constant/statues';
 
 export default function RightColumn() {
-    const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
+    const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom);
+    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const summaryOfClassStatues = useAppSelector(s => s.student.massTimetablePage.summaryOfClassStatuses);
     const courseIds = useAppSelector(s => s.class.courses.ids);
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
@@ -40,7 +41,7 @@ export default function RightColumn() {
     const [selectedCourseIds, setSelectedCourseIds] = useState<number[]>([]);
 
     const submit = () => {
-        if (!classRoom) return;
+        if (!classroom) return;
         const newFilter = {
             ...statuesFilter,
             courseIds: selectedCourseIds,
@@ -50,7 +51,7 @@ export default function RightColumn() {
         dispatch(
             StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
                 dateUnixTimestamp: currentTimestamp,
-                classRoom: classRoom,
+                classRoom: classroom,
                 filter: newFilter,
             })
         );
@@ -132,7 +133,7 @@ export default function RightColumn() {
                         onPanelChange={onPanelChange}
                         value={dayjs(selectedDate)}
                         onSelect={(date, _) => {
-                            if (!classRoom) {
+                            if (!classroom) {
                                 return;
                             }
                             const date_ = date.startOf('day').toDate();
@@ -155,7 +156,7 @@ export default function RightColumn() {
                         }}
                     >
                         <FaFilter />
-                        <Spacer width={5} /> Filter By
+                        <Spacer width={15} /> Filter By
                     </div>
                     {/* Filter by Class Status */}
                     <div style={{ marginBottom: '20px' }}>
@@ -278,6 +279,15 @@ export default function RightColumn() {
 
     function onDateChanged(date_: Date) {
         dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: date_ }));
-        dispatch(studentSlice.actions.updateFilterDate(date_));
+        if (!classroom) {
+            return;
+        }
+        dispatch(
+            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
+                dateUnixTimestamp: dayjs(date_).startOf('day').toDate().getTime(),
+                classRoom: classroom,
+                filter,
+            })
+        );
     }
 }

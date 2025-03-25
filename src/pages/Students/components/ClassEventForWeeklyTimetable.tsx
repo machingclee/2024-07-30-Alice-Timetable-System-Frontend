@@ -11,7 +11,7 @@ import DeleteClassForm from '../../../components/DeleteClassForm';
 import DeleteClassDialog from '../../../components/DeleteClassDialog';
 import DuplicateClassDialog from '../../../components/DuplicateClassDialog';
 import DuplicateClassForm from '../../../components/DuplicateClassForm';
-import { StudentThunkAction } from '../../../redux/slices/studentSlice';
+import studentSlice, { StudentThunkAction } from '../../../redux/slices/studentSlice';
 import colors from '../../../constant/colors';
 import Label from '../../../components/Label';
 import ViewClassDialog from '../../../components/ViewClassDialog';
@@ -25,6 +25,7 @@ import MoveConfirmationForm from './MoveConfirmationForm';
 import MoveConfirmationDialog from './MoveConfirmationDialog';
 import useGetStudentIdFromParam from '../../../hooks/useGetStudentIdFromParam';
 import classNames from 'classnames';
+import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
 
 export default function StudentClassForWeeklyTimetable(props: {
     dayUnixTimestamp: number;
@@ -33,6 +34,7 @@ export default function StudentClassForWeeklyTimetable(props: {
     rowIndex: number;
 }) {
     const dispatch = useAppDispatch();
+    const { setURLAnchorTimestamp } = useAnchorTimestamp();
     const { studentId } = useGetStudentIdFromParam();
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const {
@@ -310,6 +312,20 @@ export default function StudentClassForWeeklyTimetable(props: {
                                             canDrag={!!classEvent && isInTheFuture()}
                                         >
                                             <Box
+                                                onDoubleClick={() => {
+                                                    dispatch(
+                                                        studentSlice.actions.setSelectedPackageId({
+                                                            packageId: classEvent.studentPackage.id + '',
+                                                            setURLAnchorTimestamp: setURLAnchorTimestamp,
+                                                            desiredAnchorTimestamp: classEvent.class.hourUnixTimestamp,
+                                                        })
+                                                    );
+                                                    document
+                                                        .querySelector(
+                                                            `#studentpackage_${classEvent.studentPackage.id}`
+                                                        )
+                                                        ?.scrollIntoView({ block: 'start' });
+                                                }}
                                                 sx={{
                                                     '&:hover': { cursor: 'pointer' },
                                                 }}

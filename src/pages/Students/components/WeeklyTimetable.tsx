@@ -13,6 +13,7 @@ import { Button } from 'antd';
 import CustomScrollbarContainer from '../../../components/CustomScrollbarContainer';
 import colors from '../../../constant/colors';
 import FadeIn from '../../../components/FadeIn';
+import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
 
 export type WeeklyCoordinate = {
     [dateUnixTimestamp: string]: {
@@ -20,12 +21,12 @@ export type WeeklyCoordinate = {
     };
 };
 
+const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
+
 export default function WeeklyTimeTable() {
+    const { anchorTimestamp, setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
     const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
-    const courseStartDate = useAppSelector(s => s.student.studentDetailTimetablePage.weeklyClassEvent.selectedDate);
-    const [offset, setOffset] = useState(0);
-
     const getHalfHourTimeIntervalsForDay = useCallback((date: Date) => {
         const dayJS = dayjs(date);
         const start = dayJS.startOf('day').add(9, 'hour');
@@ -37,12 +38,8 @@ export default function WeeklyTimeTable() {
         return intervals;
     }, []);
 
-    const weekStart = dayjs(startOfWeek(courseStartDate, { weekStartsOn: 1 }))
-        .add(offset, 'day')
-        .toDate();
-    const weekEnd = dayjs(endOfWeek(courseStartDate, { weekStartsOn: 1 }))
-        .add(offset, 'day')
-        .toDate();
+    const weekStart = dayjs(startOfWeek(anchorTimestamp, { weekStartsOn: 1 })).toDate();
+    const weekEnd = dayjs(endOfWeek(anchorTimestamp, { weekStartsOn: 1 })).toDate();
     const [timeGrid, setTimegrid] = useState<WeeklyCoordinate>({});
 
     useEffect(() => {
@@ -57,11 +54,18 @@ export default function WeeklyTimeTable() {
         });
         setTimegrid(timetable_);
         // eslint-disable-next-line
-    }, [offset, courseStartDate, selectedPackageId, getHalfHourTimeIntervalsForDay]);
+    }, [anchorTimestamp, selectedPackageId, getHalfHourTimeIntervalsForDay]);
 
-    useEffect(() => {
-        setOffset(0);
-    }, [selectedPackageId]);
+    const goNextWeek = () => {
+        const nextAnchorTimestamp = anchorTimestamp + ONE_DAY_IN_MS * 7;
+        setAnchorTimestamp(nextAnchorTimestamp);
+    };
+    const goPrevWeek = () => {
+        const nextAnchorTimestamp = anchorTimestamp - ONE_DAY_IN_MS * 7;
+        setAnchorTimestamp(nextAnchorTimestamp);
+    };
+
+    useEffect(() => {}, [selectedPackageId, anchorTimestamp]);
 
     const timetableContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -88,12 +92,6 @@ export default function WeeklyTimeTable() {
         };
     }, [adjustWidth]);
 
-    // useEffect(() => {
-    //     if (rightColumnCollapsed) {
-    //         adjustWidth();
-    //     }
-    // }, [rightColumnCollapsed]);
-
     const weekNavigator = () => {
         return (
             <SectionTitle>
@@ -104,11 +102,7 @@ export default function WeeklyTimeTable() {
                         padding: 10,
                     }}
                 >
-                    <Button
-                        onClick={() => {
-                            setOffset(v => v - 7);
-                        }}
-                    >
+                    <Button onClick={goPrevWeek}>
                         <div
                             style={{
                                 display: 'flex',
@@ -127,11 +121,7 @@ export default function WeeklyTimeTable() {
                     <Spacer width={10} />
                     <div>{dayjs(weekEnd).format('YYYY-MM-DD (ddd)')}</div>
                     <Spacer width={20} />
-                    <Button
-                        onClick={() => {
-                            setOffset(v => v + 7);
-                        }}
-                    >
+                    <Button onClick={goNextWeek}>
                         <div
                             style={{
                                 display: 'flex',
