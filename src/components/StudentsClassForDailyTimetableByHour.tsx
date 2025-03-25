@@ -16,11 +16,13 @@ import RouteEnum from '../enum/RouteEnum';
 import appSlice from '../redux/slices/appSlice';
 import { Modal } from 'antd';
 import { useState } from 'react';
+import useAnchorTimestamp from '../hooks/useAnchorTimestamp';
 
 export default function StudentsClassForDailyTimetableByHour(props: {
     dayUnixTimestamp: number;
     currHourUnixTimestamp: number;
 }) {
+    const { setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
     const { currHourUnixTimestamp, dayUnixTimestamp } = props;
     const [showSwitchStudentDetailPageConfirmation, setShowSwitchStudentDetailPageConfirmation] = useState(false);
     const navigate = useNavigate();
@@ -146,7 +148,11 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                             }, 1000);
                                             setTimeout(() => {
                                                 dispatch(
-                                                    studentSlice.actions.setSelectedPackageId(studentPackage.id + '')
+                                                    studentSlice.actions.setSelectedPackageId({
+                                                        packageId: studentPackage.id + '',
+                                                        desiredAnchorTimestamp: classEvent.class.dayUnixTimestamp,
+                                                        setURLAnchorTimestamp: setAnchorTimestamp,
+                                                    })
                                                 );
                                                 dispatch(appSlice.actions.setLoading(false));
                                             }, 1500);

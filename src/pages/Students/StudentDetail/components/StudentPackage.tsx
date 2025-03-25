@@ -17,9 +17,11 @@ import EditPackageForm from './EditPackageForm';
 import classnames from 'classnames';
 import { useState } from 'react';
 import { Modal } from 'antd';
+import useAnchorTimestamp from '../../../../hooks/useAnchorTimestamp';
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;
+    const { anchorTimestamp, setURLAnchorTimestamp } = useAnchorTimestamp();
     const dispatch = useAppDispatch();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
@@ -40,7 +42,12 @@ export default function StudentPackage(props: { packageId: string }) {
 
     const isSelected = selectedPackageId === packageId;
     const selectPackage = () => {
-        dispatch(studentSlice.actions.setSelectedPackageId(packageId || ''));
+        dispatch(
+            studentSlice.actions.setSelectedPackageId({
+                packageId: packageId || '',
+                setURLAnchorTimestamp: setURLAnchorTimestamp,
+            })
+        );
     };
     const addPaymentDetail = async () => {
         AddPaymentDetailDialog.setContent(() => () => <AddPaymentDetailForm packageId={Number(packageId)} />);
@@ -84,7 +91,13 @@ export default function StudentPackage(props: { packageId: string }) {
     };
 
     const showAttendence = async () => {
-        dispatch(studentSlice.actions.setSelectedPackageId(packageId || ''));
+        dispatch(
+            studentSlice.actions.setSelectedPackageId({
+                packageId: packageId || '',
+                desiredAnchorTimestamp: anchorTimestamp,
+                setURLAnchorTimestamp,
+            })
+        );
         dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_PACKAGE_CLASS_STATUES));
     };
 
@@ -125,6 +138,7 @@ export default function StudentPackage(props: { packageId: string }) {
 
     return (
         <div
+            id={`studentpackage_${packageId}`}
             style={{
                 boxShadow: boxShadow.SHADOW_60,
                 maxWidth: 300,

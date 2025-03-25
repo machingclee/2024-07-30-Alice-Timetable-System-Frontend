@@ -16,14 +16,15 @@ import AddPaymentDetailDialog from './components/AddPaymentDetailDialog';
 import ViewClassDialog from '../../../components/ViewClassDialog';
 import EditPackageDialog from './components/EditPackageDialog';
 import { FaChevronLeft } from 'react-icons/fa6';
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import useQueryThunk from '../../../queries/useQueryThunk';
 import { Button } from 'antd';
 import RouteEnum from '../../../enum/RouteEnum';
 import PackageClassesStatus from '../components/PackageClassesStatus';
+import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
 
 export default function StudentDetail() {
-    const [userOnClickTimestamp, _] = useState(new Date());
+    const { setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
     const { studentId } = useParams<{ studentId: string }>();
     const displayType = useAppSelector(s => s.student.studentDetailTimetablePage.activePage);
     const dispatch = useAppDispatch();
@@ -32,11 +33,20 @@ export default function StudentDetail() {
     const { firstName, lastName, chineseFirstName, chineseLastName, studentCode } = studentDetail || {};
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
 
-    useQueryThunk({ thunk: StudentThunkAction.getStudentDetail })({ studentId: studentId || '' });
-    useQueryThunk({ thunk: StudentThunkAction.getStudentPackages })({ studentId: studentId || '' });
-    useQueryThunk({ thunk: StudentThunkAction.getStudentClassesForWeeklyTimetable })({
+    const {
+        query: { isLoading: studentDetailoading },
+    } = useQueryThunk({ thunk: StudentThunkAction.getStudentDetail })({ studentId: studentId || '' });
+    const {
+        query: { isLoading: packageLoading },
+    } = useQueryThunk({ thunk: StudentThunkAction.getStudentPackages })({ studentId: studentId || '' });
+
+    const {
+        query: { isLoading: timetableLoading },
+    } = useQueryThunk({ thunk: StudentThunkAction.getStudentClassesForWeeklyTimetable })({
         studentId: studentId || '',
     });
+
+    const isLoading = studentDetailoading || packageLoading || timetableLoading;
 
     const navAttendences = () => {
         const destination = `${RouteEnum.STUDENT_INFO}/${studentId}`;
@@ -55,15 +65,15 @@ export default function StudentDetail() {
     useQueryThunk({ thunk: CourseThunkAction.getCourses })();
 
     useEffect(() => {
-        dispatch(
-            studentSlice.actions.setWeeklyTimetableSelectedDate({
-                date: userOnClickTimestamp,
-            })
-        );
+        setAnchorTimestamp(new Date().getTime());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
         return () => {
             dispatch(studentSlice.actions.reset());
         };
-    }, [userOnClickTimestamp, dispatch]);
+    }, [dispatch]);
 
     const studentNameDisplay = () => {
         return (
@@ -143,7 +153,12 @@ export default function StudentDetail() {
                         <>
                             <div className="w-full mb-4">{studentNameDisplay()}</div>
                             <div style={{ width: '100%' }}>
-                                {displayType === StudentDetailPage.STUDENT_TIME_TABLE && <WeeklyTimetable />}
+                                {displayType === StudentDetailPage.STUDENT_TIME_TABLE && (
+                                    <>
+                                        {isLoading && <CircularProgress />}
+                                        {!isLoading && <WeeklyTimetable />}
+                                    </>
+                                )}
                                 {displayType === StudentDetailPage.STUDENT_PACKAGE_CLASS_STATUES && (
                                     <PackageClassesStatus />
                                 )}

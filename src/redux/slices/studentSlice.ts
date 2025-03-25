@@ -57,7 +57,7 @@ export type StudentSliceState = {
             idToPackageResponse?: { [id: string]: StudentPackageRepsonse };
         };
         weeklyClassEvent: {
-            selectedDate: Date; // we will list the timetables of the week containing this date (timestamp)
+            timetableAnchorDate: Date; // we will list the timetables of the week containing this date (timestamp)
             hrUnixTimestamps?: string[];
             hrUnixTimestampToClassEvent?: {
                 [id: string]: TimetableClassEvent;
@@ -87,7 +87,7 @@ const initialState: StudentSliceState = {
         studentPackages: {},
         detail: null,
         weeklyClassEvent: {
-            selectedDate: new Date(),
+            timetableAnchorDate: new Date(),
         },
         showAllClassesForOneStudent: true,
     },
@@ -139,9 +139,6 @@ const studentSlice = createSlice({
         setMassTimetableFilter: (state, action: PayloadAction<FilterToGetClassesForDailyTimetable>) => {
             state.massTimetablePage.filter = cloneDeep(action.payload);
         },
-        updateFilterDate: (state, action: PayloadAction<Date>) => {
-            state.massTimetablePage.selectedDate = action.payload;
-        },
         setCourseIds: (state, action: PayloadAction<number[]>) => {
             state.massTimetablePage.filter.courseIds = action.payload;
         },
@@ -157,8 +154,15 @@ const studentSlice = createSlice({
         setClassroom: (state, action: PayloadAction<Classroom>) => {
             state.massTimetablePage.classRoom = action.payload;
         },
-        setSelectedPackageId: (state, action: PayloadAction<string>) => {
-            const packageId = action.payload;
+        setSelectedPackageId: (
+            state,
+            action: PayloadAction<{
+                packageId: string;
+                desiredAnchorTimestamp?: number;
+                setURLAnchorTimestamp: (time: number) => void;
+            }>
+        ) => {
+            const { packageId, setURLAnchorTimestamp, desiredAnchorTimestamp } = action.payload;
             state.studentDetailTimetablePage.selectedPackageId = packageId;
             console.log('packageIdpackageIdpackageId', packageId);
 
@@ -172,16 +176,22 @@ const studentSlice = createSlice({
                 }
             );
             console.log('classesOfSelectedPackage', classesOfSelectedPackage);
-            const availableFirstDate = classesOfSelectedPackage?.sort((a, b) => Number(a) - Number(b)).slice(0, 1)?.[0];
-            if (availableFirstDate) {
-                state.studentDetailTimetablePage.weeklyClassEvent.selectedDate = new Date(Number(availableFirstDate));
+            if (desiredAnchorTimestamp) {
+                setURLAnchorTimestamp(desiredAnchorTimestamp);
+            } else {
+                const availableFirstDate = classesOfSelectedPackage
+                    ?.sort((a, b) => Number(a) - Number(b))
+                    .slice(0, 1)?.[0];
+                if (availableFirstDate) {
+                    setURLAnchorTimestamp(Number(availableFirstDate));
+                }
             }
         },
         setDailyTimetableSelectedDate: (state, action: PayloadAction<{ date: Date }>) => {
             state.massTimetablePage.selectedDate = action.payload.date;
         },
-        setWeeklyTimetableSelectedDate: (state, action: PayloadAction<{ date: Date }>) => {
-            state.studentDetailTimetablePage.weeklyClassEvent.selectedDate = action.payload.date;
+        setWeeklyTimetableAnchorDate: (state, action: PayloadAction<{ date: Date }>) => {
+            state.studentDetailTimetablePage.weeklyClassEvent.timetableAnchorDate = action.payload.date;
         },
         unsetStudentEvent: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
@@ -195,6 +205,9 @@ const studentSlice = createSlice({
         },
         resetStudentDetail: state => {
             state.studentDetailTimetablePage = initialState.studentDetailTimetablePage;
+        },
+        resetMassTimetablerFilter: state => {
+            state.massTimetablePage.filter = initialState.massTimetablePage.filter;
         },
         reset: () => {
             return initialState;
