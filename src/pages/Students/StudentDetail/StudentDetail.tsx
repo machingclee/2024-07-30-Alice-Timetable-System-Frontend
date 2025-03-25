@@ -24,7 +24,7 @@ import PackageClassesStatus from '../components/PackageClassesStatus';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
 
 export default function StudentDetail() {
-    const { setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
+    const { anchorTimestamp, setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
     const { studentId } = useParams<{ studentId: string }>();
     const displayType = useAppSelector(s => s.student.studentDetailTimetablePage.activePage);
     const dispatch = useAppDispatch();
@@ -65,7 +65,11 @@ export default function StudentDetail() {
     useQueryThunk({ thunk: CourseThunkAction.getCourses })();
 
     useEffect(() => {
-        setAnchorTimestamp(new Date().getTime());
+        if (anchorTimestamp) {
+            setAnchorTimestamp(anchorTimestamp);
+        } else {
+            setAnchorTimestamp(new Date().getTime());
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
