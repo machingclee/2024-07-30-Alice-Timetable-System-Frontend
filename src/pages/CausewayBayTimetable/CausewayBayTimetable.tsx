@@ -65,7 +65,7 @@ export default function CausewayBayTimetable() {
                 <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap' }}>
                     {Array(numOfDayToDisplay)
                         .fill(null)
-                        .map(dayOffset => {
+                        .map((_, dayOffset) => {
                             return (
                                 <div style={{ flex: 1 }}>
                                     <PrintableDailyTable date={dayjs(selectedDate).add(dayOffset, 'day').toDate()} />
