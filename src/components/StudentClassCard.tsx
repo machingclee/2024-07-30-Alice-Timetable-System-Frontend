@@ -2,10 +2,7 @@ import { useState } from 'react';
 import { Box } from '@mui/material';
 import colors from '../constant/colors';
 import boxShadow from '../constant/boxShadow';
-import getEnv from '../utils/getEnv';
 import { TimetableClassEvent } from '../dto/kotlinDto';
-
-const FRONTEND_URL = getEnv().VITE_FRONTEND_URL;
 
 export default function StudentClassCard(props: {
     classEvent: TimetableClassEvent;
@@ -29,14 +26,6 @@ export default function StudentClassCard(props: {
             }}
             onMouseLeave={() => {
                 setDisplayOnlyClassEventHeight(null);
-            }}
-            onClick={() => {
-                console.log('FRONTEND_URL:', FRONTEND_URL);
-                console.log('studentId:', classEvent.student.id);
-                window.open(
-                    FRONTEND_URL + `/dashboard/students/${classEvent.student.id}/${currHourUnixTimestamp}`,
-                    '_blank'
-                );
             }}
             style={{
                 border: '1px solid rgba(0,0,0,0.2)',

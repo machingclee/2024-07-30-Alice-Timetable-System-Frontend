@@ -92,7 +92,7 @@ export default function StudenRow(props: { studentId: string }) {
                 }}
             >
                 {/* @ts-expect-error - context menu has probleming in typing */}
-                <ContextMenuTrigger id={contextMenuId}>
+                <ContextMenuTrigger id={contextMenuId} hideOnLeave={true}>
                     <div
                         style={{
                             width: '100%',
@@ -173,7 +173,7 @@ export default function StudenRow(props: { studentId: string }) {
                 <FaChevronRight size={26} color="rgb(100,100,100)" />
             </Box>
             {/* @ts-expect-error - context menu has probleming in typing */}
-            <ContextMenu id={contextMenuId} style={{ zIndex: 10 ** 7 }}>
+            <ContextMenu id={contextMenuId} style={{ zIndex: 10 ** 7 }} hideOnLeave={true}>
                 <Box
                     sx={{
                         backgroundColor: 'white',

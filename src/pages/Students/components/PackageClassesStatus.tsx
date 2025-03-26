@@ -126,6 +126,7 @@ export const ClassStatusRow = (props: {
             </ContextMenuTrigger>
             {/*@ts-expect-error - context menu has problem in typing */}
             <ContextMenu
+                hideOnLeave={true}
                 id={menuId}
                 style={{
                     borderRadius: '8px',

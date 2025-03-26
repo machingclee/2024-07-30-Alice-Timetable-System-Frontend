@@ -13,17 +13,21 @@ import ViewClassDialog from '../ViewClassDialog';
 import TimeRow from './components/TimeRow';
 import { PrintHandler } from '../PrintButton';
 import Interval from '../../utils/Interval';
+import useRefetchMassTimetables from '../../hooks/useRefetchMassTimetables';
 const gridHeight = 30;
 
 export default function DailyTimetable({
     printButtonRef: printButtonRef,
     date,
+    dayOffset,
 }: {
     printButtonRef?: React.RefObject<PrintHandler>;
     date: Date;
+    dayOffset: number;
 }) {
     const dispatch = useAppDispatch();
     const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
+    const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
     const [hoursColumnGrid, setHoursColumn] = useState<string[]>([]);
     const hrUnixTimestampOnClick = useAppSelector(
         s => s.student.massTimetablePage.totalClassesInHighlight.hrUnixTimestampOnClick
@@ -132,8 +136,10 @@ export default function DailyTimetable({
                             if (!classRoom) {
                                 return;
                             }
-                            const prevDayjs = dayjs(date).subtract(1, 'day');
-                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDayjs.toDate() }));
+                            const prevDayjs = dayjs(date).subtract(1 + dayOffset, 'day');
+                            const prevDate = prevDayjs.toDate();
+                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDate }));
+                            refetchMassTimetableAnchoredAt(prevDate.getTime());
                         }}
                     >
                         <div
@@ -147,14 +153,18 @@ export default function DailyTimetable({
                         </div>
                     </Button>
                     <Spacer width={20} />
+                    {dayjs(date).format('YYYY-MM-DD (ddd)')}
                     <Spacer width={20} />
                     <Button
                         onClick={() => {
+                            console.log('classRoomclassRoom', classRoom);
                             if (!classRoom) {
                                 return;
                             }
-                            const nextDayjs = dayjs(date).add(1, 'day');
-                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDayjs.toDate() }));
+                            const nextDayjs = dayjs(date).add(1 - dayOffset, 'day');
+                            const nextDate = nextDayjs.toDate();
+                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDate }));
+                            refetchMassTimetableAnchoredAt(nextDate.getTime());
                         }}
                     >
                         <div
