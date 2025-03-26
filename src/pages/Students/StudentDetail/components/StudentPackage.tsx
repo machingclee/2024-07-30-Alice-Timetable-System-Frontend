@@ -18,6 +18,7 @@ import classnames from 'classnames';
 import { useState } from 'react';
 import { Modal } from 'antd';
 import useAnchorTimestamp from '../../../../hooks/useAnchorTimestamp';
+import documentId from '../../../../constant/documentId';
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;
@@ -138,7 +139,7 @@ export default function StudentPackage(props: { packageId: string }) {
 
     return (
         <div
-            id={`studentpackage_${packageId}`}
+            id={documentId.STUDENT_PACKAGE_ID(packageId)}
             style={{
                 boxShadow: boxShadow.SHADOW_60,
                 maxWidth: 300,
@@ -155,7 +156,7 @@ export default function StudentPackage(props: { packageId: string }) {
             )}
         >
             {/* @ts-expect-error - context menu trigger has problem in typing */}
-            <ContextMenuTrigger id={packageId}>
+            <ContextMenuTrigger id={packageId} hideOnLeave={true}>
                 <div onClick={selectPackage}>
                     <div className="p-[10px] flex justify-center font-[600]">{course?.courseName}</div>
                     <Sep />
@@ -207,6 +208,7 @@ export default function StudentPackage(props: { packageId: string }) {
             </ContextMenuTrigger>
             {/* @ts-expect-error - context menu trigger has problem in typing */}
             <ContextMenu
+                hideOnLeave={true}
                 id={packageId}
                 style={{
                     zIndex: 10 ** 7,

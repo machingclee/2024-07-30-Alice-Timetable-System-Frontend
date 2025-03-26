@@ -11,7 +11,9 @@ const PrinceEdwardIndex = () => {
     useQueryThunk({ thunk: CourseThunkAction.getCourses })();
     useMassTimetablePage('PRINCE_EDWARD');
     useEffect(() => {
-        dispatch(studentSlice.actions.resetMassTimetablerFilter());
+        return () => {
+            dispatch(studentSlice.actions.resetMassTimetablerFilter());
+        };
     }, [dispatch]);
     return <Outlet />;
 };

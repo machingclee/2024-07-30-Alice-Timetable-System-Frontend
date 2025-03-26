@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import timeUtil from '../../../utils/timeUtil';
 import Spacer from '../../Spacer';
@@ -24,7 +24,6 @@ export default function TimeRow({
         s => s.student.massTimetablePage.totalClassesInHighlight.numberOfClassesInHighlight
     );
     const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
-    const [isHovered, setIsHovered] = useState(false);
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
     const dispatch = useAppDispatch();
@@ -37,28 +36,6 @@ export default function TimeRow({
     const handleClose = () => {
         setAnchorEl(null);
     };
-
-    useEffect(() => {
-        const handleMouseEnter = () => {
-            setIsHovered(true);
-        };
-
-        const handleMouseLeave = () => {
-            setIsHovered(false);
-        };
-        const node = timeColumnRef.current;
-        if (node) {
-            node.addEventListener('mouseenter', handleMouseEnter);
-            node.addEventListener('mouseleave', handleMouseLeave);
-        }
-
-        return () => {
-            if (node) {
-                node.removeEventListener('mouseenter', handleMouseEnter);
-                node.removeEventListener('mouseleave', handleMouseLeave);
-            }
-        };
-    }, [anchorEl]);
 
     useEffect(() => {
         if (anchorEl) {
@@ -96,14 +73,6 @@ export default function TimeRow({
                     height: gridHeight,
                 }}
             >
-                <div
-                    style={{
-                        position: 'absolute',
-                        width: '100%',
-                        height: 32,
-                        backgroundColor: isHovered ? '#9e9e9e' : 'transparent',
-                    }}
-                />
                 <BasePopup id={id} open={open} anchor={anchorEl} placement="left" style={{ zIndex: 10 ** 7 }}>
                     <div
                         style={{

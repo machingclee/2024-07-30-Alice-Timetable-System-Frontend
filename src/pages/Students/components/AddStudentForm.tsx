@@ -36,7 +36,10 @@ export default function AddStudentForm() {
     };
 
     const submit = async () => {
-        await dispatch(StudentThunkAction.createStudent(formData.current)).unwrap();
+        const wechatId = formData.current.wechat_id?.trim();
+        await dispatch(
+            StudentThunkAction.createStudent({ ...formData.current, wechat_id: wechatId ? wechatId : null })
+        ).unwrap();
         toastUtil.success('User Created');
         AddUserDialog.setOpen(false);
         dispatch(StudentThunkAction.getStudents());

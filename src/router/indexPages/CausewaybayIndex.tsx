@@ -11,7 +11,9 @@ const CausewaybayIndex = () => {
     useQueryThunk({ thunk: CourseThunkAction.getCourses })();
     useMassTimetablePage('CAUSEWAY_BAY');
     useEffect(() => {
-        dispatch(studentSlice.actions.resetMassTimetablerFilter());
+        return () => {
+            dispatch(studentSlice.actions.resetMassTimetablerFilter());
+        };
     }, [dispatch]);
     return <Outlet />;
 };

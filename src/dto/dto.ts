@@ -28,7 +28,7 @@ export type CreateStudentRequest = {
     school_name: string;
     grade: string;
     phone_number: string;
-    wechat_id?: string;
+    wechat_id?: string | null;
 };
 
 export type UpdateStudentRequest = {
@@ -247,8 +247,15 @@ export type Loggings = {
     created_at_hk: string;
 }[];
 
-export type DailyTimetableRequest = {
+export type PreDailyTimetableRequest = {
     dateUnixTimestamp: number;
+    numOfDays?: number;
+    classRoom: Classroom;
+    filter: FilterToGetClassesForDailyTimetable;
+};
+
+export type DailyTimetableRequest = {
+    dateUnixTimestamps: number[];
     classRoom: Classroom;
     filter: FilterToGetClassesForDailyTimetable;
 };

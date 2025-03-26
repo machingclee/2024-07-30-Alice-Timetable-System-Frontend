@@ -16,6 +16,7 @@ import {
     CreateStudentRequest,
     UpdateStudentRequest,
     FilterToGetClassesForDailyTimetable,
+    PreDailyTimetableRequest,
     DailyTimetableRequest,
 } from '../../dto/dto';
 import normalizeUtil from '../../utils/normalizeUtil';
@@ -32,8 +33,8 @@ import {
     UIStudentDetail,
     GetPackageClassStatusResponse,
 } from '../../dto/kotlinDto';
-import { omit } from 'lodash';
 import statues from '../../constant/statues';
+import dayjs from 'dayjs';
 
 export enum StudentDetailPage {
     STUDENT_TIME_TABLE = 'STUDENT_TIME_TABLE',
@@ -66,6 +67,7 @@ export type StudentSliceState = {
     };
     massTimetablePage: {
         classRoom: Classroom | null;
+        numOfDaysToDisplay: number;
         selectedDate: Date;
         hrUnixTimestampToTimetableClasses: { [id: string]: TimetableClassEvent[] };
         totalClassesInHighlight: {
@@ -92,6 +94,7 @@ const initialState: StudentSliceState = {
         showAllClassesForOneStudent: true,
     },
     massTimetablePage: {
+        numOfDaysToDisplay: 1,
         selectedDate: new Date(),
         classRoom: null,
         hrUnixTimestampToTimetableClasses: {},
@@ -127,6 +130,9 @@ const studentSlice = createSlice({
     name: 'student',
     initialState,
     reducers: {
+        seMassTimetableNumOfDaysToDisplay: (state, action: PayloadAction<number>) => {
+            state.massTimetablePage.numOfDaysToDisplay = action.payload;
+        },
         setStudentDetailPage: (state, action: PayloadAction<StudentDetailPage>) => {
             state.studentDetailTimetablePage.activePage = action.payload;
         },
@@ -207,7 +213,7 @@ const studentSlice = createSlice({
             state.studentDetailTimetablePage = initialState.studentDetailTimetablePage;
         },
         resetMassTimetablerFilter: state => {
-            state.massTimetablePage.filter = initialState.massTimetablePage.filter;
+            state.massTimetablePage = initialState.massTimetablePage;
         },
         reset: () => {
             return initialState;
@@ -349,20 +355,6 @@ const studentSlice = createSlice({
                 });
                 state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestamps = ids;
                 state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent = idToObject;
-            })
-            .addCase(StudentThunkAction.moveStudentEvent.fulfilled, (state, action) => {
-                const { fromTimestamp = '' } = action.payload;
-                // remove the key and value
-                const index = state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestamps?.findIndex(
-                    t => t === String(fromTimestamp)
-                );
-                if (index != null) {
-                    state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestamps?.splice(index, 1);
-                }
-                omit(
-                    state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent,
-                    String(fromTimestamp)
-                );
             });
     },
 });
@@ -433,42 +425,21 @@ export class StudentThunkAction {
         'studentSlice/moveStudentEvent',
         async (
             props: {
-                fromHourTimestamp: string;
+                fromClassEvent: TimetableClassEvent;
                 toDayTimestamp: string;
                 toHourTimestamp: string;
             },
-            api
+            _
         ) => {
-            const { fromHourTimestamp: fromTimestamp, toDayTimestamp, toHourTimestamp } = props;
-            const existingRecord = (api.getState() as RootState).student.studentDetailTimetablePage.weeklyClassEvent
-                .hrUnixTimestampToClassEvent?.[toHourTimestamp];
+            const { fromClassEvent, toDayTimestamp, toHourTimestamp } = props;
 
-            if (existingRecord) {
-                return { type: 'skipped' };
-            }
-
-            const classEvent = lodash.cloneDeep(
-                (api.getState() as RootState).student?.studentDetailTimetablePage.weeklyClassEvent
-                    .hrUnixTimestampToClassEvent?.[fromTimestamp]
-            )!;
-            classEvent.class.dayUnixTimestamp = Number(toDayTimestamp);
-            classEvent.class.hourUnixTimestamp = Number(toHourTimestamp);
-
-            api.dispatch({
-                type: 'student/unsetStudentEvent',
-                payload: { hrTimestamp: fromTimestamp },
-            });
-
-            const classId = classEvent.class.id;
+            const classId = fromClassEvent.class.id;
             const requestBody: MoveClassRequest = {
                 class_id: classId,
                 toDayTimestamp: parseInt(toDayTimestamp),
                 toHourTimestamp: parseInt(toHourTimestamp),
             };
             await apiClient.put<CustomResponse<null>>(apiRoutes.PUT_MOVE_STUDNET_CLASS, requestBody);
-            return {
-                fromTimestamp,
-            };
         }
     );
     public static updateStudent = createApiThunk(
@@ -484,10 +455,21 @@ export class StudentThunkAction {
 
     public static getFilteredStudentClassesForDailyTimetable = createApiThunk(
         'studentSlice/getFilteredStudentClassesForDailyTimetable',
-        async (props: DailyTimetableRequest, api) => {
+        async (props: PreDailyTimetableRequest, api) => {
+            const { classRoom, dateUnixTimestamp, filter, numOfDays = 1 } = props;
+            const timestamps = Array(numOfDays)
+                .fill(null)
+                .map((_, dayOffset) => {
+                    return dayjs(dateUnixTimestamp).add(dayOffset, 'day').toDate().getTime();
+                });
+            const request: DailyTimetableRequest = {
+                classRoom: classRoom,
+                dateUnixTimestamps: timestamps,
+                filter,
+            };
             const res = await apiClient.post<CustomResponse<{ classes: TimetableClassEvent[] }>>(
                 apiRoutes.POST_GET_FILTERED_STUDENT_CLASSES_FOR_DAILY_TIMETABLE,
-                props
+                request
             );
             return processRes(res, api);
         }

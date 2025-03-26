@@ -20,12 +20,12 @@ import { Class_status, Classroom } from '../../../prismaTypes/types';
 import { Droppable } from '../../../components/DragAndDrop/Droppable';
 import { Draggable } from '../../../components/DragAndDrop/Draggable';
 import { TimetableClassEvent as TimetableClassEvent } from '../../../dto/kotlinDto';
-import { store } from '../../../redux/store';
 import MoveConfirmationForm from './MoveConfirmationForm';
 import MoveConfirmationDialog from './MoveConfirmationDialog';
 import useGetStudentIdFromParam from '../../../hooks/useGetStudentIdFromParam';
 import classNames from 'classnames';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
+import documentId from '../../../constant/documentId';
 
 export default function StudentClassForWeeklyTimetable(props: {
     dayUnixTimestamp: number;
@@ -106,7 +106,9 @@ export default function StudentClassForWeeklyTimetable(props: {
                   return (
                       <>
                           {/*@ts-expect-error - context menu has problem in typing */}
-                          <ContextMenuTrigger id={currGridHourUnixTimestamp.toString()}>{children}</ContextMenuTrigger>
+                          <ContextMenuTrigger id={currGridHourUnixTimestamp.toString()} hideOnLeave={true}>
+                              {children}
+                          </ContextMenuTrigger>
                           {/*@ts-expect-error - context menu has problem in typing */}
                           <ContextMenu
                               id={currGridHourUnixTimestamp.toString()}
@@ -154,10 +156,6 @@ export default function StudentClassForWeeklyTimetable(props: {
 
     const updateClassStatus = (status: Class_status) => {
         const cls = classEvent?.class;
-        console.log('studentClass?.class_number:', cls?.classNumber);
-        console.log('studentClass?.min:', cls?.min);
-        console.log('studentClass?.remark:', cls?.remark);
-        console.log('studentClass?.actual_classroom:', cls?.actualClassroom);
         if (cls?.classNumber && cls?.min && cls?.actualClassroom) {
             dispatch(
                 StudentThunkAction.updateClass({
@@ -208,19 +206,11 @@ export default function StudentClassForWeeklyTimetable(props: {
     }, [classEvent, timetable.hrUnixTimestampToClassEvent]);
 
     const onValidDrop = async (fromClassEvent: TimetableClassEvent) => {
-        const fromClassEventHrUnixTimestamp = fromClassEvent.class.hourUnixTimestamp;
-        const fromClz =
-            store.getState().student.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent?.[
-                fromClassEventHrUnixTimestamp
-            ];
-        if (!fromClz) {
-            return;
-        }
         const move = async () => {
             try {
                 await dispatch(
                     StudentThunkAction.moveStudentEvent({
-                        fromHourTimestamp: String(fromClassEventHrUnixTimestamp),
+                        fromClassEvent,
                         toDayTimestamp: String(currGridDayUnixTimestamp),
                         toHourTimestamp: String(currGridHourUnixTimestamp),
                     })
@@ -231,7 +221,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                 MoveConfirmationDialog.setOpen(false);
             }
         };
-        if (fromClz?.classGroup) {
+        if (fromClassEvent.classGroup) {
             MoveConfirmationDialog.setWidth('sm');
             MoveConfirmationDialog.setContent(() => () => <MoveConfirmationForm moveClassesAction={move} />);
             MoveConfirmationDialog.setOpen(true);
@@ -304,7 +294,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                             classEvent && (
                                 <>
                                     {/*@ts-expect-error - context menu has problem in typing */}
-                                    <ContextMenuTrigger id={contextMenuId}>
+                                    <ContextMenuTrigger id={contextMenuId} hideOnLeave={true}>
                                         <Draggable
                                             // eslint-disable-next-line
                                             data={classEvent!!}
@@ -322,7 +312,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     );
                                                     document
                                                         .querySelector(
-                                                            `#studentpackage_${classEvent.studentPackage.id}`
+                                                            `#${documentId.STUDENT_PACKAGE_ID(classEvent.studentPackage.id + '')}`
                                                         )
                                                         ?.scrollIntoView({ block: 'start' });
                                                 }}
@@ -426,6 +416,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                     </ContextMenuTrigger>
                                     {/*@ts-expect-error - context menu has problem in typing */}
                                     <ContextMenu
+                                        hideOnLeave={true}
                                         id={contextMenuId}
                                         style={{
                                             zIndex: 10 ** 7 + 1,
