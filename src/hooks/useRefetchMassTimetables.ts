@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { StudentThunkAction } from '../redux/slices/studentSlice';
 
@@ -13,7 +14,7 @@ export default () => {
         }
         dispatch(
             StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                dateUnixTimestamp: dateTimestamp,
+                anchorTimestamp: dayjs(dateTimestamp).startOf('day').valueOf(),
                 numOfDays: numOfDaysToDisplay,
                 classRoom: classroom,
                 filter: filter,

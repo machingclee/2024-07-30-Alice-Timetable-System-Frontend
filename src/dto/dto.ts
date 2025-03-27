@@ -248,7 +248,7 @@ export type Loggings = {
 }[];
 
 export type PreDailyTimetableRequest = {
-    dateUnixTimestamp: number;
+    anchorTimestamp: number;
     numOfDays?: number;
     classRoom: Classroom;
     filter: FilterToGetClassesForDailyTimetable;

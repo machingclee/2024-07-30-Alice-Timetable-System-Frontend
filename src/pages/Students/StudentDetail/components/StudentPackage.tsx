@@ -208,7 +208,6 @@ export default function StudentPackage(props: { packageId: string }) {
             </ContextMenuTrigger>
             {/* @ts-expect-error - context menu trigger has problem in typing */}
             <ContextMenu
-                hideOnLeave={true}
                 id={packageId}
                 style={{
                     zIndex: 10 ** 7,

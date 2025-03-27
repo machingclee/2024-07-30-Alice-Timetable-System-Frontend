@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import timeUtil from '../../../utils/timeUtil';
 import Spacer from '../../Spacer';
 import StudentsClassForDailyTimetableByHour from '../../StudentsClassForDailyTimetableByHour';
 import React from 'react';
@@ -9,16 +8,7 @@ import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import boxShadow from '../../../constant/boxShadow';
 const gridHeight = 30;
 
-export default function TimeRow({
-    index,
-    hourUnixTimestamp,
-    hoursColumnGrid,
-}: {
-    index: number;
-    hourUnixTimestamp: string;
-    hoursColumnGrid: string[];
-}) {
-    const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
+export default function TimeRow({ rowIndex, hourUnixTimestamp }: { rowIndex: number; hourUnixTimestamp: string }) {
     const timeColumnRef = useRef<HTMLDivElement>(null);
     const numberOfClassesInHighlight = useAppSelector(
         s => s.student.massTimetablePage.totalClassesInHighlight.numberOfClassesInHighlight
@@ -69,7 +59,6 @@ export default function TimeRow({
                 className="droppable"
                 style={{
                     position: 'relative',
-                    zIndex: hoursColumnGrid.length - index + 1,
                     height: gridHeight,
                 }}
             >
@@ -86,10 +75,9 @@ export default function TimeRow({
                         {numberOfClassesInHighlight} {numberOfClassesInHighlight > 1 ? 'classes' : 'class'}
                     </div>
                 </BasePopup>
-
                 <StudentsClassForDailyTimetableByHour
                     key={hourUnixTimestamp}
-                    dayUnixTimestamp={timeUtil.getDayUnixTimestamp(selectedDate.getTime())}
+                    rowIndex={rowIndex}
                     currHourUnixTimestamp={parseInt(hourUnixTimestamp)}
                 />
             </div>

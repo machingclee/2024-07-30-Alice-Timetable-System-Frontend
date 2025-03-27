@@ -16,7 +16,7 @@ export default function RefreshDailyTimetableButton() {
         dispatch(
             StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
                 classRoom: classroom,
-                dateUnixTimestamp: selectedDate.getTime(),
+                anchorTimestamp: selectedDate.getTime(),
                 filter,
             })
         );

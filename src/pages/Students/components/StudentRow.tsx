@@ -173,7 +173,7 @@ export default function StudenRow(props: { studentId: string }) {
                 <FaChevronRight size={26} color="rgb(100,100,100)" />
             </Box>
             {/* @ts-expect-error - context menu has probleming in typing */}
-            <ContextMenu id={contextMenuId} style={{ zIndex: 10 ** 7 }} hideOnLeave={true}>
+            <ContextMenu id={contextMenuId} style={{ zIndex: 10 ** 7 }}>
                 <Box
                     sx={{
                         backgroundColor: 'white',

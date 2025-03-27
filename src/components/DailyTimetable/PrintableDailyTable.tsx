@@ -7,12 +7,14 @@ import ViewClassDialog from '../ViewClassDialog';
 import DeleteClassDialog from '../DeleteClassDialog';
 import AddClassEventDialog from '../AddClassEventDialog';
 import MoveConfirmationDialog from '../../pages/Students/components/MoveConfirmationDialog';
+import Spacer from '../Spacer';
 
 const PrintableDailyTable = (props: { date: Date; dayOffset: number }) => {
     const { date, dayOffset } = props;
     const printButtonRef = useRef<PrintHandler>(null);
     return (
         <>
+            <Spacer />
             <div
                 style={{
                     display: 'flex',

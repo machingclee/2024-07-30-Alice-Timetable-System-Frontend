@@ -145,11 +145,11 @@ const studentSlice = createSlice({
         setMassTimetableFilter: (state, action: PayloadAction<FilterToGetClassesForDailyTimetable>) => {
             state.massTimetablePage.filter = cloneDeep(action.payload);
         },
-        setCourseIds: (state, action: PayloadAction<number[]>) => {
+        setFilterCourseIds: (state, action: PayloadAction<number[]>) => {
             state.massTimetablePage.filter.courseIds = action.payload;
         },
-        addFilterCourseId: (state, action: PayloadAction<number>) => {
-            state.massTimetablePage.filter.courseIds.push(action.payload);
+        updateFilter: (state, action: PayloadAction<Partial<FilterToGetClassesForDailyTimetable>>) => {
+            state.massTimetablePage.filter = { ...state.massTimetablePage.filter, ...action.payload };
         },
         dropFilterCourseId: (state, action: PayloadAction<number>) => {
             const targetId = action.payload;
@@ -456,7 +456,7 @@ export class StudentThunkAction {
     public static getFilteredStudentClassesForDailyTimetable = createApiThunk(
         'studentSlice/getFilteredStudentClassesForDailyTimetable',
         async (props: PreDailyTimetableRequest, api) => {
-            const { classRoom, dateUnixTimestamp, filter, numOfDays = 1 } = props;
+            const { classRoom, anchorTimestamp: dateUnixTimestamp, filter, numOfDays = 1 } = props;
             const timestamps = Array(numOfDays)
                 .fill(null)
                 .map((_, dayOffset) => {

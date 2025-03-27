@@ -6,7 +6,7 @@ import Sep from '../components/Sep';
 import { Button, Calendar } from 'antd';
 import type { CalendarProps } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import studentSlice, { StudentThunkAction } from '../redux/slices/studentSlice';
+import studentSlice from '../redux/slices/studentSlice';
 import { AppDispatch } from '../redux/store';
 import { StatuesFilter } from '../dto/dto';
 import { FaFilter } from 'react-icons/fa';
@@ -17,16 +17,17 @@ import ClassFilterItem from './CourseFilterItem';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { Box } from '@mui/material';
 import statues from '../constant/statues';
+import useRefetchMassTimetables from '../hooks/useRefetchMassTimetables';
 
 export default function RightColumn() {
     const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom);
-    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const summaryOfClassStatues = useAppSelector(s => s.student.massTimetablePage.summaryOfClassStatuses);
     const courseIds = useAppSelector(s => s.class.courses.ids);
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
     const dispatch = useDispatch<AppDispatch>();
     const [filterByClassStatusOnPress, setFilterByClassStatusOnPress] = useState<boolean>(false);
     const [filterByCourseOnPress, setFilterByCourseOnPress] = useState<boolean>(false);
+    const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
 
     const [statuesFilter, setStatuesFilter] = React.useState<StatuesFilter>({
         present: true,
@@ -38,23 +39,9 @@ export default function RightColumn() {
         trial: true,
         reserved: true,
     });
-    const [selectedCourseIds, setSelectedCourseIds] = useState<number[]>([]);
-
-    const submit = () => {
-        if (!classroom) return;
-        const newFilter = {
-            ...statuesFilter,
-            courseIds: selectedCourseIds,
-        };
-        dispatch(studentSlice.actions.setMassTimetableFilter(newFilter));
+    const submitConfirmation = () => {
         const currentTimestamp = dayjs(selectedDate.getTime()).startOf('day').valueOf();
-        dispatch(
-            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                dateUnixTimestamp: currentTimestamp,
-                classRoom: classroom,
-                filter: newFilter,
-            })
-        );
+        refetchMassTimetableAnchoredAt(currentTimestamp);
     };
 
     const onPanelChange = (value: Dayjs, _mode: CalendarProps<Dayjs>['mode']) => {
@@ -63,8 +50,7 @@ export default function RightColumn() {
 
     useEffect(() => {
         if (courseIds) {
-            dispatch(studentSlice.actions.setCourseIds(courseIds));
-            setSelectedCourseIds(courseIds);
+            dispatch(studentSlice.actions.setFilterCourseIds(courseIds));
         }
     }, [courseIds, dispatch]);
 
@@ -137,6 +123,7 @@ export default function RightColumn() {
                                 return;
                             }
                             const date_ = date.startOf('day').toDate();
+                            console.log('this is the date_', date_);
                             onDateChanged(date_);
                         }}
                         style={{ width: 290 }}
@@ -261,13 +248,11 @@ export default function RightColumn() {
                         >
                             {filterByCourseOnPress &&
                                 courseIds?.map(id => {
-                                    return (
-                                        <ClassFilterItem key={id} id={id} setSelectedCourseIds={setSelectedCourseIds} />
-                                    );
+                                    return <ClassFilterItem key={id} id={id} />;
                                 })}
                         </div>
                         <Spacer />
-                        <Button type="primary" block onClick={submit} style={{ marginTop: '10px' }}>
+                        <Button type="primary" block onClick={submitConfirmation} style={{ marginTop: '10px' }}>
                             Confirm
                         </Button>
                         <Spacer height={40} />
@@ -279,15 +264,6 @@ export default function RightColumn() {
 
     function onDateChanged(date_: Date) {
         dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: date_ }));
-        if (!classroom) {
-            return;
-        }
-        dispatch(
-            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                dateUnixTimestamp: dayjs(date_).startOf('day').toDate().getTime(),
-                classRoom: classroom,
-                filter,
-            })
-        );
+        refetchMassTimetableAnchoredAt(dayjs(date_).startOf('day').toDate().getTime());
     }
 }
