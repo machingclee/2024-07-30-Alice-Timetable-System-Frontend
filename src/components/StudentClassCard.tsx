@@ -1,8 +1,9 @@
-import { useState } from 'react';
 import { Box } from '@mui/material';
 import colors from '../constant/colors';
 import boxShadow from '../constant/boxShadow';
 import { TimetableClassEvent } from '../dto/kotlinDto';
+import Sep from './Sep';
+import Spacer from './Spacer';
 
 export default function StudentClassCard(props: {
     classEvent: TimetableClassEvent;
@@ -11,7 +12,6 @@ export default function StudentClassCard(props: {
     classminToHeight?: (min: number) => number;
 }) {
     const { classEvent, currHourUnixTimestamp, dayUnixTimestamp, classminToHeight: minToHeight } = props;
-    const [displayOnlyclassEventHeight, setDisplayOnlyClassEventHeight] = useState<number | null>(null);
     const invalidData = dayUnixTimestamp >= currHourUnixTimestamp;
     const { student } = classEvent;
 
@@ -21,12 +21,6 @@ export default function StudentClassCard(props: {
 
     return (
         <Box
-            onMouseEnter={() => {
-                setDisplayOnlyClassEventHeight(180);
-            }}
-            onMouseLeave={() => {
-                setDisplayOnlyClassEventHeight(null);
-            }}
             style={{
                 border: '1px solid rgba(0,0,0,0.2)',
                 cursor: 'pointer',
@@ -34,15 +28,12 @@ export default function StudentClassCard(props: {
                 boxShadow: boxShadow.SHADOW_62,
                 minHeight: '50px',
                 transition: 'height 0.18s ease-in-out',
-                zIndex: displayOnlyclassEventHeight ? 10 ** 7 : 10 ** 5,
                 overflow: 'hidden',
                 maxWidth: 150,
                 width: 150,
-                height:
-                    displayOnlyclassEventHeight ||
-                    (minToHeight
-                        ? minToHeight(classEvent.studentPackage.min)
-                        : 1.2 * (classEvent.studentPackage.min || 0) - 10),
+                height: minToHeight
+                    ? minToHeight(classEvent.studentPackage.min)
+                    : 1.2 * (classEvent.studentPackage.min || 0) - 10,
                 backgroundColor: (() => {
                     if (invalidData) {
                         return 'red';
@@ -70,16 +61,33 @@ export default function StudentClassCard(props: {
                 borderRadius: 4,
                 fontSize: 14,
                 color: 'white',
-                textAlign: 'center',
+                // textAlign: 'center',
             }}
         >
             {/* <div style={{ padding: 4 }}>{classEvent.course_name}</div> */}
+            <div style={{ padding: 4, backgroundColor: 'rgba(0,0,0,0.6)', fontSize: 12 }}>
+                {classEvent.course.courseName}
+            </div>
             {chiName ? (
-                <div style={{ padding: 4, fontSize: 18 }}>{chiName}</div>
+                <div style={{ padding: 4, fontSize: 16, paddingLeft: 10 }}>{chiName}</div>
             ) : (
-                <div style={{ padding: 4, fontSize: 18 }}>{engName}</div>
+                <div style={{ padding: 4, fontSize: 16 }}>{engName}</div>
             )}
-            <div style={{ padding: 4, fontSize: 16 }}>{classEvent.student.studentCode}</div>
+            <Sep />
+            <Spacer height={5} />
+            <div style={{ fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div
+                    style={{
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        padding: '0px 5px',
+                        borderRadius: 4,
+                        marginLeft: 5,
+                        fontSize: 14,
+                    }}
+                >
+                    {classEvent.student.studentCode}
+                </div>
+            </div>
         </Box>
     );
 }

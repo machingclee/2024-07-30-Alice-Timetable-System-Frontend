@@ -16,7 +16,7 @@ export default (classroom: ClassRoom) => {
     useEffect(() => {
         dispatch(
             StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                dateUnixTimestamp: new Date().getTime(),
+                anchorTimestamp: new Date().getTime(),
                 numOfDays: numOfDaysToDisplay,
                 classRoom: classroom,
                 filter: filter,

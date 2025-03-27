@@ -25,13 +25,14 @@ import useRefetchMassTimetables from '../hooks/useRefetchMassTimetables';
 import MoveClassWarning from '../pages/Students/components/MoveClassWarning';
 
 export default function StudentsClassForDailyTimetableByHour(props: {
-    dayUnixTimestamp: number;
     currHourUnixTimestamp: number;
+    rowIndex: number;
 }) {
     const [moveClassConfirmationOpen, setMoveClassConfirmationOpen] = useState(false);
     const [classToMove, setClassToMove] = useState<TimetableClassEvent | null>(null);
     const { setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
-    const { currHourUnixTimestamp, dayUnixTimestamp } = props;
+    const { currHourUnixTimestamp, rowIndex } = props;
+    const dayUnixTimestamp = dayjs(currHourUnixTimestamp).startOf('day').valueOf();
     const [showSwitchStudentDetailPageConfirmation, setShowSwitchStudentDetailPageConfirmation] = useState(false);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -58,7 +59,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
         staleTime: 5000,
         enabled: false,
     })({
-        dateUnixTimestamp: dayjs(selectedDate).startOf('day').toDate().getTime(),
+        anchorTimestamp: dayjs(selectedDate).startOf('day').toDate().getTime(),
         classRoom: classroom || 'CAUSEWAY_BAY',
         filter: filter,
     });
@@ -70,7 +71,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
             await dispatch(
                 StudentThunkAction.moveStudentEvent({
                     fromClassEvent: fromClass,
-                    toDayTimestamp: String(dayUnixTimestamp),
+                    toDayTimestamp: String(dayjs(currHourUnixTimestamp).startOf('day').valueOf()),
                     toHourTimestamp: String(currHourUnixTimestamp),
                 })
             ).unwrap();
@@ -112,9 +113,8 @@ export default function StudentsClassForDailyTimetableByHour(props: {
     };
 
     return (
-        <>
-            <div style={timeSlotStyle} />
-
+        <div style={{ position: 'relative' }}>
+            <div style={{ ...timeSlotStyle }} />
             <Droppable
                 isValidMove={(_: TimetableClassEvent) => true}
                 onValidDrop={onValidDrop}
@@ -125,14 +125,16 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                     display: 'flex',
                     width: '100%',
                     height: '100%',
-                    zIndex: 1,
                 }}
             >
                 {classesThisHour.map((classEvent, index) => {
                     const contextMenuId = `${classEvent?.student.id || ''}-${classEvent?.class.hourUnixTimestamp || ''}`;
                     return (
                         <Draggable
-                            style={{ left: index * 120 }}
+                            style={{
+                                left: index * 100 + (rowIndex % 2) * 20,
+                                // zIndex: currHourUnixTimestamp,
+                            }}
                             canDrag={new Date().getTime() < currHourUnixTimestamp}
                             data={classEvent}
                             key={classEvent.class.id}
@@ -144,12 +146,11 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                     justifyContent: 'flex-start',
                                     alignItems: 'flex-start',
                                     height: '100%',
-                                    // position: 'relative',
                                 }}
                             >
                                 <div>
                                     {/* @ts-expect-error - ignore for context menu incorrect typing*/}
-                                    <ContextMenuTrigger id={contextMenuId} hideOnLeave={true}>
+                                    <ContextMenuTrigger id={contextMenuId}>
                                         <StudentClassCard
                                             dayUnixTimestamp={dayUnixTimestamp}
                                             currHourUnixTimestamp={currHourUnixTimestamp}
@@ -161,7 +162,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                         />
                                     </ContextMenuTrigger>
                                     {/* @ts-expect-error - ignore for context menu incorrect typing*/}
-                                    <ContextMenu id={contextMenuId} style={{ zIndex: 10 ** 7 }} hideOnLeave={true}>
+                                    <ContextMenu id={contextMenuId} style={{ zIndex: 10 ** 7 }}>
                                         <Box
                                             sx={{
                                                 backgroundColor: 'white',
@@ -290,6 +291,6 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                 })}
                 {moveConfirmationModel()}
             </Droppable>
-        </>
+        </div>
     );
 }

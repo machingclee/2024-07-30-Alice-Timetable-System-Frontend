@@ -416,7 +416,6 @@ export default function StudentClassForWeeklyTimetable(props: {
                                     </ContextMenuTrigger>
                                     {/*@ts-expect-error - context menu has problem in typing */}
                                     <ContextMenu
-                                        hideOnLeave={true}
                                         id={contextMenuId}
                                         style={{
                                             zIndex: 10 ** 7 + 1,

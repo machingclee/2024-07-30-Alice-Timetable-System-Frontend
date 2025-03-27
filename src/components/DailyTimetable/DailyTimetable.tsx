@@ -181,7 +181,7 @@ export default function DailyTimetable({
             </SectionTitle>
 
             <CustomScrollbarContainer
-                style={{ height: 'calc(100vh - 190px)' }}
+                style={{ height: 'calc(100vh - 230px)' }}
                 setPrintContent={(content: HTMLDivElement | null) => {
                     printButtonRef?.current?.setPrintTarget(content);
                 }}
@@ -226,9 +226,8 @@ export default function DailyTimetable({
                                         return (
                                             <TimeRow
                                                 key={`${hourUnixTimestamp}-${date?.getTime() || 0}`}
-                                                index={index}
+                                                rowIndex={index}
                                                 hourUnixTimestamp={hourUnixTimestamp}
-                                                hoursColumnGrid={hoursColumnGrid}
                                             />
                                         );
                                     })}
