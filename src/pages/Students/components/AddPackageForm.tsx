@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { Autocomplete, Box, TextField } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
 import { CourseThunkAction } from '../../../redux/slices/courseSlice';
-import { StudentThunkAction } from '../../../redux/slices/studentSlice';
+import studentSlice, { StudentThunkAction } from '../../../redux/slices/studentSlice';
 import { TimePicker } from 'antd';
 import { CreateStudentPackageRequest } from '../../../dto/dto';
 import dayjs from 'dayjs';
@@ -15,6 +15,8 @@ import { Classroom } from '../../../prismaTypes/types';
 import { IoIosInformationCircle } from 'react-icons/io';
 import colors from '../../../constant/colors';
 import { toast } from 'react-toastify';
+import toastUtil from '../../../utils/toastUtil';
+import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
 
 // Function to convert timestamp to the start of the day (midnight)
 const toMidnight = (timestamp: number): number => {
@@ -31,6 +33,7 @@ const toMidnight = (timestamp: number): number => {
 export default function AddPackageForm(props: { studentId: string; studentName: string }) {
     const { studentName, studentId } = props;
     const [error, _] = useState<Partial<CreateStudentPackageRequest>>({});
+    const { setURLAnchorTimestamp } = useAnchorTimestamp();
     const dispatch = useAppDispatch();
     const classes = useAppSelector(s => s.class.courses);
     const formData = useRef<Partial<CreateStudentPackageRequest>>({});
@@ -42,6 +45,7 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
         const { course_id, min, start_date, num_of_classes, start_time, default_classroom } = formData.current || {};
         console.log('submission data', course_id, min, start_date, num_of_classes, start_time, default_classroom);
         if (!(course_id != null && min != null && num_of_classes != null && default_classroom != null)) {
+            toastUtil.error('None of the field can be empty.');
             return;
         }
         console.log('Hi!');
@@ -63,13 +67,21 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
         };
         console.log('reqBody:', reqBody);
         AddPackageDialog.setOpen(false);
-        await dispatch(StudentThunkAction.createStudentPackage({ req: reqBody, studentId })).unwrap();
-        dispatch(StudentThunkAction.getStudentPackages({ studentId })).unwrap();
+        const result = await dispatch(StudentThunkAction.createStudentPackage({ req: reqBody, studentId })).unwrap();
+        toastUtil.success('Package added successfully.');
+        await dispatch(StudentThunkAction.getStudentPackages({ studentId })).unwrap();
         dispatch(
             StudentThunkAction.getStudentClassesForWeeklyTimetable({
                 studentId,
             })
         ).unwrap();
+        dispatch(
+            studentSlice.actions.setSelectedPackageId({
+                packageId: result.id + '',
+                setURLAnchorTimestamp: setURLAnchorTimestamp,
+                desiredAnchorTimestamp: result.startDate,
+            })
+        );
     };
 
     useEffect(() => {

@@ -3,9 +3,9 @@ import { toast } from 'react-toastify';
 const error = (msg: string) => {
     toast.error(msg, {
         toastId: msg,
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 5000,
-        hideProgressBar: false,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -17,9 +17,9 @@ const error = (msg: string) => {
 const info = (msg: string) => {
     toast.info(msg, {
         toastId: msg,
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 5000,
-        hideProgressBar: false,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -31,9 +31,9 @@ const info = (msg: string) => {
 const success = (msg: string) => {
     toast.success(msg, {
         toastId: msg,
-        position: 'top-center',
+        position: 'top-right',
         autoClose: 5000,
-        hideProgressBar: false,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,

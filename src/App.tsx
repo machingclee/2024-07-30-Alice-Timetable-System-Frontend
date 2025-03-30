@@ -26,7 +26,7 @@ export default function App() {
                 <QueryClientProvider client={queryClient}>
                     <ConfigAxios store={store}>
                         <RouterProvider router={getRouter(store)} />
-                        <ToastContainer limit={1} />
+                        <ToastContainer limit={3} />
                     </ConfigAxios>
                     {/* <ReactQueryDevtools /> */}
                 </QueryClientProvider>

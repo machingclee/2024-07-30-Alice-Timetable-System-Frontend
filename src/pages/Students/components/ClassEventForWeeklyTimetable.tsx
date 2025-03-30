@@ -16,7 +16,7 @@ import colors from '../../../constant/colors';
 import Label from '../../../components/Label';
 import ViewClassDialog from '../../../components/ViewClassDialog';
 import ViewClassForm from '../../../components/ViewClassForm';
-import { Class_status, Classroom } from '../../../prismaTypes/types';
+import { Classroom } from '../../../prismaTypes/types';
 import { Droppable } from '../../../components/DragAndDrop/Droppable';
 import { Draggable } from '../../../components/DragAndDrop/Draggable';
 import { TimetableClassEvent as TimetableClassEvent } from '../../../dto/kotlinDto';
@@ -25,7 +25,7 @@ import MoveConfirmationDialog from './MoveConfirmationDialog';
 import useGetStudentIdFromParam from '../../../hooks/useGetStudentIdFromParam';
 import classNames from 'classnames';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
-import documentId from '../../../constant/documentId';
+import { ClassStatus } from '../../../dto/dto';
 
 export default function StudentClassForWeeklyTimetable(props: {
     dayUnixTimestamp: number;
@@ -154,7 +154,7 @@ export default function StudentClassForWeeklyTimetable(props: {
         [classEvent, selectedPackageId]
     );
 
-    const updateClassStatus = (status: Class_status) => {
+    const updateClassStatus = (status: ClassStatus) => {
         const cls = classEvent?.class;
         if (cls?.classNumber && cls?.min && cls?.actualClassroom) {
             dispatch(
@@ -310,11 +310,6 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                             desiredAnchorTimestamp: classEvent.class.hourUnixTimestamp,
                                                         })
                                                     );
-                                                    document
-                                                        .querySelector(
-                                                            `#${documentId.STUDENT_PACKAGE_ID(classEvent.studentPackage.id + '')}`
-                                                        )
-                                                        ?.scrollIntoView({ block: 'start' });
                                                 }}
                                                 sx={{
                                                     '&:hover': { cursor: 'pointer' },
@@ -326,7 +321,11 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     setClassEventHeight(null);
                                                 }}
                                                 style={{
-                                                    border: classEvent ? '1px solid rgba(0,0,0,0.2)' : '',
+                                                    border: classEvent
+                                                        ? selectedPackageId === classEvent.studentPackage.id + ''
+                                                            ? `2px solid ${colors.BLUE}`
+                                                            : '1px solid rgba(0,0,0,0.2)'
+                                                        : '',
                                                     position: 'absolute',
                                                     boxShadow: classEvent ? boxShadow.SHADOW_62 : '',
                                                     transition: 'height 0.18s ease-in-out',
@@ -371,7 +370,11 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                 }}
                                                 key={currGridHourUnixTimestamp}
                                             >
-                                                <div style={{ position: 'relative' }}>
+                                                <div
+                                                    style={{
+                                                        position: 'relative',
+                                                    }}
+                                                >
                                                     {/* <div
                                                         style={{
                                                             position: 'absolute',
@@ -616,7 +619,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                         'width 0.7s ease-in-out, ' + 'max-height 0.5s ease-in-out',
                                                     overflow: 'hidden',
                                                     maxHeight: classStatusMenuOptionsExpand ? '500px' : '0px',
-                                                    width: classStatusMenuOptionsExpand ? '150px' : '0px',
+                                                    // width: classStatusMenuOptionsExpand ? '150px' : '0px',
                                                 }}
                                             >
                                                 {classStatusMenuOptionsExpand && (
@@ -631,6 +634,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                             <div
                                                                 style={{
                                                                     display: 'flex',
+                                                                    alignItems: 'center',
                                                                     justifyContent: 'space-between',
                                                                 }}
                                                             >

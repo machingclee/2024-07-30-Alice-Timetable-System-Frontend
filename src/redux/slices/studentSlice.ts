@@ -35,6 +35,7 @@ import {
 } from '../../dto/kotlinDto';
 import statues from '../../constant/statues';
 import dayjs from 'dayjs';
+import documentId from '../../constant/documentId';
 
 export enum StudentDetailPage {
     STUDENT_TIME_TABLE = 'STUDENT_TIME_TABLE',
@@ -184,6 +185,9 @@ const studentSlice = createSlice({
             console.log('classesOfSelectedPackage', classesOfSelectedPackage);
             if (desiredAnchorTimestamp) {
                 setURLAnchorTimestamp(desiredAnchorTimestamp);
+                document
+                    .querySelector(`#${documentId.STUDENT_PACKAGE_ID(packageId)}`)
+                    ?.scrollIntoView({ block: 'start' });
             } else {
                 const availableFirstDate = classesOfSelectedPackage
                     ?.sort((a, b) => Number(a) - Number(b))

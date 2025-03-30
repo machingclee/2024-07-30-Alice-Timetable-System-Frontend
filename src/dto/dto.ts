@@ -146,10 +146,20 @@ export type DetachClassRequest = {
     classId: number;
 };
 
+export type ClassStatus =
+    | 'PRESENT'
+    | 'ILLEGIT_ABSENCE'
+    | 'SUSPICIOUS_ABSENCE'
+    | 'LEGIT_ABSENCE'
+    | 'MAKEUP'
+    | 'CHANGE_OF_CLASSROOM'
+    | 'TRIAL'
+    | 'RESERVED';
+
 export type UpdateClassRequest = {
     classId: number;
     min: number;
-    class_status: string;
+    class_status: ClassStatus;
     reason_for_absence: string;
     remark: string;
     actual_classroom: Classroom;

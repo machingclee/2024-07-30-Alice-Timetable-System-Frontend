@@ -101,7 +101,7 @@ export default function LeftNavigation() {
                 <NavButton
                     activeNavigationRegex={pathRegex.USERS}
                     routeEnum={RouteEnum.DASHBOARD_USERS}
-                    title="Users"
+                    title="Staffs"
                 />
                 <Spacer height={10} />
                 <NavButton

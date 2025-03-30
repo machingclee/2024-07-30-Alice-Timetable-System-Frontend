@@ -43,6 +43,7 @@ export type StudentDTO = {
     createdAtHk: string;
     parentId: string;
     gender: GENDER;
+    shouldAutoRenewPackage: boolean;
 };
 
 export type StudentPackageRepsonse = {
