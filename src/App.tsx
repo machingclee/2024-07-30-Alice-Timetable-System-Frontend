@@ -8,6 +8,7 @@ import ConfigAxios from './components/ConfigAxios';
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import toastUtil from './utils/toastUtil';
 import './index.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 const queryClient = new QueryClient({
     queryCache: new QueryCache({
@@ -26,7 +27,7 @@ export default function App() {
                 <QueryClientProvider client={queryClient}>
                     <ConfigAxios store={store}>
                         <RouterProvider router={getRouter(store)} />
-                        <ToastContainer limit={1} />
+                        <ToastContainer limit={5} />
                     </ConfigAxios>
                     {/* <ReactQueryDevtools /> */}
                 </QueryClientProvider>

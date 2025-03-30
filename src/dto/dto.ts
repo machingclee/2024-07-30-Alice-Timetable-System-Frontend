@@ -29,6 +29,7 @@ export type CreateStudentRequest = {
     grade: string;
     phone_number: string;
     wechat_id?: string | null;
+    shouldAutoRenewPackage: boolean;
 };
 
 export type UpdateStudentRequest = {
@@ -146,10 +147,20 @@ export type DetachClassRequest = {
     classId: number;
 };
 
+export type ClassStatus =
+    | 'PRESENT'
+    | 'ILLEGIT_ABSENCE'
+    | 'SUSPICIOUS_ABSENCE'
+    | 'LEGIT_ABSENCE'
+    | 'MAKEUP'
+    | 'CHANGE_OF_CLASSROOM'
+    | 'TRIAL'
+    | 'RESERVED';
+
 export type UpdateClassRequest = {
     classId: number;
     min: number;
-    class_status: string;
+    class_status: ClassStatus;
     reason_for_absence: string;
     remark: string;
     actual_classroom: Classroom;
@@ -258,4 +269,18 @@ export type DailyTimetableRequest = {
     dateUnixTimestamps: number[];
     classRoom: Classroom;
     filter: FilterToGetClassesForDailyTimetable;
+};
+
+export type CreateTicketRequest = {
+    content: string;
+    title: string;
+    solvedBy: string;
+};
+
+export type UpdateTicketRequest = {
+    ticketId: number;
+    content: string;
+    title: string;
+    isSolved: boolean;
+    solvedBy: string;
 };

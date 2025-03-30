@@ -1,6 +1,6 @@
 import { Input } from 'antd';
 import Spacer from './Spacer';
-import { HTMLAttributes } from 'react';
+import { CSSProperties, HTMLAttributes } from 'react';
 import FormInputTitle from './FormInputTitle';
 
 const FormInputField = (props: {
@@ -13,10 +13,11 @@ const FormInputField = (props: {
     onEnter?: () => void;
     isPassword?: boolean;
     remark?: string;
+    style?: CSSProperties;
 }) => {
-    const { onChange, title, error, inputProps, value, onEnter, remark } = props;
+    const { onChange, title, error, inputProps, value, onEnter, remark, style } = props;
     return (
-        <div>
+        <div style={style}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <FormInputTitle>{title + (remark ? ' ' + remark : '')}</FormInputTitle>
                 <Spacer height={1} />

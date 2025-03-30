@@ -19,6 +19,7 @@ import { useState } from 'react';
 import { Modal } from 'antd';
 import useAnchorTimestamp from '../../../../hooks/useAnchorTimestamp';
 import documentId from '../../../../constant/documentId';
+import toastUtil from '../../../../utils/toastUtil';
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;
@@ -88,6 +89,7 @@ export default function StudentPackage(props: { packageId: string }) {
                     studentId,
                 })
             );
+            toastUtil.success('Class deleted successfully.');
         }
     };
 
@@ -255,7 +257,7 @@ export default function StudentPackage(props: { packageId: string }) {
                             centered
                             open={showDeleteConfirmation}
                         >
-                            <div>Are you sure to delete? Data will be lost and cannot be rolled back</div>
+                            <div>Are you sure to delete? Data will be lost and cannot be reverted.</div>
                         </Modal>
                     </>
                     <>

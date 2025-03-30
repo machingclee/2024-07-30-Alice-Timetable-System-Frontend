@@ -20,6 +20,7 @@ const pathRegex = {
     PRINCE_EDWARD_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE)),
     CAUSEWAY_BAY_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE)),
     LOGGING: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_LOGGING)),
+    TICKET: new RegExp(escapeStringRegexp(RouteEnum.DAHSBOARD_TICKETS)),
 };
 
 export default function LeftNavigation() {
@@ -46,6 +47,8 @@ export default function LeftNavigation() {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE));
             } else if (pathRegex.COMPETITIONS.test(pathname)) {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_COMPETITIONS));
+            } else if (pathRegex.TICKET.test(pathname)) {
+                dispatch(appSlice.actions.setActivePath(RouteEnum.DAHSBOARD_TICKETS));
             } else {
                 dispatch(appSlice.actions.setActivePath(pathname));
             }
@@ -101,7 +104,7 @@ export default function LeftNavigation() {
                 <NavButton
                     activeNavigationRegex={pathRegex.USERS}
                     routeEnum={RouteEnum.DASHBOARD_USERS}
-                    title="Users"
+                    title="Staffs"
                 />
                 <Spacer height={10} />
                 <NavButton
@@ -120,6 +123,12 @@ export default function LeftNavigation() {
                     activeNavigationRegex={pathRegex.COMPETITIONS}
                     routeEnum={RouteEnum.DASHBOARD_COMPETITIONS}
                     title="Competitions"
+                />
+                <Spacer height={10} />
+                <NavButton
+                    activeNavigationRegex={pathRegex.TICKET}
+                    routeEnum={RouteEnum.DAHSBOARD_TICKETS}
+                    title="Tickets"
                 />
                 <Spacer height={10} />
                 <NavButton

@@ -17,7 +17,7 @@ import ViewClassDialog from '../../../components/ViewClassDialog';
 import EditPackageDialog from './components/EditPackageDialog';
 import { FaChevronLeft } from 'react-icons/fa6';
 import { Box, CircularProgress } from '@mui/material';
-import useQueryThunk from '../../../queries/useQueryThunk';
+import useQueryThunk from '../../../reactQueries/useQueryThunk';
 import { Button } from 'antd';
 import RouteEnum from '../../../enum/RouteEnum';
 import PackageClassesStatus from '../components/PackageClassesStatus';

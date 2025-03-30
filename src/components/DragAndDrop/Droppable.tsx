@@ -3,6 +3,7 @@ import { ReactNode, HTMLAttributes, useRef, useState, useEffect } from 'react';
 import invariant from 'tiny-invariant';
 import toastUtil from '../../utils/toastUtil';
 import { DraggableDropData } from './Draggable';
+import { Box } from '@mui/material';
 
 enum HoveredState {
     IDLE = 'IDLE',
@@ -13,21 +14,31 @@ enum HoveredState {
 // eslint-disable-next-line
 export const Droppable = <T extends Record<string, any>>(
     props: {
+        idleColor?: string;
+        activeColor?: string;
         children: ReactNode;
         isValidMove: (data: T) => boolean;
         onValidDrop: (data: T) => void | Promise<void>;
     } & HTMLAttributes<HTMLDivElement>
 ) => {
-    const { children, isValidMove, onValidDrop, ..._props } = props;
+    const {
+        idleColor: idleColor = 'white',
+        activeColor = 'yellow',
+        children,
+        isValidMove,
+        onValidDrop,
+        style,
+        ..._props
+    } = props;
     const ref = useRef(null);
     const [hoveredState, setHoveredState] = useState<HoveredState>(HoveredState.IDLE);
     const getColor = () => {
         if (hoveredState === HoveredState.IDLE) {
-            return 'white';
+            return idleColor;
         } else if (hoveredState === HoveredState.INVALID_MOVE) {
             return 'red';
         } else if (hoveredState === HoveredState.VALID_MOVE) {
-            return 'yellow';
+            return activeColor;
         }
     };
 
@@ -82,8 +93,8 @@ export const Droppable = <T extends Record<string, any>>(
     }, [isValidMove, onValidDrop]);
 
     return (
-        <div {..._props} style={{ backgroundColor: getColor() }} ref={ref}>
+        <Box {..._props} style={{ ...style, backgroundColor: getColor() }} ref={ref}>
             {children}
-        </div>
+        </Box>
     );
 };

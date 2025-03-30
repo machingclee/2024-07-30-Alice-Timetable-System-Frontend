@@ -9,7 +9,7 @@ import ViewClassForm from './ViewClassForm';
 import ViewClassDialog from './ViewClassDialog';
 import StudentClassCard from './StudentClassCard';
 import dayjs from 'dayjs';
-import useQueryThunk from '../queries/useQueryThunk';
+import useQueryThunk from '../reactQueries/useQueryThunk';
 import studentSlice, { StudentThunkAction } from '../redux/slices/studentSlice';
 import { useNavigate } from 'react-router-dom';
 import RouteEnum from '../enum/RouteEnum';
@@ -17,7 +17,6 @@ import appSlice from '../redux/slices/appSlice';
 import { Modal } from 'antd';
 import { useState } from 'react';
 import useAnchorTimestamp from '../hooks/useAnchorTimestamp';
-import documentId from '../constant/documentId';
 import { Draggable } from './DragAndDrop/Draggable';
 import { Droppable } from './DragAndDrop/Droppable';
 import { TimetableClassEvent } from '../dto/kotlinDto';
@@ -225,11 +224,6 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                                                 setURLAnchorTimestamp: setAnchorTimestamp,
                                                             })
                                                         );
-                                                        document
-                                                            .querySelector(
-                                                                `#${documentId.STUDENT_PACKAGE_ID(classEvent.studentPackage.id + '')}`
-                                                            )
-                                                            ?.scrollIntoView({ block: 'start' });
                                                         dispatch(appSlice.actions.setLoading(false));
                                                     }, 1500);
                                                 }}

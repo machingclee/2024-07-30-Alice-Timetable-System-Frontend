@@ -1,0 +1,95 @@
+import { Button, Modal } from 'antd';
+import { BaseButtonProps } from 'antd/es/button/button';
+import { CSSProperties, ReactNode, useRef, useState } from 'react';
+
+export type AliceModalProps = {
+    setOnOk: (action: Action) => void;
+    setOkText: (text: string) => void;
+};
+
+type Action = () => void | Promise<void>;
+
+const AliceModalTrigger = (props: {
+    style?: CSSProperties;
+    modalClassName?: string;
+    okButtonType?: BaseButtonProps['type'];
+    modalContent: (props: AliceModalProps) => ReactNode;
+    children: ReactNode;
+}) => {
+    const { okButtonType = 'primary', style } = props;
+    const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false);
+
+    const modalRef = useRef<{
+        okText: string;
+        onOk: Action;
+    }>({
+        okText: 'Ok',
+        onOk: () => {},
+    });
+
+    const setOkText = (text: string) => {
+        modalRef.current.okText = text;
+    };
+    const setOnOk = (action: Action) => {
+        modalRef.current.onOk = action;
+    };
+
+    return (
+        <>
+            <div style={{ display: 'inline-block', ...style }} onClick={() => setOpen(true)}>
+                {props.children}
+            </div>
+            <Modal
+                destroyOnClose={true}
+                styles={{
+                    content: {
+                        maxHeight: '80vh',
+                        maxWidth: '60vw',
+                        overflowY: 'scroll',
+                    },
+                }}
+                open={open}
+                className={props.modalClassName}
+                centered
+                closable={false}
+                onCancel={() => {
+                    setOpen(false);
+                }}
+                onClose={() => {
+                    setOpen(false);
+                }}
+                okText={modalRef.current.okText}
+                footer={[
+                    <Button key="back" onClick={() => setOpen(false)}>
+                        Cancel
+                    </Button>,
+                    <Button
+                        key="submit"
+                        type={okButtonType}
+                        loading={loading}
+                        onClick={async () => {
+                            try {
+                                setLoading(true);
+                                await modalRef.current.onOk();
+                                console.log('closing it');
+                                setOpen(false);
+                            } finally {
+                                setLoading(false);
+                            }
+                        }}
+                    >
+                        {modalRef.current.okText}
+                    </Button>,
+                ]}
+            >
+                {props.modalContent({
+                    setOkText,
+                    setOnOk,
+                })}
+            </Modal>
+        </>
+    );
+};
+
+export default AliceModalTrigger;

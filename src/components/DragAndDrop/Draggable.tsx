@@ -15,11 +15,13 @@ export const Draggable = <T extends Record<string, any>>(
         children: ReactNode;
         data: T;
         canDrag: boolean;
+        dynamicalHeightSetter?: (height: number) => void;
     } & HTMLAttributes<HTMLDivElement>
 ) => {
-    const { children, data, canDrag, style, ..._props } = props;
+    const { children, data, canDrag, style, dynamicalHeightSetter, ..._props } = props;
     const ref = useRef(null);
     const [dragging, setDragging] = useState<boolean>(false);
+    const divRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const el = ref.current;
@@ -34,6 +36,19 @@ export const Draggable = <T extends Record<string, any>>(
             },
         });
     }, [data, canDrag]);
+
+    useEffect(() => {
+        const resizeObserver = new ResizeObserver(entries => {
+            for (const entry of entries) {
+                const height = entry.contentRect.height;
+                dynamicalHeightSetter?.(height);
+            }
+        });
+        resizeObserver.observe(divRef.current as Element);
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, [dynamicalHeightSetter]);
 
     return (
         <Box
@@ -54,7 +69,14 @@ export const Draggable = <T extends Record<string, any>>(
                 ...style,
             }}
         >
-            {children}
+            <div
+                ref={divRef}
+                style={{
+                    width: '100%',
+                }}
+            >
+                {children}
+            </div>
         </Box>
     );
 };
