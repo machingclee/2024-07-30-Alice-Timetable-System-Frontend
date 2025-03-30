@@ -10,6 +10,7 @@ import userSlice, { userMiddleware } from './slices/userSlice';
 import studentSlice, { studentMiddleware } from './slices/studentSlice';
 import classSlice, { classMiddleware } from './slices/courseSlice';
 import competitionSlice, { competitionMiddleware } from './slices/competitionSlice';
+import ticketSlice, { ticketMiddleware } from './slices/ticketSlice';
 
 // a fix following the guide from https://www.youtube.com/watch?v=fjPIJZ1Eokg
 const createNoopStorage = () => {
@@ -46,6 +47,7 @@ export const store = configureStore({
         student: studentSlice.reducer,
         class: classSlice.reducer,
         competition: competitionSlice.reducer,
+        ticket: ticketSlice.reducer,
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({ serializableCheck: false }).concat(
@@ -53,7 +55,8 @@ export const store = configureStore({
             userMiddleware.middleware,
             studentMiddleware.middleware,
             classMiddleware.middleware,
-            competitionMiddleware.middleware
+            competitionMiddleware.middleware,
+            ticketMiddleware.middleware
         ),
 });
 

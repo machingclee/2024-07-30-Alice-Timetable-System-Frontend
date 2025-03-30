@@ -7,8 +7,8 @@ import {
     ThunkDispatch,
     isAnyOf,
 } from '@reduxjs/toolkit';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import toastUtil from './toastUtil';
 
 type Effect = ListenerEffect<any, unknown, ThunkDispatch<unknown, unknown, UnknownAction>, unknown>;
 
@@ -43,17 +43,7 @@ export default (
                     let errMsg = 'Failed';
                     if (msg) {
                         errMsg = msg;
-                        toast.error(errMsg, {
-                            toastId: errMsg,
-                            position: 'top-center',
-                            autoClose: 5000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                            theme: 'colored',
-                        });
+                        toastUtil.error(errMsg);
                     }
                 },
             });

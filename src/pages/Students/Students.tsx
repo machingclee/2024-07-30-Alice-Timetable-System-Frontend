@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import AddStudentDialog from './components/AddStudentDialog';
 import { Button } from 'antd';
-import AddStudentForm from './components/AddStudentForm';
+import AddStudentModal from './components/AddStudentModal';
 import Spacer from '../../components/Spacer';
 import { Box } from '@mui/material';
 import SectionTitle from '../../components/SectionTitle';
@@ -12,17 +11,13 @@ import TextField from '@mui/material/TextField';
 import EditStudentDialog from './components/EditStudentDialog';
 import escapeStringRegexp from 'escape-string-regexp';
 import { StudentThunkAction } from '../../redux/slices/studentSlice';
+import AliceModalTrigger from '../../components/AliceModalTrigger';
 
 export default function Students() {
     const dispatch = useAppDispatch();
     const ids = useAppSelector(s => s.student.students.ids) || [];
     const [filter, setFilter] = useState('');
     const idToStudent = useAppSelector(s => s.student.students.idToStudent);
-    const openAddUserDialog = () => {
-        AddStudentDialog.setWidth('sm');
-        AddStudentDialog.setContent(() => () => <AddStudentForm />);
-        AddStudentDialog.setOpen(true);
-    };
 
     const filterRegex = new RegExp(escapeStringRegexp(filter), 'i');
     const filteredIds = ids.filter(id => {
@@ -106,16 +101,14 @@ export default function Students() {
                     marginTop: 20,
                 }}
             >
-                <Button type="primary" onClick={openAddUserDialog}>
-                    Add Student
-                </Button>
+                <AliceModalTrigger modalContent={AddStudentModal}>
+                    <Button type="primary">Add Student</Button>
+                </AliceModalTrigger>
             </div>
 
             <Spacer />
 
             <Box>{filteredIds?.map(studentId => <StudentRow studentId={studentId} />)}</Box>
-
-            <AddStudentDialog.render />
             <EditStudentDialog.render />
         </div>
     );

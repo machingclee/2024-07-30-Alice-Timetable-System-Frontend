@@ -14,7 +14,6 @@ import AddPackageDialog from './AddPackageDialog';
 import { Classroom } from '../../../prismaTypes/types';
 import { IoIosInformationCircle } from 'react-icons/io';
 import colors from '../../../constant/colors';
-import { toast } from 'react-toastify';
 import toastUtil from '../../../utils/toastUtil';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
 
@@ -195,7 +194,7 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
                 freeSolo
                 onChange={(_, newValue) => {
                     if (Number.isNaN(Number(newValue))) {
-                        toast.error(`${newValue} is an invalid input`);
+                        toastUtil.error(`${newValue} is an invalid input`);
                     } else {
                         updateFormData({ num_of_classes: Number(newValue) });
                     }

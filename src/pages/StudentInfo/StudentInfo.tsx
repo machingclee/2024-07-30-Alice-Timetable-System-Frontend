@@ -1,7 +1,7 @@
 import { Box, Container } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import useQueryThunk from '../../queries/useQueryThunk';
+import useQueryThunk from '../../reactQueries/useQueryThunk';
 import { StudentThunkAction } from '../../redux/slices/studentSlice';
 
 export default function StudentInfo() {

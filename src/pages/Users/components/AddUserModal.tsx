@@ -13,9 +13,9 @@ import { useAppDispatch } from '../../../redux/hooks';
 import { UserThunkAction } from '../../../redux/slices/userSlice';
 import { Box } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
-import { SliceModalProps } from '../../../components/AliceModalTrigger';
+import { AliceModalProps } from '../../../components/AliceModalTrigger';
 
-export default function AddUserModal(props: SliceModalProps) {
+export default function AddUserModal(props: AliceModalProps) {
     const { setOnOk: setOnOk, setOkText } = props;
     const dispatch = useAppDispatch();
     const formData = useRef<Partial<CreateUserRequest>>({

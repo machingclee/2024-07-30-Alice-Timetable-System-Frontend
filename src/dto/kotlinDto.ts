@@ -100,3 +100,11 @@ export type UIStudentDetail = {
     student: StudentDTO;
     studentPackages: UIStudentPackage[];
 };
+
+export type TicketDTO = {
+    id: number;
+    isSolved: boolean;
+    content: string;
+    title: string;
+    solvedBy: string;
+};

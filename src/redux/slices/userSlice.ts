@@ -22,7 +22,7 @@ const initialState: UserSliceState = {
 };
 
 const userSlice = createSlice({
-    name: 'app',
+    name: 'users',
     initialState,
     reducers: {
         reset: () => {

@@ -1,6 +1,6 @@
 import SectionTitle from "../../components/SectionTitle";
 import Spacer from "../../components/Spacer";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import competitionSlice from "../../redux/slices/competitionSlice";
 import { Button } from "antd";

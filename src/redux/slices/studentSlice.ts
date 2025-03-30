@@ -128,7 +128,7 @@ const initialState: StudentSliceState = {
 };
 
 const studentSlice = createSlice({
-    name: 'student',
+    name: 'students',
     initialState,
     reducers: {
         seMassTimetableNumOfDaysToDisplay: (state, action: PayloadAction<number>) => {

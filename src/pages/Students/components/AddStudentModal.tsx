@@ -1,21 +1,22 @@
-import { Button, Select } from 'antd';
+import { Select, Switch } from 'antd';
 import Spacer from '../../../components/Spacer';
 import { useRef } from 'react';
 import { CreateStudentRequest, Gender } from '../../../dto/dto';
 import FormInputField from '../../../components/FormInputField';
 import toastUtil from '../../../utils/toastUtil';
 import SectionTitle from '../../../components/SectionTitle';
-import AddUserDialog from './AddStudentDialog';
 import { useAppDispatch } from '../../../redux/hooks';
 import { Box } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { StudentThunkAction } from '../../../redux/slices/studentSlice';
+import { AliceModalProps } from '../../../components/AliceModalTrigger';
 
 const initialDate = '2015-01-01';
 
-export default function AddStudentForm() {
+export default function AddStudentModal(props: AliceModalProps) {
+    const { setOkText, setOnOk } = props;
     const dispatch = useAppDispatch();
     const formData = useRef<CreateStudentRequest>({
         gender: 'MALE',
@@ -30,6 +31,7 @@ export default function AddStudentForm() {
         school_name: '',
         student_code: '',
         wechat_id: '',
+        shouldAutoRenewPackage: false,
     });
     const update = (update_: Partial<CreateStudentRequest>) => {
         formData.current = { ...formData.current, ...update_ };
@@ -41,27 +43,45 @@ export default function AddStudentForm() {
             StudentThunkAction.createStudent({ ...formData.current, wechat_id: wechatId ? wechatId : null })
         ).unwrap();
         toastUtil.success('User Created');
-        AddUserDialog.setOpen(false);
         dispatch(StudentThunkAction.getStudents());
     };
 
     const dateFormat = 'YYYY-MM-DD';
-
+    setOkText('Ok');
+    setOnOk(submit);
     return (
         <Box
             style={{
-                padding: '40px 80px',
                 overflowY: 'auto',
-                paddingBottom: 60,
             }}
         >
             <SectionTitle>Add Student</SectionTitle>
             <Spacer />
             <FormInputField title="Student Code" onChange={t => update({ student_code: t })} />
-            <FormInputField title="Chinese Surname" onChange={t => update({ chinese_last_name: t })} />
-            <FormInputField title="Chinese Name" onChange={t => update({ chinese_first_name: t })} />
-            <FormInputField title="Last Name" onChange={t => update({ last_name: t })} />
-            <FormInputField title="First Name" onChange={t => update({ first_name: t })} />
+            <div style={{ display: 'flex' }}>
+                <FormInputField title="姓氏" onChange={t => update({ chinese_last_name: t })} />
+                <Spacer />
+                <FormInputField title="名字" onChange={t => update({ chinese_first_name: t })} style={{ flex: 1 }} />
+            </div>
+            <div style={{ display: 'flex', marginTop: -15 }}>
+                <FormInputField title="Last Name" onChange={t => update({ last_name: t })} />
+                <Spacer />
+                <FormInputField title="First Name" onChange={t => update({ first_name: t })} style={{ flex: 1 }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div> Auto Renew Packages?</div>
+                <Spacer />
+                <Switch
+                    size="small"
+                    defaultValue={false}
+                    onChange={checked => {
+                        update({ shouldAutoRenewPackage: checked });
+                    }}
+                />
+            </div>
+
+            <Spacer />
+
             <div style={{ display: 'flex' }}>
                 <div>
                     <FormInputTitle>Gender</FormInputTitle>
@@ -102,11 +122,6 @@ export default function AddStudentForm() {
             />
             <FormInputField title="Phone Number" onChange={t => update({ phone_number: t })} />
             <FormInputField title="Wechat Id (Optional)" onChange={t => update({ wechat_id: t })} />
-            <Spacer />
-            <Spacer />
-            <Button type="primary" block onClick={submit}>
-                Submit
-            </Button>
         </Box>
     );
 }

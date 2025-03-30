@@ -1,7 +1,8 @@
-import { Modal } from 'antd';
-import { ReactNode, useRef, useState } from 'react';
+import { Button, Modal } from 'antd';
+import { BaseButtonProps } from 'antd/es/button/button';
+import { CSSProperties, ReactNode, useRef, useState } from 'react';
 
-export type SliceModalProps = {
+export type AliceModalProps = {
     setOnOk: (action: Action) => void;
     setOkText: (text: string) => void;
 };
@@ -9,10 +10,14 @@ export type SliceModalProps = {
 type Action = () => void | Promise<void>;
 
 const AliceModalTrigger = (props: {
+    style?: CSSProperties;
     modalClassName?: string;
-    modalContent: (props: SliceModalProps) => ReactNode;
+    okButtonType?: BaseButtonProps['type'];
+    modalContent: (props: AliceModalProps) => ReactNode;
     children: ReactNode;
 }) => {
+    const { okButtonType = 'primary', style } = props;
+    const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
 
     const modalRef = useRef<{
@@ -32,10 +37,18 @@ const AliceModalTrigger = (props: {
 
     return (
         <>
-            <div style={{ display: 'inline-block' }} onClick={() => setOpen(true)}>
+            <div style={{ display: 'inline-block', ...style }} onClick={() => setOpen(true)}>
                 {props.children}
             </div>
             <Modal
+                destroyOnClose={true}
+                styles={{
+                    content: {
+                        maxHeight: '80vh',
+                        maxWidth: '60vw',
+                        overflowY: 'scroll',
+                    },
+                }}
                 open={open}
                 className={props.modalClassName}
                 centered
@@ -47,11 +60,28 @@ const AliceModalTrigger = (props: {
                     setOpen(false);
                 }}
                 okText={modalRef.current.okText}
-                onOk={async () => {
-                    await modalRef.current.onOk();
-                    console.log('closing it');
-                    setOpen(false);
-                }}
+                footer={[
+                    <Button key="back" onClick={() => setOpen(false)}>
+                        Cancel
+                    </Button>,
+                    <Button
+                        key="submit"
+                        type={okButtonType}
+                        loading={loading}
+                        onClick={async () => {
+                            try {
+                                setLoading(true);
+                                await modalRef.current.onOk();
+                                console.log('closing it');
+                                setOpen(false);
+                            } finally {
+                                setLoading(false);
+                            }
+                        }}
+                    >
+                        {modalRef.current.okText}
+                    </Button>,
+                ]}
             >
                 {props.modalContent({
                     setOkText,

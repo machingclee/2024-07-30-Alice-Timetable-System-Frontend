@@ -6,7 +6,7 @@ import ClassRow from './components/CourseRow';
 import { Button } from 'antd';
 import AddClassDialog from './components/AddCourseDialog';
 import AddClassForm from './components/AddCourseForm';
-import useQueryThunk from '../../queries/useQueryThunk';
+import useQueryThunk from '../../reactQueries/useQueryThunk';
 
 export default function Courses() {
     const ids = useAppSelector(s => s.class.courses.ids) || [];

@@ -4,6 +4,7 @@ export default {
     POST_CREATE_USER: '/users',
     POST_CREATE_STUDNET: '/students',
     POST_CREATE_COURSE: '/courses',
+    POST_CREATE_TICKET: '/tickets',
     POST_CREATE_STUDENT_CLASS: (studentId: string) => `/students/${studentId}/classes`,
     POST_DUPLICATE_CLASSES: '/students/classes/duplicate',
     POST_CREATE_STUDENT_PACKAGE: (studentId: string) => `/students/${studentId}/packages`,
@@ -12,6 +13,7 @@ export default {
     GET_USERS: '/users',
     GET_STUDENTS: `/students`,
     GET_COURSES: '/courses',
+    GET_TICKETS: '/tickets',
     GET_STUDENT_DETAIL: (studentId: string) => `/students/${studentId}/student-detail`,
     GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE: (studentId: string) => `/students/${studentId}/classes/weekly`,
     GET_STUDENT_PACKAGES: (studentId: string) => `/students/${studentId}/student-packages`,
@@ -25,7 +27,7 @@ export default {
     PUT_MARK_PACAKGE_AS_PAID: '/students/package/mark/paid',
     PUT_MARK_PACAKGE_AS_UNPAID: '/students/package/mark/unpaid',
     PUT_UPDATE_PACKAGE: '/students/package',
-
+    PUT_TICKETS: '/tickets',
     PATCH_UPDATE_COURSE: '/courses',
     PATCH_UPDATE_CLASS: '/students/classes',
 

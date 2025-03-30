@@ -20,6 +20,7 @@ import LogginIndex from './indexPages/LogginIndex.tsx';
 import ClassStatusIndex from './indexPages/ClassStatusIndex.tsx';
 import PrinceEdwardIndex from './indexPages/PrinceEdwardIndex.tsx';
 import StudentInfo from '../pages/StudentInfo/StudentInfo.tsx';
+import Tickets from '../pages/Tickets/Tickets.tsx';
 
 function getRouter(_store: Store) {
     return createBrowserRouter(
@@ -30,6 +31,7 @@ function getRouter(_store: Store) {
                 </Route>
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<Dashboard />}>
+                    <Route path="tickets" element={<Tickets />} />
                     <Route path={'students'} element={<RouteIndex />}>
                         <Route index element={<Students />} />
                         <Route path=":studentId" element={<StudentDetail />} />

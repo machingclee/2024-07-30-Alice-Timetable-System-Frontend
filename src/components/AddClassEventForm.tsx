@@ -15,7 +15,7 @@ import dayjs from 'dayjs';
 import range from '../utils/range';
 import { Classroom } from '../prismaTypes/types';
 import appSlice from '../redux/slices/appSlice';
-import useQueryThunk from '../queries/useQueryThunk';
+import useQueryThunk from '../reactQueries/useQueryThunk';
 
 export default function AddClassEventForm(props: {
     dayUnixTimestamp: number;

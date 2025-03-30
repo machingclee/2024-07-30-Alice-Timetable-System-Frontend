@@ -9,7 +9,7 @@ import ViewClassForm from './ViewClassForm';
 import ViewClassDialog from './ViewClassDialog';
 import StudentClassCard from './StudentClassCard';
 import dayjs from 'dayjs';
-import useQueryThunk from '../queries/useQueryThunk';
+import useQueryThunk from '../reactQueries/useQueryThunk';
 import studentSlice, { StudentThunkAction } from '../redux/slices/studentSlice';
 import { useNavigate } from 'react-router-dom';
 import RouteEnum from '../enum/RouteEnum';

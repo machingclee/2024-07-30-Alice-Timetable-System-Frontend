@@ -29,6 +29,7 @@ export type CreateStudentRequest = {
     grade: string;
     phone_number: string;
     wechat_id?: string | null;
+    shouldAutoRenewPackage: boolean;
 };
 
 export type UpdateStudentRequest = {
@@ -268,4 +269,18 @@ export type DailyTimetableRequest = {
     dateUnixTimestamps: number[];
     classRoom: Classroom;
     filter: FilterToGetClassesForDailyTimetable;
+};
+
+export type CreateTicketRequest = {
+    content: string;
+    title: string;
+    solvedBy: string;
+};
+
+export type UpdateTicketRequest = {
+    ticketId: number;
+    content: string;
+    title: string;
+    isSolved: boolean;
+    solvedBy: string;
 };
