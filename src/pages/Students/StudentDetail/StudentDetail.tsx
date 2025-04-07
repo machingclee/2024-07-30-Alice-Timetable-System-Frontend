@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import SectionTitle from '../../../components/SectionTitle';
 import { useEffect, useState } from 'react';
@@ -22,11 +22,13 @@ import { Button } from 'antd';
 import RouteEnum from '../../../enum/RouteEnum';
 import PackageClassesStatus from '../components/PackageClassesStatus';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
+import { IoMdReturnLeft } from 'react-icons/io';
 
 export default function StudentDetail() {
     const { anchorTimestamp, setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
     const { studentId } = useParams<{ studentId: string }>();
     const displayType = useAppSelector(s => s.student.studentDetailTimetablePage.activePage);
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [collapseTimetable, setCollapseTimetable] = useState(false);
     const studentDetail = useAppSelector(s => s.student.studentDetailTimetablePage.detail);
@@ -83,6 +85,14 @@ export default function StudentDetail() {
         return (
             <>
                 <SectionTitle style={{ fontSize: 30 }}>
+                    <Button
+                        style={{ display: 'flex', alignItems: 'center' }}
+                        onClick={() => navigate(RouteEnum.DASHBOARD_STUDENTS)}
+                    >
+                        <IoMdReturnLeft />
+                        Students
+                    </Button>
+                    <Spacer />
                     <div>{`${chineseLastName} ${chineseFirstName}`}</div>
                     <Spacer width={20} />
                     {`${firstName} ${lastName}`}

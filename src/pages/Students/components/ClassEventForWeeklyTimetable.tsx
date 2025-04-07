@@ -323,11 +323,15 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                 style={{
                                                     border: classEvent
                                                         ? selectedPackageId === classEvent.studentPackage.id + ''
-                                                            ? `2px solid ${colors.BLUE}`
+                                                            ? `1px solid ${colors.ORANGE}`
                                                             : '1px solid rgba(0,0,0,0.2)'
                                                         : '',
                                                     position: 'absolute',
-                                                    boxShadow: classEvent ? boxShadow.SHADOW_62 : '',
+                                                    boxShadow: classEvent
+                                                        ? selectedPackageId === classEvent.studentPackage.id + ''
+                                                            ? boxShadow.SHADOW_25
+                                                            : boxShadow.SHADOW_62
+                                                        : '',
                                                     transition: 'height 0.18s ease-in-out',
                                                     zIndex: classEventHeight ? 10 ** 7 : 10 ** 5,
                                                     overflow: 'hidden',

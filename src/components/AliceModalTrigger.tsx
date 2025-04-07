@@ -5,18 +5,21 @@ import { CSSProperties, ReactNode, useRef, useState } from 'react';
 export type AliceModalProps = {
     setOnOk: (action: Action) => void;
     setOkText: (text: string) => void;
+    setOpen: (open: boolean) => void;
 };
 
 type Action = () => void | Promise<void>;
 
 const AliceModalTrigger = (props: {
     style?: CSSProperties;
+    centered?: boolean;
     modalClassName?: string;
     okButtonType?: BaseButtonProps['type'];
     modalContent: (props: AliceModalProps) => ReactNode;
+    destroyOnClose?: boolean;
     children: ReactNode;
 }) => {
-    const { okButtonType = 'primary', style } = props;
+    const { okButtonType = 'primary', style, destroyOnClose = true, centered = true } = props;
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
 
@@ -35,13 +38,21 @@ const AliceModalTrigger = (props: {
         modalRef.current.onOk = action;
     };
 
+    const ModalContent = () =>
+        props.modalContent({
+            setOkText,
+            setOnOk,
+            setOpen,
+        });
+
     return (
         <>
             <div style={{ display: 'inline-block', ...style }} onClick={() => setOpen(true)}>
                 {props.children}
             </div>
             <Modal
-                destroyOnClose={true}
+                destroyOnClose={destroyOnClose}
+                maskClosable={false}
                 styles={{
                     content: {
                         maxHeight: '80vh',
@@ -51,7 +62,7 @@ const AliceModalTrigger = (props: {
                 }}
                 open={open}
                 className={props.modalClassName}
-                centered
+                centered={centered}
                 closable={false}
                 onCancel={() => {
                     setOpen(false);
@@ -83,10 +94,7 @@ const AliceModalTrigger = (props: {
                     </Button>,
                 ]}
             >
-                {props.modalContent({
-                    setOkText,
-                    setOnOk,
-                })}
+                <ModalContent />
             </Modal>
         </>
     );

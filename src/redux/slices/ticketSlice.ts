@@ -46,6 +46,15 @@ export class TicketThunkAction {
         const res = await apiClient.put<CustomResponse<undefined[]>>(apiRoutes.PUT_TICKETS, props);
         return processRes(res, api);
     });
+
+    public static deleteTicket = createApiThunk(
+        'ticketSlice/deleteTicket',
+        async (props: { ticketId: number }, api) => {
+            const { ticketId } = props;
+            const res = await apiClient.delete<CustomResponse<number>>(apiRoutes.DELETE_TICKET(ticketId));
+            return processRes(res, api);
+        }
+    );
 }
 
 export default ticketSlice;

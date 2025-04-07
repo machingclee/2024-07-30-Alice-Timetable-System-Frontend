@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { TicketThunkAction } from '../../redux/slices/ticketSlice';
 import SectionTitle from '../../components/SectionTitle';
@@ -31,7 +31,7 @@ export default function Tickets() {
         <div>
             <SectionTitle>Tickets</SectionTitle>
             <Spacer />
-            <AliceModalTrigger modalContent={CreateTicketModal}>
+            <AliceModalTrigger destroyOnClose={true} modalContent={CreateTicketModal}>
                 <Button type="primary">Create Ticket</Button>
             </AliceModalTrigger>
             <Spacer />
@@ -48,9 +48,16 @@ export default function Tickets() {
                     }}
                 >
                     <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
-                        <div style={{ display: 'flex', justifyContent: 'center', fontSize: 16 }}>Doing</div>
-
-                        <Spacer height={5} />
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                fontSize: 16,
+                                paddingBottom: 10,
+                            }}
+                        >
+                            Doing
+                        </div>
 
                         <Droppable
                             style={{ flex: 1 }}
@@ -79,11 +86,11 @@ export default function Tickets() {
                                 .filter(t => t.isSolved === false)
                                 .map(ticket => {
                                     return (
-                                        <>
+                                        <React.Fragment key={ticket.id}>
                                             <ResizableDraggableCard ticket={ticket} />
 
                                             <Spacer height={10} />
-                                        </>
+                                        </React.Fragment>
                                     );
                                 })}
                         </Droppable>
@@ -101,7 +108,7 @@ export default function Tickets() {
                     }}
                 >
                     <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
-                        <div style={{ display: 'flex', justifyContent: 'center', fontSize: 16 }}>Done</div>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>Done</div>
 
                         <Spacer height={5} />
 
@@ -147,7 +154,7 @@ export default function Tickets() {
 }
 
 const EditTicketModal = (props: AliceModalProps & { ticket: TicketDTO }) => {
-    const { ticket } = props;
+    const { ticket, setOpen: setTicketEditorOpen } = props;
     const dispatch = useAppDispatch();
     const [ticketData, setTicketData] = useState<TicketDTO>(ticket);
     const updateField = (key: keyof TicketDTO) => (text: string) => setTicketData(data => ({ ...data, [key]: text }));
@@ -168,6 +175,27 @@ const EditTicketModal = (props: AliceModalProps & { ticket: TicketDTO }) => {
 
     return (
         <div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <AliceModalTrigger
+                    modalContent={props => {
+                        props.setOkText('Yes');
+                        props.setOnOk(async () => {
+                            await dispatch(TicketThunkAction.deleteTicket({ ticketId: ticket.id }));
+                            props.setOpen(false);
+                            dispatch(TicketThunkAction.getTickets());
+                        });
+                        return <div>Are you sure to delete?</div>;
+                    }}
+                >
+                    <Button
+                        onClick={() => {
+                            setTicketEditorOpen(false);
+                        }}
+                    >
+                        Delete
+                    </Button>
+                </AliceModalTrigger>
+            </div>
             <FormInputField defaultValue={ticketData.title} title="Title" onChange={e => updateField('title')(e)} />
             <FormInputField
                 defaultValue={ticketData.solvedBy}
@@ -182,6 +210,7 @@ const EditTicketModal = (props: AliceModalProps & { ticket: TicketDTO }) => {
                 placeholder="Please input the ticket content"
                 autoSize={{ minRows: 8, maxRows: 10 }}
             />
+            <Spacer />
         </div>
     );
 };
@@ -193,12 +222,14 @@ const ResizableDraggableCard = (props: { ticket: TicketDTO }) => {
     return (
         <div style={{ position: 'relative', height }}>
             <Draggable
-                dynamicalHeightSetter={setHeight}
+                maxZIndexOnHover={false}
+                dynamicContentHeightSetter={setHeight}
                 data={ticket}
                 canDrag={true}
                 // style={{ background: 'rgba(0,0,0,0)' }}
             >
                 <AliceModalTrigger
+                    destroyOnClose={false}
                     modalContent={props => <EditTicketModal {...props} ticket={ticket} />}
                     style={{ display: 'block' }}
                 >
@@ -206,13 +237,13 @@ const ResizableDraggableCard = (props: { ticket: TicketDTO }) => {
                         style={{
                             cursor: 'pointer',
                             overflow: 'hidden',
-                            borderRadius: 10,
+                            borderRadius: 4,
                             backgroundColor: 'white',
-                            boxShadow: boxShadow.SHADOW_61,
+                            boxShadow: boxShadow.SHADOW_56,
                             padding: 10,
                         }}
                     >
-                        <div style={{ display: 'flex', fontWeight: 600, fontSize: 18 }}>{title}</div>
+                        <div style={{ display: 'flex', fontWeight: 600 }}>{title}</div>
 
                         <div style={{ fontSize: 15 }}>{solvedBy}</div>
                         <Spacer height={5} />
@@ -234,19 +265,23 @@ const ResizableDraggableCard = (props: { ticket: TicketDTO }) => {
     );
 };
 
+const initialState: CreateTicketRequest = {
+    content: '',
+    title: '',
+    solvedBy: '',
+};
+
 const CreateTicketModal = (props: AliceModalProps) => {
     const dispatch = useAppDispatch();
-    const [request, setRequest] = useState<CreateTicketRequest>({
-        content: '',
-        title: '',
-        solvedBy: '',
-    });
+    const [request, setRequest] = useState<CreateTicketRequest>(initialState);
     const submit = async () => {
         await dispatch(TicketThunkAction.createTicket(request));
         dispatch(TicketThunkAction.getTickets());
     };
+
     props.setOnOk(submit);
     props.setOkText('Create');
+
     return (
         <div>
             <FormInputField

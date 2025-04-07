@@ -36,4 +36,5 @@ export default {
     DELETE_CLASSES_BY_GROUP: (classId: number) => `/students/classes/${classId}/group`,
     DELETE_CLASS_BY_INDIVIDUAL: (classId: number) => `/students/classes/${classId}/single`,
     DELETE_STUDENT: (studentId: number) => `/students/delete-student/${studentId}`,
+    DELETE_TICKET: (ticketId: number) => `/tickets/${ticketId}`,
 };
