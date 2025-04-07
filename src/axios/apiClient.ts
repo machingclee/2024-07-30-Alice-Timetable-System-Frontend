@@ -25,8 +25,10 @@ export const configApiClient = (apiClient: AxiosInstance, store: ReduxToolkitSto
         const token = store?.getState()?.auth?.accessToken || '';
         if (token) {
             req.headers['Authorization'] = 'Bearer ' + token;
+            return req;
+        } else {
+            return Promise.reject('Request Cancelled');
         }
-        return req;
     });
 
     apiClient.interceptors.response.use(

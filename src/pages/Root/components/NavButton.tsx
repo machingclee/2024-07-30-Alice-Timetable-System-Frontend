@@ -19,7 +19,7 @@ export default function NavButton(props: { activeNavigationRegex: RegExp; title:
                     navigate(routeEnum);
                 }}
             >
-                <div key={path} style={{ textTransform: 'capitalize', fontSize: 16 }}>
+                <div key={path} style={{ textTransform: 'capitalize' }}>
                     {title}
                 </div>
             </Button>

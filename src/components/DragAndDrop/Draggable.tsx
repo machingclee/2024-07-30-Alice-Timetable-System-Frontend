@@ -12,13 +12,17 @@ export type DraggableDropData<T extends Record<string, any>> = {
 // eslint-disable-next-line
 export const Draggable = <T extends Record<string, any>>(
     props: {
+        maxZIndexOnHover?: boolean;
         children: ReactNode;
         data: T;
         canDrag: boolean;
-        dynamicalHeightSetter?: (height: number) => void;
+        /**
+         * Let the componenet calculate the height and set the parent height
+         */
+        dynamicContentHeightSetter?: (height: number) => void;
     } & HTMLAttributes<HTMLDivElement>
 ) => {
-    const { children, data, canDrag, style, dynamicalHeightSetter, ..._props } = props;
+    const { children, data, canDrag, style, dynamicContentHeightSetter, maxZIndexOnHover = true, ..._props } = props;
     const ref = useRef(null);
     const [dragging, setDragging] = useState<boolean>(false);
     const divRef = useRef<HTMLDivElement>(null);
@@ -41,20 +45,20 @@ export const Draggable = <T extends Record<string, any>>(
         const resizeObserver = new ResizeObserver(entries => {
             for (const entry of entries) {
                 const height = entry.contentRect.height;
-                dynamicalHeightSetter?.(height);
+                dynamicContentHeightSetter?.(height);
             }
         });
         resizeObserver.observe(divRef.current as Element);
         return () => {
             resizeObserver.disconnect();
         };
-    }, [dynamicalHeightSetter]);
+    }, [dynamicContentHeightSetter]);
 
     return (
         <Box
             sx={{
                 zIndex: 1,
-                '&:hover': { zIndex: 10 ** 7 },
+                '&:hover': { zIndex: maxZIndexOnHover ? 10 ** 7 : 1 },
             }}
             ref={ref}
             {..._props}
