@@ -40,8 +40,6 @@ export default function ViewClassForm(props: {
         <Box
             style={{
                 width: '100%',
-                padding: '40px 40px',
-                paddingBottom: 60,
             }}
         >
             <div
@@ -52,7 +50,7 @@ export default function ViewClassForm(props: {
                 }}
             >
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <div style={{ fontWeight: 'bold', fontSize: '23px' }}>{course?.courseName}</div>
+                    <div style={{ fontWeight: 500, fontSize: '23px' }}>{course?.courseName}</div>
                     <Spacer />
                 </div>
                 <div
@@ -88,7 +86,7 @@ export default function ViewClassForm(props: {
                         marginBottom: '10px',
                         marginTop: '5px',
                         fontSize: '16px',
-                        fontWeight: 'bold',
+                        fontWeight: 500,
                     }}
                 >
                     Duration:
@@ -110,14 +108,14 @@ export default function ViewClassForm(props: {
                     />
                 )}
             </div>
-            <Spacer height={5} />
+            <Spacer height={10} />
             <div>
                 <div
                     style={{
                         marginBottom: '10px',
                         marginTop: '5px',
                         fontSize: '16px',
-                        fontWeight: 'bold',
+                        fontWeight: 500,
                     }}
                 >
                     Classroom:
@@ -142,14 +140,14 @@ export default function ViewClassForm(props: {
                     />
                 )}
             </div>
-            <Spacer height={5} />
+            <Spacer height={10} />
             <div>
                 <div
                     style={{
                         marginBottom: '10px',
                         marginTop: '5px',
                         fontSize: '16px',
-                        fontWeight: 'bold',
+                        fontWeight: 500,
                     }}
                 >
                     Class Status:
@@ -201,13 +199,13 @@ export default function ViewClassForm(props: {
                     />
                 )}
             </div>
-            <Spacer height={5} />
+            <Spacer height={10} />
             <div>
                 <div
                     style={{
                         marginBottom: '10px',
                         marginTop: '5px',
-                        fontWeight: 'bold',
+                        fontWeight: 500,
                         fontSize: '16px',
                     }}
                 >

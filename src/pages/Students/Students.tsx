@@ -59,9 +59,15 @@ export default function Students() {
     }, [dispatch]);
 
     return (
-        <div>
+        <div
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: 'calc(100vh - 20px)',
+            }}
+        >
             <SectionTitle style={{ marginBottom: 20 }}>Students</SectionTitle>
-
+            <Spacer />
             {/* Autocomplete for searching students */}
             <Autocomplete
                 freeSolo // Allows arbitrary input not limited to the options
@@ -108,7 +114,15 @@ export default function Students() {
 
             <Spacer />
 
-            <Box>{filteredIds?.map(studentId => <StudentRow studentId={studentId} />)}</Box>
+            <Box
+                style={{
+                    flex: 1,
+                    height: 20,
+                    overflow: 'scroll',
+                }}
+            >
+                {filteredIds?.map(studentId => <StudentRow studentId={studentId} />)}
+            </Box>
             <EditStudentDialog.render />
         </div>
     );

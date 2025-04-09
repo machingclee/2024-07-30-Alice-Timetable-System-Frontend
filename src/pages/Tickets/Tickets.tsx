@@ -108,7 +108,7 @@ export default function Tickets() {
                     }}
                 >
                     <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>Done</div>
+                        <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 5 }}>Done</div>
 
                         <Spacer height={5} />
 

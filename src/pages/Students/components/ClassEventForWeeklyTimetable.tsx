@@ -1,6 +1,5 @@
 import classnames from 'classnames';
 import dayjs from 'dayjs';
-import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import boxShadow from '../../../constant/boxShadow';
 import { Box } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
@@ -26,6 +25,7 @@ import useGetStudentIdFromParam from '../../../hooks/useGetStudentIdFromParam';
 import classNames from 'classnames';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
 import { ClassStatus } from '../../../dto/dto';
+import { AliceMenu } from '@/components/ContextMenu';
 
 export default function StudentClassForWeeklyTimetable(props: {
     dayUnixTimestamp: number;
@@ -43,7 +43,6 @@ export default function StudentClassForWeeklyTimetable(props: {
         colIndex,
         rowIndex,
     } = props;
-    const [classStatusMenuOptionsExpand, setClassStatusMenuOptionsExpand] = useState<boolean>(false);
     const classEvent = useAppSelector(
         s =>
             s.student.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestampToClassEvent?.[
@@ -76,7 +75,6 @@ export default function StudentClassForWeeklyTimetable(props: {
     };
 
     const invalidData = day_unix_timestamp >= classUnixTimestamp;
-    const contextMenuId = `${classEvent?.student.id || ''}-${classEvent?.class.hourUnixTimestamp || ''}`;
     const hasClassEvent = !!classEvent;
     const dayAndTime = dayjs(currGridHourUnixTimestamp).format('ddd, HH:mm');
     const disableDuplicate = classEvent?.classGroup != null;
@@ -102,54 +100,20 @@ export default function StudentClassForWeeklyTimetable(props: {
     // eslint-disable-next-line
     const ClassEventWrapper = useCallback(
         !hasClassEvent
-            ? ({ children }: PropsWithChildren) => {
-                  return (
-                      <>
-                          {/*@ts-expect-error - context menu has problem in typing */}
-                          <ContextMenuTrigger id={currGridHourUnixTimestamp.toString()} hideOnLeave={true}>
-                              {children}
-                          </ContextMenuTrigger>
-                          {/*@ts-expect-error - context menu has problem in typing */}
-                          <ContextMenu
-                              id={currGridHourUnixTimestamp.toString()}
-                              style={{
-                                  zIndex: 10 ** 7,
-                                  borderRadius: 8,
-                                  backgroundColor: 'white',
-                                  boxShadow: boxShadow.SHADOW_62,
-                              }}
-                          >
-                              <Box
-                                  sx={{
-                                      '& .menu-item': {
-                                          padding: '10px',
-                                          cursor: 'pointer',
-                                          color: !selectedPackageId ? 'rgb(200,200,200) !important' : 'inherit',
-                                          '&:hover': {
-                                              '&:hover': {
-                                                  color: 'rgb(64, 150, 255)',
-                                              },
-                                          },
-                                      },
-                                  }}
-                              >
-                                  {/* @ts-expect-error - context menu has problem in typing */}
-                                  <MenuItem
-                                      className="menu-item"
-                                      disabled={!selectedPackageId}
-                                      onClick={() => {
-                                          createEvent();
-                                      }}
-                                  >
-                                      {!selectedPackageId
-                                          ? 'Please First Select a Package'
-                                          : `Add class(es) at ${dayAndTime}`}
-                                  </MenuItem>
-                              </Box>
-                          </ContextMenu>
-                      </>
-                  );
-              }
+            ? ({ children }: PropsWithChildren) => (
+                  <AliceMenu
+                      items={[
+                          {
+                              item: !selectedPackageId
+                                  ? 'Please First Select a Package'
+                                  : `Add class(es) at ${dayAndTime}`,
+                              onClick: () => createEvent(),
+                          },
+                      ]}
+                  >
+                      {children}
+                  </AliceMenu>
+              )
             : ({ children }: PropsWithChildren) => children,
         [classEvent, selectedPackageId]
     );
@@ -180,7 +144,6 @@ export default function StudentClassForWeeklyTimetable(props: {
                 });
         }
     };
-
     // To account for the numbering of classes
     useEffect(() => {
         if (classEvent && timetable.hrUnixTimestampToClassEvent) {
@@ -293,13 +256,155 @@ export default function StudentClassForWeeklyTimetable(props: {
                         {(showAll || (!showAll && Number(selectedPackageId) === classEvent?.studentPackage.id)) &&
                             classEvent && (
                                 <>
-                                    {/*@ts-expect-error - context menu has problem in typing */}
-                                    <ContextMenuTrigger id={contextMenuId} hideOnLeave={true}>
-                                        <Draggable
-                                            // eslint-disable-next-line
-                                            data={classEvent!!}
-                                            key={classEvent?.class.id}
-                                            canDrag={!!classEvent && isInTheFuture()}
+                                    <Draggable
+                                        // eslint-disable-next-line
+                                        data={classEvent!!}
+                                        key={classEvent?.class.id}
+                                        canDrag={!!classEvent && isInTheFuture()}
+                                    >
+                                        <AliceMenu
+                                            items={[
+                                                {
+                                                    item: 'View class detail',
+                                                    onClick: () => {
+                                                        ViewClassDialog.setContent(() => () => (
+                                                            <ViewClassForm
+                                                                dateUnixTimestamp={classEvent.class.dayUnixTimestamp}
+                                                                cls={classEvent.class}
+                                                                course={classEvent.course}
+                                                                student={classEvent.student}
+                                                            />
+                                                        ));
+                                                        ViewClassDialog.setOpen(true);
+                                                    },
+                                                },
+                                                {
+                                                    item: 'Edit class',
+                                                    onClick: () => {
+                                                        ViewClassDialog.setWidth('xs');
+                                                        ViewClassDialog.setContent(() => () => (
+                                                            <ViewClassForm
+                                                                isEditing={true}
+                                                                dateUnixTimestamp={classEvent.class.dayUnixTimestamp}
+                                                                cls={classEvent.class}
+                                                                course={classEvent.course}
+                                                                student={classEvent.student}
+                                                            />
+                                                        ));
+                                                        ViewClassDialog.setOpen(true);
+                                                    },
+                                                },
+                                                {
+                                                    item: 'Duplicate class',
+                                                    disabled: disableDuplicate || !classEvent,
+                                                    onClick: () => {
+                                                        if (!classEvent?.class) {
+                                                            return;
+                                                        }
+                                                        DuplicateClassDialog.setWidth('xs');
+                                                        DuplicateClassDialog.setContent(() => () => (
+                                                            <DuplicateClassForm class={classEvent?.class} />
+                                                        ));
+                                                        DuplicateClassDialog.setOpen(true);
+                                                    },
+                                                },
+                                                {
+                                                    item: 'Detach from group',
+                                                    disabled: !disableDuplicate,
+                                                    onClick: async () => {
+                                                        await dispatch(
+                                                            StudentThunkAction.detachFromGroup({
+                                                                classId: classEvent.class.id,
+                                                            })
+                                                        ).unwrap();
+                                                    },
+                                                },
+                                                {
+                                                    item: 'Delete a class',
+                                                    onClick: () => {
+                                                        DeleteClassDialog.setWidth('xs');
+                                                        DeleteClassDialog.setContent(() => () => (
+                                                            <DeleteClassForm
+                                                                deleteSingleClass={true}
+                                                                classGroup={classEvent.classGroup}
+                                                                cls={classEvent.class}
+                                                                course={classEvent.course}
+                                                                onDeletion={async () => {
+                                                                    const studentId = classEvent.student.id;
+                                                                    dispatch(
+                                                                        StudentThunkAction.getStudentClassesForWeeklyTimetable(
+                                                                            {
+                                                                                studentId: studentId,
+                                                                            }
+                                                                        )
+                                                                    );
+                                                                    dispatch(
+                                                                        StudentThunkAction.getStudentPackages({
+                                                                            studentId: studentId,
+                                                                        })
+                                                                    );
+                                                                }}
+                                                            />
+                                                        ));
+                                                        DeleteClassDialog.setOpen(true);
+                                                    },
+                                                },
+                                                {
+                                                    item: 'Delete a group of classes',
+                                                    onClick: () => {
+                                                        DeleteClassDialog.setWidth('xs');
+                                                        DeleteClassDialog.setContent(() => () => (
+                                                            <DeleteClassForm
+                                                                deleteSingleClass={false}
+                                                                classGroup={classEvent.classGroup}
+                                                                cls={classEvent.class}
+                                                                course={classEvent.course}
+                                                                onDeletion={async () => {
+                                                                    const studentId = classEvent.student.id;
+                                                                    dispatch(
+                                                                        StudentThunkAction.getStudentClassesForWeeklyTimetable(
+                                                                            {
+                                                                                studentId: studentId,
+                                                                            }
+                                                                        )
+                                                                    );
+                                                                    dispatch(
+                                                                        StudentThunkAction.getStudentPackages({
+                                                                            studentId: studentId,
+                                                                        })
+                                                                    );
+                                                                }}
+                                                            />
+                                                        ));
+                                                        DeleteClassDialog.setOpen(true);
+                                                    },
+                                                },
+                                                {
+                                                    item: 'Change Status',
+                                                    subItems: [
+                                                        {
+                                                            item: <Present />,
+                                                            onClick: () => updateClassStatus('PRESENT'),
+                                                        },
+                                                        {
+                                                            item: <SuspiciousAbsent />,
+                                                            onClick: () => updateClassStatus('SUSPICIOUS_ABSENCE'),
+                                                        },
+                                                        {
+                                                            item: <IllegitAbsent />,
+                                                            onClick: () => updateClassStatus('ILLEGIT_ABSENCE'),
+                                                        },
+                                                        {
+                                                            item: <LegitAbsent />,
+                                                            onClick: () => updateClassStatus('LEGIT_ABSENCE'),
+                                                        },
+                                                        {
+                                                            item: <MarkUp />,
+                                                            onClick: () => updateClassStatus('MAKEUP'),
+                                                        },
+                                                    ],
+                                                },
+                                            ]}
                                         >
                                             <Box
                                                 onDoubleClick={() => {
@@ -419,342 +524,122 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     )}
                                                 </div>
                                             </Box>
-                                        </Draggable>
-                                    </ContextMenuTrigger>
-                                    {/*@ts-expect-error - context menu has problem in typing */}
-                                    <ContextMenu
-                                        id={contextMenuId}
-                                        style={{
-                                            zIndex: 10 ** 7 + 1,
-                                        }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                backgroundColor: 'white',
-                                                borderRadius: '8px',
-                                                boxShadow: boxShadow.SHADOW_62,
-                                                '& .menu-item': {
-                                                    padding: '10px',
-                                                    cursor: 'pointer',
-                                                    '&:hover': {
-                                                        color: 'rgb(64, 150, 255)',
-                                                    },
-                                                    '&.disabled': {
-                                                        opacity: 0.3,
-                                                        pointerEvents: 'none',
-                                                    },
-                                                },
-                                            }}
-                                        >
-                                            <>
-                                                {/*@ts-expect-error - context menu has problem in typing */}
-                                                <MenuItem
-                                                    className="menu-item"
-                                                    onClick={() => {
-                                                        ViewClassDialog.setContent(() => () => (
-                                                            <ViewClassForm
-                                                                dateUnixTimestamp={classEvent.class.dayUnixTimestamp}
-                                                                cls={classEvent.class}
-                                                                course={classEvent.course}
-                                                                student={classEvent.student}
-                                                            />
-                                                        ));
-                                                        ViewClassDialog.setOpen(true);
-                                                    }}
-                                                >
-                                                    View class detail
-                                                </MenuItem>
-                                            </>
-                                            {/*@ts-expect-error - context menu has problem in typing */}
-                                            <MenuItem
-                                                className="menu-item"
-                                                onClick={() => {
-                                                    ViewClassDialog.setWidth('xs');
-                                                    ViewClassDialog.setContent(() => () => (
-                                                        <ViewClassForm
-                                                            isEditing={true}
-                                                            dateUnixTimestamp={classEvent.class.dayUnixTimestamp}
-                                                            cls={classEvent.class}
-                                                            course={classEvent.course}
-                                                            student={classEvent.student}
-                                                        />
-                                                    ));
-                                                    ViewClassDialog.setOpen(true);
-                                                }}
-                                            >
-                                                Edit class
-                                            </MenuItem>
-                                            {/*@ts-expect-error - context menu has problem in typing */}
-                                            <MenuItem
-                                                disabled={disableDuplicate || !classEvent}
-                                                className={classnames('menu-item', disableDuplicate ? 'disabled' : '')}
-                                                onClick={() => {
-                                                    if (!classEvent?.class) {
-                                                        return;
-                                                    }
-                                                    DuplicateClassDialog.setWidth('xs');
-                                                    DuplicateClassDialog.setContent(() => () => (
-                                                        <DuplicateClassForm class={classEvent?.class} />
-                                                    ));
-                                                    DuplicateClassDialog.setOpen(true);
-                                                }}
-                                            >
-                                                Duplicate class
-                                            </MenuItem>
-                                            {disableDuplicate && (
-                                                <>
-                                                    {/*@ts-expect-error - context menu has problem in typing */}
-                                                    <MenuItem
-                                                        className={classnames('menu-item')}
-                                                        onClick={async () => {
-                                                            await dispatch(
-                                                                StudentThunkAction.detachFromGroup({
-                                                                    classId: classEvent.class.id,
-                                                                })
-                                                            ).unwrap();
-                                                        }}
-                                                    >
-                                                        Detach from group
-                                                    </MenuItem>
-                                                </>
-                                            )}
-                                            {/*@ts-expect-error - context menu has problem in typing */}
-                                            <MenuItem
-                                                className={classnames('menu-item')}
-                                                onClick={() => {
-                                                    DeleteClassDialog.setWidth('xs');
-                                                    DeleteClassDialog.setContent(() => () => (
-                                                        <DeleteClassForm
-                                                            deleteSingleClass={true}
-                                                            classGroup={classEvent.classGroup}
-                                                            cls={classEvent.class}
-                                                            course={classEvent.course}
-                                                            onDeletion={async () => {
-                                                                const studentId = classEvent.student.id;
-                                                                dispatch(
-                                                                    StudentThunkAction.getStudentClassesForWeeklyTimetable(
-                                                                        {
-                                                                            studentId: studentId,
-                                                                        }
-                                                                    )
-                                                                );
-                                                                dispatch(
-                                                                    StudentThunkAction.getStudentPackages({
-                                                                        studentId: studentId,
-                                                                    })
-                                                                );
-                                                            }}
-                                                        />
-                                                    ));
-                                                    DeleteClassDialog.setOpen(true);
-                                                }}
-                                            >
-                                                <span
-                                                    style={{
-                                                        color: 'red',
-                                                    }}
-                                                >
-                                                    Delete a class
-                                                </span>
-                                            </MenuItem>
-                                            {/*@ts-expect-error - context menu has problem in typing */}
-                                            <MenuItem
-                                                className={classnames('menu-item')}
-                                                onClick={() => {
-                                                    DeleteClassDialog.setWidth('xs');
-                                                    DeleteClassDialog.setContent(() => () => (
-                                                        <DeleteClassForm
-                                                            deleteSingleClass={false}
-                                                            classGroup={classEvent.classGroup}
-                                                            cls={classEvent.class}
-                                                            course={classEvent.course}
-                                                            onDeletion={async () => {
-                                                                const studentId = classEvent.student.id;
-                                                                dispatch(
-                                                                    StudentThunkAction.getStudentClassesForWeeklyTimetable(
-                                                                        {
-                                                                            studentId: studentId,
-                                                                        }
-                                                                    )
-                                                                );
-                                                                dispatch(
-                                                                    StudentThunkAction.getStudentPackages({
-                                                                        studentId: studentId,
-                                                                    })
-                                                                );
-                                                            }}
-                                                        />
-                                                    ));
-                                                    DeleteClassDialog.setOpen(true);
-                                                }}
-                                            >
-                                                <span
-                                                    style={{
-                                                        color: 'red',
-                                                    }}
-                                                >
-                                                    Delete a group of classes
-                                                </span>
-                                            </MenuItem>
-                                            <div
-                                                className={classnames('menu-item')}
-                                                onClick={() => {
-                                                    setClassStatusMenuOptionsExpand(!classStatusMenuOptionsExpand);
-                                                }}
-                                            >
-                                                <span
-                                                    style={{
-                                                        color: 'yellowgreen',
-                                                    }}
-                                                >
-                                                    Change Status
-                                                </span>
-                                            </div>
-                                            <div
-                                                style={{
-                                                    height: '1px',
-                                                    opacity: 0.1,
-                                                    backgroundColor: 'black',
-                                                }}
-                                            />
-                                            <div
-                                                style={{
-                                                    transition:
-                                                        'width 0.7s ease-in-out, ' + 'max-height 0.5s ease-in-out',
-                                                    overflow: 'hidden',
-                                                    maxHeight: classStatusMenuOptionsExpand ? '500px' : '0px',
-                                                    // width: classStatusMenuOptionsExpand ? '150px' : '0px',
-                                                }}
-                                            >
-                                                {classStatusMenuOptionsExpand && (
-                                                    <>
-                                                        {/*@ts-expect-error - context menu has problem in typing */}
-                                                        <MenuItem
-                                                            className={classnames('menu-item')}
-                                                            onClick={() => {
-                                                                updateClassStatus('PRESENT');
-                                                            }}
-                                                        >
-                                                            <div
-                                                                style={{
-                                                                    display: 'flex',
-                                                                    alignItems: 'center',
-                                                                    justifyContent: 'space-between',
-                                                                }}
-                                                            >
-                                                                <span>Present</span>
-                                                                <div
-                                                                    style={{
-                                                                        background: colors.GREEN_BLUE,
-                                                                        width: '15px',
-                                                                        height: '15px',
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        </MenuItem>
-                                                        {/*@ts-expect-error - context menu has problem in typing */}
-                                                        <MenuItem
-                                                            className={classnames('menu-item')}
-                                                            onClick={() => {
-                                                                updateClassStatus('SUSPICIOUS_ABSENCE');
-                                                            }}
-                                                        >
-                                                            <div
-                                                                style={{
-                                                                    display: 'flex',
-                                                                    justifyContent: 'space-between',
-                                                                    alignItems: 'center',
-                                                                }}
-                                                            >
-                                                                <span>Suspicious Absence</span>
-                                                                <div
-                                                                    style={{
-                                                                        background: colors.ORANGE,
-                                                                        width: '15px',
-                                                                        height: '15px',
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        </MenuItem>
-                                                        {/*@ts-expect-error - context menu has problem in typing */}
-                                                        <MenuItem
-                                                            className={classnames('menu-item')}
-                                                            onClick={() => {
-                                                                updateClassStatus('ILLEGIT_ABSENCE');
-                                                            }}
-                                                        >
-                                                            <div
-                                                                style={{
-                                                                    display: 'flex',
-                                                                    justifyContent: 'space-between',
-                                                                }}
-                                                            >
-                                                                <span>Illegit Absence</span>
-                                                                <div
-                                                                    style={{
-                                                                        background: colors.RED,
-                                                                        width: '15px',
-                                                                        height: '15px',
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        </MenuItem>
-                                                        {/*@ts-expect-error - context menu has problem in typing */}
-                                                        <MenuItem
-                                                            className={classnames('menu-item')}
-                                                            onClick={() => {
-                                                                updateClassStatus('LEGIT_ABSENCE');
-                                                            }}
-                                                        >
-                                                            <div
-                                                                style={{
-                                                                    display: 'flex',
-                                                                    justifyContent: 'space-between',
-                                                                }}
-                                                            >
-                                                                <span>Legit Absence</span>
-                                                                <div
-                                                                    style={{
-                                                                        background: colors.GREY,
-                                                                        width: '15px',
-                                                                        height: '15px',
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        </MenuItem>
-                                                        {/*@ts-expect-error - context menu has problem in typing */}
-                                                        <MenuItem
-                                                            className={classnames('menu-item')}
-                                                            onClick={() => {
-                                                                updateClassStatus('MAKEUP');
-                                                            }}
-                                                        >
-                                                            <div
-                                                                style={{
-                                                                    display: 'flex',
-                                                                    justifyContent: 'space-between',
-                                                                }}
-                                                            >
-                                                                <span>Makeup</span>
-                                                                <div
-                                                                    style={{
-                                                                        background: colors.BLUE,
-                                                                        width: '15px',
-                                                                        height: '15px',
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        </MenuItem>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </Box>
-                                    </ContextMenu>
+                                        </AliceMenu>
+                                    </Draggable>
                                 </>
                             )}
                     </div>
                 </div>
             </ClassEventWrapper>
         </Droppable>
+    );
+}
+function MarkUp() {
+    return (
+        <div
+            style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+            }}
+        >
+            <span>Makeup</span>
+            <div
+                style={{
+                    background: colors.BLUE,
+                    width: '15px',
+                    height: '15px',
+                }}
+            />
+        </div>
+    );
+}
+
+function LegitAbsent() {
+    return (
+        <div
+            style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+            }}
+        >
+            <span>Legit Absence</span>
+            <div
+                style={{
+                    background: colors.GREY,
+                    width: '15px',
+                    height: '15px',
+                }}
+            />
+        </div>
+    );
+}
+
+function IllegitAbsent() {
+    return (
+        <div
+            style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+            }}
+        >
+            <span>Illegit Absence</span>
+            <div
+                style={{
+                    background: colors.RED,
+                    width: '15px',
+                    height: '15px',
+                }}
+            />
+        </div>
+    );
+}
+
+function SuspiciousAbsent() {
+    return (
+        <div
+            style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+            }}
+        >
+            <span>Suspicious Absence</span>
+            <div
+                style={{
+                    background: colors.ORANGE,
+                    width: '15px',
+                    height: '15px',
+                }}
+            />
+        </div>
+    );
+}
+
+function Present() {
+    return (
+        <div
+            style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+            }}
+        >
+            <span>Present</span>
+            <div
+                style={{
+                    background: colors.GREEN_BLUE,
+                    width: '15px',
+                    height: '15px',
+                }}
+            />
+        </div>
     );
 }

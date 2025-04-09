@@ -10,9 +10,7 @@ export default function MoveConfirmationForm(props: { moveClassesAction: () => P
     return (
         <Box
             style={{
-                padding: '40px 80px',
                 overflowY: 'auto',
-                paddingBottom: 60,
             }}
         >
             <SectionTitle>Are you sure to move the classes?</SectionTitle>

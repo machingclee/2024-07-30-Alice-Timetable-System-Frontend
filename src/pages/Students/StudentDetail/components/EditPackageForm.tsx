@@ -62,9 +62,7 @@ export default function EditPackageForm(props: { packageId: string }) {
         <Box
             style={{
                 width: '100%',
-                padding: '40px 80px',
                 overflowY: 'auto',
-                paddingBottom: 60,
             }}
         >
             <SectionTitle>Edit Package Information</SectionTitle>
