@@ -1,5 +1,6 @@
 import statues from '../constant/statues';
 import { Classroom, Student_package } from '../prismaTypes/types';
+import { Class_status } from './kotlinDto';
 
 export type Gender = 'MALE' | 'FEMALE';
 export type RoleInSystem = 'SUPER_ADMIN' | 'ADMIN' | 'STAFF' | 'STUDENT';
@@ -147,20 +148,10 @@ export type DetachClassRequest = {
     classId: number;
 };
 
-export type ClassStatus =
-    | 'PRESENT'
-    | 'ILLEGIT_ABSENCE'
-    | 'SUSPICIOUS_ABSENCE'
-    | 'LEGIT_ABSENCE'
-    | 'MAKEUP'
-    | 'CHANGE_OF_CLASSROOM'
-    | 'TRIAL'
-    | 'RESERVED';
-
 export type UpdateClassRequest = {
     classId: number;
     min: number;
-    class_status: ClassStatus;
+    class_status: Class_status;
     reason_for_absence: string;
     remark: string;
     actual_classroom: Classroom;

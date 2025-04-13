@@ -18,14 +18,13 @@ import ViewClassForm from '../../../components/ViewClassForm';
 import { Classroom } from '../../../prismaTypes/types';
 import { Droppable } from '../../../components/DragAndDrop/Droppable';
 import { Draggable } from '../../../components/DragAndDrop/Draggable';
-import { TimetableClassEvent as TimetableClassEvent } from '../../../dto/kotlinDto';
+import { Class_status, TimetableClassEvent as TimetableClassEvent } from '../../../dto/kotlinDto';
 import MoveConfirmationForm from './MoveConfirmationForm';
 import MoveConfirmationDialog from './MoveConfirmationDialog';
 import useGetStudentIdFromParam from '../../../hooks/useGetStudentIdFromParam';
 import classNames from 'classnames';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
-import { ClassStatus } from '../../../dto/dto';
-import { AliceMenu } from '@/components/ContextMenu';
+import { AliceMenu } from '@/components/AliceMenu';
 
 export default function StudentClassForWeeklyTimetable(props: {
     dayUnixTimestamp: number;
@@ -118,7 +117,7 @@ export default function StudentClassForWeeklyTimetable(props: {
         [classEvent, selectedPackageId]
     );
 
-    const updateClassStatus = (status: ClassStatus) => {
+    const updateClassStatus = (status: Class_status) => {
         const cls = classEvent?.class;
         if (cls?.classNumber && cls?.min && cls?.actualClassroom) {
             dispatch(
@@ -402,6 +401,10 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                             item: <MarkUp />,
                                                             onClick: () => updateClassStatus('MAKEUP'),
                                                         },
+                                                        {
+                                                            item: <AdverseWhether />,
+                                                            onClick: () => updateClassStatus('BAD_WHETHER'),
+                                                        },
                                                     ],
                                                 },
                                             ]}
@@ -469,6 +472,8 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                                     return colors.BLUE;
                                                                 case 'CHANGE_OF_CLASSROOM':
                                                                     return colors.PURPLE;
+                                                                case 'BAD_WHETHER':
+                                                                    return colors.BLACK;
                                                             }
                                                         }
                                                     })(),
@@ -636,6 +641,29 @@ function Present() {
             <div
                 style={{
                     background: colors.GREEN_BLUE,
+                    width: '15px',
+                    height: '15px',
+                }}
+            />
+        </div>
+    );
+}
+
+function AdverseWhether() {
+    return (
+        <div
+            style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+            }}
+        >
+            <span>ADVERSE WHETHER</span>
+            <div
+                style={{
+                    background: colors.BLACK,
+                    color: 'white',
                     width: '15px',
                     height: '15px',
                 }}

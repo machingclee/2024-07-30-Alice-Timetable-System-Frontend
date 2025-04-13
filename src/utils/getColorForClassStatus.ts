@@ -1,5 +1,5 @@
+import { Class_status } from '@/dto/kotlinDto';
 import colors from '../constant/colors';
-import { Class_status } from '../prismaTypes/types';
 
 export default (class_status: Class_status) => {
     switch (class_status) {
@@ -17,5 +17,7 @@ export default (class_status: Class_status) => {
             return colors.BLUE;
         case 'RESERVED':
             return colors.CYAN;
+        case 'BAD_WHETHER':
+            return colors.BLACK;
     }
 };

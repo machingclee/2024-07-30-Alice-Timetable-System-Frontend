@@ -18,7 +18,7 @@ import { Droppable } from './DragAndDrop/Droppable';
 import { TimetableClassEvent } from '../dto/kotlinDto';
 import useRefetchMassTimetables from '../hooks/useRefetchMassTimetables';
 import MoveClassWarning from '../pages/Students/components/MoveClassWarning';
-import { AliceMenu } from './ContextMenu';
+import { AliceMenu } from './AliceMenu';
 
 export default function StudentsClassForDailyTimetableByHour(props: {
     currHourUnixTimestamp: number;

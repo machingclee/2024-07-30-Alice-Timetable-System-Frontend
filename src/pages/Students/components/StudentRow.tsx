@@ -8,7 +8,7 @@ import RouteEnum from '../../../enum/RouteEnum';
 import dayjs from 'dayjs';
 import { useAppSelector } from '../../../redux/hooks';
 import { Button } from 'antd';
-import { AliceMenu } from '@/components/ContextMenu';
+import { AliceMenu } from '@/components/AliceMenu';
 
 export default function StudenRow(props: { studentId: string }) {
     const { studentId } = props;

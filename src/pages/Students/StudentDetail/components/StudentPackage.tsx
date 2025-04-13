@@ -18,7 +18,7 @@ import { Modal } from 'antd';
 import useAnchorTimestamp from '../../../../hooks/useAnchorTimestamp';
 import documentId from '../../../../constant/documentId';
 import toastUtil from '../../../../utils/toastUtil';
-import { AliceMenu } from '@/components/ContextMenu';
+import { AliceMenu } from '@/components/AliceMenu';
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;

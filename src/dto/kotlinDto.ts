@@ -1,4 +1,13 @@
-import { Class_status } from '../prismaTypes/types';
+export type Class_status =
+    | 'PRESENT'
+    | 'ILLEGIT_ABSENCE'
+    | 'SUSPICIOUS_ABSENCE'
+    | 'LEGIT_ABSENCE'
+    | 'MAKEUP'
+    | 'CHANGE_OF_CLASSROOM'
+    | 'TRIAL'
+    | 'RESERVED'
+    | 'BAD_WHETHER';
 
 export type ClassRoom = 'PRINCE_EDWARD' | 'CAUSEWAY_BAY';
 

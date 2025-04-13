@@ -204,11 +204,11 @@ export default function WeeklyTimeTable() {
                 },
             }}
         >
-            <FadeIn>
+            <FadeIn className="flex flex-col flex-1 h-[calc(100vh-160px)] overflow-hidden overflow-y-scroll">
                 <div className="flex justify-center">{weekNavigator()}</div>
-                <CustomScrollbarContainer style={{ height: 'calc(100vh - 120px)', width: '100%' }}>
+                <CustomScrollbarContainer className="flex-1 overflow-scroll">
                     <Spacer />
-                    <div style={{ display: 'flex' }}>
+                    <div className="flex">
                         <div style={{ flex: 1 }}>
                             <div style={{ display: 'flex' }}>
                                 <div>
