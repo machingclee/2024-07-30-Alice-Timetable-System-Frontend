@@ -22,7 +22,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         dispatch(NotificationThunkAction.getNotifications());
-    }, []);
+    }, [dispatch]);
 
     return (
         <div style={{ display: 'flex', flexDirection: 'row', height: '100vh' }}>
