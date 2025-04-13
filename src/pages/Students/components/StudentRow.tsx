@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import { useAppSelector } from '../../../redux/hooks';
 import { Button } from 'antd';
 import { AliceMenu } from '@/components/AliceMenu';
+import { RiUser5Line } from 'react-icons/ri';
 
 export default function StudenRow(props: { studentId: string }) {
     const { studentId } = props;
@@ -51,11 +52,11 @@ export default function StudenRow(props: { studentId: string }) {
     return (
         <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
             <Box
+                className="rounded-xl"
                 style={{
                     flex: 1,
                     boxShadow: boxShadow.SHADOW_62,
                     margin: '7px 15px',
-                    borderRadius: '20px',
                     overflow: 'hidden',
                 }}
                 sx={{
@@ -86,6 +87,9 @@ export default function StudenRow(props: { studentId: string }) {
                     '& .react-contextmenu-wrapper': {
                         width: '100%',
                     },
+                    '& td:nth-child(3)': {
+                        paddingLeft: '20px',
+                    },
                     '& td:nth-child(2), & td:nth-child(4)': {
                         display: 'flex',
                         width: '260px',
@@ -114,72 +118,84 @@ export default function StudenRow(props: { studentId: string }) {
                     <Button
                         type="text"
                         onClick={goDetailPage}
+                        className="flex flex-col !border-none"
                         style={{
-                            padding: '10px 20px',
-                            display: 'flex',
+                            padding: '0px 0px',
                             width: '100%',
                             height: '100%',
-                            justifyContent: 'space-between',
                         }}
                     >
-                        <div
-                            style={{
-                                flex: 1,
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <table style={{ width: '100%' }}>
-                                <tbody>
-                                    <tr>
-                                        <td>Student Code:</td>
-                                        <td>{studentCode}</td>
-                                        <td>
-                                            Grade:{' '}
-                                            <span
-                                                style={{
-                                                    fontSize: 13,
-                                                    fontWeight: 'bold',
-                                                }}
-                                            >{`(before ${dayjs(new Date()).format('YYYY')}-09-01)`}</span>
-                                        </td>
-                                        <td>{`${grade}`}</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Chinese Name:</td>
-                                        <td>{chineseName}</td>
-                                        <td>School Name:</td>
-                                        <td>{`${schoolName}`}</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td>English Name:</td>
-                                        <td>{`${firstName} ${lastName}`}</td>
-                                        <td>phone number:</td>
-                                        <td>{`${phoneNumber}`}</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Gender:</td>
-                                        <td>{`${gender}`}</td>
-                                        <td>Wechat ID:</td>
-                                        <td
-                                            style={{ backgroundColor: wechatId ? 'inherit' : 'transparent' }}
-                                        >{`${wechatId || ''}`}</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Parent Email:</td>
-                                        <td>{parentEmail}</td>
-                                        <td>Birthday:</td>
-                                        <td>{`${birthdate}`}</td>
-                                        <td></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div className="w-full">
+                            <div className="flex justify-start items-center text-2xl bg-[#00B96B] text-white pl-4 pt-1 pb-1">
+                                <RiUser5Line className="mr-2" />
+                                <div>{`${firstName} ${lastName}`}</div>
+                            </div>
                         </div>
-                        <FaChevronRight size={26} color="rgb(100,100,100)" />
+
+                        <div className="flex justify-between w-full pl-2 pb-2 pr-2 pt-2">
+                            <div>
+                                <div
+                                    style={{
+                                        flex: 1,
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <table style={{ width: '100%' }}>
+                                        <tbody>
+                                            <tr>
+                                                <td>Student Code:</td>
+                                                <td>{studentCode}</td>
+                                                <td>
+                                                    Grade:{' '}
+                                                    <span
+                                                        style={{
+                                                            fontSize: 13,
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    >{`(before ${dayjs(new Date()).format('YYYY')}-09-01)`}</span>
+                                                </td>
+                                                <td>{`${grade}`}</td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Chinese Name:</td>
+                                                <td>{chineseName}</td>
+                                                <td>School Name:</td>
+                                                <td>{`${schoolName}`}</td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Birthday:</td>
+                                                <td>{`${dayjs(birthdate).format('YYYY-MM-DD')}`}</td>
+                                                <td>phone number:</td>
+                                                <td>{`${phoneNumber}`}</td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Gender:</td>
+                                                <td>{`${gender}`}</td>
+                                                <td>Wechat ID:</td>
+                                                <td
+                                                    style={{ backgroundColor: wechatId ? 'inherit' : 'transparent' }}
+                                                >{`${wechatId || ''}`}</td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Parent Email:</td>
+                                                <td>{parentEmail}</td>
+                                                <td></td>
+                                                <td style={{ background: 'none' }}></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div className="flex items-center">
+                                <FaChevronRight size={26} color="rgb(100,100,100)" />
+                            </div>
+                        </div>
                     </Button>
                 </AliceMenu>
             </Box>

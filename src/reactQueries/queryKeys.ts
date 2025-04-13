@@ -9,4 +9,5 @@ export default {
         const hash = hashUtil.hash(dailyTimetableReq);
         return ['filtered-daily-timetable', hash];
     },
+    NOTIFICATIONS: ['notifications'],
 };

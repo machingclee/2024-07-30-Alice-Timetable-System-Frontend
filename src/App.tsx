@@ -9,6 +9,7 @@ import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-qu
 import toastUtil from './utils/toastUtil';
 import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
+import { ConfigProvider } from 'antd';
 
 const queryClient = new QueryClient({
     queryCache: new QueryCache({
@@ -22,16 +23,18 @@ const queryClient = new QueryClient({
 
 export default function App() {
     return (
-        <Provider store={store}>
-            <PersistGate persistor={persistor}>
-                <QueryClientProvider client={queryClient}>
-                    <ConfigAxios store={store}>
-                        <RouterProvider router={getRouter(store)} />
-                        <ToastContainer limit={5} />
-                    </ConfigAxios>
-                    {/* <ReactQueryDevtools /> */}
-                </QueryClientProvider>
-            </PersistGate>
-        </Provider>
+        <ConfigProvider theme={{ token: { colorPrimary: '#00b96b' } }}>
+            <Provider store={store}>
+                <PersistGate persistor={persistor}>
+                    <QueryClientProvider client={queryClient}>
+                        <ConfigAxios store={store}>
+                            <RouterProvider router={getRouter(store)} />
+                            <ToastContainer limit={5} />
+                        </ConfigAxios>
+                        {/* <ReactQueryDevtools /> */}
+                    </QueryClientProvider>
+                </PersistGate>
+            </Provider>
+        </ConfigProvider>
     );
 }

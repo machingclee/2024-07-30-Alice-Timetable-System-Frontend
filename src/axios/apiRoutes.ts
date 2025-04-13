@@ -14,6 +14,7 @@ export default {
     GET_STUDENTS: `/students`,
     GET_COURSES: '/courses',
     GET_TICKETS: '/tickets',
+    GET_NOTIFICATIONS: '/notifications',
     GET_STUDENT_DETAIL: (studentId: string) => `/students/${studentId}/student-detail`,
     GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE: (studentId: string) => `/students/${studentId}/classes/weekly`,
     GET_STUDENT_PACKAGES: (studentId: string) => `/students/${studentId}/student-packages`,
@@ -30,6 +31,7 @@ export default {
     PUT_TICKETS: '/tickets',
     PATCH_UPDATE_COURSE: '/courses',
     PATCH_UPDATE_CLASS: '/students/classes',
+    PATCH_UPDATE_NOTIFICATION: (notificationId: number) => `/notifications/${notificationId}`,
 
     DELETE_PACKAGE: (studentId: string, packageId: number) =>
         `/students/package?studentId=${studentId}&packageId=${packageId}`,

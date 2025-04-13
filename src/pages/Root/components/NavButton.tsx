@@ -12,8 +12,8 @@ export default function NavButton(props: { activeNavigationRegex: RegExp; title:
     return (
         <>
             <Button
+                className="!p-4 !rounded-4xl"
                 block
-                style={{ paddingTop: 18, paddingBottom: 18 }}
                 type={active ? 'primary' : 'default'}
                 onClick={() => {
                     navigate(routeEnum);
