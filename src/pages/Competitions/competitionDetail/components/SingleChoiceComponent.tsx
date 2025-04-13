@@ -148,7 +148,6 @@ export default ({ question, competitionId }: { competitionId: string; question: 
                 setStartEdit(true);
             }}
         >
-            <Label label="SingleChoiceComponent.tsx" offsetTop={-20} />
             <div>
                 {/* Question */}
                 {!startEdit && <div style={{ color: "dark", fontSize: 18, fontStyle: "normal", paddingTop: 10, width: "100%" }}>{question.question}</div>}

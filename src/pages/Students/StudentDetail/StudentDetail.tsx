@@ -1,11 +1,10 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import SectionTitle from '../../../components/SectionTitle';
 import { useEffect, useState } from 'react';
-import studentSlice, { StudentThunkAction } from '../../../redux/slices/studentSlice';
+import studentSlice, { StudentDetailPage, StudentThunkAction } from '../../../redux/slices/studentSlice';
 import Spacer from '../../../components/Spacer';
 import WeeklyTimetable from '../components/WeeklyTimetable';
-import Label from '../../../components/Label';
 import AddClassEventDialog from '../../../components/AddClassEventDialog';
 import { CourseThunkAction } from '../../../redux/slices/courseSlice';
 import DuplicateClassDialog from '../../../components/DuplicateClassDialog';
@@ -17,50 +16,89 @@ import AddPaymentDetailDialog from './components/AddPaymentDetailDialog';
 import ViewClassDialog from '../../../components/ViewClassDialog';
 import EditPackageDialog from './components/EditPackageDialog';
 import { FaChevronLeft } from 'react-icons/fa6';
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
+import useQueryThunk from '../../../reactQueries/useQueryThunk';
+import { Button } from 'antd';
+import RouteEnum from '../../../enum/RouteEnum';
+import PackageClassesStatus from '../components/PackageClassesStatus';
+import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
+import { IoMdReturnLeft } from 'react-icons/io';
 
 export default function StudentDetail() {
-    const [userOnClickTimestamp, _] = useState(new Date());
+    const { anchorTimestamp, setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
     const { studentId } = useParams<{ studentId: string }>();
+    const displayType = useAppSelector(s => s.student.studentDetailTimetablePage.activePage);
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [collapseTimetable, setCollapseTimetable] = useState(false);
     const studentDetail = useAppSelector(s => s.student.studentDetailTimetablePage.detail);
     const { firstName, lastName, chineseFirstName, chineseLastName, studentCode } = studentDetail || {};
+    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
 
-    useEffect(() => {
-        if (studentId) {
-            dispatch(StudentThunkAction.getStudentDetail({ studentId }));
-            dispatch(
-                StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                    studentId,
-                })
-            );
-            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
+    const {
+        query: { isLoading: studentDetailoading },
+    } = useQueryThunk({ thunk: StudentThunkAction.getStudentDetail })({ studentId: studentId || '' });
+    const {
+        query: { isLoading: packageLoading },
+    } = useQueryThunk({ thunk: StudentThunkAction.getStudentPackages })({ studentId: studentId || '' });
+
+    const {
+        query: { isLoading: timetableLoading },
+    } = useQueryThunk({ thunk: StudentThunkAction.getStudentClassesForWeeklyTimetable })({
+        studentId: studentId || '',
+    });
+
+    const isLoading = studentDetailoading || packageLoading || timetableLoading;
+
+    const navAttendences = () => {
+        const destination = `${RouteEnum.STUDENT_INFO}/${studentId}`;
+        window.open(destination, '_blank', 'noopener,noreferrer');
+    };
+
+    const navPackageAttendence = () => {
+        if (!selectedPackageId) {
+            return;
         }
-    }, [studentId, dispatch]);
+        dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_PACKAGE_CLASS_STATUES));
+    };
 
     // To get courses in case the user wants to add a course to the timetable
+
+    useQueryThunk({ thunk: CourseThunkAction.getCourses })();
+
     useEffect(() => {
-        dispatch(
-            studentSlice.actions.setWeeklyTimetableSelectedDate({
-                date: userOnClickTimestamp,
-            })
-        );
-        dispatch(CourseThunkAction.getCourses());
+        if (anchorTimestamp) {
+            setAnchorTimestamp(anchorTimestamp);
+        } else {
+            setAnchorTimestamp(new Date().getTime());
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
         return () => {
             dispatch(studentSlice.actions.reset());
         };
-    }, [userOnClickTimestamp, dispatch]);
+    }, [dispatch]);
 
     const studentNameDisplay = () => {
         return (
             <>
                 <SectionTitle style={{ fontSize: 30 }}>
+                    <Button
+                        style={{ display: 'flex', alignItems: 'center' }}
+                        onClick={() => navigate(RouteEnum.DASHBOARD_STUDENTS)}
+                    >
+                        <IoMdReturnLeft />
+                        Students
+                    </Button>
+                    <Spacer />
                     <div>{`${chineseLastName} ${chineseFirstName}`}</div>
                     <Spacer width={20} />
                     {`${firstName} ${lastName}`}
                     <Spacer width={20} />
                 </SectionTitle>
+                <Spacer height={10} />
                 <Box
                     sx={{
                         '& td:nth-child(1)': {
@@ -78,6 +116,21 @@ export default function StudentDetail() {
                             <tr>
                                 <td>Student Code:</td>
                                 <td>{studentCode}</td>
+                                <td style={{ paddingLeft: 10 }}>
+                                    <Button block type="default" onClick={navAttendences}>
+                                        Attendences (Sharable)
+                                    </Button>
+                                </td>
+                                <td style={{ paddingLeft: 10 }}>
+                                    <Button
+                                        block
+                                        type="primary"
+                                        onClick={navPackageAttendence}
+                                        disabled={!selectedPackageId}
+                                    >
+                                        Show package attendences
+                                    </Button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -115,7 +168,15 @@ export default function StudentDetail() {
                         <>
                             <div className="w-full mb-4">{studentNameDisplay()}</div>
                             <div style={{ width: '100%' }}>
-                                <WeeklyTimetable />
+                                {displayType === StudentDetailPage.STUDENT_TIME_TABLE && (
+                                    <>
+                                        {isLoading && <CircularProgress />}
+                                        {!isLoading && <WeeklyTimetable />}
+                                    </>
+                                )}
+                                {displayType === StudentDetailPage.STUDENT_PACKAGE_CLASS_STATUES && (
+                                    <PackageClassesStatus />
+                                )}
                             </div>
                         </>
                     )}
@@ -161,7 +222,6 @@ const CollapseTriggerBar = (props: { collapseTimetable: boolean; onClick: () => 
                 position: 'relative',
             }}
         >
-            <Label label="const CollapseTriggerBar" offsetTop={60} />
             <div
                 style={{
                     height: '100%',

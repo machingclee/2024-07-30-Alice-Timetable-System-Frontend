@@ -9,8 +9,9 @@ import authSlice, { authMiddleware } from './slices/authSlice';
 import userSlice, { userMiddleware } from './slices/userSlice';
 import studentSlice, { studentMiddleware } from './slices/studentSlice';
 import classSlice, { classMiddleware } from './slices/courseSlice';
-import publicSlice, { publicMiddleware } from './slices/publicSlice';
 import competitionSlice, { competitionMiddleware } from './slices/competitionSlice';
+import ticketSlice, { ticketMiddleware } from './slices/ticketSlice';
+import notificationSlice, { notificationMiddleware } from './slices/notificationSlice';
 
 // a fix following the guide from https://www.youtube.com/watch?v=fjPIJZ1Eokg
 const createNoopStorage = () => {
@@ -46,8 +47,9 @@ export const store = configureStore({
         user: userSlice.reducer,
         student: studentSlice.reducer,
         class: classSlice.reducer,
-        public: publicSlice.reducer,
         competition: competitionSlice.reducer,
+        ticket: ticketSlice.reducer,
+        notification: notificationSlice.reducer,
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({ serializableCheck: false }).concat(
@@ -55,8 +57,9 @@ export const store = configureStore({
             userMiddleware.middleware,
             studentMiddleware.middleware,
             classMiddleware.middleware,
-            publicMiddleware.middleware,
-            competitionMiddleware.middleware
+            competitionMiddleware.middleware,
+            ticketMiddleware.middleware,
+            notificationMiddleware.middleware
         ),
 });
 

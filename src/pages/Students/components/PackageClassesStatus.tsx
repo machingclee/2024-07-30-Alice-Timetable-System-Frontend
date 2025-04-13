@@ -1,13 +1,22 @@
-import { PropsWithChildren, useEffect } from 'react';
+import { PropsWithChildren } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import Spacer from '../../../components/Spacer';
 import SectionTitle from '../../../components/SectionTitle';
 import dayjs from 'dayjs';
 import { Box } from '@mui/material';
-import { useParams } from 'react-router-dom';
-import Label from '../../../components/Label';
-import { TimetableClass } from '../../../dto/dto';
-import { PublicThunkAction } from '../../../redux/slices/publicSlice';
+import { GetPackageClassStatusResponse } from '../../../dto/kotlinDto';
+import useQueryThunk from '../../../reactQueries/useQueryThunk';
+import studentSlice, { StudentDetailPage, StudentThunkAction } from '../../../redux/slices/studentSlice';
+import { FaChevronLeft } from 'react-icons/fa6';
+import { Button, Spin } from 'antd';
+import FadeIn from '../../../components/FadeIn';
+import statues from '../../../constant/statues';
+import boxShadow from '../../../constant/boxShadow';
+import { ContextMenuTrigger, ContextMenu, MenuItem } from 'react-contextmenu';
+import ViewClassDialog from '../../../components/ViewClassDialog';
+import ViewClassForm from '../../../components/ViewClassForm';
+import DeleteClassDialog from '../../../components/DeleteClassDialog';
+import DeleteClassForm from '../../../components/DeleteClassForm';
 
 export const Container = (props: PropsWithChildren) => {
     return (
@@ -21,58 +30,239 @@ export const Container = (props: PropsWithChildren) => {
             }}
             style={{ padding: 30 }}
         >
-            <Label label="PackageClassesStatus.tsx" />
             {props.children}
         </Box>
     );
 };
 
 export default function PackageClassesStatus() {
-    const { packageUUID } = useParams<{ packageUUID: string }>();
+    const packageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const pkg = useAppSelector(
+        s => s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[packageId]
+    );
     const dispatch = useAppDispatch();
-    const classes = useAppSelector(s => s.public.classes);
+    const course = pkg?.course;
+    const { query, invalidation: invalidateClassStatues } = useQueryThunk({
+        thunk: StudentThunkAction.getClassesStatus,
+    })({ packageId });
+    const classInfos = query.data;
+    const backToTimetable = () => {
+        dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_TIME_TABLE));
+    };
+    const { isLoading } = query;
 
-    useEffect(() => {
-        console.log('packageIdpackageId', packageUUID);
-        if (packageUUID) {
-            dispatch(PublicThunkAction.getClassesStatus({ pkgUUID: packageUUID }));
-        }
-    }, [packageUUID, dispatch]);
-
-    if (classes?.length === 0) {
-        return <Container>No class yet.</Container>;
+    if (isLoading) {
+        return <Spin />;
     }
-
-    const { course_name, first_name, last_name, chinese_first_name, chinese_last_name } = classes?.[0] || {};
-
     return (
-        <Container>
-            <SectionTitle>{`${first_name} ${last_name} (${chinese_last_name}${chinese_first_name})`}</SectionTitle>
-            <Spacer height={5} />
-            <SectionTitle>{course_name}</SectionTitle>
-            <Spacer />
-            <table>
-                <thead>
-                    <th>Day</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                </thead>
-                <tbody>{classes?.map(cls => <ClassRow cls={cls} />) || []}</tbody>
-            </table>
-        </Container>
+        <div
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                overflowY: 'scroll',
+                height: 'calc(100vh - 130px)',
+            }}
+        >
+            <div>
+                <Button style={{ display: 'flex', alignItems: 'center' }} onClick={backToTimetable}>
+                    <FaChevronLeft /> Back
+                </Button>
+            </div>
+            <FadeIn style={{ flex: 1 }}>
+                <div>
+                    <Spacer />
+                    <SectionTitle>{course?.courseName || ''}</SectionTitle>
+                    <Spacer />
+                    <Box>
+                        {classInfos?.map(classInfo => {
+                            return (
+                                <ClassStatusRow classInfo={classInfo} invalidateClassStatues={invalidateClassStatues} />
+                            );
+                        })}
+                    </Box>
+                </div>
+            </FadeIn>
+        </div>
     );
 }
 
-export const ClassRow = (props: { cls: TimetableClass }) => {
-    const { cls } = props;
-    const { class_status, hour_unix_timestamp } = cls;
-    const formattedDay = dayjs(hour_unix_timestamp).format('YYYY-MM-DD');
-    const formattedTime = dayjs(hour_unix_timestamp).format('HH:mm');
+export const ClassStatusRow = (props: {
+    classInfo: GetPackageClassStatusResponse;
+    invalidateClassStatues: () => Promise<void>;
+}) => {
+    const { cls, course, dateUnixTimestamp, student, classGroup } = props.classInfo;
+    const invalidateClassStatues = props.invalidateClassStatues;
+
+    const dispatch = useAppDispatch();
+    const hourUnixTimestamp = cls.hourUnixTimestamp;
+    const classStatus = cls.classStatus;
+    const formattedDay = dayjs(hourUnixTimestamp).format('YYYY-MM-DD');
+    const formattedTime = dayjs(hourUnixTimestamp).format('HH:mm');
+    const color = statues?.[classStatus.toLocaleLowerCase() as keyof typeof statues]?.color;
+    const menuId = `${cls.id}_${hourUnixTimestamp}`;
     return (
-        <tr>
-            <td>{formattedDay}</td>
-            <td>{formattedTime}</td>
-            <td>{class_status}</td>
-        </tr>
+        <>
+            {/*@ts-expect-error - context menu has problem in typing */}
+            <ContextMenuTrigger id={menuId}>
+                <div
+                    style={{
+                        cursor: 'pointer',
+                        boxShadow: boxShadow.SHADOW_61,
+                        display: 'flex',
+                        marginBottom: 10,
+                        background: 'white',
+                        padding: 10,
+                        borderRadius: 4,
+                        marginRight: 10,
+                    }}
+                >
+                    <div style={{ flex: 1, display: 'flex' }}>
+                        <div>{formattedDay}</div>
+                        <Spacer />
+                        <div>{formattedTime}</div>
+                    </div>
+                    <div style={{ color: color || 'black' }}>{classStatus}</div>
+                </div>
+            </ContextMenuTrigger>
+            {/*@ts-expect-error - context menu has problem in typing */}
+            <ContextMenu
+                id={menuId}
+                style={{
+                    borderRadius: '8px',
+                    zIndex: 10 ** 7 + 1,
+                    boxShadow: boxShadow.SHADOW_62,
+                    backgroundColor: 'white',
+                }}
+            >
+                <Box
+                    sx={{
+                        '& .menu-item': {
+                            padding: '10px',
+                            cursor: 'pointer',
+                            '&:hover': {
+                                '&:hover': {
+                                    color: 'rgb(64, 150, 255)',
+                                },
+                            },
+                        },
+                    }}
+                >
+                    {/*@ts-expect-error - context menu has problem in typing */}
+                    <MenuItem
+                        className="menu-item"
+                        onClick={() => {
+                            ViewClassDialog.setWidth('xs');
+                            ViewClassDialog.setContent(() => () => (
+                                <ViewClassForm
+                                    isEditing={false}
+                                    dateUnixTimestamp={dateUnixTimestamp}
+                                    cls={cls}
+                                    course={course}
+                                    student={student}
+                                />
+                            ));
+                            ViewClassDialog.setOpen(true);
+                        }}
+                    >
+                        View class detail
+                    </MenuItem>
+                    {/*@ts-expect-error - context menu has problem in typing */}
+                    <MenuItem
+                        className="menu-item"
+                        onClick={() => {
+                            ViewClassDialog.setWidth('xs');
+                            ViewClassDialog.setContent(() => () => (
+                                <ViewClassForm
+                                    isEditing={true}
+                                    dateUnixTimestamp={dateUnixTimestamp}
+                                    cls={cls}
+                                    course={course}
+                                    student={student}
+                                />
+                            ));
+                            ViewClassDialog.setOpen(true);
+                        }}
+                    >
+                        Edit class
+                    </MenuItem>
+                    {/*@ts-expect-error - context menu has problem in typing */}
+                    <MenuItem
+                        className="menu-item"
+                        onClick={() => {
+                            DeleteClassDialog.setWidth('xs');
+                            DeleteClassDialog.setContent(() => () => (
+                                <DeleteClassForm
+                                    deleteSingleClass={true}
+                                    classGroup={classGroup}
+                                    cls={cls}
+                                    course={course}
+                                    onDeletion={async () => {
+                                        const studentId = student.id;
+                                        dispatch(
+                                            StudentThunkAction.getStudentClassesForWeeklyTimetable({
+                                                studentId,
+                                            })
+                                        );
+                                        dispatch(
+                                            StudentThunkAction.getStudentPackages({
+                                                studentId,
+                                            })
+                                        );
+                                        invalidateClassStatues();
+                                    }}
+                                />
+                            ));
+                            DeleteClassDialog.setOpen(true);
+                        }}
+                    >
+                        <span
+                            style={{
+                                color: 'red',
+                            }}
+                        >
+                            Delete a class
+                        </span>
+                    </MenuItem>
+                    {/*@ts-expect-error - context menu has problem in typing */}
+                    <MenuItem
+                        className="menu-item"
+                        onClick={() => {
+                            DeleteClassDialog.setWidth('xs');
+                            DeleteClassDialog.setContent(() => () => (
+                                <DeleteClassForm
+                                    deleteSingleClass={false}
+                                    classGroup={classGroup}
+                                    cls={cls}
+                                    course={course}
+                                    onDeletion={async () => {
+                                        const studentId = student.id;
+                                        dispatch(
+                                            StudentThunkAction.getStudentClassesForWeeklyTimetable({
+                                                studentId,
+                                            })
+                                        );
+                                        dispatch(
+                                            StudentThunkAction.getStudentPackages({
+                                                studentId,
+                                            })
+                                        );
+                                        invalidateClassStatues();
+                                    }}
+                                />
+                            ));
+                            DeleteClassDialog.setOpen(true);
+                        }}
+                    >
+                        <span
+                            style={{
+                                color: 'red',
+                            }}
+                        >
+                            Delete a group of classes
+                        </span>
+                    </MenuItem>
+                </Box>
+            </ContextMenu>
+        </>
     );
 };

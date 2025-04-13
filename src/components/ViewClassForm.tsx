@@ -11,20 +11,20 @@ import classStatuses from '../constant/classStatuses';
 import ViewClassDialog from './ViewClassDialog';
 import getColorForClassStatus from '../utils/getColorForClassStatus';
 import getNumberSuffix from '../utils/getNumberSuffix';
-import { TimetableClassEvent } from '../dto/kotlinDto';
+import { ClassDTO, CourseDTO, StudentDTO } from '../dto/kotlinDto';
 import boxShadow from '../constant/boxShadow';
-import Label from './Label';
 
 export default function ViewClassForm(props: {
-    classEvent: TimetableClassEvent;
-    dateUnixTimestamp?: number;
+    student: StudentDTO;
+    cls: ClassDTO;
+    course: CourseDTO;
+    dateUnixTimestamp: number;
     isEditing?: boolean;
 }) {
     const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const [editing, setEditing] = useState(props.isEditing || false);
-    const { classEvent, dateUnixTimestamp } = props;
-    const { class: cls, course } = classEvent;
+    const { cls, course, dateUnixTimestamp, student } = props;
     const formData = useRef({
         min: cls.min,
         class_status: cls.classStatus,
@@ -40,11 +40,8 @@ export default function ViewClassForm(props: {
         <Box
             style={{
                 width: '100%',
-                padding: '40px 40px',
-                paddingBottom: 60,
             }}
         >
-            <Label label="ViewClassForm.tsx" offsetTop={0} offsetLeft={380} />
             <div
                 style={{
                     display: 'flex',
@@ -53,7 +50,7 @@ export default function ViewClassForm(props: {
                 }}
             >
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <div style={{ fontWeight: 'bold', fontSize: '23px' }}>{course?.courseName}</div>
+                    <div style={{ fontWeight: 500, fontSize: '23px' }}>{course?.courseName}</div>
                     <Spacer />
                 </div>
                 <div
@@ -89,7 +86,7 @@ export default function ViewClassForm(props: {
                         marginBottom: '10px',
                         marginTop: '5px',
                         fontSize: '16px',
-                        fontWeight: 'bold',
+                        fontWeight: 500,
                     }}
                 >
                     Duration:
@@ -111,14 +108,14 @@ export default function ViewClassForm(props: {
                     />
                 )}
             </div>
-            <Spacer height={5} />
+            <Spacer height={10} />
             <div>
                 <div
                     style={{
                         marginBottom: '10px',
                         marginTop: '5px',
                         fontSize: '16px',
-                        fontWeight: 'bold',
+                        fontWeight: 500,
                     }}
                 >
                     Classroom:
@@ -143,14 +140,14 @@ export default function ViewClassForm(props: {
                     />
                 )}
             </div>
-            <Spacer height={5} />
+            <Spacer height={10} />
             <div>
                 <div
                     style={{
                         marginBottom: '10px',
                         marginTop: '5px',
                         fontSize: '16px',
-                        fontWeight: 'bold',
+                        fontWeight: 500,
                     }}
                 >
                     Class Status:
@@ -202,13 +199,13 @@ export default function ViewClassForm(props: {
                     />
                 )}
             </div>
-            <Spacer height={5} />
+            <Spacer height={10} />
             <div>
                 <div
                     style={{
                         marginBottom: '10px',
                         marginTop: '5px',
-                        fontWeight: 'bold',
+                        fontWeight: 500,
                         fontSize: '16px',
                     }}
                 >
@@ -252,21 +249,21 @@ export default function ViewClassForm(props: {
                                         dispatch(
                                             StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
                                                 classRoom: classRoom,
-                                                dateUnixTimestamp: dateUnixTimestamp.toString(),
+                                                anchorTimestamp: dateUnixTimestamp,
                                                 filter: filter,
                                             })
                                         );
                                     } else {
                                         dispatch(
                                             StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                                                studentId: classEvent.student.id,
+                                                studentId: student.id,
                                             })
                                         );
                                     }
                                 });
                             dispatch(
                                 StudentThunkAction.getStudentPackages({
-                                    studentId: classEvent.student.id,
+                                    studentId: student.id,
                                 })
                             );
                             ViewClassDialog.setOpen(false);

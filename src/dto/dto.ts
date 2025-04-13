@@ -1,4 +1,6 @@
+import statues from '../constant/statues';
 import { Classroom, Student_package } from '../prismaTypes/types';
+import { Class_status } from './kotlinDto';
 
 export type Gender = 'MALE' | 'FEMALE';
 export type RoleInSystem = 'SUPER_ADMIN' | 'ADMIN' | 'STAFF' | 'STUDENT';
@@ -27,7 +29,8 @@ export type CreateStudentRequest = {
     school_name: string;
     grade: string;
     phone_number: string;
-    wechat_id?: string;
+    wechat_id?: string | null;
+    shouldAutoRenewPackage: boolean;
 };
 
 export type UpdateStudentRequest = {
@@ -57,6 +60,21 @@ export type CreateUserRequest = {
     role_in_system: RoleInSystem;
     role_in_company: string;
 };
+
+//   public val id: UUID?,
+//   public val firstName: String,
+//   public val lastName: String,
+//   public val chineseFirstName: String?,
+//   public val chineseLastName: String?,
+//   public val isBlocked: Boolean,
+//   public val companyEmail: String,
+//   public val passwordHash: String,
+//   public val avatarFileUrl: String,
+//   public val createdAt: Double?,
+//   public val mobileNumber: String,
+//   public val roleInSystem: Role,
+//   public val roleInCompany: String,
+//   public val createdAtHk: String?,
 
 export type User = {
     first_name: string;
@@ -113,15 +131,8 @@ export type FilterToGetClassesForDailyTimetable = {
     courseIds: number[];
 };
 
-export type FilterToGetClassesForDailyTimetableWithoutCourseIds = {
-    present: boolean;
-    reserved: boolean;
-    suspicious_absence: boolean;
-    illegit_absence: boolean;
-    legit_absence: boolean;
-    makeup: boolean;
-    changeOfClassroom: boolean;
-    trial: boolean;
+export type StatuesFilter = {
+    [key in keyof typeof statues]: boolean;
 };
 
 export type DeleteClassRequest = {
@@ -140,7 +151,7 @@ export type DetachClassRequest = {
 export type UpdateClassRequest = {
     classId: number;
     min: number;
-    class_status: string;
+    class_status: Class_status;
     reason_for_absence: string;
     remark: string;
     actual_classroom: Classroom;
@@ -237,3 +248,30 @@ export type Loggings = {
     created_at: number;
     created_at_hk: string;
 }[];
+
+export type PreDailyTimetableRequest = {
+    anchorTimestamp: number;
+    numOfDays?: number;
+    classRoom: Classroom;
+    filter: FilterToGetClassesForDailyTimetable;
+};
+
+export type DailyTimetableRequest = {
+    dateUnixTimestamps: number[];
+    classRoom: Classroom;
+    filter: FilterToGetClassesForDailyTimetable;
+};
+
+export type CreateTicketRequest = {
+    content: string;
+    title: string;
+    solvedBy: string;
+};
+
+export type UpdateTicketRequest = {
+    ticketId: number;
+    content: string;
+    title: string;
+    isSolved: boolean;
+    solvedBy: string;
+};

@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 export default () => {
     const { studentId: studentId_ } = useParams<{ studentId: string }>();

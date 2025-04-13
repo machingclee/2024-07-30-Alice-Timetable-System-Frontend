@@ -12,6 +12,9 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     plugins: ['react-refresh', 'prettier', '@typescript-eslint'],
     rules: {
+        '@eslint-community/eslint-comments/no-unused-disable': 'off',
+        'eslint-comments/no-unused-disable': 'off',
+        'no-unused-disable': 'off',
         'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
         '@typescript-eslint/no-explicit-any': 'warn',
         'prettier/prettier': 'error',
@@ -26,7 +29,7 @@ module.exports = {
         'max-len': [
             'error',
             {
-                code: 120,
+                code: 150,
                 tabWidth: 2,
                 ignoreComments: true,
                 ignoreUrls: true,

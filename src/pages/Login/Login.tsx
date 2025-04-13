@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useNavigate } from 'react-router-dom';
 import { AuthThunkAction } from '../../redux/slices/authSlice';
 import RouteEnum from '../../enum/RouteEnum';
+import loginLogo from '../../assets/loginLogo.png';
 
 export default function Login() {
     const dispatch = useAppDispatch();
@@ -15,6 +16,7 @@ export default function Login() {
     const [password, setPassword] = useState('');
 
     const login = async () => {
+        console.log('login with', email, password);
         await dispatch(
             AuthThunkAction.userLogin({
                 email,
@@ -57,6 +59,9 @@ export default function Login() {
                         margin: '10px',
                     }}
                 >
+                    <img src={loginLogo} style={{ width: 240 }} />
+                    <Spacer />
+                    <Spacer />
                     <div style={{ flex: 2 }} />
                     <div style={{ minWidth: 400, width: 400 }}>
                         <FormInputField
@@ -89,7 +94,7 @@ export default function Login() {
                     <div style={{ flex: 6 }} />
                 </div>
             </div>
-            <div style={{ flex: 10 }} />
+            <div style={{ flex: 20 }} />
         </div>
     );
 }

@@ -1,11 +1,14 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import RouteEnum from '../../enum/RouteEnum';
-import { useAppSelector } from '../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useEffect } from 'react';
+import { NotificationThunkAction } from '@/redux/slices/notificationSlice';
 
 const Dashboard = () => {
     const accessToken = useAppSelector(s => s.auth.accessToken);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+
     useEffect(() => {
         if (!accessToken) {
             navigate('/login');
@@ -16,6 +19,11 @@ const Dashboard = () => {
             }
         }
     }, [accessToken, navigate]);
+
+    useEffect(() => {
+        dispatch(NotificationThunkAction.getNotifications());
+    }, [dispatch]);
+
     return (
         <div style={{ display: 'flex', flexDirection: 'row', height: '100vh' }}>
             <div

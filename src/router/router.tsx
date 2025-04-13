@@ -19,13 +19,21 @@ import CausewaybayIndex from './indexPages/CausewaybayIndex.tsx';
 import LogginIndex from './indexPages/LogginIndex.tsx';
 import ClassStatusIndex from './indexPages/ClassStatusIndex.tsx';
 import PrinceEdwardIndex from './indexPages/PrinceEdwardIndex.tsx';
+import StudentInfo from '../pages/StudentInfo/StudentInfo.tsx';
+import Tickets from '../pages/Tickets/Tickets.tsx';
+import Notification from '@/pages/Notification/Notificaiton.tsx';
 
 function getRouter(_store: Store) {
     return createBrowserRouter(
         createRoutesFromElements(
             <Route path="/" element={<Root />}>
+                <Route path="/student-info">
+                    <Route path=":studentId" element={<StudentInfo />} />
+                </Route>
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<Dashboard />}>
+                    <Route path="tickets" element={<Tickets />} />
+                    <Route path="notifications" element={<Notification />} />
                     <Route path={'students'} element={<RouteIndex />}>
                         <Route index element={<Students />} />
                         <Route path=":studentId" element={<StudentDetail />} />

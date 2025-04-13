@@ -7,6 +7,14 @@ import getEnv from '../utils/getEnv';
 const baseURL = getEnv().VITE_BACKEND_URL || '';
 console.log('baseURLbaseURLbaseURL', baseURL);
 
+export const loginApiClient = axios.create({
+    baseURL,
+    responseEncoding: 'utf8',
+    headers: {
+        'Content-type': 'application/json',
+    },
+});
+
 const apiClient = axios.create({
     baseURL,
     responseEncoding: 'utf8',
@@ -25,8 +33,10 @@ export const configApiClient = (apiClient: AxiosInstance, store: ReduxToolkitSto
         const token = store?.getState()?.auth?.accessToken || '';
         if (token) {
             req.headers['Authorization'] = 'Bearer ' + token;
+            return req;
+        } else {
+            return Promise.reject('Request Cancelled');
         }
-        return req;
     });
 
     apiClient.interceptors.response.use(

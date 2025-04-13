@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Spacer from '../../../components/Spacer';
 import { CourseResponse } from '../../../dto/dto';
-import Label from '../../../components/Label';
 import { CourseThunkAction } from '../../../redux/slices/courseSlice';
 import { debounce } from 'lodash';
 import lodash from 'lodash';
@@ -71,7 +70,6 @@ export default function CourseRow(props: { id: number }) {
         >
             <div style={{ flex: 1 }}>
                 <table>
-                    <Label label="CourseRow.tsx" offsetTop={-20} />
                     <tbody>
                         <tr>
                             <td>Course Name:</td>

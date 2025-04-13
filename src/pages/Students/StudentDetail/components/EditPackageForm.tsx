@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import SectionTitle from '../../../../components/SectionTitle';
-import Label from '../../../../components/Label';
 import Spacer from '../../../../components/Spacer';
 import { useEffect, useRef, useState } from 'react';
 import { Button, DatePicker, Select } from 'antd';
@@ -18,7 +17,7 @@ import dayjs from 'dayjs';
 export default function EditPackageForm(props: { packageId: string }) {
     const { packageId } = props;
     const { studentId } = useParams<{ studentId: string }>();
-    const currentPackage = useAppSelector(
+    const packageInfo = useAppSelector(
         s => s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[packageId]
     );
 
@@ -31,17 +30,17 @@ export default function EditPackageForm(props: { packageId: string }) {
     };
 
     const submit = async () => {
-        if (!currentPackage) {
+        if (!packageInfo) {
             return;
         }
         const reqBody: UpdateStudentPackageRequest = {
             id: parseInt(packageId),
-            course_id: formData.current.course_id || currentPackage.course_id,
-            start_date: formData.current.start_date || currentPackage.start_date,
-            num_of_classes: formData.current.num_of_classes || currentPackage.num_of_classes,
-            min: formData.current.min || currentPackage.min,
-            default_classroom: formData.current.default_classroom || currentPackage.default_classroom,
-            student_id: currentPackage.student_id,
+            course_id: formData.current.course_id || packageInfo.packageId,
+            start_date: formData.current.start_date || packageInfo.studentPackage.startDate,
+            num_of_classes: formData.current.num_of_classes || packageInfo.studentPackage.numOfClasses,
+            min: formData.current.min || packageInfo.studentPackage.min,
+            default_classroom: formData.current.default_classroom || packageInfo.studentPackage.defaultClassroom,
+            student_id: packageInfo.student.id,
             expiry_date: formData.current.expiry_date || 0,
         };
         EditPackageDialog.setOpen(false);
@@ -62,14 +61,10 @@ export default function EditPackageForm(props: { packageId: string }) {
     return (
         <Box
             style={{
-                maxWidth: 400,
-                width: 600,
-                padding: '40px 80px',
+                width: '100%',
                 overflowY: 'auto',
-                paddingBottom: 60,
             }}
         >
-            <Label label="Edit Package Information.tsx" offsetTop={0} offsetLeft={180} />
             <SectionTitle>Edit Package Information</SectionTitle>
             <Spacer />
             <div style={{ display: 'flex' }}>
@@ -81,15 +76,15 @@ export default function EditPackageForm(props: { packageId: string }) {
             <Select
                 dropdownStyle={{ zIndex: 10 ** 4 }}
                 style={{ width: '100%' }}
-                defaultValue={currentPackage?.course_id}
+                defaultValue={packageInfo?.course.id}
                 onChange={value => {
                     updateFormData({ course_id: value });
                 }}
                 options={classes.ids?.map(id_ => {
-                    const { course_name, id } = classes.idToCourse?.[id_] || {};
+                    const { courseName, id } = classes.idToCourse?.[id_] || {};
                     return {
                         value: id || 0,
-                        label: course_name || '',
+                        label: courseName || '',
                     };
                 })}
             />
@@ -118,7 +113,7 @@ export default function EditPackageForm(props: { packageId: string }) {
                 onChange={value => {
                     updateFormData({ min: value });
                 }}
-                defaultValue={currentPackage?.min}
+                defaultValue={packageInfo?.studentPackage.min}
                 options={[
                     { value: 45, label: '45' },
                     { value: 60, label: '60' },
@@ -133,7 +128,7 @@ export default function EditPackageForm(props: { packageId: string }) {
             <Select
                 dropdownStyle={{ zIndex: 10 ** 4 }}
                 style={{ width: '100%' }}
-                defaultValue={currentPackage?.num_of_classes}
+                defaultValue={packageInfo?.studentPackage.numOfClasses}
                 onChange={value => {
                     updateFormData({ num_of_classes: value });
                 }}
@@ -150,7 +145,7 @@ export default function EditPackageForm(props: { packageId: string }) {
             <Select
                 dropdownStyle={{ zIndex: 10 ** 4 }}
                 style={{ width: '100%' }}
-                defaultValue={currentPackage?.default_classroom}
+                defaultValue={packageInfo?.studentPackage.defaultClassroom}
                 onChange={value => {
                     updateFormData({ default_classroom: value });
                 }}
@@ -160,7 +155,7 @@ export default function EditPackageForm(props: { packageId: string }) {
                 }))}
             />
             <Spacer />
-            {currentPackage?.expiry_date && (
+            {packageInfo?.studentPackage.expiryDate && (
                 <>
                     <div style={{ display: 'flex' }}>
                         <FormInputTitle>Update Expiry Date</FormInputTitle>
@@ -171,7 +166,7 @@ export default function EditPackageForm(props: { packageId: string }) {
                             updateFormData({ expiry_date: val.valueOf() });
                         }}
                         popupStyle={{ zIndex: 10 ** 7 }}
-                        defaultValue={dayjs(currentPackage?.expiry_date)}
+                        defaultValue={dayjs(packageInfo?.studentPackage.expiryDate)}
                     />
                 </>
             )}

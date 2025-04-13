@@ -1,25 +1,24 @@
 import Checkbox from '@mui/material/Checkbox';
 import Label from './Label';
-import { useAppSelector } from '../redux/hooks';
-import { AppDispatch } from '../redux/store';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { cloneDeep } from 'lodash';
 import studentSlice from '../redux/slices/studentSlice';
-import { useState } from 'react';
 
-export default function CourseFilterItem({ id }: { id: number }) {
-    const dispatch = useDispatch<AppDispatch>();
-    const filterCourseIds = useAppSelector(s => s.student.massTimetablePage.filter.courseIds);
-    const [checked, setChecked] = useState(filterCourseIds.includes(id) ? true : false);
-    const course = useAppSelector(s => s.class.courses.idToCourse?.[id]);
+export default function CourseFilterItem({ id: courseId }: { id: number }) {
+    const course = useAppSelector(s => s.class.courses.idToCourse?.[courseId]);
+    const dispatch = useAppDispatch();
+    const selectedCourseIds = useAppSelector(s => s.student.massTimetablePage.filter.courseIds);
+    const checked = selectedCourseIds.includes(courseId);
 
-    const handleCourseFilterItemOnChange = (checked: boolean) => {
+    const handleCourseFilterItemOnChange = () => {
+        const newCourseIds = cloneDeep(selectedCourseIds);
         if (checked) {
-            dispatch(studentSlice.actions.addCourseFilterItem(id));
-            setChecked(true);
+            const index = newCourseIds.indexOf(courseId);
+            newCourseIds.splice(index, 1);
         } else {
-            dispatch(studentSlice.actions.dropCourseFilterItem(id));
-            setChecked(false);
+            newCourseIds.push(courseId);
         }
+        dispatch(studentSlice.actions.updateFilter({ courseIds: newCourseIds }));
     };
 
     return (
@@ -30,14 +29,8 @@ export default function CourseFilterItem({ id }: { id: number }) {
                 alignItems: 'center',
             }}
         >
-            <Checkbox
-                onChange={event => {
-                    handleCourseFilterItemOnChange(event.target.checked);
-                }}
-                checked={checked}
-                {...Label}
-            />
-            {course?.course_name}
+            <Checkbox onChange={handleCourseFilterItemOnChange} checked={checked} {...Label} />
+            {course?.courseName}
         </div>
     );
 }

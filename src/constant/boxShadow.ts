@@ -26,7 +26,7 @@ export default {
     SHADOW_22: 'rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,rgba(0, 0, 0, 0.3) 0px 30px 60px -30px',
     SHADOW_23: 'rgba(0, 0, 0, 0.12) 0px 1px 3px,rgba(0, 0, 0, 0.24) 0px 1px 2px',
     SHADOW_24: 'rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px',
-    SHADOW_25: 'rgba(0, 0, 0, 0.25) 0px 14px 28px,rgba(0, 0, 0, 0.22) 0px 10px 10px',
+    SHADOW_25: 'rgb(196, 255, 1) 0px 0px 5px, rgb(196, 255, 1) 0px 0px 20px, rgb(196, 255, 1) 0px 0px 50px',
     SHADOW_26: 'rgba(0, 0, 0, 0.3) 0px 19px 38px,rgba(0, 0, 0, 0.22) 0px 15px 12px',
     SHADOW_27: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
     SHADOW_28: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,rgba(60, 64, 67, 0.15) 0px 1px 3px 1px',

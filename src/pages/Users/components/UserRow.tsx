@@ -7,7 +7,6 @@ import { Button, Select } from 'antd';
 import Spacer from '../../../components/Spacer';
 import { UserThunkAction } from '../../../redux/slices/userSlice';
 import lodash, { debounce } from 'lodash';
-import Label from '../../../components/Label';
 
 export default function UserRow(props: { id: string }) {
     const { id } = props;
@@ -68,6 +67,7 @@ export default function UserRow(props: { id: string }) {
     return (
         <Box
             style={{
+                backgroundColor: 'white',
                 boxShadow: boxShadow.SHADOW_62,
                 padding: '20px 30px',
                 marginBottom: '15px',
@@ -89,6 +89,7 @@ export default function UserRow(props: { id: string }) {
                     verticalAlign: 'middle',
                     width: '100px',
                     color: 'rgb(150,150,150)',
+                    marginBottom: '5px',
                 },
                 '& td:nth-child(2), & td:nth-child(3)': {
                     display: 'flex',
@@ -96,14 +97,14 @@ export default function UserRow(props: { id: string }) {
                     borderRadius: '4px',
                     background: 'rgb(240,240,240)',
                     padding: '5px',
+                    marginBottom: '5px',
                 },
             }}
         >
             <table>
-                <Label label="UserRow.tsx" offsetTop={-20} />
                 <tbody>
                     <tr>
-                        <td>English Name:</td>
+                        <td>English Name</td>
                         {!startEdit && <td>{`${first_name} ${last_name}`}</td>}
                         {startEdit && (
                             <>
@@ -142,11 +143,11 @@ export default function UserRow(props: { id: string }) {
                         )}
                     </tr>
                     <tr>
-                        <td>Email:</td>
+                        <td>Email</td>
                         <td>{company_email}</td>
                     </tr>
                     <tr>
-                        <td>Position:</td>
+                        <td>Position</td>
                         {!startEdit && <td>{role_in_company}</td>}
                         {startEdit && (
                             <td>
@@ -160,7 +161,7 @@ export default function UserRow(props: { id: string }) {
                         )}
                     </tr>
                     <tr>
-                        <td>Phone:</td>
+                        <td>Phone</td>
                         {!startEdit && <td>{mobile_number}</td>}
                         {startEdit && (
                             <td>
@@ -175,7 +176,7 @@ export default function UserRow(props: { id: string }) {
                     </tr>
                     {/* <Spacer height={startEdit ? 0 : 0} /> */}
                     <tr>
-                        <td>System Role:</td>
+                        <td>System Role</td>
                         {!startEdit && (
                             <td
                                 style={{

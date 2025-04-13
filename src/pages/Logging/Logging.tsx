@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import apiClient from '../../axios/apiClient';
 import apiRoutes from '../../axios/apiRoutes';
 import { CustomResponse } from '../../axios/responseTypes';
-import Label from '../../components/Label';
 import { Loggings } from '../../dto/dto';
 import { Box } from '@mui/material';
 import dayjs from 'dayjs';
@@ -23,7 +22,6 @@ export default function Logging() {
 
     return (
         <div>
-            <Label label="Logging.tsx" />
             <Box
                 sx={{
                     table: { borderCollapse: 'collapse' },

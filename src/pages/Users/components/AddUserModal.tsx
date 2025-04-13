@@ -1,11 +1,10 @@
-import { Button, Select } from 'antd';
+import { Select } from 'antd';
 import Spacer from '../../../components/Spacer';
 import { useRef, useState } from 'react';
 import { CreateUserRequest, RoleInSystem } from '../../../dto/dto';
 import apiClient from '../../../axios/apiClient';
 import apiRoutes from '../../../axios/apiRoutes';
 import { CustomResponse } from '../../../axios/responseTypes';
-import { toast } from 'react-toastify';
 import FormInputField from '../../../components/FormInputField';
 import toastUtil from '../../../utils/toastUtil';
 import SectionTitle from '../../../components/SectionTitle';
@@ -14,8 +13,10 @@ import { useAppDispatch } from '../../../redux/hooks';
 import { UserThunkAction } from '../../../redux/slices/userSlice';
 import { Box } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
+import { AliceModalProps } from '../../../components/AliceModalTrigger';
 
-export default function AddUserForm() {
+export default function AddUserModal(props: AliceModalProps) {
+    const { setOnOk: setOnOk, setOkText } = props;
     const dispatch = useAppDispatch();
     const formData = useRef<Partial<CreateUserRequest>>({
         role_in_system: 'STAFF',
@@ -46,11 +47,13 @@ export default function AddUserForm() {
                 setError(errorObject);
             }
         } else {
-            toast.success('User Created');
+            toastUtil.success('User Created');
             AddUserDialog.setOpen(false);
             dispatch(UserThunkAction.getUsers());
         }
     };
+    setOnOk(submit);
+    setOkText('Submit');
 
     return (
         <Box
@@ -62,7 +65,7 @@ export default function AddUserForm() {
                 paddingBottom: 60,
             }}
         >
-            <SectionTitle>Add User</SectionTitle>
+            <SectionTitle>Add Staff</SectionTitle>
             <Spacer />
             <FormInputField
                 title="English First Name"
@@ -111,9 +114,6 @@ export default function AddUserForm() {
             />
             <Spacer />
             <Spacer />
-            <Button type="primary" block onClick={submit}>
-                Submit
-            </Button>
         </Box>
     );
 }

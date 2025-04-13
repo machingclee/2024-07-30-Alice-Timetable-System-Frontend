@@ -12,7 +12,6 @@ import AddClassDialog from './AddCourseDialog';
 import { useAppDispatch } from '../../../redux/hooks';
 import { CourseThunkAction } from '../../../redux/slices/courseSlice';
 import { Button } from 'antd';
-import Label from '../../../components/Label';
 
 export default function AddCourseForm() {
     const dispatch = useAppDispatch();
@@ -51,7 +50,6 @@ export default function AddCourseForm() {
             }}
         >
             <SectionTitle>Add a Course</SectionTitle>
-            <Label offsetTop={-40} label="AddClassForm.tsx" />
             <Spacer />
             <FormInputField
                 title="Course Name"

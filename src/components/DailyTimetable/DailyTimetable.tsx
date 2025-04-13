@@ -7,48 +7,49 @@ import SectionTitle from '../SectionTitle';
 import Spacer from '../Spacer';
 
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import studentSlice, { StudentThunkAction } from '../../redux/slices/studentSlice';
+import studentSlice from '../../redux/slices/studentSlice';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import timeUtil from '../../utils/timeUtil';
-import Label from '../Label';
 import ViewClassDialog from '../ViewClassDialog';
 import TimeRow from './components/TimeRow';
 import { PrintHandler } from '../PrintButton';
 import Interval from '../../utils/Interval';
+import useRefetchMassTimetables from '../../hooks/useRefetchMassTimetables';
 const gridHeight = 30;
 
 export default function DailyTimetable({
     printButtonRef: printButtonRef,
+    date,
+    dayOffset,
 }: {
     printButtonRef?: React.RefObject<PrintHandler>;
+    date: Date;
+    dayOffset: number;
 }) {
     const dispatch = useAppDispatch();
     const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
-    const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
+    const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
     const [hoursColumnGrid, setHoursColumn] = useState<string[]>([]);
-    const selectedDay = useAppSelector(s => s.student.massTimetablePage.selectedDate);
-    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const hrUnixTimestampOnClick = useAppSelector(
         s => s.student.massTimetablePage.totalClassesInHighlight.hrUnixTimestampOnClick
     );
-    const hrUnixTimestampToClasses = useAppSelector(s => s.student.massTimetablePage.hrUnixTimestampToClasses);
+    const hrUnixTimestampToClasses = useAppSelector(s => s.student.massTimetablePage.hrUnixTimestampToTimetableClasses);
 
     // Memoize the half-hour intervals to prevent recalculation on every render
     const oneForthHourIntervals = useMemo(() => {
-        const startOfTodayDayjs = dayjs(selectedDate).startOf('day').add(9, 'hour'); // Start from 9 AM
+        const startOfTodayDayjs = dayjs(date).startOf('day').add(9, 'hour'); // Start from 9 AM
         const intervals: Dayjs[] = [];
         for (let offset = 0; offset < 44; offset++) {
             intervals.push(startOfTodayDayjs.add(offset * 0.25, 'hour'));
         }
         return intervals;
-    }, [selectedDate]);
+    }, [date]);
 
     // Initialize the time grid based on `hrUnixTimestamps`
     useEffect(() => {
         const hoursOfTheDay = oneForthHourIntervals.map(dayJS => String(dayJS.valueOf()));
         setHoursColumn(hoursOfTheDay);
         // Add another thing to listen to: change of the date (like next day and previous day)
-    }, [selectedDay, oneForthHourIntervals]);
+    }, [date, oneForthHourIntervals]);
 
     // Move to the parent component to do one operation of counting the number of classes starting on, progressing through or ending on a particular unix timestamp
     useEffect(() => {
@@ -60,10 +61,12 @@ export default function DailyTimetable({
 
             Object.values(hrUnixTimestampToClasses).forEach(timetableClass => {
                 timetableClass.forEach(timetableClass => {
-                    const { hour_unix_timestamp, min } = timetableClass;
+                    const hourUnixTimestamp = timetableClass.class.hourUnixTimestamp;
+                    const package_ = timetableClass.studentPackage;
+                    const min = package_.min;
                     const classInterval = new Interval(
-                        hour_unix_timestamp,
-                        dayjs(hour_unix_timestamp).add(min, 'minute').valueOf() - 1
+                        hourUnixTimestamp,
+                        dayjs(hourUnixTimestamp).add(min, 'minute').valueOf() - 1
                     );
                     const intersection = classInterval.intersect(intervalOnClick);
                     if (intersection) {
@@ -117,7 +120,6 @@ export default function DailyTimetable({
                 },
             }}
         >
-            <Label label="DailyTimetable.tsx" offsetLeft={40} offsetTop={20} />
             <SectionTitle style={{ justifyContent: 'center' }}>
                 <div
                     style={{
@@ -130,27 +132,15 @@ export default function DailyTimetable({
                     }}
                 >
                     <Button
+                        className="!rounded-2xl"
                         onClick={() => {
                             if (!classRoom) {
                                 return;
                             }
-                            const prevDayjs = dayjs(selectedDate).subtract(1, 'day');
-                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDayjs.toDate() }));
-                            dispatch(
-                                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                                    dateUnixTimestamp: timeUtil
-                                        .getDayUnixTimestamp(dayjs(selectedDate).subtract(1, 'day').toDate().getTime())
-                                        .toString(),
-                                    classRoom: classRoom,
-                                    filter: filter,
-                                })
-                            );
-                            dispatch(
-                                StudentThunkAction.getStudentClassesForDailyTimetable({
-                                    dateUnixTimestamp: prevDayjs.startOf('day').valueOf().toString(),
-                                    classRoom: classRoom,
-                                })
-                            );
+                            const prevDayjs = dayjs(date).subtract(1 + dayOffset, 'day');
+                            const prevDate = prevDayjs.toDate();
+                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDate }));
+                            refetchMassTimetableAnchoredAt(prevDate.getTime());
                         }}
                     >
                         <div
@@ -164,30 +154,19 @@ export default function DailyTimetable({
                         </div>
                     </Button>
                     <Spacer width={20} />
-                    <div>{dayjs(selectedDate).format('YYYY-MM-DD (ddd)')}</div>
+                    {dayjs(date).format('YYYY-MM-DD (ddd)')}
                     <Spacer width={20} />
                     <Button
+                        className="!rounded-2xl"
                         onClick={() => {
+                            console.log('classRoomclassRoom', classRoom);
                             if (!classRoom) {
                                 return;
                             }
-                            const nextDayjs = dayjs(selectedDate).add(1, 'day');
-                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDayjs.toDate() }));
-                            dispatch(
-                                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                                    dateUnixTimestamp: timeUtil
-                                        .getDayUnixTimestamp(dayjs(selectedDate).add(1, 'day').toDate().getTime())
-                                        .toString(),
-                                    classRoom: classRoom,
-                                    filter: filter,
-                                })
-                            );
-                            // dispatch(
-                            //     StudentThunkAction.getStudentClassesForDailyTimetable({
-                            //         dateUnixTimestamp: nextDayjs.valueOf().toString(),
-                            //         classRoom: classRoom,
-                            //     })
-                            // );
+                            const nextDayjs = dayjs(date).add(1 - dayOffset, 'day');
+                            const nextDate = nextDayjs.toDate();
+                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDate }));
+                            refetchMassTimetableAnchoredAt(nextDate.getTime());
                         }}
                     >
                         <div
@@ -204,7 +183,7 @@ export default function DailyTimetable({
             </SectionTitle>
 
             <CustomScrollbarContainer
-                style={{ height: 'calc(100vh - 120px)' }}
+                style={{ height: 'calc(100vh - 230px)' }}
                 setPrintContent={(content: HTMLDivElement | null) => {
                     printButtonRef?.current?.setPrintTarget(content);
                 }}
@@ -248,10 +227,9 @@ export default function DailyTimetable({
                                     {hoursColumnGrid.sort().map((hourUnixTimestamp, index) => {
                                         return (
                                             <TimeRow
-                                                key={`${hourUnixTimestamp}-${selectedDate.getTime()}`}
-                                                index={index}
+                                                key={`${hourUnixTimestamp}-${date?.getTime() || 0}`}
+                                                rowIndex={index}
                                                 hourUnixTimestamp={hourUnixTimestamp}
-                                                hoursColumnGrid={hoursColumnGrid}
                                             />
                                         );
                                     })}

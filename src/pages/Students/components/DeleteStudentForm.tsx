@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import SectionTitle from '../../../components/SectionTitle';
-import Label from '../../../components/Label';
 import Spacer from '../../../components/Spacer';
 import { useEffect } from 'react';
 import { Button } from 'antd';
@@ -32,7 +31,6 @@ export default function DeleteStudentForm(props: { studentId: string }) {
                 paddingBottom: 60,
             }}
         >
-            <Label label="DeleteStudentForm.tsx" offsetTop={0} offsetLeft={300} />
             <SectionTitle>Are you sure to delete this student?</SectionTitle>
             <Spacer height={40} />
             <div>English name: {firstName + ' ' + lastName}</div>

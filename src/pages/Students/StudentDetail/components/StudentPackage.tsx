@@ -1,12 +1,9 @@
 import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import boxShadow from '../../../../constant/boxShadow';
-import { Box } from '@mui/material';
-import studentSlice, { StudentThunkAction } from '../../../../redux/slices/studentSlice';
+import studentSlice, { StudentDetailPage, StudentThunkAction } from '../../../../redux/slices/studentSlice';
 import Sep from '../../../../components/Sep';
 import Spacer from '../../../../components/Spacer';
-import Label from '../../../../components/Label';
-import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import colors from '../../../../constant/colors';
 import { useParams } from 'react-router-dom';
 import { FaRegCheckCircle } from 'react-icons/fa';
@@ -15,18 +12,25 @@ import AddPaymentDetailDialog from './AddPaymentDetailDialog';
 import AddPaymentDetailForm from './AddPaymentDetailForm';
 import EditPackageDialog from './EditPackageDialog';
 import EditPackageForm from './EditPackageForm';
-import RouteEnum from '../../../../enum/RouteEnum';
 import classnames from 'classnames';
+import { useState } from 'react';
+import { Modal } from 'antd';
+import useAnchorTimestamp from '../../../../hooks/useAnchorTimestamp';
+import documentId from '../../../../constant/documentId';
+import toastUtil from '../../../../utils/toastUtil';
+import { AliceMenu } from '@/components/AliceMenu';
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;
+    const { anchorTimestamp, setURLAnchorTimestamp } = useAnchorTimestamp();
     const dispatch = useAppDispatch();
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const { studentId } = useParams<{ studentId: string }>();
     const pkgResonse = useAppSelector(
         s => s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[packageId]
     );
-    const { consumedMinutes, schedumeMinutes, studentPackage: studentPkg, student } = pkgResonse || {};
+    const { consumedMinutes, scheduledMinutes: schedumeMinutes, studentPackage: studentPkg } = pkgResonse || {};
     const courseId = studentPkg?.courseId;
     const course = useAppSelector(s => s.class.courses?.idToCourse?.[courseId || -1]);
     const assignedClasses = Math.floor(((schedumeMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
@@ -38,10 +42,16 @@ export default function StudentPackage(props: { packageId: string }) {
     }
 
     const isSelected = selectedPackageId === packageId;
-    const selectHandler = () => {
-        dispatch(studentSlice.actions.setSelectedPackageId(packageId || ''));
+    const selectPackage = () => {
+        dispatch(
+            studentSlice.actions.setSelectedPackageId({
+                packageId: packageId || '',
+                setURLAnchorTimestamp: setURLAnchorTimestamp,
+            })
+        );
     };
     const addPaymentDetail = async () => {
+        AddPaymentDetailDialog.setWidth('xs');
         AddPaymentDetailDialog.setContent(() => () => <AddPaymentDetailForm packageId={Number(packageId)} />);
         AddPaymentDetailDialog.setOpen(true);
         // await dispatch(StudentThunkAction.markPackageAsPaid({ packageId: Number(packageId) })).unwrap()
@@ -72,24 +82,34 @@ export default function StudentPackage(props: { packageId: string }) {
             })
         ).unwrap();
         if (studentId) {
+            dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_TIME_TABLE));
             dispatch(StudentThunkAction.getStudentPackages({ studentId }));
             dispatch(
                 StudentThunkAction.getStudentClassesForWeeklyTimetable({
                     studentId,
                 })
             );
+            toastUtil.success('Class deleted successfully.');
         }
     };
 
     const showAttendence = async () => {
-        const route = `${RouteEnum.CLASS_STATUS}/${student?.id}`;
-        window.open(route, '_blank');
+        dispatch(
+            studentSlice.actions.setSelectedPackageId({
+                packageId: packageId || '',
+                desiredAnchorTimestamp: anchorTimestamp,
+                setURLAnchorTimestamp,
+            })
+        );
+        dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_PACKAGE_CLASS_STATUES));
     };
 
     const editPackage = async () => {
+        EditPackageDialog.setWidth('xs');
         EditPackageDialog.setContent(() => () => <EditPackageForm packageId={packageId} />);
         EditPackageDialog.setOpen(true);
     };
+
     const paidIcon = () => {
         return (
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -121,9 +141,12 @@ export default function StudentPackage(props: { packageId: string }) {
 
     return (
         <div
+            id={documentId.STUDENT_PACKAGE_ID(packageId)}
             style={{
                 boxShadow: boxShadow.SHADOW_60,
                 maxWidth: 300,
+                borderRadius: 15,
+                marginBottom: 10,
             }}
             className={classnames(
                 'cursor-pointer',
@@ -136,11 +159,45 @@ export default function StudentPackage(props: { packageId: string }) {
                 'p-[10px] rounded-none m-1'
             )}
         >
-            <Label label="StudentPackage.tsx" offsetLeft={10} />
-            {/* @ts-expect-error - context menu trigger has problem in typing */}
-            <ContextMenuTrigger id={packageId}>
-                <div onClick={selectHandler}>
-                    <div className="p-[10px] flex justify-center font-[600]">{course?.courseName}</div>
+            <AliceMenu
+                items={[
+                    {
+                        item: 'Edit package',
+                        onClick: editPackage,
+                    },
+                    {
+                        item: 'Delete package',
+                        onClick: () => setShowDeleteConfirmation(true),
+                    },
+                    {
+                        item: 'Show attendence',
+                        onClick: showAttendence,
+                    },
+                    {
+                        item: 'Add payment detail',
+                        disabled: isPaid,
+                        onClick: addPaymentDetail,
+                    },
+                    {
+                        item: 'Mark as unpaid',
+                        disabled: !isPaid,
+                        onClick: markAsUnPaid,
+                    },
+                ]}
+            >
+                <Modal
+                    closable={false}
+                    okText={'I do'}
+                    onOk={deletePackage}
+                    onCancel={() => setShowDeleteConfirmation(false)}
+                    onClose={() => setShowDeleteConfirmation(false)}
+                    centered
+                    open={showDeleteConfirmation}
+                >
+                    <div>Are you sure to delete? Data will be lost and cannot be reverted.</div>
+                </Modal>
+                <div onClick={selectPackage}>
+                    <div className="p-[5px] flex justify-center font-[600]">{course?.courseName}</div>
                     <Sep />
                     <Spacer height={5} />
                     <table className="[&_td]:pr-[10px]">
@@ -187,65 +244,7 @@ export default function StudentPackage(props: { packageId: string }) {
                         </tbody>
                     </table>
                 </div>
-            </ContextMenuTrigger>
-            {/* @ts-expect-error - context menu trigger has problem in typing */}
-            <ContextMenu
-                id={packageId}
-                style={{
-                    zIndex: 10 ** 7,
-                    borderRadius: 8,
-                    backgroundColor: 'white',
-                    // boxShadow: boxShadow.SHADOW_62,
-                    border: '1px solid rgba(0,0,0,0.2)',
-                }}
-            >
-                <Box
-                    sx={{
-                        '& .menu-item': {
-                            zIndex: 10 ** 7,
-                            border: 'none',
-                            padding: '10px',
-                            cursor: 'pointer',
-                            '&:hover': {
-                                '&:hover': {
-                                    color: 'rgb(64, 150, 255)',
-                                },
-                            },
-                        },
-                    }}
-                >
-                    {/* @ts-expect-error - context menu trigger has problem in typing */}
-                    <MenuItem className="menu-item" onClick={editPackage}>
-                        Edit package
-                    </MenuItem>
-                    <>
-                        {/* @ts-expect-error - context menu trigger has problem in typing */}
-                        <MenuItem className="menu-item" onClick={deletePackage}>
-                            Delete package
-                        </MenuItem>
-                    </>
-                    {/* @ts-expect-error - context menu trigger has problem in typing */}
-                    <MenuItem className="menu-item" onClick={showAttendence}>
-                        Show Attendence
-                    </MenuItem>
-                    {!isPaid && (
-                        <>
-                            {/* @ts-expect-error - context menu trigger has problem in typing */}
-                            <MenuItem className="menu-item" onClick={addPaymentDetail}>
-                                Add Payment Detail
-                            </MenuItem>
-                        </>
-                    )}
-                    {isPaid && (
-                        <>
-                            {/* @ts-expect-error - context menu trigger has problem in typing */}
-                            <MenuItem className="menu-item" onClick={markAsUnPaid}>
-                                Mark as Unpaid
-                            </MenuItem>
-                        </>
-                    )}
-                </Box>
-            </ContextMenu>
+            </AliceMenu>
         </div>
     );
 }

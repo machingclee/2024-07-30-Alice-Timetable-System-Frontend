@@ -3,625 +3,267 @@ import Spacer from '../components/Spacer';
 import { useAppSelector } from '../redux/hooks';
 import { useDispatch } from 'react-redux';
 import Sep from '../components/Sep';
-import Label from '../components/Label';
 import { Button, Calendar } from 'antd';
 import type { CalendarProps } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import studentSlice, { StudentThunkAction } from '../redux/slices/studentSlice';
-import timeUtil from '../utils/timeUtil';
+import studentSlice from '../redux/slices/studentSlice';
 import { AppDispatch } from '../redux/store';
-import { FilterToGetClassesForDailyTimetableWithoutCourseIds } from '../dto/dto';
+import { StatuesFilter } from '../dto/dto';
 import { FaFilter } from 'react-icons/fa';
 import Checkbox from '@mui/material/Checkbox';
-import colors from '../constant/colors';
 import React, { useEffect, useState } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 import ClassFilterItem from './CourseFilterItem';
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
+import { Box } from '@mui/material';
+import statues from '../constant/statues';
+import useRefetchMassTimetables from '../hooks/useRefetchMassTimetables';
 
 export default function RightColumn() {
-    const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
+    const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom);
     const summaryOfClassStatues = useAppSelector(s => s.student.massTimetablePage.summaryOfClassStatuses);
     const courseIds = useAppSelector(s => s.class.courses.ids);
-    const filterCourseIds = useAppSelector(s => s.student.massTimetablePage.filter.courseIds);
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
-    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const dispatch = useDispatch<AppDispatch>();
     const [filterByClassStatusOnPress, setFilterByClassStatusOnPress] = useState<boolean>(false);
     const [filterByCourseOnPress, setFilterByCourseOnPress] = useState<boolean>(false);
+    const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
 
-    const [formData, setFormData] = React.useState<FilterToGetClassesForDailyTimetableWithoutCourseIds>({
-        present: filter.present,
-        suspicious_absence: filter.suspicious_absence,
-        illegit_absence: filter.illegit_absence,
-        legit_absence: filter.legit_absence,
-        makeup: filter.makeup,
-        changeOfClassroom: filter.changeOfClassroom,
-        trial: filter.trial,
-        reserved: filter.reserved,
+    const [statuesFilter, setStatuesFilter] = React.useState<StatuesFilter>({
+        present: true,
+        suspicious_absence: true,
+        illegit_absence: true,
+        legit_absence: true,
+        makeup: true,
+        changeOfClassroom: true,
+        trial: true,
+        reserved: true,
     });
-
-    const submit = () => {
-        if (!classRoom) return;
-        dispatch(
-            studentSlice.actions.setFilter({
-                ...formData,
-                courseIds: filterCourseIds,
-            })
-        );
-        const currentTimestamp = dayjs(selectedDate.getTime()).startOf('day').valueOf().toString();
-        dispatch(
-            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                dateUnixTimestamp: currentTimestamp,
-                classRoom: classRoom,
-                filter: filter,
-            })
-        );
+    const submitConfirmation = () => {
+        const currentTimestamp = dayjs(selectedDate.getTime()).startOf('day').valueOf();
+        refetchMassTimetableAnchoredAt(currentTimestamp);
     };
 
     const onPanelChange = (value: Dayjs, _mode: CalendarProps<Dayjs>['mode']) => {
-        dispatch(
-            studentSlice.actions.setDailyTimetableSelectedDate({
-                date: value.toDate(),
-            })
-        );
+        onDateChanged(value.startOf('day').toDate());
     };
-
-    const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
     useEffect(() => {
         if (courseIds) {
-            dispatch(studentSlice.actions.setCourseFilterItem(courseIds));
+            dispatch(studentSlice.actions.setFilterCourseIds(courseIds));
         }
     }, [courseIds, dispatch]);
+
+    const statusRow = (props: { updateKey: keyof typeof statuesFilter }) => {
+        const { updateKey } = props;
+        return (
+            <tr>
+                <td>
+                    <Checkbox
+                        onChange={event => {
+                            setStatuesFilter(prev => ({
+                                ...prev,
+                                [updateKey]: event.target.checked,
+                            }));
+                        }}
+                        checked={statuesFilter[updateKey]}
+                    />
+                </td>
+                <td>{statues[updateKey].text}</td>
+                <td>
+                    <div
+                        style={{
+                            background: statues[updateKey].color,
+                            width: '15px',
+                            height: '15px',
+                        }}
+                    />
+                </td>
+                <td>({summaryOfClassStatues[updateKey]})</td>
+            </tr>
+        );
+    };
 
     return (
         <div
             style={{
-                marginRight: '50px',
+                height: 'calc(100vh - 30px)',
+                // marginRight: '50px',
+
                 transition: 'width 0.3s ease-in-out',
             }}
         >
-            <div
+            <OverlayScrollbarsComponent
                 style={{
                     height: '100%',
+                    paddingRight: 30,
                     paddingBottom: '10px',
-                    overflow: 'hidden',
+                    overflowY: 'scroll',
                     display: 'flex',
                     flexDirection: 'column',
                     transition: 'opacity 0.3s ease-in-out',
                 }}
             >
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Label label="RightColumn.tsx" offsetTop={0} offsetLeft={-70} />
-                    <Title>Calendar</Title>
-                </div>
-                <Calendar
-                    fullscreen={false}
-                    onPanelChange={onPanelChange}
-                    value={dayjs(selectedDate)}
-                    onSelect={(date, _) => {
-                        if (!classRoom) {
-                            return;
-                        }
-                        dispatch(
-                            studentSlice.actions.setDailyTimetableSelectedDate({
-                                date: date.toDate(),
-                            })
-                        );
-                        dispatch(
-                            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                                dateUnixTimestamp: timeUtil.getDayUnixTimestamp(date.toDate().getTime()).toString(),
-                                classRoom,
-                                filter: {
-                                    ...formData,
-                                    courseIds: filterCourseIds,
-                                },
-                            })
-                        );
-                    }}
-                    style={{ width: 290 }}
-                />
-                <Spacer height={5} />
-                <Sep />
-                <Spacer height={60} />
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'flex-start',
-                        alignItems: 'center',
-                        marginBottom: '30px',
-                        marginLeft: '10px',
-                        marginTop: '20px',
-                        fontSize: 19,
-                        fontWeight: 'bold',
-                    }}
-                >
-                    <FaFilter />
-                    <Spacer width={5} /> Filter By
-                </div>
-                {/* Filter by Class Status */}
-                <div style={{ marginBottom: '20px' }}>
+                <div style={{ height: '100%' }}>
                     <div
-                        onClick={() => {
-                            setFilterByClassStatusOnPress(!filterByClassStatusOnPress);
-                        }}
                         style={{
-                            marginLeft: '10px',
                             display: 'flex',
-                            gap: '15px',
-                            fontSize: 18,
-                            fontWeight: 500,
-                            cursor: 'pointer',
+                            justifyContent: 'center',
+                            alignItems: 'center',
                         }}
                     >
-                        <IoIosArrowForward
-                            style={{
-                                transform: filterByClassStatusOnPress ? 'rotate(90deg)' : 'rotate(0deg)',
-                                transition: 'transform 0.3s ease-in-out',
-                            }}
-                        />
-                        <div>Class Status</div>
+                        <Title>Calendar</Title>
                     </div>
+                    <Calendar
+                        fullscreen={false}
+                        onPanelChange={onPanelChange}
+                        value={dayjs(selectedDate)}
+                        onSelect={(date, _) => {
+                            if (!classroom) {
+                                return;
+                            }
+                            const date_ = date.startOf('day').toDate();
+                            console.log('this is the date_', date_);
+                            onDateChanged(date_);
+                        }}
+                        style={{ width: 290 }}
+                    />
+                    <Spacer height={20} />
+                    <Sep />
+                    <Spacer height={20} />
                     <div
                         style={{
-                            transition: 'opacity 0.4s ease-in-out',
-                            opacity: filterByClassStatusOnPress ? 1 : 0,
+                            display: 'flex',
+                            justifyContent: 'flex-start',
+                            alignItems: 'center',
+                            marginBottom: '30px',
+                            marginLeft: '10px',
+                            fontSize: 19,
+                            fontWeight: 'bold',
                         }}
                     >
-                        {filterByClassStatusOnPress && (
-                            <div style={{ height: '100%', width: '100%' }}>
-                                <div
+                        <FaFilter />
+                        <Spacer width={15} /> Filter By
+                    </div>
+                    {/* Filter by Class Status */}
+                    <div style={{ marginBottom: '20px' }}>
+                        <div
+                            onClick={() => {
+                                setFilterByClassStatusOnPress(!filterByClassStatusOnPress);
+                            }}
+                            style={{
+                                marginLeft: '10px',
+                                display: 'flex',
+                                gap: '15px',
+                                fontSize: 18,
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <IoIosArrowForward
                                     style={{
-                                        display: 'flex',
-                                        justifyContent: 'flex-start',
-                                        alignContent: 'center',
-                                        gap: '15px',
+                                        transform: filterByClassStatusOnPress ? 'rotate(90deg)' : 'rotate(0deg)',
+                                        transition: 'transform 0.3s ease-in-out',
                                     }}
-                                >
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'flex-start',
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}
-                                        >
-                                            <Checkbox
-                                                onChange={event => {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        present: event.target.checked,
-                                                    }));
-                                                }}
-                                                checked={formData.present}
-                                                {...label}
-                                            />
-                                            Present
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}
-                                        >
-                                            <Checkbox
-                                                onChange={event => {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        reserved: event.target.checked,
-                                                    }));
-                                                }}
-                                                checked={formData.reserved}
-                                                {...label}
-                                            />
-                                            Reserved
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}
-                                        >
-                                            <Checkbox
-                                                onChange={event => {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        suspicious_absence: event.target.checked,
-                                                    }));
-                                                }}
-                                                checked={formData.suspicious_absence}
-                                                {...label}
-                                            />
-                                            Suspicious Absence
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}
-                                        >
-                                            <Checkbox
-                                                onChange={event => {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        illegit_absence: event.target.checked,
-                                                    }));
-                                                }}
-                                                checked={formData.illegit_absence}
-                                                {...label}
-                                            />
-                                            Illegit Absence
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}
-                                        >
-                                            <Checkbox
-                                                onChange={event => {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        legit_absence: event.target.checked,
-                                                    }));
-                                                }}
-                                                checked={formData.legit_absence}
-                                                {...label}
-                                            />
-                                            Legit Absence
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}
-                                        >
-                                            <Checkbox
-                                                onChange={event => {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        makeup: event.target.checked,
-                                                    }));
-                                                }}
-                                                checked={formData.makeup}
-                                                {...label}
-                                            />
-                                            Makeup
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}
-                                        >
-                                            <Checkbox
-                                                onChange={event => {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        trial: event.target.checked,
-                                                    }));
-                                                }}
-                                                checked={formData.trial}
-                                                {...label}
-                                            />
-                                            Trial
-                                        </div>
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                            }}
-                                        >
-                                            <Checkbox
-                                                onChange={event => {
-                                                    setFormData(prev => ({
-                                                        ...prev,
-                                                        changeOfClassroom: event.target.checked,
-                                                    }));
-                                                }}
-                                                checked={formData.changeOfClassroom}
-                                                {...label}
-                                            />
-                                            Change of Classroom
-                                        </div>
-                                    </div>
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            justifyContent: 'center',
-                                            gap: '9px',
-                                            marginTop: '12px',
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    background: colors.GREEN_BLUE,
-                                                    width: '15px',
-                                                    height: '15px',
-                                                }}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    background: colors.CYAN,
-                                                    width: '15px',
-                                                    height: '15px',
-                                                }}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    background: colors.ORANGE,
-                                                    width: '15px',
-                                                    height: '15px',
-                                                }}
-                                            />
-                                        </div>
-
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    background: colors.RED,
-                                                    width: '15px',
-                                                    height: '15px',
-                                                }}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    background: colors.GREY,
-                                                    width: '15px',
-                                                    height: '15px',
-                                                }}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    background: colors.BLUE,
-                                                    width: '15px',
-                                                    height: '15px',
-                                                }}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    background: colors.PINK,
-                                                    width: '15px',
-                                                    height: '15px',
-                                                }}
-                                            />
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            <div
-                                                style={{
-                                                    background: colors.PURPLE,
-                                                    width: '15px',
-                                                    height: '15px',
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            justifyContent: 'center',
-                                            gap: '9px',
-                                            marginTop: '12px',
-                                        }}
-                                    >
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            ({summaryOfClassStatues.present})
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            ({summaryOfClassStatues.reserved})
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            ({summaryOfClassStatues.suspiciousAbsence})
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            ({summaryOfClassStatues.illegitAbsence})
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            ({summaryOfClassStatues.legitAbsence})
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            ({summaryOfClassStatues.makeup})
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            ({summaryOfClassStatues.trial})
-                                        </div>
-                                        <div
-                                            style={{
-                                                height: '32px',
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center',
-                                                marginLeft: '10px',
-                                            }}
-                                        >
-                                            ({summaryOfClassStatues.changeOfClassroom})
-                                        </div>
-                                    </div>
-                                </div>
+                                />
                             </div>
-                        )}
-                    </div>
-                </div>
-                {/* Filter by Course */}
-                <div style={{ height: '100%', width: '100%' }}>
-                    <div
-                        onClick={() => {
-                            setFilterByCourseOnPress(!filterByCourseOnPress);
-                        }}
-                        style={{
-                            marginLeft: '10px',
-                            display: 'flex',
-                            gap: '15px',
-                            fontSize: 18,
-                            fontWeight: 500,
-                            cursor: 'pointer',
-                        }}
-                    >
-                        <IoIosArrowForward
+                            <div>Class Status</div>
+                        </div>
+                        <div
                             style={{
-                                transform: filterByCourseOnPress ? 'rotate(90deg)' : 'rotate(0deg)',
-                                transition: 'transform 0.3s ease-in-out',
+                                transition: 'opacity 0.4s ease-in-out',
+                                opacity: filterByClassStatusOnPress ? 1 : 0,
                             }}
-                        />
-                        <div>Course</div>
+                        >
+                            {filterByClassStatusOnPress && (
+                                <div style={{ width: '<100%>' }}>
+                                    <Box
+                                        sx={{
+                                            '& table': {
+                                                width: '100%',
+                                            },
+                                            '& td': {
+                                                width: '40px',
+                                                verticalAlign: 'middle',
+                                                textAlign: 'left',
+                                            },
+                                            '& td:nth-child(2)': {
+                                                width: 'unset',
+                                            },
+                                        }}
+                                        style={{ width: '100%' }}
+                                    >
+                                        <table>
+                                            <tbody>
+                                                {Object.keys(statuesFilter).map(status => {
+                                                    return (
+                                                        <React.Fragment key={status}>
+                                                            {statusRow({
+                                                                updateKey: status as keyof typeof statuesFilter,
+                                                            })}
+                                                        </React.Fragment>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </Box>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            marginTop: '10px',
-                            transition: 'opacity 0.4s ease-in-out',
-                            opacity: filterByCourseOnPress ? 1 : 0,
-                        }}
-                    >
-                        {filterByCourseOnPress &&
-                            courseIds?.map(id => {
-                                return <ClassFilterItem key={id} id={id} />;
-                            })}
+                    {/* Filter by Course */}
+                    <div style={{ width: '100%' }}>
+                        <div
+                            onClick={() => {
+                                setFilterByCourseOnPress(!filterByCourseOnPress);
+                            }}
+                            style={{
+                                marginLeft: '10px',
+                                display: 'flex',
+                                gap: '15px',
+                                fontSize: 18,
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <IoIosArrowForward
+                                    style={{
+                                        transform: filterByCourseOnPress ? 'rotate(90deg)' : 'rotate(0deg)',
+                                        transition: 'transform 0.3s ease-in-out',
+                                    }}
+                                />
+                            </div>
+                            <div>Course</div>
+                        </div>
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                marginTop: '10px',
+                                transition: 'opacity 0.4s ease-in-out',
+                                opacity: filterByCourseOnPress ? 1 : 0,
+                            }}
+                        >
+                            {filterByCourseOnPress &&
+                                courseIds?.map(id => {
+                                    return <ClassFilterItem key={id} id={id} />;
+                                })}
+                        </div>
+                        <Spacer />
+                        <Button type="primary" block onClick={submitConfirmation} style={{ marginTop: '10px' }}>
+                            Confirm
+                        </Button>
+                        <Spacer height={40} />
                     </div>
-                    <Button type="primary" block onClick={submit} style={{ marginTop: '10px' }}>
-                        Confirm
-                    </Button>
                 </div>
-            </div>
+            </OverlayScrollbarsComponent>
         </div>
     );
+
+    function onDateChanged(date_: Date) {
+        dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: date_ }));
+        refetchMassTimetableAnchoredAt(dayjs(date_).startOf('day').toDate().getTime());
+    }
 }

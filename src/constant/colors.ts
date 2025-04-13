@@ -10,5 +10,6 @@ export default {
     GREEN_BLUE: '#3dbf00',
     CYAN: '#02e6a1',
     PINK: '#ff0077',
-    BACKGORUND_GREY: 'rgb(245, 245, 245)',
+    BLACK: 'rgb(100,100,100)',
+    BACKGORUND_GREY: '#e9f2e8',
 };

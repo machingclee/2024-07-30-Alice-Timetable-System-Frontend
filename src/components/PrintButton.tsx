@@ -1,7 +1,6 @@
 import { IoPrint } from 'react-icons/io5';
 import { useAppSelector } from '../redux/hooks';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import Label from './Label';
 import { useReactToPrint } from 'react-to-print';
 
 export type PrintHandler = {
@@ -11,7 +10,7 @@ export type PrintHandler = {
 // eslint-disable-next-line
 export default forwardRef<PrintHandler, {}>((_, ref) => {
     const [printOnPressed, setPrintOnPressed] = useState<boolean>(false);
-    const { leftNavigatorCollapsed, rightColumnCollapsed } = useAppSelector(s => s.app);
+    const { leftNavigatorCollapsed } = useAppSelector(s => s.app);
     const handlePrint = () => {
         reactToPrintFn();
     };
@@ -29,19 +28,17 @@ export default forwardRef<PrintHandler, {}>((_, ref) => {
 
     useEffect(() => {
         console.log('leftNavigatorCollapsed:', leftNavigatorCollapsed);
-        console.log('rightColumnCollapsed:', rightColumnCollapsed);
         console.log('printOnPressed:', printOnPressed);
-        if (leftNavigatorCollapsed && rightColumnCollapsed && printOnPressed) {
+        if (leftNavigatorCollapsed && printOnPressed) {
             window.print();
             setPrintOnPressed(false);
         }
-    }, [leftNavigatorCollapsed, rightColumnCollapsed, printOnPressed]);
+    }, [leftNavigatorCollapsed, printOnPressed]);
 
     return (
-        <div style={{ padding: 30 }}>
-            <Label label="Print Timetable Button" offsetLeft={-60} />
+        <div style={{ paddingLeft: 10, paddingRight: 30 }}>
             <IoPrint
-                size={21}
+                size={40}
                 style={{
                     padding: '8px',
                     borderRadius: '100%',

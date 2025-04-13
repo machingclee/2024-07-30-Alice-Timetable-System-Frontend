@@ -1,4 +1,13 @@
-import { Class_status } from '../prismaTypes/types';
+export type Class_status =
+    | 'PRESENT'
+    | 'ILLEGIT_ABSENCE'
+    | 'SUSPICIOUS_ABSENCE'
+    | 'LEGIT_ABSENCE'
+    | 'MAKEUP'
+    | 'CHANGE_OF_CLASSROOM'
+    | 'TRIAL'
+    | 'RESERVED'
+    | 'BAD_WHETHER';
 
 export type ClassRoom = 'PRINCE_EDWARD' | 'CAUSEWAY_BAY';
 
@@ -43,12 +52,13 @@ export type StudentDTO = {
     createdAtHk: string;
     parentId: string;
     gender: GENDER;
+    shouldAutoRenewPackage: boolean;
 };
 
 export type StudentPackageRepsonse = {
     packageId: number;
     studentPackage: StudentPackageDTO;
-    schedumeMinutes: number;
+    scheduledMinutes: number;
     consumedMinutes: number;
     student: StudentDTO;
     course: CourseDTO;
@@ -64,7 +74,15 @@ export type TimetableClassEvent = {
     student: StudentDTO;
     course: CourseDTO;
     class: ClassDTO;
-    package: StudentPackageDTO;
+    studentPackage: StudentPackageDTO;
+};
+
+export type GetPackageClassStatusResponse = {
+    dateUnixTimestamp: number;
+    classGroup: ClassGroupDTO;
+    cls: ClassDTO;
+    course: CourseDTO;
+    student: StudentDTO;
 };
 
 export type ClassDTO = {
@@ -79,4 +97,38 @@ export type ClassDTO = {
     remark: string;
     classNumber: number;
     actualClassroom: string;
+};
+
+export type UIStudentPackage = {
+    package: StudentPackageDTO;
+    course: CourseDTO;
+    classes: ClassDTO[];
+};
+
+export type UIStudentDetail = {
+    student: StudentDTO;
+    studentPackages: UIStudentPackage[];
+};
+
+export type TicketDTO = {
+    id: number;
+    isSolved: boolean;
+    content: string;
+    title: string;
+    solvedBy: string;
+};
+
+export type NotificationDTO = {
+    id?: number;
+    message: string;
+    type: 'PACKAGE_DEADLINE_COMING';
+    isRead: boolean;
+    createdAt?: number;
+    createdAtHk?: string;
+};
+
+export type NotificationResponse = {
+    student: StudentDTO;
+    studentPackage: StudentPackageDTO;
+    notification: NotificationDTO;
 };

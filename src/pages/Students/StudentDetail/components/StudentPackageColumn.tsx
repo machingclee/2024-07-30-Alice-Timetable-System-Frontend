@@ -9,7 +9,6 @@ import { Switch } from '@mui/material';
 import CustomScrollbarContainer from '../../../../components/CustomScrollbarContainer';
 import { useAppSelector } from '../../../../redux/hooks';
 import StudentPackage from './StudentPackage';
-import Label from '../../../../components/Label';
 import { useDispatch } from 'react-redux';
 import studentSlice from '../../../../redux/slices/studentSlice';
 import { MdOutlineEventNote } from 'react-icons/md';
@@ -43,9 +42,9 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
         >
             <div
                 style={{
+                    overflowY: 'scroll',
                     minWidth: 300,
                     height: 'calc(100vh - 40px)',
-                    overflow: 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
                     transition: 'opacity 0.5s eas-in-out',
@@ -58,7 +57,6 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                         alignItems: 'center',
                     }}
                 >
-                    <Label label="StudentPackageColumn.tsx" offsetTop={-15} offsetLeft={20} />
                     <Title>Student Packages</Title>
                     <Button
                         style={{ minWidth: 40, minHeight: 40 }}
@@ -78,8 +76,9 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                 <Sep />
                 <Spacer />
                 <div>
-                    <div style={{ marginLeft: '10px' }}>Show All Classes</div>
+                    <div className="mt-2">Show All Classes</div>
                     <Switch
+                        className="ml-[-10px]"
                         onChange={event => {
                             handleShowAllClassesOnChange(event);
                         }}

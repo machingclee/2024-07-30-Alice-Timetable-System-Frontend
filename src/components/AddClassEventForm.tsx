@@ -1,11 +1,10 @@
 import { Button, Select } from 'antd';
 import Spacer from '../components/Spacer';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import SectionTitle from '../components/SectionTitle';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { Box } from '@mui/material';
 import FormInputTitle from '../components/FormInputTitle';
-import Label from '../components/Label';
 import { CourseThunkAction } from '../redux/slices/courseSlice';
 import { StudentThunkAction } from '../redux/slices/studentSlice';
 import toastUtil from '../utils/toastUtil';
@@ -16,6 +15,7 @@ import dayjs from 'dayjs';
 import range from '../utils/range';
 import { Classroom } from '../prismaTypes/types';
 import appSlice from '../redux/slices/appSlice';
+import useQueryThunk from '../reactQueries/useQueryThunk';
 
 export default function AddClassEventForm(props: {
     dayUnixTimestamp: number;
@@ -83,9 +83,7 @@ export default function AddClassEventForm(props: {
         }
     };
 
-    useEffect(() => {
-        dispatch(CourseThunkAction.getCourses());
-    }, [dispatch]);
+    useQueryThunk({ thunk: CourseThunkAction.getCourses, staleTime: 1000 })();
 
     const classroomOptions: Classroom[] = ['PRINCE_EDWARD', 'CAUSEWAY_BAY'];
 
@@ -97,7 +95,6 @@ export default function AddClassEventForm(props: {
                 paddingBottom: 60,
             }}
         >
-            <Label label="AddClassEventForm.tsx" offsetTop={0} offsetLeft={180} />
             <SectionTitle>Add Class at {dayjs(hourUnixTimestamp).format('HH:mm')}</SectionTitle>
             <Spacer />
             <div style={{ display: 'flex' }}>

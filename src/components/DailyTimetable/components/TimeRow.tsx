@@ -1,31 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
-import timeUtil from '../../../utils/timeUtil';
 import Spacer from '../../Spacer';
 import StudentsClassForDailyTimetableByHour from '../../StudentsClassForDailyTimetableByHour';
 import React from 'react';
 import studentSlice from '../../../redux/slices/studentSlice';
 import { Unstable_Popup as BasePopup } from '@mui/base/Unstable_Popup';
 import boxShadow from '../../../constant/boxShadow';
-import Label from '../../Label';
 const gridHeight = 30;
 
-export default function TimeRow({
-    index,
-    hourUnixTimestamp,
-    hoursColumnGrid,
-}: {
-    index: number;
-    hourUnixTimestamp: string;
-    hoursColumnGrid: string[];
-}) {
-    const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
+export default function TimeRow({ rowIndex, hourUnixTimestamp }: { rowIndex: number; hourUnixTimestamp: string }) {
     const timeColumnRef = useRef<HTMLDivElement>(null);
     const numberOfClassesInHighlight = useAppSelector(
         s => s.student.massTimetablePage.totalClassesInHighlight.numberOfClassesInHighlight
     );
     const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
-    const [isHovered, setIsHovered] = useState(false);
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
     const dispatch = useAppDispatch();
@@ -38,28 +26,6 @@ export default function TimeRow({
     const handleClose = () => {
         setAnchorEl(null);
     };
-
-    useEffect(() => {
-        const handleMouseEnter = () => {
-            setIsHovered(true);
-        };
-
-        const handleMouseLeave = () => {
-            setIsHovered(false);
-        };
-        const node = timeColumnRef.current;
-        if (node) {
-            node.addEventListener('mouseenter', handleMouseEnter);
-            node.addEventListener('mouseleave', handleMouseLeave);
-        }
-
-        return () => {
-            if (node) {
-                node.removeEventListener('mouseenter', handleMouseEnter);
-                node.removeEventListener('mouseleave', handleMouseLeave);
-            }
-        };
-    }, [anchorEl]);
 
     useEffect(() => {
         if (anchorEl) {
@@ -93,36 +59,23 @@ export default function TimeRow({
                 className="droppable"
                 style={{
                     position: 'relative',
-                    zIndex: hoursColumnGrid.length - index + 1,
                     height: gridHeight,
                 }}
             >
-                <div
-                    style={{
-                        position: 'absolute',
-                        width: '100%',
-                        height: 32,
-                        backgroundColor: isHovered ? '#9e9e9e' : 'transparent',
-                    }}
-                />
-                <BasePopup id={id} open={open} anchor={anchorEl} placement="left">
-                    <Label label="count number of classes" />
+                <BasePopup id={id} open={open} anchor={anchorEl} placement="left" style={{ zIndex: 10 ** 7 }}>
                     <div
+                        className="bg-white rounded-lg px-4 py-2"
                         style={{
-                            backgroundColor: 'white',
-                            padding: 10,
-                            borderRadius: 4,
                             boxShadow: boxShadow.SHADOW_62,
                             transform: 'translateX(-5px)',
                         }}
                     >
-                        {numberOfClassesInHighlight} class(es)
+                        {numberOfClassesInHighlight} {numberOfClassesInHighlight > 1 ? 'classes' : 'class'}
                     </div>
                 </BasePopup>
-
                 <StudentsClassForDailyTimetableByHour
                     key={hourUnixTimestamp}
-                    dayUnixTimestamp={timeUtil.getDayUnixTimestamp(selectedDate.getTime())}
+                    rowIndex={rowIndex}
                     currHourUnixTimestamp={parseInt(hourUnixTimestamp)}
                 />
             </div>

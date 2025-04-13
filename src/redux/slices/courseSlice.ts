@@ -24,7 +24,7 @@ const initialState: ClassSliceState = {
 };
 
 const classSlice = createSlice({
-    name: 'app',
+    name: 'courses',
     initialState,
     reducers: {
         reset: () => {
