@@ -109,14 +109,13 @@ export default function StudentsClassForDailyTimetableByHour(props: {
     };
 
     return (
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', background: 'white', width: '100%', height: '100%' }}>
             <div style={{ ...timeSlotStyle }} />
             <Droppable
                 isValidMove={(_: TimetableClassEvent) => true}
                 onValidDrop={onValidDrop}
                 className="daily-class-container"
                 style={{
-                    background: 'red',
                     position: 'relative',
                     display: 'flex',
                     width: '100%',
@@ -128,6 +127,8 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                     return (
                         <Draggable
                             style={{
+                                width: 160,
+                                // background: 'red',
                                 left: index * 100 + (rowIndex % 2) * 20,
                                 // zIndex: currHourUnixTimestamp,
                             }}
