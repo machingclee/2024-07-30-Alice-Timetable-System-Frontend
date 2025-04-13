@@ -16,6 +16,7 @@ export default function Login() {
     const [password, setPassword] = useState('');
 
     const login = async () => {
+        console.log('login with', email, password);
         await dispatch(
             AuthThunkAction.userLogin({
                 email,
