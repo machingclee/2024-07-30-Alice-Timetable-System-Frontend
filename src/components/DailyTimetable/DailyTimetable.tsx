@@ -132,6 +132,7 @@ export default function DailyTimetable({
                     }}
                 >
                     <Button
+                        className="!rounded-2xl"
                         onClick={() => {
                             if (!classRoom) {
                                 return;
@@ -156,6 +157,7 @@ export default function DailyTimetable({
                     {dayjs(date).format('YYYY-MM-DD (ddd)')}
                     <Spacer width={20} />
                     <Button
+                        className="!rounded-2xl"
                         onClick={() => {
                             console.log('classRoomclassRoom', classRoom);
                             if (!classRoom) {

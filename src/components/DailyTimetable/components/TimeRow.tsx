@@ -64,10 +64,8 @@ export default function TimeRow({ rowIndex, hourUnixTimestamp }: { rowIndex: num
             >
                 <BasePopup id={id} open={open} anchor={anchorEl} placement="left" style={{ zIndex: 10 ** 7 }}>
                     <div
+                        className="bg-white rounded-lg px-4 py-2"
                         style={{
-                            backgroundColor: 'white',
-                            padding: 10,
-                            borderRadius: 4,
                             boxShadow: boxShadow.SHADOW_62,
                             transform: 'translateX(-5px)',
                         }}

@@ -18,9 +18,21 @@ export default function StudentClassCard(props: {
     const engName = `${student.lastName} ${student.firstName}`;
     const chiName =
         student.chineseFirstName && student.chineseLastName ? `${student.firstName}${student.lastName}` : '';
+    const nameComponent = () => {
+        return (
+            <>
+                {chiName ? (
+                    <div className="text-[16px] px-1">{chiName}</div>
+                ) : (
+                    <div className="text-[16px] px-1">{engName}</div>
+                )}
+            </>
+        );
+    };
 
     return (
         <Box
+            className="rounded-md"
             style={{
                 border: '1px solid rgba(0,0,0,0.2)',
                 cursor: 'pointer',
@@ -58,22 +70,16 @@ export default function StudentClassCard(props: {
                         }
                     }
                 })(),
-                borderRadius: 4,
                 fontSize: 14,
                 color: 'white',
                 // textAlign: 'center',
             }}
         >
             {/* <div style={{ padding: 4 }}>{classEvent.course_name}</div> */}
-            <div style={{ padding: 4, backgroundColor: 'rgba(0,0,0,0.6)', fontSize: 12 }}>
-                {classEvent.course.courseName}
-            </div>
-            {chiName ? (
-                <div style={{ padding: 4, fontSize: 16, paddingLeft: 10 }}>{chiName}</div>
-            ) : (
-                <div style={{ padding: 4, fontSize: 16 }}>{engName}</div>
-            )}
+            <div style={{ padding: 4, backgroundColor: 'rgba(0,0,0,0.4)', fontSize: 12 }}>{nameComponent()}</div>
+            <div className="flex justify-center my-1 text-[15px] px-2">{classEvent.course.courseName}</div>
             <Sep />
+
             <Spacer height={5} />
             <div style={{ fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div

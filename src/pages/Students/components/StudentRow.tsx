@@ -52,7 +52,7 @@ export default function StudenRow(props: { studentId: string }) {
     return (
         <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
             <Box
-                className="rounded-xl"
+                className="rounded-md"
                 style={{
                     flex: 1,
                     boxShadow: boxShadow.SHADOW_62,
@@ -126,7 +126,7 @@ export default function StudenRow(props: { studentId: string }) {
                         }}
                     >
                         <div className="w-full">
-                            <div className="flex justify-start items-center text-2xl bg-[#00B96B] text-white pl-4 pt-1 pb-1">
+                            <div className="flex justify-start items-center text-xl bg-[#59967c] text-white pl-4 pt-1 pb-0.5">
                                 <RiUser5Line className="mr-2" />
                                 <div>{`${firstName} ${lastName}`}</div>
                             </div>
