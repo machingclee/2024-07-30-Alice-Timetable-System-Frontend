@@ -1,11 +1,9 @@
 import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
 import boxShadow from '../../../../constant/boxShadow';
-import { Box } from '@mui/material';
 import studentSlice, { StudentDetailPage, StudentThunkAction } from '../../../../redux/slices/studentSlice';
 import Sep from '../../../../components/Sep';
 import Spacer from '../../../../components/Spacer';
-import { ContextMenu, ContextMenuTrigger, MenuItem } from 'react-contextmenu';
 import colors from '../../../../constant/colors';
 import { useParams } from 'react-router-dom';
 import { FaRegCheckCircle } from 'react-icons/fa';
@@ -20,6 +18,7 @@ import { Modal } from 'antd';
 import useAnchorTimestamp from '../../../../hooks/useAnchorTimestamp';
 import documentId from '../../../../constant/documentId';
 import toastUtil from '../../../../utils/toastUtil';
+import { AliceMenu } from '@/components/AliceMenu';
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;
@@ -52,6 +51,7 @@ export default function StudentPackage(props: { packageId: string }) {
         );
     };
     const addPaymentDetail = async () => {
+        AddPaymentDetailDialog.setWidth('xs');
         AddPaymentDetailDialog.setContent(() => () => <AddPaymentDetailForm packageId={Number(packageId)} />);
         AddPaymentDetailDialog.setOpen(true);
         // await dispatch(StudentThunkAction.markPackageAsPaid({ packageId: Number(packageId) })).unwrap()
@@ -145,6 +145,8 @@ export default function StudentPackage(props: { packageId: string }) {
             style={{
                 boxShadow: boxShadow.SHADOW_60,
                 maxWidth: 300,
+                borderRadius: 15,
+                marginBottom: 10,
             }}
             className={classnames(
                 'cursor-pointer',
@@ -157,10 +159,45 @@ export default function StudentPackage(props: { packageId: string }) {
                 'p-[10px] rounded-none m-1'
             )}
         >
-            {/* @ts-expect-error - context menu trigger has problem in typing */}
-            <ContextMenuTrigger id={packageId} hideOnLeave={true}>
+            <AliceMenu
+                items={[
+                    {
+                        item: 'Edit package',
+                        onClick: editPackage,
+                    },
+                    {
+                        item: 'Delete package',
+                        onClick: () => setShowDeleteConfirmation(true),
+                    },
+                    {
+                        item: 'Show attendence',
+                        onClick: showAttendence,
+                    },
+                    {
+                        item: 'Add payment detail',
+                        disabled: isPaid,
+                        onClick: addPaymentDetail,
+                    },
+                    {
+                        item: 'Mark as unpaid',
+                        disabled: !isPaid,
+                        onClick: markAsUnPaid,
+                    },
+                ]}
+            >
+                <Modal
+                    closable={false}
+                    okText={'I do'}
+                    onOk={deletePackage}
+                    onCancel={() => setShowDeleteConfirmation(false)}
+                    onClose={() => setShowDeleteConfirmation(false)}
+                    centered
+                    open={showDeleteConfirmation}
+                >
+                    <div>Are you sure to delete? Data will be lost and cannot be reverted.</div>
+                </Modal>
                 <div onClick={selectPackage}>
-                    <div className="p-[10px] flex justify-center font-[600]">{course?.courseName}</div>
+                    <div className="p-[5px] flex justify-center font-[600]">{course?.courseName}</div>
                     <Sep />
                     <Spacer height={5} />
                     <table className="[&_td]:pr-[10px]">
@@ -207,83 +244,7 @@ export default function StudentPackage(props: { packageId: string }) {
                         </tbody>
                     </table>
                 </div>
-            </ContextMenuTrigger>
-            {/* @ts-expect-error - context menu trigger has problem in typing */}
-            <ContextMenu
-                id={packageId}
-                style={{
-                    zIndex: 10 ** 7,
-                    borderRadius: 8,
-                    backgroundColor: 'white',
-                    // boxShadow: boxShadow.SHADOW_62,
-                    border: '1px solid rgba(0,0,0,0.2)',
-                }}
-            >
-                <Box
-                    sx={{
-                        '& .menu-item': {
-                            zIndex: 10 ** 7,
-                            border: 'none',
-                            padding: '10px',
-                            cursor: 'pointer',
-                            '&:hover': {
-                                '&:hover': {
-                                    color: 'rgb(64, 150, 255)',
-                                },
-                            },
-                        },
-                    }}
-                >
-                    {/* @ts-expect-error - context menu trigger has problem in typing */}
-                    <MenuItem className="menu-item" onClick={editPackage}>
-                        Edit package
-                    </MenuItem>
-                    <>
-                        {/* @ts-expect-error - context menu trigger has problem in typing */}
-                        <MenuItem
-                            className="menu-item"
-                            onClick={() => {
-                                setShowDeleteConfirmation(true);
-                            }}
-                        >
-                            Delete package
-                        </MenuItem>
-                        <Modal
-                            closable={false}
-                            okText={'I do'}
-                            onOk={deletePackage}
-                            onCancel={() => setShowDeleteConfirmation(false)}
-                            onClose={() => setShowDeleteConfirmation(false)}
-                            centered
-                            open={showDeleteConfirmation}
-                        >
-                            <div>Are you sure to delete? Data will be lost and cannot be reverted.</div>
-                        </Modal>
-                    </>
-                    <>
-                        {/* @ts-expect-error - context menu trigger has problem in typing */}
-                        <MenuItem className="menu-item" onClick={showAttendence}>
-                            Show attendence
-                        </MenuItem>
-                    </>
-                    {!isPaid && (
-                        <>
-                            {/* @ts-expect-error - context menu trigger has problem in typing */}
-                            <MenuItem className="menu-item" onClick={addPaymentDetail}>
-                                Add payment detail
-                            </MenuItem>
-                        </>
-                    )}
-                    {isPaid && (
-                        <>
-                            {/* @ts-expect-error - context menu trigger has problem in typing */}
-                            <MenuItem className="menu-item" onClick={markAsUnPaid}>
-                                Mark as unpaid
-                            </MenuItem>
-                        </>
-                    )}
-                </Box>
-            </ContextMenu>
+            </AliceMenu>
         </div>
     );
 }

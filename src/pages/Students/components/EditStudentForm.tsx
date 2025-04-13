@@ -65,9 +65,7 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
     return (
         <Box
             style={{
-                padding: '40px 80px',
                 overflowY: 'auto',
-                paddingBottom: 60,
             }}
         >
             <SectionTitle>Edit Student Info</SectionTitle>
@@ -166,9 +164,13 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
             />
             <Spacer />
             <Spacer />
-            <Button type="primary" block onClick={submit}>
-                Submit
-            </Button>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button onClick={() => EditStudentDialog.close()}>Cancel</Button>
+                <Spacer />
+                <Button type="primary" onClick={submit}>
+                    Submit
+                </Button>
+            </div>
         </Box>
     );
 }

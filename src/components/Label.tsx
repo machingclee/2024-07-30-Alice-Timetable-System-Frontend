@@ -4,6 +4,7 @@ const ENV = getEnv().VITE_ENV;
 
 export default function Label(props: { label: string; offsetTop?: number; offsetLeft?: number }) {
     const { label, offsetLeft = 0, offsetTop = 0 } = props;
+    return null;
     if (ENV === 'prod') {
         return null;
     }

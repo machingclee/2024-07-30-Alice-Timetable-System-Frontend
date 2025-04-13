@@ -47,9 +47,7 @@ export default function DeleteClassForm(props: {
         <Box
             style={{
                 width: '100%',
-                padding: '40px 80px',
                 overflowY: 'auto',
-                paddingBottom: 60,
             }}
         >
             <SectionTitle>Are you sure to delete this class?</SectionTitle>

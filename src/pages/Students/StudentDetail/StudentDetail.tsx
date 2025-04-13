@@ -98,6 +98,7 @@ export default function StudentDetail() {
                     {`${firstName} ${lastName}`}
                     <Spacer width={20} />
                 </SectionTitle>
+                <Spacer height={10} />
                 <Box
                     sx={{
                         '& td:nth-child(1)': {

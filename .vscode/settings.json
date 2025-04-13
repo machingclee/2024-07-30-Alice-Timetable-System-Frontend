@@ -11,10 +11,5 @@
         "source.fixAll.eslint": "explicit"
     },
     "prettier.requireConfig": true,
-    "eslint.validate": [
-        "javascript",
-        "javascriptreact",
-        "typescript",
-        "typescriptreact"
-    ]
+    "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
 }

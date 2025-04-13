@@ -48,7 +48,12 @@ export default function Root() {
                 }}
             >
                 {isInDashboard && (
-                    <Collapse style={{ height: '100vh' }} in={!leftNavigatorCollapsed} orientation="horizontal">
+                    <Collapse
+                        style={{ height: '100vh' }}
+                        in={!leftNavigatorCollapsed}
+                        orientation="horizontal"
+                        className="transition-[width] duration-300 ease-in-out max-[1100px]:!w-0 !overflow-hidden !w-[210px]"
+                    >
                         <div style={{ height: '100%', flexDirection: 'column', display: 'flex' }}>
                             <Spacer />
                             <div

@@ -2,13 +2,22 @@ import { Box, Breakpoint, Dialog } from '@mui/material';
 import { OverlayScrollbarsComponent, OverlayScrollbarsComponentRef } from 'overlayscrollbars-react';
 import { useRef, useState } from 'react';
 
+type GeneraDialogOption = {
+    enableBackdrop: boolean;
+};
+
 export default class GeneralDialog {
+    private option: GeneraDialogOption = { enableBackdrop: true };
     public setContent = (_: () => () => JSX.Element) => {};
     public setOpen: (open: boolean) => void = () => {};
     public setBackgroundColor: (bgColor: string) => void = () => {};
     public setWidth: (width: false | Breakpoint | undefined) => void = () => {};
     public open: () => void = () => {};
     public close: () => void = () => {};
+
+    constructor(props?: Partial<GeneraDialogOption>) {
+        this.option = { ...this.option, ...(props || {}) };
+    }
 
     render = () => {
         const [content, setContent] = useState(() => () => <></>);
@@ -29,15 +38,22 @@ export default class GeneralDialog {
             <Dialog
                 PaperProps={{
                     style: {
-                        borderRadius: 20,
+                        borderRadius: '7px',
                         backgroundColor: bgColor,
+                        padding: '25px 25px',
                         zIndex: 10 ** 7 + 1,
                     },
                 }}
                 maxWidth={width}
                 fullWidth={true}
-                onClose={() => {
-                    setOpen(false);
+                onClose={(_, reason) => {
+                    if (this.option.enableBackdrop) {
+                        setOpen(false);
+                    } else {
+                        if (reason != 'backdropClick') {
+                            setOpen(false);
+                        }
+                    }
                 }}
                 open={open}
             >
@@ -45,6 +61,7 @@ export default class GeneralDialog {
                     sx={{
                         '& .data-overlayscrollbars-contents': {
                             display: 'flex',
+
                             justifyContent: 'center',
                         },
                     }}
