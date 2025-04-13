@@ -1,2 +1,3 @@
 **/pages/Competitions/**
 src/redux/slices/competitionSlice.ts
+**/components/ui

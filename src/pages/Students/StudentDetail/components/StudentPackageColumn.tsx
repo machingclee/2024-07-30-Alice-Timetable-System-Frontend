@@ -76,8 +76,9 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                 <Sep />
                 <Spacer />
                 <div>
-                    <div style={{ marginLeft: '10px' }}>Show All Classes</div>
+                    <div className="mt-2">Show All Classes</div>
                     <Switch
+                        className="ml-[-10px]"
                         onChange={event => {
                             handleShowAllClassesOnChange(event);
                         }}

@@ -215,7 +215,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                     style={{
                         transform: 'translateY(50%)',
                         position: 'absolute',
-                        top: 'calc(-100% - 2px)',
+                        top: 'calc(-100% - 3px)',
                         left: -60,
                         fontSize: 14,
                         display: 'flex',

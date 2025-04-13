@@ -117,3 +117,18 @@ export type TicketDTO = {
     title: string;
     solvedBy: string;
 };
+
+export type NotificationDTO = {
+    id?: number;
+    message: string;
+    type: 'PACKAGE_DEADLINE_COMING';
+    isRead: boolean;
+    createdAt?: number;
+    createdAtHk?: string;
+};
+
+export type NotificationResponse = {
+    student: StudentDTO;
+    studentPackage: StudentPackageDTO;
+    notification: NotificationDTO;
+};
