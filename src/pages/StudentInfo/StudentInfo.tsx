@@ -1,8 +1,14 @@
-import { Box, Container } from '@mui/material';
+import { Container } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import useQueryThunk from '../../reactQueries/useQueryThunk';
 import { StudentThunkAction } from '../../redux/slices/studentSlice';
+import getColorForClassStatus from '@/utils/getColorForClassStatus';
+import { Separator } from '@/components/ui/separator';
+import { FaLocationDot } from 'react-icons/fa6';
+import { PiStudentFill } from 'react-icons/pi';
+import { FaCalendarTimes } from 'react-icons/fa';
+import CustomScrollbarContainer from '@/components/CustomScrollbarContainer';
 
 export default function StudentInfo() {
     const { studentId = '' } = useParams<{ studentId: string }>();
@@ -18,45 +24,102 @@ export default function StudentInfo() {
     const engName = `${firstName} ${lastName}`;
     const chiName = chineseFirstName && chineseLastName ? `${chineseLastName} ${chineseFirstName}` : '';
     return (
-        <Container style={{ padding: 10 }}>
-            {isLoading && 'loading...'}
-            <div>{chiName}</div>
-            <div>{engName}</div>
+        <CustomScrollbarContainer>
+            <Container style={{ padding: 10 }} className="h-[100vh] overflow-y-scroll">
+                {isLoading && 'loading...'}
+                {!isLoading && (
+                    <div className="space-y-3 bg-[rgb(255,255,255,0.6)] p-4 rounded-xl border-1  mb-60">
+                        <div className="flex gap-2">
+                            <div className="flex text-2xl pl-4 items-center gap-4">
+                                <FaCalendarTimes /> Package Information
+                            </div>
+                            <div className="px-4 py-2 rounded-md flex gap-2 items-center">
+                                <PiStudentFill size={30} />
+                                <div className="text-lg">{chiName}</div>
+                                <div className="text-lg">{engName}</div>
+                            </div>
+                        </div>
+                        <Separator />
 
-            <div>
-                {studentPackages.map(pkgInfo => {
-                    const { classes, course } = pkgInfo;
+                        <div className="space-y-6">
+                            {studentPackages
+                                .sort((pkg1, pkg2) => pkg1.package.startDate - pkg2.package.startDate)
+                                .map(pkgInfo => {
+                                    const { classes, course } = pkgInfo;
 
-                    return (
-                        <Box
-                            sx={{
-                                '& td': {
-                                    paddingLeft: '10px',
-                                },
-                            }}
-                        >
-                            <div>{course.courseName}</div>
-                            <table>
-                                <tbody>
-                                    {classes
-                                        .sort((a, b) => a.hourUnixTimestamp - b.hourUnixTimestamp)
-                                        .map(cls => {
-                                            const { actualClassroom, classStatus, hourUnixTimestamp } = cls;
-                                            const shouldGreyout = new Date().getTime() > hourUnixTimestamp;
-                                            return (
-                                                <tr style={{ opacity: shouldGreyout ? 0.2 : 1 }}>
-                                                    <td>{actualClassroom}</td>
-                                                    <td>{dayjs(hourUnixTimestamp).format('YYYY-MM-DD H:mm:ss')}</td>
-                                                    <td>{classStatus}</td>
-                                                </tr>
-                                            );
-                                        })}
-                                </tbody>
-                            </table>
-                        </Box>
-                    );
-                })}
-            </div>
-        </Container>
+                                    return (
+                                        <div
+                                            className={`bg-[rgb(255,255,255,0.6)]
+                                            px-4 py-2 rounded-2xl flex
+                                            gap-2 border-1
+                                            shadow-md border-[rgb(87,141,103)]`}
+                                        >
+                                            <div className="w-60">{course.courseName}</div>
+                                            <div
+                                                style={{ borderLeft: '2px solid rgb(87,141,103,0.2)' }}
+                                                className="pl-4 flex-1"
+                                            >
+                                                {classes
+                                                    .sort((a, b) => a.hourUnixTimestamp - b.hourUnixTimestamp)
+                                                    .map(cls => {
+                                                        const { actualClassroom, classStatus, hourUnixTimestamp } = cls;
+                                                        const statusColor = getColorForClassStatus(classStatus);
+
+                                                        const shouldGreyout = new Date().getTime() > hourUnixTimestamp;
+                                                        return (
+                                                            <>
+                                                                <div className="!w-full ">
+                                                                    <div
+                                                                        style={{ opacity: shouldGreyout ? 0.4 : 1 }}
+                                                                        className="flex px-2 py-1 rounded-md mb-1.5"
+                                                                    >
+                                                                        <div className="w-48">
+                                                                            <div
+                                                                                className={`
+                                                                                flex inline-block bg-[#a0bea4] 
+                                                                                px-2 rounded-sm  !text-[rgba(255,255,255,0.8)]
+                                                                                items-center`}
+                                                                            >
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <FaLocationDot /> {actualClassroom}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="w-30">
+                                                                            {dayjs(hourUnixTimestamp).format(
+                                                                                'YYYY-MM-DD'
+                                                                            )}
+                                                                        </div>
+                                                                        <div className="w-30">
+                                                                            {dayjs(hourUnixTimestamp).format(
+                                                                                'HH:mm:ss'
+                                                                            )}
+                                                                        </div>
+                                                                        <div className={`w-40`}>
+                                                                            <div
+                                                                                style={{
+                                                                                    color: statusColor,
+                                                                                    border: `1px solid ${statusColor}`,
+                                                                                }}
+                                                                                className="font-mono text-sm px-2 rounded-sm bg-white inline-block"
+                                                                            >
+                                                                                {classStatus}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <Separator className="mb-[0.4rem] " />
+                                                            </>
+                                                        );
+                                                    })}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                        </div>
+                    </div>
+                )}
+            </Container>
+        </CustomScrollbarContainer>
     );
 }

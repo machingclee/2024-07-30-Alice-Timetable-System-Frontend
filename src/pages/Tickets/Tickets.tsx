@@ -102,6 +102,7 @@ export default function Tickets() {
                         width: CONTAINER_WIDTH,
                         border: '1px solid rgba(0,0,0,0.2)',
                         padding: 10,
+                        overflow: 'scroll',
                         height: 'calc(100vh - 160px)',
                         borderRadius: 10,
                         backgroundColor: 'rgba(0,0,0,0.1)',

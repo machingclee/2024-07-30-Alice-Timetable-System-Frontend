@@ -16,6 +16,7 @@ import { IoLogoWhatsapp } from 'react-icons/io';
 import { AliceDropdownMenu } from '@/components/CustomDropdownMenu';
 import classnames from 'classnames';
 import boxShadow from '@/constant/boxShadow';
+import RouteEnum from '@/enum/RouteEnum';
 
 export default function Notification() {
     const notifications = useAppSelector(s => s.notification.notificationResponses);
@@ -92,10 +93,19 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
                         <MdMessage />
                         <div>Message</div>
                     </div>
-                    <div>
-                        <div className="flex items-center">
-                            <IoLogoWhatsapp className="mr-2" /> {phoneNumber}
-                        </div>
+
+                    <div className="flex items-center">
+                        <IoLogoWhatsapp className="mr-2" /> {phoneNumber}
+                    </div>
+
+                    <div
+                        className={`font-mono text-sm border-1 px-4 rounded-md cursor-pointer
+                             hover:text-gray-600 hover:border-gray-800 bg-white py-1 transition-all duration-300 ease-in-out`}
+                        onClick={() => {
+                            window.open(`${RouteEnum.STUDENT_INFO}/${student.id}`);
+                        }}
+                    >
+                        Package Attendences
                     </div>
                 </div>
                 <div className="flex items-center gap-4 mt-1">

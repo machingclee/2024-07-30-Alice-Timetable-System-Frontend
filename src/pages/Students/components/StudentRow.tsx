@@ -9,8 +9,7 @@ import dayjs from 'dayjs';
 import { useAppSelector } from '../../../redux/hooks';
 import { Button } from 'antd';
 import { AliceMenu } from '@/components/AliceMenu';
-import { RiUser5Line } from 'react-icons/ri';
-
+import { IoLogoOctocat } from 'react-icons/io5';
 export default function StudenRow(props: { studentId: string }) {
     const { studentId } = props;
     const student = useAppSelector(s => s.student.students.idToStudent?.[studentId]);
@@ -56,7 +55,7 @@ export default function StudenRow(props: { studentId: string }) {
                 style={{
                     flex: 1,
                     boxShadow: boxShadow.SHADOW_62,
-                    margin: '7px 15px',
+                    margin: '7px 5px',
                     overflow: 'hidden',
                 }}
                 sx={{
@@ -126,8 +125,8 @@ export default function StudenRow(props: { studentId: string }) {
                         }}
                     >
                         <div className="w-full">
-                            <div className="flex justify-start items-center text-xl bg-[#59967c] text-white pl-4 pt-1 pb-0.5">
-                                <RiUser5Line className="mr-2" />
+                            <div className="flex justify-start items-center text-xl pl-4 pt-1 pb-0.5 shadow-xs shadow-gray-300">
+                                <IoLogoOctocat className="mr-4" />
                                 <div>{`${firstName} ${lastName}`}</div>
                             </div>
                         </div>

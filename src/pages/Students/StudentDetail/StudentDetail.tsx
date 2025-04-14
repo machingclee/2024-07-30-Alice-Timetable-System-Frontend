@@ -18,7 +18,7 @@ import EditPackageDialog from './components/EditPackageDialog';
 import { FaChevronLeft } from 'react-icons/fa6';
 import { Box, CircularProgress } from '@mui/material';
 import useQueryThunk from '../../../reactQueries/useQueryThunk';
-import { Button } from 'antd';
+import { Button, Input } from 'antd';
 import RouteEnum from '../../../enum/RouteEnum';
 import PackageClassesStatus from '../components/PackageClassesStatus';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
@@ -84,57 +84,41 @@ export default function StudentDetail() {
     const studentNameDisplay = () => {
         return (
             <>
-                <SectionTitle style={{ fontSize: 30 }}>
-                    <Button
-                        style={{ display: 'flex', alignItems: 'center' }}
-                        onClick={() => navigate(RouteEnum.DASHBOARD_STUDENTS)}
-                    >
-                        <IoMdReturnLeft />
-                        Students
-                    </Button>
-                    <Spacer />
-                    <div>{`${chineseLastName} ${chineseFirstName}`}</div>
-                    <Spacer width={20} />
-                    {`${firstName} ${lastName}`}
-                    <Spacer width={20} />
-                </SectionTitle>
+                <div>
+                    <SectionTitle style={{ fontSize: 30 }}>
+                        <Button
+                            style={{ display: 'flex', alignItems: 'center' }}
+                            onClick={() => navigate(RouteEnum.DASHBOARD_STUDENTS)}
+                        >
+                            <IoMdReturnLeft />
+                            Students
+                        </Button>
+                        <Spacer />
+                        <div>{`${chineseLastName} ${chineseFirstName}`}</div>
+                        <Spacer width={20} />
+                        {`${firstName} ${lastName}`}
+                        <Spacer width={20} />
+                    </SectionTitle>
+                    <div className="rounded-2xl mr-4 flex overflow-hidden max-w-120">
+                        <div className="flex pl-4 pr-2 text-xs font-mono items-center">Student Code</div>
+                        <div className="pl-1 font-mono text-xs py-1 flex items-center ">
+                            <Input value={studentCode} className="!w-full !rounded-2xl !py-0" contentEditable={false} />
+                        </div>
+                    </div>
+                </div>
                 <Spacer height={10} />
-                <Box
-                    sx={{
-                        '& td:nth-child(1)': {
-                            paddingRight: '8px',
-                        },
-                        '& td:nth-child(2)': {
-                            padding: '1px 4px',
-                            borderRadius: '4px',
-                            background: 'rgba(0,0,0,0.1)',
-                        },
-                    }}
-                >
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>Student Code:</td>
-                                <td>{studentCode}</td>
-                                <td style={{ paddingLeft: 10 }}>
-                                    <Button block type="default" onClick={navAttendences}>
-                                        Attendences (Sharable)
-                                    </Button>
-                                </td>
-                                <td style={{ paddingLeft: 10 }}>
-                                    <Button
-                                        block
-                                        type="primary"
-                                        onClick={navPackageAttendence}
-                                        disabled={!selectedPackageId}
-                                    >
-                                        Show package attendences
-                                    </Button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </Box>
+                <div className="flex items-center gap-2">
+                    <div>
+                        <Button block type="default" onClick={navAttendences}>
+                            Attendences (Sharable)
+                        </Button>
+                    </div>
+                    <div>
+                        <Button block type="primary" onClick={navPackageAttendence} disabled={!selectedPackageId}>
+                            Show package attendences
+                        </Button>
+                    </div>
+                </div>
             </>
         );
     };

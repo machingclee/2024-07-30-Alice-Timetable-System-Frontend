@@ -23,7 +23,7 @@ const queryClient = new QueryClient({
 
 export default function App() {
     return (
-        <ConfigProvider theme={{ token: { colorPrimary: '#00b96b' } }}>
+        <ConfigProvider theme={{ token: { colorPrimary: '#3bc289' } }}>
             <Provider store={store}>
                 <PersistGate persistor={persistor}>
                     <QueryClientProvider client={queryClient}>

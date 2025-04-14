@@ -6,12 +6,14 @@ import Spacer from '../../components/Spacer';
 import { Box } from '@mui/material';
 import SectionTitle from '../../components/SectionTitle';
 import StudentRow from './components/StudentRow';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
+
 import EditStudentDialog from './components/EditStudentDialog';
 import escapeStringRegexp from 'escape-string-regexp';
 import { StudentThunkAction } from '../../redux/slices/studentSlice';
 import AliceModalTrigger from '../../components/AliceModalTrigger';
+import { Input } from '@/components/ui/input';
+import { IoMdSearch } from 'react-icons/io';
+import { MdOutlinePersonAddAlt } from 'react-icons/md';
 
 export default function Students() {
     const dispatch = useAppDispatch();
@@ -67,49 +69,31 @@ export default function Students() {
             }}
         >
             <SectionTitle style={{ marginBottom: 20 }}>Students</SectionTitle>
-            <Spacer />
-            {/* Autocomplete for searching students */}
-            <Autocomplete
-                freeSolo // Allows arbitrary input not limited to the options
-                options={filteredIds.map(id => {
-                    const student = idToStudent?.[id];
-                    const searchDisplay = (() => {
-                        let result = '';
-                        if (student?.firstName) {
-                            result += student.firstName;
-                        }
-                        if (student?.lastName) {
-                            result += ' ' + student.lastName;
-                        }
-                        return result;
-                    })();
-                    return searchDisplay;
-                })}
-                onInputChange={(_, newValue) => {
-                    setFilter(newValue || '');
-                }}
-                renderInput={params => (
-                    <TextField
-                        {...params}
-                        label="Find the student"
-                        size="small"
-                        style={{ backgroundColor: 'white' }}
+            <div className="space-y-1">
+                {/* Autocomplete for searching students */}
+                <div>
+                    <label className="flex items-center gap-2">
+                        <IoMdSearch size={20} />
+                        Search for Students
+                    </label>
+                </div>
+                <div className="flex items-center gap-4">
+                    <Input
                         placeholder="Chinese Name, English Name, School Name, Parent Email, etc."
-                        variant="outlined"
+                        className="bg-white"
+                        value={filter}
+                        onChange={e => {
+                            const value = e.target.value;
+                            setFilter(value);
+                        }}
                     />
-                )}
-            />
-
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    marginTop: 20,
-                }}
-            >
-                <AliceModalTrigger modalContent={AddStudentModal}>
-                    <Button type="primary">Add Student</Button>
-                </AliceModalTrigger>
+                    <AliceModalTrigger modalContent={AddStudentModal}>
+                        <Button type="primary">
+                            <MdOutlinePersonAddAlt size={20} />
+                            Add Student
+                        </Button>
+                    </AliceModalTrigger>
+                </div>
             </div>
 
             <Spacer />
