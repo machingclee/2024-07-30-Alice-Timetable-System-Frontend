@@ -37,6 +37,7 @@ export default function Tickets() {
             <Spacer />
             <div style={{ display: 'flex' }}>
                 <div
+                    className="bg-emerald-50"
                     style={{
                         width: CONTAINER_WIDTH,
                         border: '1px solid rgba(0,0,0,0.2)',
@@ -44,7 +45,6 @@ export default function Tickets() {
                         height: 'calc(100vh - 160px)',
                         overflow: 'scroll',
                         borderRadius: 10,
-                        backgroundColor: 'rgba(0,0,0,0.1)',
                     }}
                 >
                     <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -105,8 +105,8 @@ export default function Tickets() {
                         overflow: 'scroll',
                         height: 'calc(100vh - 160px)',
                         borderRadius: 10,
-                        backgroundColor: 'rgba(0,0,0,0.1)',
                     }}
+                    className="bg-emerald-50"
                 >
                     <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
                         <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 5 }}>Done</div>
@@ -235,12 +235,13 @@ const ResizableDraggableCard = (props: { ticket: TicketDTO }) => {
                     style={{ display: 'block' }}
                 >
                     <div
+                        className="border border-emerald-400"
                         style={{
                             cursor: 'pointer',
                             overflow: 'hidden',
                             borderRadius: 4,
                             backgroundColor: 'white',
-                            boxShadow: boxShadow.SHADOW_56,
+                            boxShadow: boxShadow.SHADOW_47,
                             padding: 10,
                         }}
                     >

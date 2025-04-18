@@ -8,9 +8,13 @@ import boxShadow from '../../../constant/boxShadow';
 import { useEffect } from 'react';
 import NavButton from './NavButton';
 import appSlice from '../../../redux/slices/appSlice';
-
 import escapeStringRegexp from 'escape-string-regexp';
 import RouteEnum from '../../../enum/RouteEnum';
+import { IoBook } from 'react-icons/io5';
+import { FaLocationDot, FaUserGraduate, FaUserLock } from 'react-icons/fa6';
+import { GiChampions } from 'react-icons/gi';
+import { TiTicket } from 'react-icons/ti';
+import { GoLog } from 'react-icons/go';
 
 const pathRegex = {
     STUDENTS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_STUDENTS)),
@@ -69,9 +73,7 @@ export default function LeftNavigation() {
         <Box
             style={{
                 height: '100%',
-                marginLeft: '30px',
                 transition: 'width 0.5s ease-out',
-                marginRight: '20px',
             }}
             sx={{
                 display: 'flex',
@@ -82,63 +84,71 @@ export default function LeftNavigation() {
             <div
                 style={{
                     height: '100%',
-
                     flexDirection: 'column',
                     transition: 'opacity 0.4s ease-in-out',
                     opacity: leftNavigatorCollapsed ? 0 : 1,
                 }}
+                className="px-4 space-y-2"
             >
                 <Spacer />
                 <NavButton
+                    icon={<FaUserGraduate size={20} />}
                     activeNavigationRegex={pathRegex.STUDENTS}
                     routeEnum={RouteEnum.DASHBOARD_STUDENTS}
                     title="Students"
                 />
-                <Spacer height={10} />
+
                 <NavButton
+                    icon={<IoBook size={20} />}
                     activeNavigationRegex={pathRegex.COURSES}
                     routeEnum={RouteEnum.DASHBOARD_COURSES}
                     title="Courses"
                 />
-                <Spacer height={10} />
+
                 <NavButton
+                    icon={<FaUserLock size={20} />}
                     activeNavigationRegex={pathRegex.USERS}
                     routeEnum={RouteEnum.DASHBOARD_USERS}
                     title="Staffs"
                 />
-                <Spacer height={10} />
+
                 <NavButton
+                    icon={<FaLocationDot size={20} />}
                     activeNavigationRegex={pathRegex.PRINCE_EDWARD_TIMETABLE}
                     routeEnum={RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE}
                     title="Prince Ed. Timetable"
                 />
-                <Spacer height={10} />
+
                 <NavButton
+                    icon={<FaLocationDot size={20} />}
                     activeNavigationRegex={pathRegex.CAUSEWAY_BAY_TIMETABLE}
                     routeEnum={RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE}
                     title="CWB Timetable"
                 />
-                <Spacer height={10} />
+
                 <NavButton
+                    icon={<GiChampions size={20} />}
                     activeNavigationRegex={pathRegex.COMPETITIONS}
                     routeEnum={RouteEnum.DASHBOARD_COMPETITIONS}
                     title="Competitions"
                 />
-                <Spacer height={10} />
+
                 <NavButton
+                    icon={<TiTicket size={20} />}
                     activeNavigationRegex={pathRegex.TICKET}
                     routeEnum={RouteEnum.DAHSBOARD_TICKETS}
                     title="Tickets"
                 />
-                <Spacer height={10} />
+
                 <NavButton
+                    icon={<GoLog size={20} />}
                     activeNavigationRegex={pathRegex.LOGGING}
                     routeEnum={RouteEnum.DASHBOARD_LOGGING}
                     title="Logging"
                 />
-                <Spacer height={10} />
             </div>
             <div
+                className="px-2"
                 style={{
                     transition: 'opacity 0.4s ease-in-out',
                     opacity: leftNavigatorCollapsed ? 0 : 1,

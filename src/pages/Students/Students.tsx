@@ -3,7 +3,6 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { Button } from 'antd';
 import AddStudentModal from './components/AddStudentModal';
 import Spacer from '../../components/Spacer';
-import { Box } from '@mui/material';
 import SectionTitle from '../../components/SectionTitle';
 import StudentRow from './components/StudentRow';
 
@@ -14,6 +13,8 @@ import AliceModalTrigger from '../../components/AliceModalTrigger';
 import { Input } from '@/components/ui/input';
 import { IoMdSearch } from 'react-icons/io';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
+import CustomScrollbarContainer from '@/components/CustomScrollbarContainer';
+import ContentContainer from '@/components/ContentContainer';
 
 export default function Students() {
     const dispatch = useAppDispatch();
@@ -69,44 +70,48 @@ export default function Students() {
             }}
         >
             <SectionTitle style={{ marginBottom: 20 }}>Students</SectionTitle>
-            <div className="space-y-1">
-                {/* Autocomplete for searching students */}
-                <div>
-                    <label className="flex items-center gap-2">
-                        <IoMdSearch size={20} />
-                        Search for Students
-                    </label>
+            <ContentContainer>
+                <div className="space-y-1">
+                    {/* Autocomplete for searching students */}
+                    <div>
+                        <label className="flex items-center gap-2">
+                            <IoMdSearch size={20} />
+                            Search for Students
+                        </label>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Input
+                            placeholder="Chinese Name, English Name, School Name, Parent Email, etc."
+                            className="bg-white border-1 border-emerald-500 shadow-md"
+                            value={filter}
+                            onChange={e => {
+                                const value = e.target.value;
+                                setFilter(value);
+                            }}
+                        />
+                        <AliceModalTrigger modalContent={AddStudentModal}>
+                            <Button type="primary">
+                                <MdOutlinePersonAddAlt size={20} />
+                                Add Student
+                            </Button>
+                        </AliceModalTrigger>
+                    </div>
                 </div>
-                <div className="flex items-center gap-4">
-                    <Input
-                        placeholder="Chinese Name, English Name, School Name, Parent Email, etc."
-                        className="bg-white"
-                        value={filter}
-                        onChange={e => {
-                            const value = e.target.value;
-                            setFilter(value);
-                        }}
-                    />
-                    <AliceModalTrigger modalContent={AddStudentModal}>
-                        <Button type="primary">
-                            <MdOutlinePersonAddAlt size={20} />
-                            Add Student
-                        </Button>
-                    </AliceModalTrigger>
-                </div>
-            </div>
+            </ContentContainer>
 
             <Spacer />
 
-            <Box
+            <CustomScrollbarContainer
                 style={{
                     flex: 1,
                     height: 20,
-                    overflow: 'scroll',
                 }}
             >
-                {filteredIds?.map(studentId => <StudentRow studentId={studentId} />)}
-            </Box>
+                <ContentContainer>
+                    {filteredIds?.map(studentId => <StudentRow studentId={studentId} />)}
+                </ContentContainer>
+            </CustomScrollbarContainer>
+
             <EditStudentDialog.render />
         </div>
     );

@@ -23,6 +23,7 @@ import RouteEnum from '../../../enum/RouteEnum';
 import PackageClassesStatus from '../components/PackageClassesStatus';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
 import { IoMdReturnLeft } from 'react-icons/io';
+import ContentContainer from '@/components/ContentContainer';
 
 export default function StudentDetail() {
     const { anchorTimestamp, setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
@@ -81,44 +82,54 @@ export default function StudentDetail() {
         };
     }, [dispatch]);
 
+    useEffect(() => {
+        dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_TIME_TABLE));
+    }, [dispatch]);
+
     const studentNameDisplay = () => {
         return (
             <>
-                <div>
-                    <SectionTitle style={{ fontSize: 30 }}>
-                        <Button
-                            style={{ display: 'flex', alignItems: 'center' }}
-                            onClick={() => navigate(RouteEnum.DASHBOARD_STUDENTS)}
-                        >
-                            <IoMdReturnLeft />
-                            Students
-                        </Button>
-                        <Spacer />
-                        <div>{`${chineseLastName} ${chineseFirstName}`}</div>
-                        <Spacer width={20} />
-                        {`${firstName} ${lastName}`}
-                        <Spacer width={20} />
-                    </SectionTitle>
-                    <div className="rounded-2xl mr-4 flex overflow-hidden max-w-120">
-                        <div className="flex pl-4 pr-2 text-xs font-mono items-center">Student Code</div>
-                        <div className="pl-1 font-mono text-xs py-1 flex items-center ">
-                            <Input value={studentCode} className="!w-full !rounded-2xl !py-0" contentEditable={false} />
+                <ContentContainer className="mr-4 !border-0">
+                    <div className="flex justify-between">
+                        <SectionTitle style={{ fontSize: 30 }}>
+                            <Button
+                                type="primary"
+                                style={{ display: 'flex', alignItems: 'center' }}
+                                onClick={() => navigate(RouteEnum.DASHBOARD_STUDENTS)}
+                            >
+                                <IoMdReturnLeft />
+                                Students
+                            </Button>
+                            <Spacer />
+                            <div>{`${chineseLastName} ${chineseFirstName}`}</div>
+                            <Spacer width={20} />
+                            {`${firstName} ${lastName}`}
+                            <Spacer width={20} />
+                        </SectionTitle>
+                        <div className="rounded-2xl mr-4 flex overflow-hidden">
+                            <div className="flex pl-4 pr-2 text-xs font-mono items-center">Student Code</div>
+                            <div className="pl-1 font-mono text-xs py-1 flex items-center ">
+                                <Input
+                                    value={studentCode}
+                                    className="!w-full !rounded-2xl !py-0"
+                                    contentEditable={false}
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <Spacer height={10} />
-                <div className="flex items-center gap-2">
-                    <div>
-                        <Button block type="default" onClick={navAttendences}>
-                            Attendences (Sharable)
-                        </Button>
+                    <div className="flex items-center gap-2">
+                        <div>
+                            <Button block type="default" onClick={navAttendences}>
+                                Attendences (Sharable)
+                            </Button>
+                        </div>
+                        <div>
+                            <Button block type="primary" onClick={navPackageAttendence} disabled={!selectedPackageId}>
+                                Show package attendences
+                            </Button>
+                        </div>
                     </div>
-                    <div>
-                        <Button block type="primary" onClick={navPackageAttendence} disabled={!selectedPackageId}>
-                            Show package attendences
-                        </Button>
-                    </div>
-                </div>
+                </ContentContainer>
             </>
         );
     };
@@ -192,6 +203,7 @@ const CollapseTriggerBar = (props: { collapseTimetable: boolean; onClick: () => 
     return (
         <Box
             onClick={onClick}
+            className="cursor-pointer"
             sx={{
                 flexDirection: 'row',
                 justifyContent: 'center',
@@ -200,7 +212,6 @@ const CollapseTriggerBar = (props: { collapseTimetable: boolean; onClick: () => 
                 },
             }}
             style={{
-                cursor: 'pointer',
                 height: '100%',
                 width: 35,
                 position: 'relative',

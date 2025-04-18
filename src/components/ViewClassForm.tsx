@@ -18,13 +18,14 @@ export default function ViewClassForm(props: {
     student: StudentDTO;
     cls: ClassDTO;
     course: CourseDTO;
+    onSubmit?: () => void;
     dateUnixTimestamp: number;
     isEditing?: boolean;
 }) {
     const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const [editing, setEditing] = useState(props.isEditing || false);
-    const { cls, course, dateUnixTimestamp, student } = props;
+    const { cls, course, dateUnixTimestamp, student, onSubmit = () => {} } = props;
     const formData = useRef({
         min: cls.min,
         class_status: cls.classStatus,
@@ -42,13 +43,7 @@ export default function ViewClassForm(props: {
                 width: '100%',
             }}
         >
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-end',
-                }}
-            >
+            <div className="flex justify-between items-end">
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <div style={{ fontWeight: 500, fontSize: '23px' }}>{course?.courseName}</div>
                     <Spacer />
@@ -80,16 +75,14 @@ export default function ViewClassForm(props: {
                 </div>
             </div>
             <Spacer />
-            <div>
+            <div className="space-y-1.5 mb-3">
                 <div
                     style={{
-                        marginBottom: '10px',
-                        marginTop: '5px',
                         fontSize: '16px',
                         fontWeight: 500,
                     }}
                 >
-                    Duration:
+                    Duration
                 </div>
                 {!editing && <DisplayResult>{cls.min}</DisplayResult>}
                 {editing && (
@@ -108,12 +101,9 @@ export default function ViewClassForm(props: {
                     />
                 )}
             </div>
-            <Spacer height={10} />
-            <div>
+            <div className="space-y-1.5 mb-3">
                 <div
                     style={{
-                        marginBottom: '10px',
-                        marginTop: '5px',
                         fontSize: '16px',
                         fontWeight: 500,
                     }}
@@ -140,12 +130,9 @@ export default function ViewClassForm(props: {
                     />
                 )}
             </div>
-            <Spacer height={10} />
-            <div>
+            <div className="space-y-1.5 mb-3">
                 <div
                     style={{
-                        marginBottom: '10px',
-                        marginTop: '5px',
                         fontSize: '16px',
                         fontWeight: 500,
                     }}
@@ -199,12 +186,9 @@ export default function ViewClassForm(props: {
                     />
                 )}
             </div>
-            <Spacer height={10} />
-            <div>
+            <div className="space-y-1.5 mb-3">
                 <div
                     style={{
-                        marginBottom: '10px',
-                        marginTop: '5px',
                         fontWeight: 500,
                         fontSize: '16px',
                     }}
@@ -266,6 +250,7 @@ export default function ViewClassForm(props: {
                                     studentId: student.id,
                                 })
                             );
+                            onSubmit();
                             ViewClassDialog.setOpen(false);
                         }}
                     >

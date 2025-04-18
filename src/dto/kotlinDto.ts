@@ -60,6 +60,9 @@ export type StudentPackageRepsonse = {
     studentPackage: StudentPackageDTO;
     scheduledMinutes: number;
     consumedMinutes: number;
+    consumedextendedClassMins: number;
+    numOfNormalClasses: number;
+    numOfExtendedClass: number;
     student: StudentDTO;
     course: CourseDTO;
 };

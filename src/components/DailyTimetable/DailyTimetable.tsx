@@ -14,6 +14,7 @@ import TimeRow from './components/TimeRow';
 import { PrintHandler } from '../PrintButton';
 import Interval from '../../utils/Interval';
 import useRefetchMassTimetables from '../../hooks/useRefetchMassTimetables';
+import ContentContainer from '../ContentContainer';
 const gridHeight = 30;
 
 export default function DailyTimetable({
@@ -180,66 +181,68 @@ export default function DailyTimetable({
                 </div>
             </SectionTitle>
 
-            <CustomScrollbarContainer
-                style={{ height: 'calc(100vh - 230px)' }}
-                setPrintContent={(content: HTMLDivElement | null) => {
-                    printButtonRef?.current?.setPrintTarget(content);
-                }}
-            >
-                <Box
-                    sx={{
-                        '@media print': {
-                            padding: '20px', // Print-specific padding
-                            pageBreakInside: 'avoid',
-                        },
-                        '& .grid-time: nth-child(n+1)': {
-                            paddingRight: '14px',
-                            height: `${gridHeight + 5}px`,
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                        },
+            <ContentContainer>
+                <CustomScrollbarContainer
+                    style={{ height: 'calc(100vh - 230px)' }}
+                    setPrintContent={(content: HTMLDivElement | null) => {
+                        printButtonRef?.current?.setPrintTarget(content);
                     }}
                 >
-                    <Spacer />
-                    <div style={{ display: 'flex' }}>
-                        <div style={{ flex: 1 }}>
-                            <div style={{ display: 'flex' }}>
-                                <div>
-                                    {oneForthHourIntervals.map(dayJS => {
-                                        return (
-                                            <div
-                                                style={{ fontSize: 13 }}
-                                                className="grid-time"
-                                                key={dayJS.valueOf().toString()}
-                                            >
-                                                {dayJS.format('HH:mm')}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                                <div style={{ flex: 1 }}>
-                                    {hoursColumnGrid.sort().map((hourUnixTimestamp, index) => {
-                                        return (
-                                            <TimeRow
-                                                key={`${hourUnixTimestamp}-${date?.getTime() || 0}`}
-                                                rowIndex={index}
-                                                hourUnixTimestamp={hourUnixTimestamp}
-                                            />
-                                        );
-                                    })}
+                    <Box
+                        sx={{
+                            '@media print': {
+                                padding: '20px', // Print-specific padding
+                                pageBreakInside: 'avoid',
+                            },
+                            '& .grid-time: nth-child(n+1)': {
+                                paddingRight: '14px',
+                                height: `${gridHeight + 5}px`,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                            },
+                        }}
+                    >
+                        <Spacer />
+                        <div style={{ display: 'flex' }}>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ display: 'flex' }}>
+                                    <div>
+                                        {oneForthHourIntervals.map(dayJS => {
+                                            return (
+                                                <div
+                                                    style={{ fontSize: 13 }}
+                                                    className="grid-time"
+                                                    key={dayJS.valueOf().toString()}
+                                                >
+                                                    {dayJS.format('HH:mm')}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        {hoursColumnGrid.sort().map((hourUnixTimestamp, index) => {
+                                            return (
+                                                <TimeRow
+                                                    key={`${hourUnixTimestamp}-${date?.getTime() || 0}`}
+                                                    rowIndex={index}
+                                                    hourUnixTimestamp={hourUnixTimestamp}
+                                                />
+                                            );
+                                        })}
+                                    </div>
                                 </div>
                             </div>
+                            <Spacer />
                         </div>
-                        <Spacer />
-                    </div>
-                </Box>
-                <Spacer />
-                <ViewClassDialog.render />
-            </CustomScrollbarContainer>
+                    </Box>
+                    <Spacer />
+                    <ViewClassDialog.render />
+                </CustomScrollbarContainer>
+            </ContentContainer>
         </Box>
     );
 }

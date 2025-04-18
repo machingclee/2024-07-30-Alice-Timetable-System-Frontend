@@ -28,7 +28,7 @@ const renderItems = (items: Item[]) => {
                             disabled={disabled}
                             inset
                             onClick={() => item.onClick?.()}
-                            className="cursor-pointer"
+                            className="cursor-pointer pr-8"
                         >
                             {item.item}
                         </ContextMenuItem>
@@ -37,7 +37,7 @@ const renderItems = (items: Item[]) => {
                     return (
                         <ContextMenuSub>
                             <ContextMenuSubTrigger inset>{item.item}</ContextMenuSubTrigger>
-                            <ContextMenuSubContent className="w-48">{renderItems(item.subItems)}</ContextMenuSubContent>
+                            <ContextMenuSubContent>{renderItems(item.subItems)}</ContextMenuSubContent>
                         </ContextMenuSub>
                     );
                 }
@@ -46,8 +46,8 @@ const renderItems = (items: Item[]) => {
     );
 };
 
-export function AliceMenu(props: { children: ReactNode; items: Item[] }) {
-    const { children, items } = props;
+export function AliceMenu(props: { className?: string; children: ReactNode; items: Item[] }) {
+    const { children, items, className } = props;
     return (
         <Box
             sx={{
@@ -55,14 +55,18 @@ export function AliceMenu(props: { children: ReactNode; items: Item[] }) {
                 height: '100%',
                 '& [data-slot="context-menu-trigger"]': {
                     border: 'none',
+                    '& > div': {
+                        width: '100%',
+                    },
                 },
             }}
+            className={className}
         >
             <ContextMenu>
                 <ContextMenuTrigger className="flex items-center justify-center rounded-md border border-dashed text-sm">
                     {children}
                 </ContextMenuTrigger>
-                <ContextMenuContent className="w-64">{renderItems(items)}</ContextMenuContent>
+                <ContextMenuContent>{renderItems(items)}</ContextMenuContent>
             </ContextMenu>
         </Box>
     );

@@ -23,7 +23,19 @@ const queryClient = new QueryClient({
 
 export default function App() {
     return (
-        <ConfigProvider theme={{ token: { colorPrimary: '#3bc289' } }}>
+        <ConfigProvider
+            theme={{
+                components: {
+                    Button: {
+                        // defaultActiveBg: 'blue',
+                    },
+                },
+                token: {
+                    colorPrimary: '#3bc289',
+                    colorBgTextHover: '#f9fff5',
+                },
+            }}
+        >
             <Provider store={store}>
                 <PersistGate persistor={persistor}>
                     <QueryClientProvider client={queryClient}>
