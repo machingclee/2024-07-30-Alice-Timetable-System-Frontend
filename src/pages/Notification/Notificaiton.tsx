@@ -20,6 +20,7 @@ import RouteEnum from '@/enum/RouteEnum';
 
 const notificationTypeToDisplayName: Record<NotificationDTO['type'], string> = {
     PACKAGE_DEADLINE_COMING: 'Package Deadline Coming',
+    ATTENDENCE_WARNING: 'Attendence Warning',
 };
 
 export default function Notification() {
@@ -57,9 +58,12 @@ export default function Notification() {
             </div>
             <Spacer />
             <div className="h-[calc(100vh-80px)] overflow-y-scroll m-1 p-1 grid grid-cols-1 min-[1400px]:grid-cols-2 min-[1850px]:grid-cols-3 gap-2">
-                {notifications.concat(notifications).map(n => {
-                    return <NotificationRow key={n.notification.id} notificationResponse={n} />;
-                })}
+                {notifications
+                    .slice(0)
+                    .sort((n1, n2) => (n2?.notification?.createdAt || 0) - (n1?.notification?.createdAt || 0))
+                    .map(n => {
+                        return <NotificationRow key={n.notification.id} notificationResponse={n} />;
+                    })}
             </div>
         </div>
     );
@@ -79,7 +83,7 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
                 'p-4 pt-2 mb-3 rounded-md flex flex-col space-y-2 border-green-500 border-1',
                 {
                     'bg-[#f0fdf9] opacity-70': notification.isRead,
-                    'bg-white': !notification.isRead,
+                    'bg-teal-50': !notification.isRead,
                 },
                 {
                     '!text-gray-300': notification.isRead,
@@ -88,7 +92,7 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
             )}
         >
             <div className="flex items-center gap-2">
-                <span className="bg-emerald-500 text-white rounded-sm px-1 py-0.5">Type</span>
+                <span className="bg-emerald-500 text-white rounded-sm px-3 py-0.5">Type</span>
                 {notificationTypeToDisplayName[notification.type]}
             </div>
             <div className="text-md flex justify-between">
@@ -106,7 +110,7 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
                         className={`font-mono text-xs border-1 px-4 border-emerald-500 rounded-md cursor-pointer
                              hover:text-gray-600 hover:border-gray-800 bg-white py-1 transition-all duration-300 ease-in-out`}
                         onClick={() => {
-                            window.open(`${RouteEnum.STUDENT_INFO}/${student.id}`);
+                            window.open(`${RouteEnum.STUDENT_INFO}/${student.id}#${notification.studentPackageId}`);
                         }}
                     >
                         Package Attendences

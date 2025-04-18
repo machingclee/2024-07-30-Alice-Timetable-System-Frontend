@@ -124,7 +124,8 @@ export type TicketDTO = {
 export type NotificationDTO = {
     id?: number;
     message: string;
-    type: 'PACKAGE_DEADLINE_COMING';
+    studentPackageId: number;
+    type: 'PACKAGE_DEADLINE_COMING' | 'ATTENDENCE_WARNING';
     isRead: boolean;
     createdAt?: number;
     createdAtHk?: string;

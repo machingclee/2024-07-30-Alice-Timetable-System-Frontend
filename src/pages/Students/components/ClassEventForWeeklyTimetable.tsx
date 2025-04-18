@@ -463,7 +463,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     left: 5,
                                                     width: 'calc(100% - 20px)',
                                                     height: getHeight(),
-                                                    filter: isInTheFuture() ? '' : 'grayscale(80%) brightness(120%)',
+                                                    filter: isInTheFuture() ? '' : 'grayscale(90%) brightness(120%)',
                                                     backgroundColor: (() => {
                                                         if (!classEvent) {
                                                             return '';

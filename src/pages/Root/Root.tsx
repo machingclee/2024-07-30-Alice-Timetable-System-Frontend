@@ -10,9 +10,23 @@ import Spacer from '../../components/Spacer';
 import colors from '../../constant/colors';
 import classnames from 'classnames';
 import { IoNotifications } from 'react-icons/io5';
-import { Button } from 'antd';
+import { Badge, Button } from 'antd';
 import RouteEnum from '@/enum/RouteEnum';
 import dashboard_background from '../../assets/dashboard_background.png';
+
+const NotificationButton = () => {
+    const navigiate = useNavigate();
+    const numOfNotifications = useAppSelector(
+        s => s.notification.notificationResponses.filter(n => !n.notification.isRead).length
+    );
+    return (
+        <Badge count={numOfNotifications}>
+            <Button shape="circle" onClick={() => navigiate(RouteEnum.DASHBOARD_NOTIFICATIONS)}>
+                <IoNotifications size={18} />
+            </Button>
+        </Badge>
+    );
+};
 
 export default function Root() {
     const dispatch = useAppDispatch();
@@ -65,14 +79,12 @@ export default function Root() {
                         />
                         <div
                             style={{ height: '100%', flexDirection: 'column', display: 'flex' }}
-                            className="bg-[#cae3c8] border-r-1 border-[rgb(200,226,205)]"
+                            className="bg-[#cae3c8] border-r-1 border-emerald-400"
                         >
                             <Spacer />
                             <div className="flex justify-between pr-4 items-center">
                                 <CloseLeftColumnButton />
-                                <Button shape="circle" onClick={() => navigiate(RouteEnum.DASHBOARD_NOTIFICATIONS)}>
-                                    <IoNotifications size={18} />
-                                </Button>
+                                <NotificationButton />
                             </div>
                             <div style={{ flex: 1 }}>
                                 <LeftNavigation />

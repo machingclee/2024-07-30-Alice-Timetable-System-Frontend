@@ -90,7 +90,7 @@ export default function StudentDetail() {
         return (
             <>
                 <ContentContainer className="mr-4 !border-0">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between mb-2">
                         <SectionTitle style={{ fontSize: 30 }}>
                             <Button
                                 type="primary"
