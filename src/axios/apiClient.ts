@@ -7,6 +7,14 @@ import getEnv from '../utils/getEnv';
 const baseURL = getEnv().VITE_BACKEND_URL || '';
 console.log('baseURLbaseURLbaseURL', baseURL);
 
+export const loginApiClient = axios.create({
+    baseURL,
+    responseEncoding: 'utf8',
+    headers: {
+        'Content-type': 'application/json',
+    },
+});
+
 const apiClient = axios.create({
     baseURL,
     responseEncoding: 'utf8',

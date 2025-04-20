@@ -1,12 +1,13 @@
 import { Button, Input } from 'antd';
-import boxShadow from '../../../constant/boxShadow';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Spacer from '../../../components/Spacer';
 import { CourseResponse } from '../../../dto/dto';
 import { CourseThunkAction } from '../../../redux/slices/courseSlice';
 import { debounce } from 'lodash';
 import lodash from 'lodash';
+import { MdEdit } from 'react-icons/md';
+import { CgPushUp } from 'react-icons/cg';
+import { IoBookOutline, IoReturnDownBackOutline } from 'react-icons/io5';
 
 export default function CourseRow(props: { id: number }) {
     const { id } = props;
@@ -56,62 +57,61 @@ export default function CourseRow(props: { id: number }) {
     }
 
     return (
-        <div
-            style={{
-                background: 'white',
-                boxShadow: boxShadow.SHADOW_62,
-                padding: '20px 30px',
-                borderRadius: '8px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '15px',
-            }}
-        >
-            <div style={{ flex: 1 }}>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>Course Name:</td>
-                            {!editing && <td>{courseName}</td>}
-                            {editing && (
-                                <td style={{}}>
-                                    <Input
-                                        style={{ flex: 1 }}
-                                        defaultValue={courseName}
-                                        onChange={e => {
-                                            updateField({
-                                                courseName: e.target.value,
-                                            });
-                                        }}
-                                    />
-                                </td>
+        <div className="items-center bg-white mb-0 px-4 py-1 rounded-md shadow-sm border-1 border-emerald-400">
+            <div className="my-2">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <IoBookOutline size={20} className="translate-y-[1px]" />
+                        {!editing && <div>{courseName}</div>}
+                        {editing && (
+                            <Input
+                                className="!w-80"
+                                defaultValue={courseName}
+                                onChange={e => {
+                                    updateField({
+                                        courseName: e.target.value,
+                                    });
+                                }}
+                            />
+                        )}
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Button
+                            className="!px-5 !py-0"
+                            onClick={() => {
+                                setEditing(editing => {
+                                    if (editing) {
+                                        formData.current = course;
+                                    }
+                                    return !editing;
+                                });
+                            }}
+                        >
+                            {editing ? (
+                                <div className="flex items-center gap-2 ">
+                                    <IoReturnDownBackOutline />
+                                    Cancel
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2">
+                                    <MdEdit /> Edit
+                                </div>
                             )}
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div style={{ display: 'flex' }}>
-                {editing && (
-                    <>
-                        <Button onClick={submitUpdate} disabled={!hasDistinction}>
-                            Update
                         </Button>
-                        <Spacer />
-                    </>
-                )}
-                <Button
-                    onClick={() => {
-                        setEditing(editing => {
-                            if (editing) {
-                                formData.current = course;
-                            }
-                            return !editing;
-                        });
-                    }}
-                >
-                    {editing ? 'Cancel' : 'Edit'}
-                </Button>
+
+                        {editing && (
+                            <>
+                                <Button
+                                    className="!px-5 !py-0 flex items-center gap-2"
+                                    onClick={submitUpdate}
+                                    disabled={!hasDistinction}
+                                >
+                                    <CgPushUp /> Update
+                                </Button>
+                            </>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );

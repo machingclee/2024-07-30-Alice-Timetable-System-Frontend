@@ -25,8 +25,9 @@ const Dashboard = () => {
     }, [dispatch]);
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'row', height: '100vh' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', height: '100vh' }} className="bg-teal-200">
             <div
+                className="ml-10"
                 style={{
                     flex: 1,
                     display: 'flex',

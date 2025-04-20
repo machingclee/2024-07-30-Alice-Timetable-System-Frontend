@@ -7,7 +7,7 @@ export default () => {
         : new Date().getTime();
 
     const setAnchorTimestamp = (timestamp: number) => {
-        setSearchParam({ anchorTimestamp: timestamp + '' });
+        setSearchParam({ anchorTimestamp: timestamp + '' }, { replace: true });
     };
 
     return { anchorTimestamp, setURLAnchorTimestamp: setAnchorTimestamp };

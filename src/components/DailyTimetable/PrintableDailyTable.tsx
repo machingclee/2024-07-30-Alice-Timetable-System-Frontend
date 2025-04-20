@@ -20,9 +20,10 @@ const PrintableDailyTable = (props: { date: Date; dayOffset: number }) => {
                     display: 'flex',
                     justifyContent: 'space-between',
                 }}
+                className="mb-2"
             >
                 <div></div>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div className="flex items-center gap-2">
                     <RefreshDailyTimetableButton />
                     <PrintButton ref={printButtonRef} />
                 </div>

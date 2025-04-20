@@ -1,11 +1,12 @@
-import { PayloadAction, createAsyncThunk, createListenerMiddleware, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createListenerMiddleware, createSlice } from '@reduxjs/toolkit';
 import registerDialogAndActions from '../../utils/registerEffects';
 import { processRes } from '../../utils/processRes';
-import apiClient from '../../axios/apiClient';
+import { loginApiClient } from '../../axios/apiClient';
 import { CustomResponse } from '../../axios/responseTypes';
 import apiRoutes from '../../axios/apiRoutes';
 import { loadingActions } from '../../utils/loadingActions';
 import { TokenPayload } from '../../dto/dto';
+import { createApiThunk } from '@/utils/createApiThunk';
 
 export type AuthSliceState = {
     accessToken: string;
@@ -58,10 +59,10 @@ const authSlice = createSlice({
 });
 
 export class AuthThunkAction {
-    public static userLogin = createAsyncThunk(
+    public static userLogin = createApiThunk(
         'authSlice/user-login',
         async (props: { email: string; password: string }, api) => {
-            const res = await apiClient.post<
+            const res = await loginApiClient.post<
                 CustomResponse<{
                     accessToken: string;
                     refreshToken: string;

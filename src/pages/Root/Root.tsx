@@ -10,8 +10,30 @@ import Spacer from '../../components/Spacer';
 import colors from '../../constant/colors';
 import classnames from 'classnames';
 import { IoNotifications } from 'react-icons/io5';
-import { Button } from 'antd';
+import { Badge, Button } from 'antd';
 import RouteEnum from '@/enum/RouteEnum';
+import dashboard_background from '../../assets/dashboard_background.png';
+
+const NotificationButton = () => {
+    const navigiate = useNavigate();
+    const numOfNotifications = useAppSelector(
+        s => s.notification.notificationResponses.filter(n => !n.notification.isRead).length
+    );
+    const { pathname } = useLocation();
+    const active = /notifications/.test(pathname);
+
+    return (
+        <Badge count={numOfNotifications}>
+            <Button
+                shape="circle"
+                onClick={() => navigiate(RouteEnum.DASHBOARD_NOTIFICATIONS)}
+                type={active ? 'primary' : 'default'}
+            >
+                <IoNotifications size={18} />
+            </Button>
+        </Badge>
+    );
+};
 
 export default function Root() {
     const dispatch = useAppDispatch();
@@ -54,17 +76,22 @@ export default function Root() {
                 {isInDashboard && (
                     <div
                         style={{ height: '100vh' }}
-                        className={classnames('ease-in-out max-[1100px]:!w-0 !overflow-hidden w-[210px]', {
+                        className={classnames('ease-in-out max-[1100px]:!w-0 !overflow-hidden w-[240px] relative', {
                             '!w-0': leftNavigatorCollapsed,
                         })}
                     >
-                        <div style={{ height: '100%', flexDirection: 'column', display: 'flex' }}>
+                        <img
+                            src={dashboard_background}
+                            className="absolute bottom-[50%] left-[calc(50%+220px)] scale-400 translate-x-[-50%] translate-y-[0] opacity-20"
+                        />
+                        <div
+                            style={{ height: '100%', flexDirection: 'column', display: 'flex' }}
+                            className="bg-[#cae3c8] border-r-1 border-emerald-400"
+                        >
                             <Spacer />
-                            <div className="flex justify-between pr-6 items-center">
+                            <div className="flex justify-between pr-4 items-center">
                                 <CloseLeftColumnButton />
-                                <Button shape="circle" onClick={() => navigiate(RouteEnum.DASHBOARD_NOTIFICATIONS)}>
-                                    <IoNotifications size={18} />
-                                </Button>
+                                <NotificationButton />
                             </div>
                             <div style={{ flex: 1 }}>
                                 <LeftNavigation />

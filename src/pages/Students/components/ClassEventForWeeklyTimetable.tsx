@@ -25,6 +25,8 @@ import useGetStudentIdFromParam from '../../../hooks/useGetStudentIdFromParam';
 import classNames from 'classnames';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
 import { AliceMenu } from '@/components/AliceMenu';
+import getColorForClassStatus from '@/utils/getColorForClassStatus';
+import getDisplayNameFromClassStatus from '@/utils/getDisplayNameFromClassStatus';
 
 export default function StudentClassForWeeklyTimetable(props: {
     dayUnixTimestamp: number;
@@ -49,9 +51,6 @@ export default function StudentClassForWeeklyTimetable(props: {
             ]
     );
     const showLabel = classEvent != null;
-    if (classEvent) {
-        console.log('studentClassstudentClass', classEvent);
-    }
     const showAll = useAppSelector(s => s.student.studentDetailTimetablePage.showAllClassesForOneStudent);
     const timetable = useAppSelector(s => s.student.studentDetailTimetablePage.weeklyClassEvent);
     const [classNumber, setClassNumber] = useState<number>(0);
@@ -67,6 +66,7 @@ export default function StudentClassForWeeklyTimetable(props: {
             <AddClassEventForm
                 dayUnixTimestamp={currGridDayUnixTimestamp}
                 hourUnixTimestamp={currGridHourUnixTimestamp}
+                resetDefaultNumOfClasses={true}
                 studentId={studentId || ''}
             />
         ));
@@ -103,6 +103,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                   <AliceMenu
                       items={[
                           {
+                              disabled: !selectedPackageId,
                               item: !selectedPackageId
                                   ? 'Please First Select a Package'
                                   : `Add class(es) at ${dayAndTime}`,
@@ -137,6 +138,11 @@ export default function StudentClassForWeeklyTimetable(props: {
                     }
                     dispatch(
                         StudentThunkAction.getStudentClassesForWeeklyTimetable({
+                            studentId: classEvent.student.id,
+                        })
+                    );
+                    dispatch(
+                        StudentThunkAction.getStudentPackages({
                             studentId: classEvent.student.id,
                         })
                     );
@@ -379,33 +385,42 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     },
                                                 },
                                                 {
-                                                    item: 'Change Status',
-                                                    subItems: [
-                                                        {
-                                                            item: <Present />,
-                                                            onClick: () => updateClassStatus('PRESENT'),
-                                                        },
-                                                        {
-                                                            item: <SuspiciousAbsent />,
-                                                            onClick: () => updateClassStatus('SUSPICIOUS_ABSENCE'),
-                                                        },
-                                                        {
-                                                            item: <IllegitAbsent />,
-                                                            onClick: () => updateClassStatus('ILLEGIT_ABSENCE'),
-                                                        },
-                                                        {
-                                                            item: <LegitAbsent />,
-                                                            onClick: () => updateClassStatus('LEGIT_ABSENCE'),
-                                                        },
-                                                        {
-                                                            item: <MarkUp />,
-                                                            onClick: () => updateClassStatus('MAKEUP'),
-                                                        },
-                                                        {
-                                                            item: <AdverseWhether />,
-                                                            onClick: () => updateClassStatus('BAD_WHETHER'),
-                                                        },
-                                                    ],
+                                                    item: (
+                                                        <div>
+                                                            <div>Change Status</div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span
+                                                                    style={{
+                                                                        color: getColorForClassStatus(
+                                                                            classEvent.class.classStatus
+                                                                        ),
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        getDisplayNameFromClassStatus[
+                                                                            classEvent.class.classStatus
+                                                                        ]
+                                                                    }
+                                                                </span>
+                                                                <div
+                                                                    style={{
+                                                                        background: getColorForClassStatus(
+                                                                            classEvent.class.classStatus
+                                                                        ),
+                                                                        width: '15px',
+                                                                        height: '15px',
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ),
+                                                    subItems: Object.keys(getDisplayNameFromClassStatus).map(
+                                                        status => ({
+                                                            disabled: classEvent.class.classStatus === status,
+                                                            item: <StatusLabel status={status as Class_status} />,
+                                                            onClick: () => updateClassStatus(status as Class_status),
+                                                        })
+                                                    ),
                                                 },
                                             ]}
                                         >
@@ -447,7 +462,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     left: 5,
                                                     width: 'calc(100% - 20px)',
                                                     height: getHeight(),
-                                                    filter: isInTheFuture() ? '' : 'grayscale(80%) brightness(120%)',
+                                                    filter: isInTheFuture() ? '' : 'grayscale(90%) brightness(120%)',
                                                     backgroundColor: (() => {
                                                         if (!classEvent) {
                                                             return '';
@@ -539,131 +554,20 @@ export default function StudentClassForWeeklyTimetable(props: {
         </Droppable>
     );
 }
-function MarkUp() {
-    return (
-        <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-            }}
-        >
-            <span>Makeup</span>
-            <div
-                style={{
-                    background: colors.BLUE,
-                    width: '15px',
-                    height: '15px',
-                }}
-            />
-        </div>
-    );
-}
 
-function LegitAbsent() {
+function StatusLabel(props: { status: Class_status }) {
+    const status = props.status;
     return (
         <div
+            className="gap-4 flex justify-between items-center"
             style={{
                 width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
             }}
         >
-            <span>Legit Absence</span>
+            <span>{getDisplayNameFromClassStatus[status]}</span>
             <div
                 style={{
-                    background: colors.GREY,
-                    width: '15px',
-                    height: '15px',
-                }}
-            />
-        </div>
-    );
-}
-
-function IllegitAbsent() {
-    return (
-        <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-            }}
-        >
-            <span>Illegit Absence</span>
-            <div
-                style={{
-                    background: colors.RED,
-                    width: '15px',
-                    height: '15px',
-                }}
-            />
-        </div>
-    );
-}
-
-function SuspiciousAbsent() {
-    return (
-        <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-            }}
-        >
-            <span>Suspicious Absence</span>
-            <div
-                style={{
-                    background: colors.ORANGE,
-                    width: '15px',
-                    height: '15px',
-                }}
-            />
-        </div>
-    );
-}
-
-function Present() {
-    return (
-        <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-            }}
-        >
-            <span>Present</span>
-            <div
-                style={{
-                    background: colors.GREEN_BLUE,
-                    width: '15px',
-                    height: '15px',
-                }}
-            />
-        </div>
-    );
-}
-
-function AdverseWhether() {
-    return (
-        <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-            }}
-        >
-            <span>ADVERSE WHETHER</span>
-            <div
-                style={{
-                    background: colors.BLACK,
-                    color: 'white',
+                    background: getColorForClassStatus(status),
                     width: '15px',
                     height: '15px',
                 }}

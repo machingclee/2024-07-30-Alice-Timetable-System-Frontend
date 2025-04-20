@@ -1,5 +1,4 @@
 import { Box } from '@mui/material';
-import boxShadow from '../../../constant/boxShadow';
 import { useNavigate } from 'react-router-dom';
 import { FaChevronRight } from 'react-icons/fa';
 import EditStudentDialog from './EditStudentDialog';
@@ -9,7 +8,8 @@ import dayjs from 'dayjs';
 import { useAppSelector } from '../../../redux/hooks';
 import { Button } from 'antd';
 import { AliceMenu } from '@/components/AliceMenu';
-import { RiUser5Line } from 'react-icons/ri';
+import { IoLogoOctocat } from 'react-icons/io5';
+import { Separator } from '@/components/ui/separator';
 
 export default function StudenRow(props: { studentId: string }) {
     const { studentId } = props;
@@ -52,11 +52,9 @@ export default function StudenRow(props: { studentId: string }) {
     return (
         <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
             <Box
-                className="rounded-md"
+                className="rounded-md border-1 shadow-sm border-teal-400 cursor-pointer"
                 style={{
                     flex: 1,
-                    boxShadow: boxShadow.SHADOW_62,
-                    margin: '7px 15px',
                     overflow: 'hidden',
                 }}
                 sx={{
@@ -118,19 +116,20 @@ export default function StudenRow(props: { studentId: string }) {
                     <Button
                         type="text"
                         onClick={goDetailPage}
-                        className="flex flex-col !border-none"
+                        className="flex flex-col"
                         style={{
                             padding: '0px 0px',
                             width: '100%',
                             height: '100%',
                         }}
                     >
-                        <div className="w-full">
-                            <div className="flex justify-start items-center text-xl bg-[#59967c] text-white pl-4 pt-1 pb-0.5">
-                                <RiUser5Line className="mr-2" />
+                        <div className="w-full bg-emerald-50">
+                            <div className="flex justify-start items-center text-xl pl-4 pt-1 pb-0.5 shadow-gray-300 gap-2">
+                                <IoLogoOctocat />
                                 <div>{`${firstName} ${lastName}`}</div>
                             </div>
                         </div>
+                        <Separator className="bg-emerald-200 -mt-2" />
 
                         <div className="flex justify-between w-full pl-2 pb-2 pr-2 pt-2">
                             <div>
@@ -168,7 +167,7 @@ export default function StudenRow(props: { studentId: string }) {
                                             <tr>
                                                 <td>Birthday:</td>
                                                 <td>{`${dayjs(birthdate).format('YYYY-MM-DD')}`}</td>
-                                                <td>phone number:</td>
+                                                <td>Parent Phone:</td>
                                                 <td>{`${phoneNumber}`}</td>
                                                 <td></td>
                                             </tr>

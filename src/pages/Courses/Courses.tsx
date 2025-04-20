@@ -7,6 +7,7 @@ import { Button } from 'antd';
 import AddClassDialog from './components/AddCourseDialog';
 import AddClassForm from './components/AddCourseForm';
 import useQueryThunk from '../../reactQueries/useQueryThunk';
+import ContentContainer from '@/components/ContentContainer';
 
 export default function Courses() {
     const ids = useAppSelector(s => s.class.courses.ids) || [];
@@ -27,9 +28,11 @@ export default function Courses() {
                 </Button>
             </div>
             <Spacer />
-            {ids.map(id => {
-                return <ClassRow id={id} />;
-            })}
+            <ContentContainer className="grid grid-cols-1 gap-2 min-[1550px]:grid-cols-2">
+                {ids.map(id => {
+                    return <ClassRow id={id} key={id} />;
+                })}
+            </ContentContainer>
             <AddClassDialog.render />
         </div>
     );

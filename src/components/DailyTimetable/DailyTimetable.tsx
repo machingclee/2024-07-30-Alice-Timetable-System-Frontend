@@ -14,6 +14,7 @@ import TimeRow from './components/TimeRow';
 import { PrintHandler } from '../PrintButton';
 import Interval from '../../utils/Interval';
 import useRefetchMassTimetables from '../../hooks/useRefetchMassTimetables';
+import ContentContainer from '../ContentContainer';
 const gridHeight = 30;
 
 export default function DailyTimetable({
@@ -120,128 +121,126 @@ export default function DailyTimetable({
                 },
             }}
         >
-            <SectionTitle style={{ justifyContent: 'center' }}>
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: 10,
-                    }}
-                    ref={ref => {
-                        console.log('setting print target ref', ref);
-                    }}
-                >
-                    <Button
-                        className="!rounded-2xl"
-                        onClick={() => {
-                            if (!classRoom) {
-                                return;
-                            }
-                            const prevDayjs = dayjs(date).subtract(1 + dayOffset, 'day');
-                            const prevDate = prevDayjs.toDate();
-                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDate }));
-                            refetchMassTimetableAnchoredAt(prevDate.getTime());
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                fontSize: 14,
-                            }}
-                        >
-                            <FaChevronLeft /> <Spacer width={5} /> Previous Day
-                        </div>
-                    </Button>
-                    <Spacer width={20} />
-                    {dayjs(date).format('YYYY-MM-DD (ddd)')}
-                    <Spacer width={20} />
-                    <Button
-                        className="!rounded-2xl"
-                        onClick={() => {
-                            console.log('classRoomclassRoom', classRoom);
-                            if (!classRoom) {
-                                return;
-                            }
-                            const nextDayjs = dayjs(date).add(1 - dayOffset, 'day');
-                            const nextDate = nextDayjs.toDate();
-                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDate }));
-                            refetchMassTimetableAnchoredAt(nextDate.getTime());
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                fontSize: 14,
-                            }}
-                        >
-                            Next Day <Spacer width={5} /> <FaChevronRight />
-                        </div>
-                    </Button>
-                </div>
-            </SectionTitle>
-
-            <CustomScrollbarContainer
-                style={{ height: 'calc(100vh - 230px)' }}
-                setPrintContent={(content: HTMLDivElement | null) => {
-                    printButtonRef?.current?.setPrintTarget(content);
-                }}
-            >
-                <Box
-                    sx={{
-                        '@media print': {
-                            padding: '20px', // Print-specific padding
-                            pageBreakInside: 'avoid',
-                        },
-                        '& .grid-time: nth-child(n+1)': {
-                            paddingRight: '14px',
-                            height: `${gridHeight + 5}px`,
+            <ContentContainer>
+                <SectionTitle style={{ justifyContent: 'center' }}>
+                    <div
+                        style={{
                             display: 'flex',
-                            justifyContent: 'center',
                             alignItems: 'center',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                        },
+                            padding: 10,
+                        }}
+                        className="flex items-center gap-4"
+                    >
+                        <Button
+                            onClick={() => {
+                                if (!classRoom) {
+                                    return;
+                                }
+                                const prevDayjs = dayjs(date).subtract(1 + dayOffset, 'day');
+                                const prevDate = prevDayjs.toDate();
+                                dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDate }));
+                                refetchMassTimetableAnchoredAt(prevDate.getTime());
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    fontSize: 14,
+                                }}
+                            >
+                                <FaChevronLeft /> <Spacer width={5} /> Previous Day
+                            </div>
+                        </Button>
+
+                        <div className="overflow-hidden whitespace-nowrap text-ellipsis text-base">
+                            {dayjs(date).format('YYYY-MM-DD (ddd)')}
+                        </div>
+
+                        <Button
+                            onClick={() => {
+                                console.log('classRoomclassRoom', classRoom);
+                                if (!classRoom) {
+                                    return;
+                                }
+                                const nextDayjs = dayjs(date).add(1 - dayOffset, 'day');
+                                const nextDate = nextDayjs.toDate();
+                                dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDate }));
+                                refetchMassTimetableAnchoredAt(nextDate.getTime());
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    fontSize: 14,
+                                }}
+                            >
+                                Next Day <Spacer width={5} /> <FaChevronRight />
+                            </div>
+                        </Button>
+                    </div>
+                </SectionTitle>
+                <CustomScrollbarContainer
+                    style={{ height: 'calc(100vh - 230px)' }}
+                    setPrintContent={(content: HTMLDivElement | null) => {
+                        printButtonRef?.current?.setPrintTarget(content);
                     }}
                 >
-                    <Spacer />
-                    <div style={{ display: 'flex' }}>
-                        <div style={{ flex: 1 }}>
-                            <div style={{ display: 'flex' }}>
-                                <div>
-                                    {oneForthHourIntervals.map(dayJS => {
-                                        return (
-                                            <div
-                                                style={{ fontSize: 13 }}
-                                                className="grid-time"
-                                                key={dayJS.valueOf().toString()}
-                                            >
-                                                {dayJS.format('HH:mm')}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                                <div style={{ flex: 1 }}>
-                                    {hoursColumnGrid.sort().map((hourUnixTimestamp, index) => {
-                                        return (
-                                            <TimeRow
-                                                key={`${hourUnixTimestamp}-${date?.getTime() || 0}`}
-                                                rowIndex={index}
-                                                hourUnixTimestamp={hourUnixTimestamp}
-                                            />
-                                        );
-                                    })}
+                    <Box
+                        sx={{
+                            '@media print': {
+                                padding: '20px', // Print-specific padding
+                                pageBreakInside: 'avoid',
+                            },
+                            '& .grid-time: nth-child(n+1)': {
+                                paddingRight: '14px',
+                                height: `${gridHeight + 5}px`,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                            },
+                        }}
+                    >
+                        <div style={{ display: 'flex' }}>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ display: 'flex' }}>
+                                    <div>
+                                        {oneForthHourIntervals.map(dayJS => {
+                                            return (
+                                                <div
+                                                    style={{ fontSize: 13 }}
+                                                    className="grid-time"
+                                                    key={dayJS.valueOf().toString()}
+                                                >
+                                                    {dayJS.format('HH:mm')}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        {hoursColumnGrid.sort().map((hourUnixTimestamp, index) => {
+                                            return (
+                                                <TimeRow
+                                                    key={`${hourUnixTimestamp}-${date?.getTime() || 0}`}
+                                                    rowIndex={index}
+                                                    hourUnixTimestamp={hourUnixTimestamp}
+                                                />
+                                            );
+                                        })}
+                                    </div>
                                 </div>
                             </div>
+                            <Spacer />
                         </div>
-                        <Spacer />
-                    </div>
-                </Box>
-                <Spacer />
-                <ViewClassDialog.render />
-            </CustomScrollbarContainer>
+                    </Box>
+                    <Spacer />
+                    <ViewClassDialog.render />
+                </CustomScrollbarContainer>
+            </ContentContainer>
         </Box>
     );
 }

@@ -14,6 +14,7 @@ import CustomScrollbarContainer from '../../../components/CustomScrollbarContain
 import colors from '../../../constant/colors';
 import FadeIn from '../../../components/FadeIn';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
+import ContentContainer from '@/components/ContentContainer';
 
 export type WeeklyCoordinate = {
     [dateUnixTimestamp: string]: {
@@ -185,7 +186,7 @@ export default function WeeklyTimeTable() {
 
                     '&:hover': {
                         cursor: 'pointer',
-                        backgroundColor: 'rgba(22,119,255,0.2)',
+                        // backgroundColor: 'rgba(22,119,255,0.2)',
                     },
                 },
                 '& .grid-hour.header': {
@@ -204,67 +205,69 @@ export default function WeeklyTimeTable() {
                 },
             }}
         >
-            <FadeIn className="flex flex-col flex-1 h-[calc(100vh-160px)] overflow-hidden overflow-y-scroll">
-                <div className="flex justify-center">{weekNavigator()}</div>
-                <CustomScrollbarContainer className="flex-1 overflow-scroll">
-                    <Spacer />
-                    <div className="flex">
-                        <div style={{ flex: 1 }}>
-                            <div style={{ display: 'flex' }}>
-                                <div>
-                                    <Spacer
-                                        height={gridTimeColTop}
-                                        style={{
-                                            position: 'sticky',
-                                            top: 0,
-                                            background: colors.BACKGORUND_GREY,
-                                            width: '100%',
-                                        }}
-                                    />
-                                    <div className="grid-time" style={{ width: 60 }}></div>
-                                </div>
-                                {Object.keys(timeGrid)
-                                    .sort()
-                                    .map((dayUnixTimestamp, colIndex) => {
-                                        const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
-                                        return (
-                                            <div key={dayUnixTimestamp} className="day-column">
-                                                <div
-                                                    className="grid-hour header"
-                                                    style={{
-                                                        width: '100%',
-                                                        fontWeight: 400,
-                                                        textAlign: 'center',
-                                                    }}
-                                                >
-                                                    {timetableAvailableWidth >= 85 && dayDayJS.format('ddd, MMM D')}
-                                                    {timetableAvailableWidth < 85 && dayDayJS.format('ddd')}
-                                                </div>
-                                                <Spacer height={5} />
-                                                <div>
-                                                    {Object.keys(timeGrid[dayUnixTimestamp])
-                                                        .sort()
-                                                        .map((hourUnixTimestamp, rowIndex) => {
-                                                            return (
-                                                                <ClassEventForWeeklyTimetable
-                                                                    key={hourUnixTimestamp}
-                                                                    colIndex={colIndex}
-                                                                    rowIndex={rowIndex}
-                                                                    dayUnixTimestamp={parseInt(dayUnixTimestamp)}
-                                                                    hourUnixTimestamp={parseInt(hourUnixTimestamp)}
-                                                                />
-                                                            );
-                                                        })}
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                            </div>
-                        </div>
+            <FadeIn className="flex flex-col flex-1 h-[calc(100vh-160px)] overflow-hidden overflow-y-scroll mr-4">
+                <ContentContainer>
+                    <div className="flex justify-center">{weekNavigator()}</div>
+                    <CustomScrollbarContainer className="flex-1 overflow-scroll">
                         <Spacer />
-                    </div>
-                    <Spacer />
-                </CustomScrollbarContainer>
+                        <div className="flex">
+                            <div style={{ flex: 1 }}>
+                                <div style={{ display: 'flex' }}>
+                                    <div>
+                                        <Spacer
+                                            height={gridTimeColTop}
+                                            style={{
+                                                position: 'sticky',
+                                                top: 0,
+                                                width: '100%',
+                                            }}
+                                        />
+                                        <div className="grid-time" style={{ width: 60 }}></div>
+                                    </div>
+                                    {Object.keys(timeGrid)
+                                        .sort()
+                                        .map((dayUnixTimestamp, colIndex) => {
+                                            const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
+                                            return (
+                                                <div key={dayUnixTimestamp} className="day-column">
+                                                    <div
+                                                        className="grid-hour header !bg-teal-100"
+                                                        style={{
+                                                            width: '100%',
+                                                            fontWeight: 400,
+                                                            textAlign: 'center',
+                                                        }}
+                                                    >
+                                                        {timetableAvailableWidth >= 85 && dayDayJS.format('ddd, MMM D')}
+                                                        {timetableAvailableWidth < 85 && dayDayJS.format('ddd')}
+                                                    </div>
+                                                    <Spacer height={5} />
+                                                    <div>
+                                                        {Object.keys(timeGrid[dayUnixTimestamp])
+                                                            .sort()
+                                                            .map((hourUnixTimestamp, rowIndex) => {
+                                                                return (
+                                                                    <ClassEventForWeeklyTimetable
+                                                                        key={hourUnixTimestamp}
+                                                                        colIndex={colIndex}
+                                                                        rowIndex={rowIndex}
+                                                                        dayUnixTimestamp={parseInt(dayUnixTimestamp)}
+                                                                        hourUnixTimestamp={parseInt(hourUnixTimestamp)}
+                                                                    />
+                                                                );
+                                                            })}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                </div>
+                            </div>
+                            <Spacer />
+                        </div>
+
+                        <Spacer />
+                    </CustomScrollbarContainer>
+                </ContentContainer>
             </FadeIn>
         </Box>
     );

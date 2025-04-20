@@ -32,10 +32,14 @@ import {
     StudentPackageDTO,
     UIStudentDetail,
     GetPackageClassStatusResponse,
+    Class_status,
 } from '../../dto/kotlinDto';
 import statues from '../../constant/statues';
 import dayjs from 'dayjs';
 import documentId from '../../constant/documentId';
+import getEnv from '@/utils/getEnv';
+import axios from 'axios';
+import { WritableDraft } from 'immer/dist/internal.js';
 
 export enum StudentDetailPage {
     STUDENT_TIME_TABLE = 'STUDENT_TIME_TABLE',
@@ -70,7 +74,9 @@ export type StudentSliceState = {
         classRoom: Classroom | null;
         numOfDaysToDisplay: number;
         selectedDate: Date;
-        hrUnixTimestampToTimetableClasses: { [id: string]: TimetableClassEvent[] };
+        hrUnixTimestampToTimetableClasses: {
+            [id: string]: (TimetableClassEvent & { isPlaceHolderForPaddingDisplay?: boolean })[];
+        };
         totalClassesInHighlight: {
             hrUnixTimestampOnClick: number | null;
             numberOfClassesInHighlight: number;
@@ -277,14 +283,7 @@ const studentSlice = createSlice({
                 const hrTimestampToClasses: {
                     [key: string]: TimetableClassEvent[];
                 } = {};
-                let presentClasses = 0;
-                let suspiciousAbsenceClasses = 0;
-                let illegitAbsenceClasses = 0;
-                let legitAbsenceClasses = 0;
-                let makeupClasses = 0;
-                let changeOfClassroomClasses = 0;
-                let trialClasses = 0;
-                let reservedClasses = 0;
+                const statusToNumOfClasses: Partial<Record<Class_status, number>> = {};
                 for (const event of events) {
                     const timestamp = event.class.hourUnixTimestamp.toString();
                     const classesForNow = hrTimestampToClasses?.[timestamp];
@@ -294,41 +293,24 @@ const studentSlice = createSlice({
                         hrTimestampToClasses[timestamp].push(event);
                     }
                 }
+
+                // deduplicate purpose, we are just interested in the key
+                const studentIdsToNull: { [id: string]: null } = {};
+
                 Object.entries(hrTimestampToClasses).forEach(([hrTimestamp, timetableClasses]) => {
                     const existingTimetableClasses =
                         state.massTimetablePage.hrUnixTimestampToTimetableClasses?.[hrTimestamp] || [];
                     const existingIds = existingTimetableClasses.map(timetableClass => timetableClass.class.id);
 
                     for (const timetableClass of timetableClasses) {
+                        const studentId = timetableClass.student.id;
+                        studentIdsToNull[studentId] = null;
+
                         if (!existingIds.includes(timetableClass.class.id)) {
                             existingTimetableClasses.push(timetableClass);
                         }
-                        switch (timetableClass.class.classStatus) {
-                            case 'PRESENT':
-                                presentClasses++;
-                                break;
-                            case 'RESERVED':
-                                reservedClasses++;
-                                break;
-                            case 'SUSPICIOUS_ABSENCE':
-                                suspiciousAbsenceClasses++;
-                                break;
-                            case 'ILLEGIT_ABSENCE':
-                                illegitAbsenceClasses++;
-                                break;
-                            case 'LEGIT_ABSENCE':
-                                legitAbsenceClasses++;
-                                break;
-                            case 'MAKEUP':
-                                makeupClasses++;
-                                break;
-                            case 'TRIAL':
-                                trialClasses++;
-                                break;
-                            case 'CHANGE_OF_CLASSROOM':
-                                changeOfClassroomClasses++;
-                                break;
-                        }
+                        const status = timetableClass.class.classStatus;
+                        statusToNumOfClasses[status] = (statusToNumOfClasses[status] || 0) + 1;
                     }
                     lodash.setWith(
                         state.massTimetablePage.hrUnixTimestampToTimetableClasses,
@@ -337,15 +319,21 @@ const studentSlice = createSlice({
                         Object
                     );
                 });
+
+                // rearrange the ids here to make sure consecutive classes of a student are listed in the same column:
+                // avoid mutating the original list for undesired side effect
+                const studentIds = Object.keys(studentIdsToNull);
+                reorderClassesByConsecutiveClassesOfStudents(state, studentIds);
+
                 state.massTimetablePage.summaryOfClassStatuses = {
-                    present: presentClasses,
-                    suspicious_absence: suspiciousAbsenceClasses,
-                    illegit_absence: illegitAbsenceClasses,
-                    legit_absence: legitAbsenceClasses,
-                    makeup: makeupClasses,
-                    changeOfClassroom: changeOfClassroomClasses,
-                    trial: trialClasses,
-                    reserved: reservedClasses,
+                    present: statusToNumOfClasses['PRESENT'] || 0,
+                    suspicious_absence: statusToNumOfClasses['SUSPICIOUS_ABSENCE'] || 0,
+                    illegit_absence: statusToNumOfClasses['ILLEGIT_ABSENCE'] || 0,
+                    legit_absence: statusToNumOfClasses['LEGIT_ABSENCE'] || 0,
+                    makeup: statusToNumOfClasses['MAKEUP'] || 0,
+                    changeOfClassroom: statusToNumOfClasses['CHANGE_OF_CLASSROOM'] || 0,
+                    trial: statusToNumOfClasses['TRIAL'] || 0,
+                    reserved: statusToNumOfClasses['RESERVED'] || 0,
                 };
             })
             .addCase(StudentThunkAction.getStudentClassesForWeeklyTimetable.fulfilled, (state, action) => {
@@ -411,6 +399,23 @@ export class StudentThunkAction {
         async (props: { studentId: string }, api) => {
             const { studentId } = props;
             const res = await apiClient.get<CustomResponse<UIStudentDetail>>(apiRoutes.GET_STUDENT_DETAIL(studentId));
+            return processRes(res, api);
+        }
+    );
+    public static getStudentInfo = createApiThunk(
+        'studentSlice/getStudentInfo',
+        async (props: { studentId: string }, api) => {
+            const { studentId } = props;
+            // cannot use our apiclient as it requires a token in the header.
+            const baseURL = getEnv().VITE_BACKEND_URL || '';
+            const client = axios.create({
+                baseURL,
+                responseEncoding: 'utf8',
+                headers: {
+                    'Content-type': 'application/json',
+                },
+            });
+            const res = await client.get<CustomResponse<UIStudentDetail>>(apiRoutes.GET_STUDENT_INFO(studentId));
             return processRes(res, api);
         }
     );
@@ -613,3 +618,89 @@ registerEffects(studentMiddleware, [
 ]);
 
 export default studentSlice;
+
+function reorderClassesByConsecutiveClassesOfStudents(state: WritableDraft<StudentSliceState>, studentIds: string[]) {
+    const hrToClassEventsList = cloneDeep(
+        Object.entries(state.massTimetablePage.hrUnixTimestampToTimetableClasses).map(([time, classEvents]) => ({
+            time,
+            classEvents,
+        }))
+    ).sort((events1, events2) => Number(events1.time) - Number(events2.time));
+
+    for (const studentId of studentIds) {
+        // whenever we move a student to front, we add placholder as a padding for the rest of the time-classes-row
+        // since otherwise the "move to front" logic will override each another
+        // when the class durations are not consistent.
+        // in UI we use the boolean isPlaceHolderForPaddingDisplay to make it transparent and unclickable
+        let placeHolderEventForPadding:
+            | StudentSliceState['massTimetablePage']['hrUnixTimestampToTimetableClasses'][string][number]
+            | null = null;
+        // timestamp that is consecutive to the current class has been swapped to the front, no placeholder needed.
+        let skippedTimeForPlaceholder: string | null = null;
+
+        for (let i = 0; i < hrToClassEventsList.length - 1; i++) {
+            const currentEvents = hrToClassEventsList[i];
+            const currEventIndex = currentEvents.classEvents.findIndex(e => e.student.id === studentId);
+            const currEvent = currentEvents.classEvents[currEventIndex];
+            const { hourUnixTimestamp: startTimestamp, min } = currEvent?.class || {};
+            const nextConsecutiveTimestamp = dayjs(startTimestamp).add(min, 'minute').valueOf();
+            const nextEventsList = hrToClassEventsList.find(events => events.time === String(nextConsecutiveTimestamp));
+            const nextEventIndex = (() => {
+                const index = nextEventsList?.classEvents?.findIndex(e => e.student.id === studentId);
+                if (index != null) {
+                    return index;
+                } else {
+                    return -1;
+                }
+            })();
+            if (
+                placeHolderEventForPadding &&
+                skippedTimeForPlaceholder &&
+                currentEvents.time !== skippedTimeForPlaceholder
+            ) {
+                prependPlaceholder(currentEvents.classEvents, placeHolderEventForPadding);
+            }
+
+            if (currEventIndex > -1 && nextEventIndex > -1) {
+                moveToFrontByMutation(currentEvents.classEvents, currEventIndex);
+                moveToFrontByMutation(nextEventsList?.classEvents || [], nextEventIndex);
+                placeHolderEventForPadding = { ...currEvent, isPlaceHolderForPaddingDisplay: true };
+                skippedTimeForPlaceholder = nextEventsList?.time || null;
+            }
+        }
+
+        // for last index, determine if we should insert the padding as well
+        const index = hrToClassEventsList.length - 1;
+        const currentEvents = hrToClassEventsList[index];
+        if (
+            placeHolderEventForPadding &&
+            skippedTimeForPlaceholder &&
+            currentEvents.time !== skippedTimeForPlaceholder
+        ) {
+            prependPlaceholder(currentEvents.classEvents, placeHolderEventForPadding);
+        }
+    }
+
+    const newMap: StudentSliceState['massTimetablePage']['hrUnixTimestampToTimetableClasses'] = {};
+    for (const events of hrToClassEventsList) {
+        const { classEvents, time } = events;
+        newMap[time] = classEvents;
+    }
+    state.massTimetablePage.hrUnixTimestampToTimetableClasses = newMap;
+}
+
+function moveToFrontByMutation<T>(array: T[], index: number) {
+    if (index > 0) {
+        const item = array.splice(index, 1)[0];
+        array.unshift(item);
+    }
+}
+
+function prependPlaceholder(
+    classEvents: StudentSliceState['massTimetablePage']['hrUnixTimestampToTimetableClasses'][string],
+    event: StudentSliceState['massTimetablePage']['hrUnixTimestampToTimetableClasses'][string][number]
+) {
+    console.log('generate placeholder', event);
+    event['isPlaceHolderForPaddingDisplay'] = true;
+    classEvents.unshift(event);
+}

@@ -2,6 +2,7 @@ import { IoPrint } from 'react-icons/io5';
 import { useAppSelector } from '../redux/hooks';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useReactToPrint } from 'react-to-print';
+import { Button } from 'antd';
 
 export type PrintHandler = {
     setPrintTarget: (div: HTMLDivElement | null) => void;
@@ -19,7 +20,6 @@ export default forwardRef<PrintHandler, {}>((_, ref) => {
         setPrintTarget: setPrintTarget,
     }));
     const setPrintTarget = (div: HTMLDivElement | null) => {
-        console.log('print target setted', div);
         printTargetRef.current = div;
     };
     const reactToPrintFn = useReactToPrint({
@@ -36,17 +36,14 @@ export default forwardRef<PrintHandler, {}>((_, ref) => {
     }, [leftNavigatorCollapsed, printOnPressed]);
 
     return (
-        <div style={{ paddingLeft: 10, paddingRight: 30 }}>
+        <Button type="primary" className="flex items-center" onClick={handlePrint}>
             <IoPrint
-                size={40}
+                size={20}
                 style={{
-                    padding: '8px',
-                    borderRadius: '100%',
-                    border: '1px solid black',
                     cursor: 'pointer',
                 }}
-                onClick={handlePrint}
             />
-        </div>
+            Print
+        </Button>
     );
 });

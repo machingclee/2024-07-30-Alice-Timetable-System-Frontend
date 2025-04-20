@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
-import boxShadow from '../../../../constant/boxShadow';
 import studentSlice, { StudentDetailPage, StudentThunkAction } from '../../../../redux/slices/studentSlice';
 import Sep from '../../../../components/Sep';
 import Spacer from '../../../../components/Spacer';
@@ -15,14 +14,14 @@ import EditPackageForm from './EditPackageForm';
 import classnames from 'classnames';
 import { useState } from 'react';
 import { Modal } from 'antd';
-import useAnchorTimestamp from '../../../../hooks/useAnchorTimestamp';
 import documentId from '../../../../constant/documentId';
 import toastUtil from '../../../../utils/toastUtil';
 import { AliceMenu } from '@/components/AliceMenu';
+import useSelectPackage from '@/hooks/useSelectPackage';
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;
-    const { anchorTimestamp, setURLAnchorTimestamp } = useAnchorTimestamp();
+    const { setURLAnchorTimestamp, selectPackage, anchorTimestamp } = useSelectPackage();
     const dispatch = useAppDispatch();
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
@@ -30,10 +29,18 @@ export default function StudentPackage(props: { packageId: string }) {
     const pkgResonse = useAppSelector(
         s => s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[packageId]
     );
-    const { consumedMinutes, scheduledMinutes: schedumeMinutes, studentPackage: studentPkg } = pkgResonse || {};
+    const {
+        consumedMinutes,
+        consumedextendedClassMins,
+        scheduledMinutes: schedumeMinutes,
+        studentPackage: studentPkg,
+        numOfNormalClasses,
+        numOfExtendedClass,
+    } = pkgResonse || {};
     const courseId = studentPkg?.courseId;
     const course = useAppSelector(s => s.class.courses?.idToCourse?.[courseId || -1]);
-    const assignedClasses = Math.floor(((schedumeMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
+    const consumedClasses = Math.floor(((schedumeMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
+    const consumedExtendedClass = Math.floor(((consumedextendedClassMins || 0) / (studentPkg?.min || 1)) * 10) / 10;
     console.log('consumed_minutes:', consumedMinutes);
     const finishedClasses = Math.floor(((consumedMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
 
@@ -42,14 +49,6 @@ export default function StudentPackage(props: { packageId: string }) {
     }
 
     const isSelected = selectedPackageId === packageId;
-    const selectPackage = () => {
-        dispatch(
-            studentSlice.actions.setSelectedPackageId({
-                packageId: packageId || '',
-                setURLAnchorTimestamp: setURLAnchorTimestamp,
-            })
-        );
-    };
     const addPaymentDetail = async () => {
         AddPaymentDetailDialog.setWidth('xs');
         AddPaymentDetailDialog.setContent(() => () => <AddPaymentDetailForm packageId={Number(packageId)} />);
@@ -143,12 +142,10 @@ export default function StudentPackage(props: { packageId: string }) {
         <div
             id={documentId.STUDENT_PACKAGE_ID(packageId)}
             style={{
-                boxShadow: boxShadow.SHADOW_60,
                 maxWidth: 300,
-                borderRadius: 15,
-                marginBottom: 10,
             }}
             className={classnames(
+                'border-1 border-emerald-400 rounded-sm',
                 'cursor-pointer',
                 'bg-white',
                 isSelected ? `outline outline-2 outline-blue-600` : '',
@@ -196,7 +193,11 @@ export default function StudentPackage(props: { packageId: string }) {
                 >
                     <div>Are you sure to delete? Data will be lost and cannot be reverted.</div>
                 </Modal>
-                <div onClick={selectPackage}>
+                <div
+                    onClick={() => {
+                        selectPackage(packageId);
+                    }}
+                >
                     <div className="p-[5px] flex justify-center font-[600]">{course?.courseName}</div>
                     <Sep />
                     <Spacer height={5} />
@@ -228,7 +229,11 @@ export default function StudentPackage(props: { packageId: string }) {
                             </tr>
                             <tr>
                                 <td>Scheduled Classes</td>
-                                <td>{`${assignedClasses}/${studentPkg.numOfClasses}`}</td>
+                                <td>{`${consumedClasses}/${numOfNormalClasses}`}</td>
+                            </tr>
+                            <tr>
+                                <td>Extended Classes</td>
+                                <td>{`${consumedExtendedClass}/${numOfExtendedClass}`}</td>
                             </tr>
                             <tr>
                                 <td>Finished Classes</td>

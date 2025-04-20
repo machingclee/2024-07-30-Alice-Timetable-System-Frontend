@@ -77,12 +77,12 @@ export default function MassTimetable(props: { timetableName: string }) {
                 {`day${numOfDaysToDisplay > 1 ? 's' : ''}`}
             </div>
             <div style={{ width: '100%', display: 'flex' }}>
-                <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap' }}>
+                <div className="w-full flex gap-2 grid-cols-3">
                     {Array(numOfDaysToDisplay)
                         .fill(null)
                         .map((_, dayOffset) => {
                             return (
-                                <div style={{ flex: 1 }}>
+                                <div style={{ flex: 1 }} key={dayOffset}>
                                     <PrintableDailyTable
                                         date={dayjs(selectedDate).add(dayOffset, 'day').toDate()}
                                         dayOffset={dayOffset}

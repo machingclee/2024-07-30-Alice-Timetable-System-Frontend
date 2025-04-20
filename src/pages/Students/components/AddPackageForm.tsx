@@ -94,9 +94,7 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
     return (
         <Box
             style={{
-                padding: '40px 80px',
                 overflowY: 'auto',
-                paddingBottom: 60,
             }}
         >
             <SectionTitle>Add Student Package for {studentName}</SectionTitle>

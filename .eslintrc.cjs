@@ -10,8 +10,9 @@ module.exports = {
     ],
     ignorePatterns: ['dist', '.eslintrc.cjs'],
     parser: '@typescript-eslint/parser',
-    plugins: ['react-refresh', 'prettier', '@typescript-eslint'],
+    plugins: ['eslint-comments', 'react-refresh', 'prettier', '@typescript-eslint'],
     rules: {
+        'eslint-comments/no-unused-disable': 'off',
         '@eslint-community/eslint-comments/no-unused-disable': 'off',
         'eslint-comments/no-unused-disable': 'off',
         'no-unused-disable': 'off',
@@ -29,7 +30,7 @@ module.exports = {
         'max-len': [
             'error',
             {
-                code: 150,
+                code: 1500,
                 tabWidth: 2,
                 ignoreComments: true,
                 ignoreUrls: true,
