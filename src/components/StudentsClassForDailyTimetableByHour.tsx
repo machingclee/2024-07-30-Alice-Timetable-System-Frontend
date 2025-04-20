@@ -239,7 +239,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                             classEvent={classEvent}
                                             classminToHeight={min => {
                                                 const numOfChunks = min / 15;
-                                                return numOfChunks * 35 - 15;
+                                                return numOfChunks * 35 - 13;
                                             }}
                                         />
                                     </AliceMenu>

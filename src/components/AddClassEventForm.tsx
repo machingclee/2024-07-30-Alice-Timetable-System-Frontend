@@ -21,8 +21,9 @@ export default function AddClassEventForm(props: {
     dayUnixTimestamp: number;
     hourUnixTimestamp: number;
     studentId: string;
+    resetDefaultNumOfClasses?: boolean;
 }) {
-    const { dayUnixTimestamp, hourUnixTimestamp, studentId } = props;
+    const { dayUnixTimestamp, hourUnixTimestamp, studentId, resetDefaultNumOfClasses } = props;
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const defaultClassroom = useAppSelector(
         s =>
@@ -39,11 +40,12 @@ export default function AddClassEventForm(props: {
             s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[selectedPackageId]
                 ?.studentPackage.min || 0
     );
-    const defaultNumOfClasses = useAppSelector(
+    const defaultNumOfClasses_ = useAppSelector(
         s =>
             s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[selectedPackageId]
                 ?.studentPackage.numOfClasses || 1
     );
+    const defaultNumOfClasses = resetDefaultNumOfClasses ? 1 : defaultNumOfClasses_;
     const dispatch = useAppDispatch();
     const courses = useAppSelector(s => s.class.courses);
     const formData = useRef<Partial<CreateClassRequest>>({
@@ -90,9 +92,7 @@ export default function AddClassEventForm(props: {
     return (
         <Box
             style={{
-                padding: '40px 80px',
                 overflowY: 'auto',
-                paddingBottom: 60,
             }}
         >
             <SectionTitle>Add Class at {dayjs(hourUnixTimestamp).format('HH:mm')}</SectionTitle>

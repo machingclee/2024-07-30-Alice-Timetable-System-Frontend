@@ -19,9 +19,16 @@ const NotificationButton = () => {
     const numOfNotifications = useAppSelector(
         s => s.notification.notificationResponses.filter(n => !n.notification.isRead).length
     );
+    const { pathname } = useLocation();
+    const active = /notifications/.test(pathname);
+
     return (
         <Badge count={numOfNotifications}>
-            <Button shape="circle" onClick={() => navigiate(RouteEnum.DASHBOARD_NOTIFICATIONS)}>
+            <Button
+                shape="circle"
+                onClick={() => navigiate(RouteEnum.DASHBOARD_NOTIFICATIONS)}
+                type={active ? 'primary' : 'default'}
+            >
                 <IoNotifications size={18} />
             </Button>
         </Badge>
@@ -75,7 +82,7 @@ export default function Root() {
                     >
                         <img
                             src={dashboard_background}
-                            className="absolute bottom-[50%] left-[calc(50%+220px)] scale-400 translate-x-[-50%] translate-y-[50%] opacity-20"
+                            className="absolute bottom-[50%] left-[calc(50%+220px)] scale-400 translate-x-[-50%] translate-y-[0] opacity-20"
                         />
                         <div
                             style={{ height: '100%', flexDirection: 'column', display: 'flex' }}

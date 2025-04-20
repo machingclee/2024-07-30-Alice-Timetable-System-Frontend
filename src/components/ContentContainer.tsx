@@ -6,7 +6,7 @@ export default function ContentContainer({
     ...props
 }: PropsWithChildren & HTMLAttributes<HTMLDivElement>) {
     return (
-        <div className={classnames(' border-1 p-2 bg-teal-100 rounded-lg border-teal-400', className)} {...props}>
+        <div className={classnames('border-1 p-2 bg-teal-100 rounded-lg border-teal-400', className)} {...props}>
             {children}
         </div>
     );

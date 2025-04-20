@@ -35,18 +35,18 @@ export type CreateStudentRequest = {
 
 export type UpdateStudentRequest = {
     id: string;
-    student_code: string;
-    first_name: string;
-    last_name: string;
-    chinese_first_name: string;
-    chinese_last_name: string;
+    studentCode: string;
+    firstName: string;
+    lastName: string;
+    chineseFirstName: string;
+    chineseLastName: string;
     gender: Gender;
     birthdate: number;
-    parent_email: string;
-    school_name: string;
+    parentEmail: string;
+    schoolName: string;
     grade: string;
-    phone_number: string;
-    wechat_id?: string;
+    phoneNumber: string;
+    wechatId?: string;
 };
 
 export type CreateUserRequest = {

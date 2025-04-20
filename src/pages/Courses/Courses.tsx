@@ -30,7 +30,7 @@ export default function Courses() {
             <Spacer />
             <ContentContainer className="grid grid-cols-1 gap-2 min-[1550px]:grid-cols-2">
                 {ids.map(id => {
-                    return <ClassRow id={id} />;
+                    return <ClassRow id={id} key={id} />;
                 })}
             </ContentContainer>
             <AddClassDialog.render />

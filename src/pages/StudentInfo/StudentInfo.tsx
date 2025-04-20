@@ -14,7 +14,7 @@ import { Button } from 'antd';
 import { GrFormNextLink } from 'react-icons/gr';
 import { LucideCalendarDays } from 'lucide-react';
 import useSelectPackage from '@/hooks/useSelectPackage';
-import { useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import appSlice from '@/redux/slices/appSlice';
 import React, { useEffect } from 'react';
 import ContentContainer from '@/components/ContentContainer';
@@ -22,9 +22,10 @@ import ContentContainer from '@/components/ContentContainer';
 export default function StudentInfo() {
     const { studentId = '' } = useParams<{ studentId: string }>();
     const { navigateToPackage, selectPackage } = useSelectPackage();
-    const { query } = useQueryThunk({ thunk: StudentThunkAction.getStudentDetail, staleTime: 2000 })({ studentId });
-    const { data, isLoading } = query;
+    const accessToken = useAppSelector(s => s.auth.accessToken);
     const dispatch = useAppDispatch();
+    const { query } = useQueryThunk({ thunk: StudentThunkAction.getStudentInfo, staleTime: 2000 })({ studentId });
+    const { data, isLoading } = query;
     const { student, studentPackages = [] } = data || {};
     const { chineseFirstName = '', chineseLastName = '', firstName = '', lastName = '' } = student || {};
     const engName = `${firstName} ${lastName}`;
@@ -32,18 +33,16 @@ export default function StudentInfo() {
     const numOfPackages = data?.studentPackages?.length || 0;
 
     useEffect(() => {
-        setTimeout(() => {
-            if (numOfPackages > 0 && location.hash) {
-                const elementId = location.hash.substring(1);
-                const element = document.getElementById(elementId);
+        if (numOfPackages > 0 && location.hash) {
+            const elementId = location.hash.substring(1);
+            const element = document.getElementById(elementId);
 
-                if (element) {
-                    setTimeout(() => {
-                        element.scrollIntoView({ behavior: 'smooth' });
-                    }, 0);
-                }
+            if (element) {
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }, 0);
             }
-        }, 1000);
+        }
     }, [numOfPackages]); // Re-run when location changes
 
     if (!data) {
@@ -98,31 +97,37 @@ export default function StudentInfo() {
                                                         <Separator className="mb-4 " />
                                                         <div className={`flex`}>
                                                             <div className="w-50 space-y-2">
-                                                                <div>
-                                                                    <Button
-                                                                        className="flex items-center"
-                                                                        onClick={() => {
-                                                                            navigateToPackage({
-                                                                                anchorTimestamp: pkg.startDate + '',
-                                                                                studentId,
-                                                                            });
-                                                                            setTimeout(() => {
-                                                                                dispatch(
-                                                                                    appSlice.actions.setLoading(true)
-                                                                                );
-                                                                            }, 1000);
-                                                                            setTimeout(() => {
-                                                                                selectPackage(pkg.id + '');
-                                                                                dispatch(
-                                                                                    appSlice.actions.setLoading(false)
-                                                                                );
-                                                                            }, 2000);
-                                                                        }}
-                                                                    >
-                                                                        <GrFormNextLink size={22} />
-                                                                        Go to package
-                                                                    </Button>
-                                                                </div>
+                                                                {accessToken && (
+                                                                    <div>
+                                                                        <Button
+                                                                            className="flex items-center"
+                                                                            onClick={() => {
+                                                                                navigateToPackage({
+                                                                                    anchorTimestamp: pkg.startDate + '',
+                                                                                    studentId,
+                                                                                });
+                                                                                setTimeout(() => {
+                                                                                    dispatch(
+                                                                                        appSlice.actions.setLoading(
+                                                                                            true
+                                                                                        )
+                                                                                    );
+                                                                                }, 1000);
+                                                                                setTimeout(() => {
+                                                                                    selectPackage(pkg.id + '');
+                                                                                    dispatch(
+                                                                                        appSlice.actions.setLoading(
+                                                                                            false
+                                                                                        )
+                                                                                    );
+                                                                                }, 2000);
+                                                                            }}
+                                                                        >
+                                                                            <GrFormNextLink size={22} />
+                                                                            Go to package
+                                                                        </Button>
+                                                                    </div>
+                                                                )}
                                                             </div>
 
                                                             <div
@@ -164,10 +169,11 @@ export default function StudentInfo() {
                                                                                         >
                                                                                             <div className="w-48">
                                                                                                 <div
-                                                                                                    className={`
-                                                                                flex inline-block bg-[#a0bea4] 
-                                                                                px-2 rounded-sm  !text-[rgba(255,255,255,0.8)]
-                                                                                items-center`}
+                                                                                                    style={{
+                                                                                                        display:
+                                                                                                            'inline-block',
+                                                                                                    }}
+                                                                                                    className={`flex bg-[#a0bea4] px-2 rounded-sm  !text-[rgba(255,255,255,0.8)] items-center`}
                                                                                                 >
                                                                                                     <div className="flex items-center gap-2">
                                                                                                         <FaLocationDot />{' '}

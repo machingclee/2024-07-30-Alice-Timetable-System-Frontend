@@ -4,7 +4,6 @@ import { UserThunkAction } from '../../redux/slices/userSlice';
 import { Button } from 'antd';
 
 import Spacer from '../../components/Spacer';
-import { Box } from '@mui/material';
 import SectionTitle from '../../components/SectionTitle';
 import UserRow from './components/UserRow';
 import AliceModalTrigger from '../../components/AliceModalTrigger';
@@ -27,11 +26,11 @@ export default function User() {
                 </AliceModalTrigger>
             </div>
             <Spacer />
-            <Box>
+            <div className="space-y-2">
                 {emails.map(email => {
                     return <UserRow id={email} key={email} />;
                 })}
-            </Box>
+            </div>
             {/* <AddUserDialog.render /> */}
         </div>
     );

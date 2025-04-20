@@ -25,18 +25,18 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
     }, []);
     const formData = useRef<Partial<UpdateStudentRequest>>({
         id: studentId,
-        student_code: student?.studentCode,
-        first_name: student?.firstName,
-        last_name: student?.lastName,
-        chinese_first_name: student?.chineseFirstName || '',
-        chinese_last_name: student?.chineseLastName || '',
+        studentCode: student?.studentCode,
+        firstName: student?.firstName,
+        lastName: student?.lastName,
+        chineseFirstName: student?.chineseFirstName || '',
+        chineseLastName: student?.chineseLastName || '',
         gender: student?.gender || 'MALE',
         grade: student?.grade || '',
         birthdate: student?.birthdate || 0,
-        parent_email: student?.parentEmail || '',
-        school_name: student?.schoolName || '',
-        phone_number: student?.phoneNumber || '',
-        wechat_id: student?.wechatId || '',
+        parentEmail: student?.parentEmail || '',
+        schoolName: student?.schoolName || '',
+        phoneNumber: student?.phoneNumber || '',
+        wechatId: student?.wechatId || '',
     });
 
     if (!student) return;
@@ -73,32 +73,32 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
             <FormInputField
                 title="Student Code"
                 defaultValue={student.studentCode}
-                onChange={t => update({ student_code: t })}
-                error={error?.['student_code']}
+                onChange={t => update({ studentCode: t })}
+                error={error?.['studentCode']}
             />
             <FormInputField
                 title="First Name"
                 defaultValue={student.firstName}
-                onChange={t => update({ first_name: t })}
-                error={error?.['first_name']}
+                onChange={t => update({ firstName: t })}
+                error={error?.['firstName']}
             />
             <FormInputField
                 title="Last Name"
                 defaultValue={student.lastName}
-                onChange={t => update({ last_name: t })}
-                error={error?.['last_name']}
+                onChange={t => update({ lastName: t })}
+                error={error?.['lastName']}
             />
             <FormInputField
                 title="Chinese Last Name"
                 defaultValue={student.chineseLastName}
-                onChange={t => update({ chinese_last_name: t })}
-                error={error?.['chinese_first_name']}
+                onChange={t => update({ chineseLastName: t })}
+                error={error?.['chineseFirstName']}
             />
             <FormInputField
                 title="Chinese First Name"
                 defaultValue={student.firstName}
-                onChange={t => update({ chinese_first_name: t })}
-                error={error?.['chinese_last_name']}
+                onChange={t => update({ chineseFirstName: t })}
+                error={error?.['chineseLastName']}
             />
             <div style={{ display: 'flex' }}>
                 <div>
@@ -135,14 +135,14 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
             <FormInputField
                 title="Parent Email"
                 defaultValue={student.parentEmail}
-                onChange={t => update({ parent_email: t })}
-                error={error?.['parent_email']}
+                onChange={t => update({ parentEmail: t })}
+                error={error?.['parentEmail']}
             />
             <FormInputField
                 title="School Name"
                 defaultValue={student.schoolName}
-                onChange={t => update({ school_name: t })}
-                error={error?.['school_name']}
+                onChange={t => update({ schoolName: t })}
+                error={error?.['schoolName']}
             />
             <FormInputField
                 title="Grade"
@@ -153,14 +153,14 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
             <FormInputField
                 title="Phone Number"
                 defaultValue={student.phoneNumber}
-                onChange={t => update({ phone_number: t })}
-                error={error?.['phone_number']}
+                onChange={t => update({ phoneNumber: t })}
+                error={error?.['phoneNumber']}
             />
             <FormInputField
                 title="Wechat Id (Optional)"
                 defaultValue={student.wechatId}
-                onChange={t => update({ wechat_id: t })}
-                error={error?.['wechat_id']}
+                onChange={t => update({ wechatId: t })}
+                error={error?.['wechatId']}
             />
             <Spacer />
             <Spacer />

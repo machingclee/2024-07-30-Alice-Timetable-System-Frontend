@@ -1,24 +1,25 @@
-import { Box } from '@mui/material';
-import colors from '../constant/colors';
-import boxShadow from '../constant/boxShadow';
-import { TimetableClassEvent } from '../dto/kotlinDto';
-import Sep from './Sep';
-import Spacer from './Spacer';
+import { StudentSliceState } from '@/redux/slices/studentSlice';
+import getColorForClassStatus from '@/utils/getColorForClassStatus';
+import { useState } from 'react';
 
 export default function StudentClassCard(props: {
-    classEvent: TimetableClassEvent;
+    classEvent: StudentSliceState['massTimetablePage']['hrUnixTimestampToTimetableClasses'][string][number];
     dayUnixTimestamp: number;
     currHourUnixTimestamp: number;
     classminToHeight?: (min: number) => number;
 }) {
     const { classEvent, currHourUnixTimestamp, dayUnixTimestamp, classminToHeight: minToHeight } = props;
+    const [height, setHeight] = useState<number | null>(null);
     const invalidData = dayUnixTimestamp >= currHourUnixTimestamp;
     const { student } = classEvent;
 
     const engName = `${student.lastName} ${student.firstName}`;
     const chiName =
-        student.chineseFirstName && student.chineseLastName ? `${student.firstName}${student.lastName}` : '';
+        student.chineseFirstName && student.chineseLastName ? `${student.firstName} ${student.lastName}` : '';
     const nameComponent = () => {
+        if (classEvent.isPlaceHolderForPaddingDisplay) {
+            return `placeholder from ${engName}`;
+        }
         return (
             <>
                 {chiName ? (
@@ -30,44 +31,36 @@ export default function StudentClassCard(props: {
         );
     };
 
+    if (classEvent.isPlaceHolderForPaddingDisplay) {
+        return <div className="w-[150px]"></div>;
+    }
+
     return (
-        <Box
-            className="rounded-md"
+        <div
+            onMouseEnter={() => setHeight(150)}
+            onMouseLeave={() => setHeight(null)}
+            className="rounded-[4px]"
             style={{
                 border: '1px solid rgba(0,0,0,0.2)',
                 cursor: 'pointer',
                 margin: '5px',
-                boxShadow: boxShadow.SHADOW_62,
                 minHeight: '50px',
                 transition: 'height 0.18s ease-in-out',
                 overflow: 'hidden',
                 maxWidth: 150,
                 width: 150,
-                height: minToHeight
-                    ? minToHeight(classEvent.studentPackage.min)
-                    : 1.2 * (classEvent.studentPackage.min || 0) - 10,
+                height: (() => {
+                    if (height != null) {
+                        return height;
+                    } else {
+                        return minToHeight ? minToHeight(classEvent.class.min) : 1.2 * (classEvent.class.min || 0) - 10;
+                    }
+                })(),
                 backgroundColor: (() => {
                     if (invalidData) {
                         return 'red';
                     } else {
-                        switch (classEvent.class.classStatus) {
-                            case 'PRESENT':
-                                return colors.GREEN_BLUE;
-                            case 'TRIAL':
-                                return colors.PINK;
-                            case 'SUSPICIOUS_ABSENCE':
-                                return colors.ORANGE;
-                            case 'ILLEGIT_ABSENCE':
-                                return colors.RED;
-                            case 'LEGIT_ABSENCE':
-                                return colors.GREY;
-                            case 'MAKEUP':
-                                return colors.BLUE;
-                            case 'RESERVED':
-                                return colors.CYAN;
-                            case 'CHANGE_OF_CLASSROOM':
-                                return colors.PURPLE;
-                        }
+                        return getColorForClassStatus(classEvent.class.classStatus);
                     }
                 })(),
                 fontSize: 14,
@@ -75,25 +68,17 @@ export default function StudentClassCard(props: {
                 // textAlign: 'center',
             }}
         >
-            {/* <div style={{ padding: 4 }}>{classEvent.course_name}</div> */}
             <div style={{ padding: 4, backgroundColor: 'rgba(0,0,0,0.4)', fontSize: 12 }}>{nameComponent()}</div>
-            <div className="flex justify-center my-1 text-[15px] px-2">{classEvent.course.courseName}</div>
-            <Sep />
-
-            <Spacer height={5} />
-            <div style={{ fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div
-                    style={{
-                        backgroundColor: 'rgba(255,255,255,0.2)',
-                        padding: '0px 5px',
-                        borderRadius: 4,
-                        marginLeft: 5,
-                        fontSize: 14,
-                    }}
-                >
+            <div
+                className="mt-1"
+                style={{ fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+                <div className="bg-[rgba(255,255,255,0.2)] mt-1 py-0 px-2 text-sm rounded-sm">
                     {classEvent.student.studentCode}
                 </div>
             </div>
-        </Box>
+            <div className="flex justify-center my-1 text-[15px] px-2">{`${classEvent.course.courseName}`}</div>
+            <div className="flex justify-center mb-1">{`(${classEvent.class.min} min)`}</div>
+        </div>
     );
 }

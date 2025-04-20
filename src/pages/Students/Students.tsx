@@ -71,11 +71,11 @@ export default function Students() {
         >
             <SectionTitle style={{ marginBottom: 20 }}>Students</SectionTitle>
             <ContentContainer>
-                <div className="space-y-1">
+                <div className="space-y-2">
                     {/* Autocomplete for searching students */}
                     <div>
-                        <label className="flex items-center gap-2">
-                            <IoMdSearch size={20} />
+                        <label className="flex items-center gap-2 text-base">
+                            <IoMdSearch size={24} />
                             Search for Students
                         </label>
                     </div>
@@ -107,9 +107,8 @@ export default function Students() {
                     height: 20,
                 }}
             >
-                <ContentContainer>
-                    {filteredIds?.map(studentId => <StudentRow studentId={studentId} />)}
-                </ContentContainer>
+                <div className="space-y-2">{filteredIds?.map(studentId => <StudentRow studentId={studentId} />)}</div>
+                <Spacer height={100} />
             </CustomScrollbarContainer>
 
             <EditStudentDialog.render />

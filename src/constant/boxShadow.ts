@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable -- Disabling ESLint for this file */
 export default {
     SHADOW_01: 'rgba(149, 157, 165, 0.2) 0px 8px 24px',
     SHADOW_02: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px',

@@ -121,67 +121,66 @@ export default function DailyTimetable({
                 },
             }}
         >
-            <SectionTitle style={{ justifyContent: 'center' }}>
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: 10,
-                    }}
-                    ref={ref => {
-                        console.log('setting print target ref', ref);
-                    }}
-                >
-                    <Button
-                        onClick={() => {
-                            if (!classRoom) {
-                                return;
-                            }
-                            const prevDayjs = dayjs(date).subtract(1 + dayOffset, 'day');
-                            const prevDate = prevDayjs.toDate();
-                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDate }));
-                            refetchMassTimetableAnchoredAt(prevDate.getTime());
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                fontSize: 14,
-                            }}
-                        >
-                            <FaChevronLeft /> <Spacer width={5} /> Previous Day
-                        </div>
-                    </Button>
-                    <Spacer width={20} />
-                    {dayjs(date).format('YYYY-MM-DD (ddd)')}
-                    <Spacer width={20} />
-                    <Button
-                        onClick={() => {
-                            console.log('classRoomclassRoom', classRoom);
-                            if (!classRoom) {
-                                return;
-                            }
-                            const nextDayjs = dayjs(date).add(1 - dayOffset, 'day');
-                            const nextDate = nextDayjs.toDate();
-                            dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDate }));
-                            refetchMassTimetableAnchoredAt(nextDate.getTime());
-                        }}
-                    >
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                fontSize: 14,
-                            }}
-                        >
-                            Next Day <Spacer width={5} /> <FaChevronRight />
-                        </div>
-                    </Button>
-                </div>
-            </SectionTitle>
-
             <ContentContainer>
+                <SectionTitle style={{ justifyContent: 'center' }}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: 10,
+                        }}
+                        className="flex items-center gap-4"
+                    >
+                        <Button
+                            onClick={() => {
+                                if (!classRoom) {
+                                    return;
+                                }
+                                const prevDayjs = dayjs(date).subtract(1 + dayOffset, 'day');
+                                const prevDate = prevDayjs.toDate();
+                                dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDate }));
+                                refetchMassTimetableAnchoredAt(prevDate.getTime());
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    fontSize: 14,
+                                }}
+                            >
+                                <FaChevronLeft /> <Spacer width={5} /> Previous Day
+                            </div>
+                        </Button>
+
+                        <div className="overflow-hidden whitespace-nowrap text-ellipsis text-base">
+                            {dayjs(date).format('YYYY-MM-DD (ddd)')}
+                        </div>
+
+                        <Button
+                            onClick={() => {
+                                console.log('classRoomclassRoom', classRoom);
+                                if (!classRoom) {
+                                    return;
+                                }
+                                const nextDayjs = dayjs(date).add(1 - dayOffset, 'day');
+                                const nextDate = nextDayjs.toDate();
+                                dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDate }));
+                                refetchMassTimetableAnchoredAt(nextDate.getTime());
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    fontSize: 14,
+                                }}
+                            >
+                                Next Day <Spacer width={5} /> <FaChevronRight />
+                            </div>
+                        </Button>
+                    </div>
+                </SectionTitle>
                 <CustomScrollbarContainer
                     style={{ height: 'calc(100vh - 230px)' }}
                     setPrintContent={(content: HTMLDivElement | null) => {
@@ -206,7 +205,6 @@ export default function DailyTimetable({
                             },
                         }}
                     >
-                        <Spacer />
                         <div style={{ display: 'flex' }}>
                             <div style={{ flex: 1 }}>
                                 <div style={{ display: 'flex' }}>

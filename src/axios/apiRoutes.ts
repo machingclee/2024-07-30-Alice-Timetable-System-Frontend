@@ -15,7 +15,9 @@ export default {
     GET_COURSES: '/courses',
     GET_TICKETS: '/tickets',
     GET_NOTIFICATIONS: '/notifications',
+    GET_NOTIFICATIONS_COUNT: '/notifications/count',
     GET_STUDENT_DETAIL: (studentId: string) => `/students/${studentId}/student-detail`,
+    GET_STUDENT_INFO: (studentId: string) => `/students/${studentId}/student-info`,
     GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE: (studentId: string) => `/students/${studentId}/classes/weekly`,
     GET_STUDENT_PACKAGES: (studentId: string) => `/students/${studentId}/student-packages`,
     GET_LOGGING: (props: { page: number; limit: number }) =>

@@ -57,7 +57,7 @@ export default function Notification() {
                 </Button>
             </div>
             <Spacer />
-            <div className="h-[calc(100vh-80px)] overflow-y-scroll m-1 p-1 grid grid-cols-1 min-[1400px]:grid-cols-2 min-[1850px]:grid-cols-3 gap-2">
+            <div className="h-[calc(100vh-80px)] overflow-y-scroll m-1 p-1 grid grid-cols-1 min-[1400px]:grid-cols-2 min-[1850px]:grid-cols-3 gap-2 pb-60">
                 {notifications
                     .slice(0)
                     .sort((n1, n2) => (n2?.notification?.createdAt || 0) - (n1?.notification?.createdAt || 0))

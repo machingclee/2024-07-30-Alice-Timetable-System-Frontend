@@ -51,9 +51,6 @@ export default function StudentClassForWeeklyTimetable(props: {
             ]
     );
     const showLabel = classEvent != null;
-    if (classEvent) {
-        console.log('studentClassstudentClass', classEvent);
-    }
     const showAll = useAppSelector(s => s.student.studentDetailTimetablePage.showAllClassesForOneStudent);
     const timetable = useAppSelector(s => s.student.studentDetailTimetablePage.weeklyClassEvent);
     const [classNumber, setClassNumber] = useState<number>(0);
@@ -69,6 +66,7 @@ export default function StudentClassForWeeklyTimetable(props: {
             <AddClassEventForm
                 dayUnixTimestamp={currGridDayUnixTimestamp}
                 hourUnixTimestamp={currGridHourUnixTimestamp}
+                resetDefaultNumOfClasses={true}
                 studentId={studentId || ''}
             />
         ));
@@ -105,6 +103,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                   <AliceMenu
                       items={[
                           {
+                              disabled: !selectedPackageId,
                               item: !selectedPackageId
                                   ? 'Please First Select a Package'
                                   : `Add class(es) at ${dayAndTime}`,

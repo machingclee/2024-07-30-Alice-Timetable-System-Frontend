@@ -20,11 +20,12 @@ type Item = {
 const renderItems = (items: Item[]) => {
     return (
         <>
-            {items.map(item => {
+            {items.map((item, index) => {
                 const { disabled = false } = item;
                 if (!item.subItems) {
                     return (
                         <ContextMenuItem
+                            key={index}
                             disabled={disabled}
                             inset
                             onClick={() => item.onClick?.()}
@@ -35,7 +36,7 @@ const renderItems = (items: Item[]) => {
                     );
                 } else {
                     return (
-                        <ContextMenuSub>
+                        <ContextMenuSub key={index}>
                             <ContextMenuSubTrigger inset>{item.item}</ContextMenuSubTrigger>
                             <ContextMenuSubContent>{renderItems(item.subItems)}</ContextMenuSubContent>
                         </ContextMenuSub>
