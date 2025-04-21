@@ -86,7 +86,7 @@ export default function Root() {
                         />
                         <div
                             style={{ height: '100%', flexDirection: 'column', display: 'flex' }}
-                            className="bg-[#cae3c8] border-r-1 border-emerald-400"
+                            className="bg-teal-300 border-r-1 border-emerald-400"
                         >
                             <Spacer />
                             <div className="flex justify-between pr-4 items-center">

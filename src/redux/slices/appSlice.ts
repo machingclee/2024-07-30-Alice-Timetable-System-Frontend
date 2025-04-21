@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export type AppSliceState = {
+    theme: 'default' | 'cool';
     loading: boolean;
     activePath: string | null;
     // Used to control when to open a dialog component
@@ -12,6 +13,7 @@ export type AppSliceState = {
 type TimetableAction = 'Create Class' | 'Move Class' | 'Resize Class' | null;
 
 const initialState: AppSliceState = {
+    theme: 'default',
     loading: false,
     activePath: null,
     timetableAction: null,
@@ -23,6 +25,9 @@ const appSlice = createSlice({
     name: 'app',
     initialState,
     reducers: {
+        setTheme: (state, action: PayloadAction<AppSliceState['theme']>) => {
+            state.theme = action.payload;
+        },
         setleftNavigatorCollapsed: (state, action: PayloadAction<boolean>) => {
             state.leftNavigatorCollapsed = action.payload;
         },

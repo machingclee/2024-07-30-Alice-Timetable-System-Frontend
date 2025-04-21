@@ -115,7 +115,6 @@ export default function DailyTimetable({
                         '&.disbaletransform': { transform: 'none !important' },
                         '&:hover': {
                             cursor: 'pointer',
-                            backgroundColor: 'rgba(22,119,255,0.2)',
                         },
                     },
                 },

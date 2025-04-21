@@ -11,7 +11,6 @@ import { PiArrowRightBold } from 'react-icons/pi';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { Button } from 'antd';
 import CustomScrollbarContainer from '../../../components/CustomScrollbarContainer';
-import colors from '../../../constant/colors';
 import FadeIn from '../../../components/FadeIn';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
 import ContentContainer from '@/components/ContentContainer';
@@ -200,7 +199,6 @@ export default function WeeklyTimeTable() {
                     justifyContent: 'center',
                     alignItems: 'center',
                     margin: 0,
-                    backgroundColor: colors.BACKGORUND_GREY,
                     zIndex: 10 ** 7,
                 },
             }}
@@ -231,7 +229,7 @@ export default function WeeklyTimeTable() {
                                             return (
                                                 <div key={dayUnixTimestamp} className="day-column">
                                                     <div
-                                                        className="grid-hour header !bg-teal-100"
+                                                        className="grid-hour header bg-teal-100"
                                                         style={{
                                                             width: '100%',
                                                             fontWeight: 400,
