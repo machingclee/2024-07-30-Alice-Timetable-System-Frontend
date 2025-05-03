@@ -96,7 +96,7 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
                 {notificationTypeToDisplayName[notification.type]}
             </div>
             <div className="text-md flex justify-between">
-                <div className="flex items-center gap-4 text-[#62aa76]">
+                <div className="flex items-center gap-4 text-emerald-500">
                     <div className=" gap-2 flex items-center">
                         <MdMessage className="mt-0.5" />
                         <div>Message</div>

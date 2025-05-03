@@ -18,6 +18,7 @@ import {
     FilterToGetClassesForDailyTimetable,
     PreDailyTimetableRequest,
     DailyTimetableRequest,
+    UpdateStudentRenewalStatusRequest,
 } from '../../dto/dto';
 import normalizeUtil from '../../utils/normalizeUtil';
 import { loadingActions } from '../../utils/loadingActions';
@@ -352,6 +353,18 @@ const studentSlice = createSlice({
 });
 
 export class StudentThunkAction {
+    public static updatePackageRenewalStatus = createApiThunk(
+        'studentSlice/updatePackageRenewalStatus',
+        async (props: { studentId: string; req: UpdateStudentRenewalStatusRequest }, api) => {
+            const { req, studentId } = props;
+            const res = await apiClient.patch<CustomResponse<null>>(
+                apiRoutes.PATCH_PACKAGE_RENEWAL_STATUS(studentId),
+                req
+            );
+            return processRes(res, api);
+        }
+    );
+
     public static getClassesStatus = createApiThunk(
         'studentSlice/getClassesStatus',
         async (props: { packageId: string }, api) => {
@@ -589,6 +602,7 @@ registerEffects(studentMiddleware, [
     ...loadingActions(StudentThunkAction.deletePackage),
     ...loadingActions(StudentThunkAction.deleteClass),
     ...loadingActions(StudentThunkAction.deleteSingleClass),
+    ...loadingActions(StudentThunkAction.updatePackageRenewalStatus),
     {
         rejections: [
             StudentThunkAction.getStudentDetail.rejected,
