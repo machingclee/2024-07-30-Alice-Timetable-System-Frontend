@@ -33,6 +33,7 @@ export default {
     PUT_TICKETS: '/tickets',
     PATCH_UPDATE_COURSE: '/courses',
     PATCH_UPDATE_CLASS: '/students/classes',
+    PATCH_PACKAGE_RENEWAL_STATUS: (studentId: string) => `/students/${studentId}/package-renewal`,
     PATCH_UPDATE_NOTIFICATION: (notificationId: number) => `/notifications/${notificationId}`,
 
     DELETE_PACKAGE: (studentId: string, packageId: number) =>

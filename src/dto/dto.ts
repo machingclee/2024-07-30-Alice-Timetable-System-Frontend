@@ -139,6 +139,10 @@ export type DeleteClassRequest = {
     classId: number;
 };
 
+export type UpdateStudentRenewalStatusRequest = {
+    autoRewPackage: boolean;
+};
+
 export type DuplicateClassRequest = {
     classId: number;
     numberOfWeeks: number;

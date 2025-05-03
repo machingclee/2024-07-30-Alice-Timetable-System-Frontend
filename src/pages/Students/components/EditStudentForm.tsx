@@ -13,6 +13,7 @@ import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import studentSlice, { StudentThunkAction } from '../../../redux/slices/studentSlice';
 import EditStudentDialog from './EditStudentDialog';
+import { Switch } from '@/components/ui/switch';
 
 export default function EditStudentForm({ studentId }: { studentId: string }) {
     const dispatch = useAppDispatch();
@@ -68,7 +69,12 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
                 overflowY: 'auto',
             }}
         >
-            <SectionTitle>Edit Student Info</SectionTitle>
+            <div className="flex items-center justify-between">
+                <SectionTitle>Edit Student Info</SectionTitle>
+                <div>
+                    <Switch id="renewal-status" />
+                </div>
+            </div>
             <Spacer />
             <FormInputField
                 title="Student Code"
