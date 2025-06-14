@@ -1,7 +1,7 @@
 import { Container } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import useQueryThunk from '../../reactQueries/useQueryThunk';
+import useQueryThunk from '../../reactQueries/query/useQueryThunk';
 import { StudentThunkAction } from '../../redux/slices/studentSlice';
 import getColorForClassStatus from '@/utils/getColorForClassStatus';
 import { Separator } from '@/components/ui/separator';

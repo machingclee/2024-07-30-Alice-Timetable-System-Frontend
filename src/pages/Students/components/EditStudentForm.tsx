@@ -72,7 +72,10 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
             <div className="flex items-center justify-between">
                 <SectionTitle>Edit Student Info</SectionTitle>
                 <div>
-                    <Switch id="renewal-status" />
+                    <div className="flex items-center gap-2">
+                        Rew Package
+                        <Switch id="renewal-status" />
+                    </div>
                 </div>
             </div>
             <Spacer />

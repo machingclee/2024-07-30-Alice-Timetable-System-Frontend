@@ -15,15 +15,16 @@ import dayjs from 'dayjs';
 import range from '../utils/range';
 import { Classroom } from '../prismaTypes/types';
 import appSlice from '../redux/slices/appSlice';
-import useQueryThunk from '../reactQueries/useQueryThunk';
+import useQueryThunk from '../reactQueries/query/useQueryThunk';
 
 export default function AddClassEventForm(props: {
+    isTimeslotInThePast: boolean;
     dayUnixTimestamp: number;
     hourUnixTimestamp: number;
     studentId: string;
     resetDefaultNumOfClasses?: boolean;
 }) {
-    const { dayUnixTimestamp, hourUnixTimestamp, studentId, resetDefaultNumOfClasses } = props;
+    const { dayUnixTimestamp, hourUnixTimestamp, studentId, resetDefaultNumOfClasses, isTimeslotInThePast } = props;
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const defaultClassroom = useAppSelector(
         s =>
@@ -65,15 +66,16 @@ export default function AddClassEventForm(props: {
 
     const submit = async () => {
         dispatch(appSlice.actions.setLoading(true));
+        const createClassForm = formData.current as CreateClassRequest;
         try {
             AddClassEventDialog.setOpen(false);
             await dispatch(
                 StudentThunkAction.createStudentClassEvent({
-                    req: formData.current as CreateClassRequest,
+                    req: { ...createClassForm, isTimeslotInThePast },
                     studentId,
                 })
             ).unwrap();
-            toastUtil.success('Event Created');
+            toastUtil.success('Class Created');
             dispatch(
                 StudentThunkAction.getStudentClassesForWeeklyTimetable({
                     studentId,
@@ -95,7 +97,10 @@ export default function AddClassEventForm(props: {
                 overflowY: 'auto',
             }}
         >
-            <SectionTitle>Add Class at {dayjs(hourUnixTimestamp).format('HH:mm')}</SectionTitle>
+            <SectionTitle>
+                {isTimeslotInThePast ? 'Insert historical record at' : 'Add Class at'}{' '}
+                {dayjs(hourUnixTimestamp).format('HH:mm')}
+            </SectionTitle>
             <Spacer />
             <div style={{ display: 'flex' }}>
                 <FormInputTitle>Course </FormInputTitle>

@@ -2188,6 +2188,15 @@ cli-truncate@^4.0.0:
     slice-ansi "^5.0.0"
     string-width "^7.0.0"
 
+click-to-react-component-intellij@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/click-to-react-component-intellij/-/click-to-react-component-intellij-1.0.9.tgz#3cdd1184163b462bb87e162f3665af3baebcb158"
+  integrity sha512-zwXeIvnsIdGl0yAxy7TFVjSxBOEgTWDhOl/wL2G0DZ32bQWI/xhf3MVggMkGUgATurITwISJY7Kgh9O6EGXb0A==
+  dependencies:
+    "@floating-ui/react-dom-interactions" "^0.3.1"
+    htm "^3.1.0"
+    react-merge-refs "^1.1.0"
+
 click-to-react-component@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/click-to-react-component/-/click-to-react-component-1.1.2.tgz#495953af3d30703bd88b22a443ddb222290dd947"

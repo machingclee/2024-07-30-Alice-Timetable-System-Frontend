@@ -29,7 +29,7 @@ import { createApiThunk } from '../../utils/createApiThunk';
 import {
     StudentDTO,
     StudentPackageRepsonse,
-    TimetableClassEvent as TimetableClassEvent,
+    TimetableLesson as TimetableLesson,
     StudentPackageDTO,
     UIStudentDetail,
     GetPackageClassStatusResponse,
@@ -66,8 +66,8 @@ export type StudentSliceState = {
         weeklyClassEvent: {
             timetableAnchorDate: Date; // we will list the timetables of the week containing this date (timestamp)
             hrUnixTimestamps?: string[];
-            hrUnixTimestampToClassEvent?: {
-                [id: string]: TimetableClassEvent;
+            hrUnixTimestampToLesson?: {
+                [id: string]: TimetableLesson;
             };
         };
     };
@@ -76,7 +76,7 @@ export type StudentSliceState = {
         numOfDaysToDisplay: number;
         selectedDate: Date;
         hrUnixTimestampToTimetableClasses: {
-            [id: string]: (TimetableClassEvent & { isPlaceHolderForPaddingDisplay?: boolean })[];
+            [id: string]: (TimetableLesson & { isPlaceHolderForPaddingDisplay?: boolean })[];
         };
         totalClassesInHighlight: {
             hrUnixTimestampOnClick: number | null;
@@ -184,8 +184,7 @@ const studentSlice = createSlice({
             console.log(JSON.stringify(state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestamps, null, 4));
             const classesOfSelectedPackage = state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestamps?.filter(
                 timestamp => {
-                    const cls =
-                        state.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestampToClassEvent?.[timestamp];
+                    const cls = state.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestampToLesson?.[timestamp];
                     return cls?.studentPackage.id === Number(packageId);
                 }
             );
@@ -212,7 +211,7 @@ const studentSlice = createSlice({
         },
         unsetStudentEvent: (state, action: PayloadAction<{ hrTimestamp: string }>) => {
             const { hrTimestamp } = action.payload;
-            lodash.unset(state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent, hrTimestamp);
+            lodash.unset(state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToLesson, hrTimestamp);
         },
         updateStudent: (state, action: PayloadAction<{ student: StudentDTO }>) => {
             const { student } = action.payload;
@@ -257,11 +256,9 @@ const studentSlice = createSlice({
             .addCase(StudentThunkAction.detachFromGroup.fulfilled, (state, action) => {
                 const hourTimeStamp = action.payload.hour_unix_timestamp;
                 if (
-                    state.studentDetailTimetablePage?.weeklyClassEvent.hrUnixTimestampToClassEvent?.[
-                        String(hourTimeStamp)
-                    ]
+                    state.studentDetailTimetablePage?.weeklyClassEvent.hrUnixTimestampToLesson?.[String(hourTimeStamp)]
                 ) {
-                    state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent[
+                    state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToLesson[
                         String(hourTimeStamp)
                     ].classGroup = null;
                 }
@@ -282,7 +279,7 @@ const studentSlice = createSlice({
                 const events = action.payload.classes;
                 state.massTimetablePage.hrUnixTimestampToTimetableClasses = {};
                 const hrTimestampToClasses: {
-                    [key: string]: TimetableClassEvent[];
+                    [key: string]: TimetableLesson[];
                 } = {};
                 const statusToNumOfClasses: Partial<Record<Class_status, number>> = {};
                 for (const event of events) {
@@ -347,7 +344,7 @@ const studentSlice = createSlice({
                     targetArr: classes,
                 });
                 state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestamps = ids;
-                state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToClassEvent = idToObject;
+                state.studentDetailTimetablePage.weeklyClassEvent.hrUnixTimestampToLesson = idToObject;
             });
     },
 });
@@ -401,7 +398,7 @@ export class StudentThunkAction {
         'studentSlice/getStudentClassesForWeeklyTimetable',
         async (props: { studentId: string }, api) => {
             const { studentId } = props;
-            const res = await apiClient.get<CustomResponse<TimetableClassEvent[]>>(
+            const res = await apiClient.get<CustomResponse<TimetableLesson[]>>(
                 apiRoutes.GET_STUDENT_CLASSES_FOR_WEEKLY_TIMETABLE(studentId)
             );
             return processRes(res, api);
@@ -447,7 +444,7 @@ export class StudentThunkAction {
         'studentSlice/moveStudentEvent',
         async (
             props: {
-                fromClassEvent: TimetableClassEvent;
+                fromClassEvent: TimetableLesson;
                 toDayTimestamp: string;
                 toHourTimestamp: string;
             },
@@ -489,7 +486,7 @@ export class StudentThunkAction {
                 dateUnixTimestamps: timestamps,
                 filter,
             };
-            const res = await apiClient.post<CustomResponse<{ classes: TimetableClassEvent[] }>>(
+            const res = await apiClient.post<CustomResponse<{ classes: TimetableLesson[] }>>(
                 apiRoutes.POST_GET_FILTERED_STUDENT_CLASSES_FOR_DAILY_TIMETABLE,
                 request
             );

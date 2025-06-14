@@ -8,8 +8,8 @@ import DuplicateClassDialog from './DuplicateClassDialog';
 import { ClassDTO } from '../dto/kotlinDto';
 import useGetStudentIdFromParam from '../hooks/useGetStudentIdFromParam';
 
-export default function DuplicateClassForm(props: { class: ClassDTO }) {
-    const { class: classEvent } = props;
+export default function DuplicateClassForm(props: { class: ClassDTO; isTimeslotInThePast: boolean }) {
+    const { class: classEvent, isTimeslotInThePast } = props;
     const { studentId } = useGetStudentIdFromParam();
     const dispatch = useAppDispatch();
     const { id } = classEvent;
@@ -53,6 +53,7 @@ export default function DuplicateClassForm(props: { class: ClassDTO }) {
                         StudentThunkAction.duplicateClases({
                             classId: id,
                             numberOfWeeks: week,
+                            isTimeslotInThePast,
                         })
                     ).unwrap();
                     await dispatch(StudentThunkAction.getStudentPackages({ studentId }));

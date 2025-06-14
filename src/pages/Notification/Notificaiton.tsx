@@ -1,8 +1,6 @@
 import SectionTitle from '@/components/SectionTitle';
 import Spacer from '@/components/Spacer';
 import { NotificationDTO, NotificationResponse } from '@/dto/kotlinDto';
-import queryKeys from '@/reactQueries/queryKeys';
-import useBaseQuery from '@/reactQueries/useBaseQuery';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { NotificationThunkAction } from '@/redux/slices/notificationSlice';
 import toastUtil from '@/utils/toastUtil';
@@ -17,6 +15,7 @@ import { AliceDropdownMenu } from '@/components/CustomDropdownMenu';
 import classnames from 'classnames';
 import boxShadow from '@/constant/boxShadow';
 import RouteEnum from '@/enum/RouteEnum';
+import useNotificationQuery from '@/queries/useNotificationQuery';
 
 const notificationTypeToDisplayName: Record<NotificationDTO['type'], string> = {
     PACKAGE_DEADLINE_COMING: 'Package Deadline Coming',
@@ -25,18 +24,7 @@ const notificationTypeToDisplayName: Record<NotificationDTO['type'], string> = {
 
 export default function Notification() {
     const notifications = useAppSelector(s => s.notification.notificationResponses);
-    const dispatch = useAppDispatch();
-
-    const { query, invalidation } = useBaseQuery({
-        queryFn: async () => {
-            dispatch(NotificationThunkAction.getNotifications());
-            return null;
-        },
-        enabled: true,
-        queryKey: queryKeys.NOTIFICATIONS,
-        gcTime: 0,
-        staleTime: 0,
-    });
+    const { query, invalidation: invalidateNotifications } = useNotificationQuery();
 
     if (query.isFetching) {
         return <Spin />;
@@ -50,14 +38,14 @@ export default function Notification() {
                     loading={query.isFetching}
                     className="!rounded-2xl active:scale-75"
                     onClick={() => {
-                        invalidation();
+                        invalidateNotifications();
                     }}
                 >
                     <MdOutlineRefresh size={24} /> Refresh
                 </Button>
             </div>
             <Spacer />
-            <div className="h-[calc(100vh-80px)] overflow-y-scroll m-1 p-1 grid grid-cols-1 min-[1400px]:grid-cols-2 min-[1850px]:grid-cols-3 gap-2 pb-60">
+            <div className="max-h-[calc(100vh-80px)] overflow-y-scroll m-1 p-1 grid grid-cols-1 min-[1400px]:grid-cols-2 min-[1850px]:grid-cols-3 gap-2 pb-60">
                 {notifications
                     .slice(0)
                     .sort((n1, n2) => (n2?.notification?.createdAt || 0) - (n1?.notification?.createdAt || 0))
@@ -80,7 +68,7 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
         <div
             style={{ boxShadow: boxShadow.SHADOW_62 }}
             className={classnames(
-                'p-4 pt-2 mb-3 rounded-md flex flex-col space-y-2 border-green-500 border-1',
+                'p-4 pt-2 mb-3 rounded-md flex flex-col space-y-2 border-green-500 border-1 max-h-[200px]',
                 {
                     'bg-[#f0fdf9] opacity-70': notification.isRead,
                     'bg-teal-50': !notification.isRead,

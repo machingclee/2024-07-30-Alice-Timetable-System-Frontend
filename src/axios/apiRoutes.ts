@@ -7,6 +7,7 @@ export default {
     POST_CREATE_TICKET: '/tickets',
     POST_CREATE_STUDENT_CLASS: (studentId: string) => `/students/${studentId}/classes`,
     POST_DUPLICATE_CLASSES: '/students/classes/duplicate',
+    POST_ADD_CUSTOM_HOLIDAY: '/holidays/custom-holiday',
     POST_CREATE_STUDENT_PACKAGE: (studentId: string) => `/students/${studentId}/packages`,
     POST_GET_FILTERED_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: '/students/classes/daily/filtered',
     GET_PACKAGE_CLASS_STATUS: (pkgId: string) => `/students/packages/${pkgId}/student-class-statuses`,
@@ -22,7 +23,7 @@ export default {
     GET_STUDENT_PACKAGES: (studentId: string) => `/students/${studentId}/student-packages`,
     GET_LOGGING: (props: { page: number; limit: number }) =>
         `/logging/get-logs?page=${props.page}&limit=${props.limit}`,
-
+    GET_CUSTOM_HOLIDAYS: '/holidays/custom-holidays',
     PUT_UPDATE_USER: '/user/update-user',
     PUT_UPDATE_STUDENT: '/students',
     PUT_MOVE_STUDNET_CLASS: '/students/classes/move',
@@ -31,6 +32,7 @@ export default {
     PUT_MARK_PACAKGE_AS_UNPAID: '/students/package/mark/unpaid',
     PUT_UPDATE_PACKAGE: '/students/package',
     PUT_TICKETS: '/tickets',
+    PUT_UPDATE_CUSTOM_HOLIDAY: (holidayId: number) => `/holidays/custom-holiday/${holidayId}`,
     PATCH_UPDATE_COURSE: '/courses',
     PATCH_UPDATE_CLASS: '/students/classes',
     PATCH_PACKAGE_RENEWAL_STATUS: (studentId: string) => `/students/${studentId}/package-renewal`,

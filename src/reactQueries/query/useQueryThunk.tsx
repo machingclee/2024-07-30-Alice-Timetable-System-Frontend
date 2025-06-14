@@ -1,7 +1,7 @@
 import { AsyncThunk } from '@reduxjs/toolkit';
 import useBaseQuery from './useBaseQuery';
-import hashUtil from '../utils/hashUtil';
-import { useAppDispatch } from '../redux/hooks';
+import hashUtil from '../../utils/hashUtil';
+import { useAppDispatch } from '../../redux/hooks';
 
 /**
  * - This wrap a thunk into a useQuery call, the purpose is to debounce and make cache appropriately.

@@ -5,7 +5,7 @@ import SectionTitle from '../../../components/SectionTitle';
 import dayjs from 'dayjs';
 import { Box } from '@mui/material';
 import { GetPackageClassStatusResponse } from '../../../dto/kotlinDto';
-import useQueryThunk from '../../../reactQueries/useQueryThunk';
+import useQueryThunk from '../../../reactQueries/query/useQueryThunk';
 import studentSlice, { StudentDetailPage, StudentThunkAction } from '../../../redux/slices/studentSlice';
 import { FaChevronLeft } from 'react-icons/fa6';
 import { Button, Spin } from 'antd';
