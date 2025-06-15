@@ -10,9 +10,8 @@ import { useAppDispatch } from '../../redux/hooks';
  * - At the end it is simply calling useQuery({..., queryFn}), with queryFn being the dispatched thunk action.
  * - Default staleTime and gcTime is 1000.
  */
-// eslint-disable-next-line react-refresh/only-export-components
+
 export default <ThunkInputParam, ReturnType>(param: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         thunk: AsyncThunk<ReturnType, ThunkInputParam, any>;
         staleTime?: number;
         enabled?: boolean;
@@ -29,7 +28,6 @@ export default <ThunkInputParam, ReturnType>(param: {
             },
             onDataChanged: data => {
                 const requestID = crypto.randomUUID() || Math.random() + '';
-                // eslint-disable-next-line
                 dispatch(thunk.fulfilled(data, requestID, inputParam as any));
             },
             enabled,

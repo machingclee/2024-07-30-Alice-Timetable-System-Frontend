@@ -8,8 +8,7 @@ export type PrintHandler = {
     setPrintTarget: (div: HTMLDivElement | null) => void;
 };
 
-// eslint-disable-next-line
-export default forwardRef<PrintHandler, {}>((_, ref) => {
+export const PrintButton = forwardRef<PrintHandler, object>((_, ref) => {
     const [printOnPressed, setPrintOnPressed] = useState<boolean>(false);
     const { leftNavigatorCollapsed } = useAppSelector(s => s.app);
     const handlePrint = () => {
@@ -47,3 +46,5 @@ export default forwardRef<PrintHandler, {}>((_, ref) => {
         </Button>
     );
 });
+
+export default PrintButton;

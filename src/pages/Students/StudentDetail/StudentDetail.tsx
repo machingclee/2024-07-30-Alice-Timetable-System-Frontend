@@ -73,7 +73,6 @@ export default function StudentDetail() {
         } else {
             setAnchorTimestamp(new Date().getTime());
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {

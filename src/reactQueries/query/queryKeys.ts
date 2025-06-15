@@ -1,3 +1,4 @@
+import { ClassRoom } from '@/dto/kotlinDto';
 import { PreDailyTimetableRequest } from '../../dto/dto';
 import hashUtil from '../../utils/hashUtil';
 
@@ -11,4 +12,5 @@ export default {
     },
     NOTIFICATIONS: ['NOTIFICATIONS'],
     CUSTOM_HOLIDAYS: ['CUSTOM_HOLIDAYS'],
+    TIMETTAMP_TO_NUM_OF_CLASSES: (classRoom: ClassRoom | '') => ['TIMETTAMP_TO_NUM_OF_CLASSES', classRoom],
 };

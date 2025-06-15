@@ -53,7 +53,6 @@ export default function WeeklyTimeTable() {
             });
         });
         setTimegrid(timetable_);
-        // eslint-disable-next-line
     }, [anchorTimestamp, selectedPackageId, getHalfHourTimeIntervalsForDay]);
 
     const goNextWeek = () => {

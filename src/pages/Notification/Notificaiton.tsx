@@ -15,7 +15,7 @@ import { AliceDropdownMenu } from '@/components/CustomDropdownMenu';
 import classnames from 'classnames';
 import boxShadow from '@/constant/boxShadow';
 import RouteEnum from '@/enum/RouteEnum';
-import useNotificationQuery from '@/queries/useNotificationQuery';
+import useNotificationQuery from '@/reactQueries/query/useNotificationQuery';
 
 const notificationTypeToDisplayName: Record<NotificationDTO['type'], string> = {
     PACKAGE_DEADLINE_COMING: 'Package Deadline Coming',

@@ -96,7 +96,7 @@ export default function StudentClassForWeeklyTimetable(props: {
             </div>
         );
     };
-    // eslint-disable-next-line
+
     const ClassEventWrapper = useCallback(
         !hasClassEvent
             ? ({ children }: PropsWithChildren) => {
@@ -267,8 +267,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                             lesson && (
                                 <>
                                     <Draggable
-                                        // eslint-disable-next-line
-                                        data={lesson!!}
+                                        data={lesson}
                                         key={lesson?.class.id}
                                         canDrag={!!lesson && isInTheFuture()}
                                     >

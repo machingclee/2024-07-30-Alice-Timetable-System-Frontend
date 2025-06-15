@@ -8,10 +8,36 @@ import DeleteClassDialog from '../DeleteClassDialog';
 import AddClassEventDialog from '../AddClassEventDialog';
 import MoveConfirmationDialog from '../../pages/Students/components/MoveConfirmationDialog';
 import Spacer from '../Spacer';
+import { Button } from 'antd';
+import useCustomHolidaysQuery from '@/reactQueries/query/useCustomHolidaysQuery';
+import useExtendClassesForHolidayMutation from '@/reactQueries/mutation/useExtendClassesForHolidayMutation';
+import { useAppSelector } from '@/redux/hooks';
+import dayjs from 'dayjs';
 
 const PrintableDailyTable = (props: { date: Date; dayOffset: number }) => {
     const { date, dayOffset } = props;
     const printButtonRef = useRef<PrintHandler>(null);
+    const holidaysQuery = useCustomHolidaysQuery();
+    const timetableDayTimestamp = dayjs(date).add(dayOffset, 'day').startOf('day').toDate().getTime();
+    const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom)!;
+    const extendClassesMutation = useExtendClassesForHolidayMutation({
+        classRoom,
+        dayTimestamp: timetableDayTimestamp,
+    });
+    const holidayButton = () => {
+        const holiday = holidaysQuery.data?.find(holiday => holiday.startOfTheDate === timetableDayTimestamp);
+        if (holiday) {
+            return (
+                <div className="flex items-center gap-2">
+                    <Button onClick={() => extendClassesMutation.mutate()}>Extend Classes</Button>
+                    <span>for holiday: {holiday?.name || ''}</span>
+                </div>
+            );
+        } else {
+            return null;
+        }
+    };
+
     return (
         <>
             <Spacer />
@@ -22,7 +48,7 @@ const PrintableDailyTable = (props: { date: Date; dayOffset: number }) => {
                 }}
                 className="mb-2"
             >
-                <div></div>
+                <div>{holidayButton()}</div>
                 <div className="flex items-center gap-2">
                     <RefreshDailyTimetableButton />
                     <PrintButton ref={printButtonRef} />

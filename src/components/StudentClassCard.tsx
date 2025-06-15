@@ -15,7 +15,6 @@ export default function StudentClassCard(props: {
 
     const engName = `${student.lastName} ${student.firstName}`;
     const chiName = student.chineseLastName + student.chineseFirstName;
-    console.log('studentstudentstudent', student);
     const nameComponent = () => {
         if (classEvent.isPlaceHolderForPaddingDisplay) {
             return `placeholder from ${engName}`;

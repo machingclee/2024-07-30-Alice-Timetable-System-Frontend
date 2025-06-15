@@ -2,7 +2,7 @@ import { Button, Modal } from 'antd';
 import { BaseButtonProps } from 'antd/es/button/button';
 import { CSSProperties, ReactNode, useCallback, useRef, useState } from 'react';
 
-export type AliceModalProps<T = Record<string, never>> = {
+export type AliceModalProps<T = any> = {
     context: T;
     setOnOk: (action: Action) => void;
     setOkText: (text: string) => void;

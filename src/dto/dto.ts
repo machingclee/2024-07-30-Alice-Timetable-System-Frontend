@@ -249,7 +249,6 @@ export type SummaryOfClassStatues = {
 
 export type Loggings = {
     id: number;
-    // eslint-disable-next-line
     payload: { ctx: { userEmail: string }; data: any };
     event_type: string;
     created_at: number;
@@ -296,4 +295,9 @@ export type UpodateHolidayDTO = {
     name: string;
     desc: string;
     date: number;
+};
+
+export type CreateExtendedClassesForHolidayRequest = {
+    dayTimestamp: number;
+    classRoom: Classroom;
 };

@@ -1,3 +1,5 @@
+import { ClassRoom } from '@/dto/kotlinDto';
+
 export default {
     POST_REFRESH_TOKEN: '/auth/refresh-token',
     POST_LOGIN: '/auth/login',
@@ -10,6 +12,8 @@ export default {
     POST_ADD_CUSTOM_HOLIDAY: '/holidays/custom-holiday',
     POST_CREATE_STUDENT_PACKAGE: (studentId: string) => `/students/${studentId}/packages`,
     POST_GET_FILTERED_STUDENT_CLASSES_FOR_DAILY_TIMETABLE: '/students/classes/daily/filtered',
+    POST_CREATE_EXTENDED_CLASSES_FOR_HOLIDAY: (classroom: ClassRoom, dayTimestamp: number) =>
+        `/students/extend-classes/classroom/${classroom}/by-holiday-on/${dayTimestamp}`,
     GET_PACKAGE_CLASS_STATUS: (pkgId: string) => `/students/packages/${pkgId}/student-class-statuses`,
     GET_USERS: '/users',
     GET_STUDENTS: `/students`,
@@ -24,6 +28,7 @@ export default {
     GET_LOGGING: (props: { page: number; limit: number }) =>
         `/logging/get-logs?page=${props.page}&limit=${props.limit}`,
     GET_CUSTOM_HOLIDAYS: '/holidays/custom-holidays',
+    GET_CLASS_TIMESTAMPS: (classRoom: ClassRoom) => `/students/classes/all/timestamp-only/classroom/${classRoom}`,
     PUT_UPDATE_USER: '/user/update-user',
     PUT_UPDATE_STUDENT: '/students',
     PUT_MOVE_STUDNET_CLASS: '/students/classes/move',
@@ -44,4 +49,5 @@ export default {
     DELETE_CLASS_BY_INDIVIDUAL: (classId: number) => `/students/classes/${classId}/single`,
     DELETE_STUDENT: (studentId: number) => `/students/delete-student/${studentId}`,
     DELETE_TICKET: (ticketId: number) => `/tickets/${ticketId}`,
+    DELETE_CUSTOM_HOLIDAY: (holidayId: number) => `/holidays/custom-holiday/${holidayId}`,
 };

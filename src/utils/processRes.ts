@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable-file */
 import { AxiosResponse } from 'axios';
 import { CustomResponse } from '../axios/responseTypes';
 
