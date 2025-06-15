@@ -16,6 +16,11 @@ import classnames from 'classnames';
 import boxShadow from '@/constant/boxShadow';
 import RouteEnum from '@/enum/RouteEnum';
 import useNotificationQuery from '@/reactQueries/query/useNotificationQuery';
+import apiClient from '@/axios/apiClient';
+import { CustomResponse } from '@/axios/responseTypes';
+import apiRoutes from '@/axios/apiRoutes';
+import { useMutation } from '@tanstack/react-query';
+import appSlice from '@/redux/slices/appSlice';
 
 const notificationTypeToDisplayName: Record<NotificationDTO['type'], string> = {
     PACKAGE_DEADLINE_COMING: 'Package Deadline Coming',
@@ -25,7 +30,21 @@ const notificationTypeToDisplayName: Record<NotificationDTO['type'], string> = {
 export default function Notification() {
     const notifications = useAppSelector(s => s.notification.notificationResponses);
     const { query, invalidation: invalidateNotifications } = useNotificationQuery();
-
+    const dispatch = useAppDispatch();
+    const createNotificationForDeadlinePackages = useMutation({
+        mutationFn: async () => {
+            return await apiClient.post<CustomResponse<void>>(apiRoutes.POST_CREATE_NOTIFICATION_FOR_DEADLINE_PACKAGES);
+        },
+        onMutate: () => {
+            dispatch(appSlice.actions.setLoading(true));
+        },
+        onSettled: () => {
+            dispatch(appSlice.actions.setLoading(false));
+        },
+        onSuccess: () => {
+            invalidateNotifications();
+        },
+    });
     if (query.isFetching) {
         return <Spin />;
     }
@@ -38,7 +57,7 @@ export default function Notification() {
                     loading={query.isFetching}
                     className="!rounded-2xl active:scale-75"
                     onClick={() => {
-                        invalidateNotifications();
+                        createNotificationForDeadlinePackages.mutate();
                     }}
                 >
                     <MdOutlineRefresh size={24} /> Refresh

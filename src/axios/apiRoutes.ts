@@ -7,6 +7,7 @@ export default {
     POST_CREATE_STUDNET: '/students',
     POST_CREATE_COURSE: '/courses',
     POST_CREATE_TICKET: '/tickets',
+    POST_CREATE_NOTIFICATION_FOR_DEADLINE_PACKAGES: '/scheduling/package-deadline/check',
     POST_CREATE_STUDENT_CLASS: (studentId: string) => `/students/${studentId}/classes`,
     POST_DUPLICATE_CLASSES: '/students/classes/duplicate',
     POST_ADD_CUSTOM_HOLIDAY: '/holidays/custom-holiday',
