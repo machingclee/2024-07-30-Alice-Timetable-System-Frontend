@@ -287,7 +287,7 @@ export type CustomHolidayDTO = {
     id: number;
     name: string;
     desc: string;
-    date: number;
+    startOfTheDate: number;
     createdAt: number;
     createdAtHk: string;
 };
