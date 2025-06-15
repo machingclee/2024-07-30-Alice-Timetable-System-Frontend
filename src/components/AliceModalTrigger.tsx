@@ -1,8 +1,9 @@
 import { Button, Modal } from 'antd';
 import { BaseButtonProps } from 'antd/es/button/button';
-import { CSSProperties, ReactNode, useRef, useState } from 'react';
+import { CSSProperties, ReactNode, useCallback, useRef, useState } from 'react';
 
-export type AliceModalProps = {
+export type AliceModalProps<T = any> = {
+    context: T;
     setOnOk: (action: Action) => void;
     setOkText: (text: string) => void;
     setOpen: (open: boolean) => void;
@@ -10,9 +11,10 @@ export type AliceModalProps = {
 
 type Action = () => void | Promise<void>;
 
-const AliceModalTrigger = (props: {
+const AliceModalTrigger = <T,>(props: {
     style?: CSSProperties;
     centered?: boolean;
+    context?: T;
     modalClassName?: string;
     okButtonType?: BaseButtonProps['type'];
     modalContent: (props: AliceModalProps) => ReactNode;
@@ -38,12 +40,16 @@ const AliceModalTrigger = (props: {
         modalRef.current.onOk = action;
     };
 
-    const ModalContent = () =>
-        props.modalContent({
-            setOkText,
-            setOnOk,
-            setOpen,
-        });
+    const ModalContent = useCallback(
+        () =>
+            props.modalContent({
+                setOkText,
+                setOnOk,
+                setOpen,
+                context: props?.context || {},
+            }),
+        [props]
+    );
 
     return (
         <>

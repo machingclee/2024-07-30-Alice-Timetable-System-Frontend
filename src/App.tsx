@@ -10,6 +10,7 @@ import toastUtil from './utils/toastUtil';
 import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
 import ThemeProvider from './components/ThemeProvider';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient({
     queryCache: new QueryCache({
@@ -32,7 +33,7 @@ export default function App() {
                             <ToastContainer limit={5} />
                         </ThemeProvider>
                     </ConfigAxios>
-                    {/* <ReactQueryDevtools /> */}
+                    <ReactQueryDevtools />
                 </QueryClientProvider>
             </PersistGate>
         </Provider>

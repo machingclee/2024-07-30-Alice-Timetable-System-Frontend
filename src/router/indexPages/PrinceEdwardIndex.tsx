@@ -9,13 +9,17 @@ import dayjs from 'dayjs';
 const PrinceEdwardIndex = () => {
     const dispatch = useAppDispatch();
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
-    useMassTimetablePage('PRINCE_EDWARD');
+    const { getDailyTimetableClasses } = useMassTimetablePage('PRINCE_EDWARD');
 
     useEffect(() => {
         return () => {
             dispatch(studentSlice.actions.resetMassTimetablerFilter());
         };
     }, [dispatch]);
+
+    useEffect(() => {
+        getDailyTimetableClasses();
+    }, []);
 
     useEffect(() => {
         dispatch(CourseThunkAction.getCourses())
@@ -31,7 +35,6 @@ const PrinceEdwardIndex = () => {
                     })
                 ).unwrap();
             });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return <Outlet />;
 };

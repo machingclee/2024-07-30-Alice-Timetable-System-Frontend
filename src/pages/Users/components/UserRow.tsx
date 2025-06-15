@@ -19,7 +19,6 @@ export default function UserRow(props: { id: string }) {
     const { company_email, first_name, last_name, mobile_number, role_in_company, role_in_system } = user;
     const formData = useRef(user);
 
-    // eslint-disable-next-line
     const checkDataDistinction = useCallback(
         debounce(() => {
             const oldData = user;

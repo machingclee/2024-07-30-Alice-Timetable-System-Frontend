@@ -123,9 +123,10 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
             <FormInputTitle>Start Date</FormInputTitle>
             <Spacer height={5} />
             <DatePicker
-                disabledDate={current => {
+                disabledDate={_ => {
                     // Can't select days before today
-                    return current && current < dayjs().startOf('day');
+                    // return current && current < dayjs().startOf('day');
+                    return false;
                 }}
                 onChange={val => {
                     formData.current.start_date = val.valueOf();

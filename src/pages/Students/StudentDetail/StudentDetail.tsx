@@ -17,7 +17,7 @@ import ViewClassDialog from '../../../components/ViewClassDialog';
 import EditPackageDialog from './components/EditPackageDialog';
 import { FaChevronLeft } from 'react-icons/fa6';
 import { Box, CircularProgress } from '@mui/material';
-import useQueryThunk from '../../../reactQueries/useQueryThunk';
+import useQueryThunk from '../../../reactQueries/query/useQueryThunk';
 import { Button, Input } from 'antd';
 import RouteEnum from '../../../enum/RouteEnum';
 import PackageClassesStatus from '../components/PackageClassesStatus';
@@ -73,7 +73,6 @@ export default function StudentDetail() {
         } else {
             setAnchorTimestamp(new Date().getTime());
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {

@@ -3,13 +3,11 @@ import { Box } from '@mui/material';
 import { ReactNode, HTMLAttributes, useRef, useState, useEffect } from 'react';
 import invariant from 'tiny-invariant';
 
-// eslint-disable-next-line
 export type DraggableDropData<T extends Record<string, any>> = {
     data: T;
     setDragging: (dragging: boolean) => void;
 };
 
-// eslint-disable-next-line
 export const Draggable = <T extends Record<string, any>>(
     props: {
         maxZIndexOnHover?: boolean;

@@ -15,20 +15,25 @@ import React, { useEffect, useState } from 'react';
 import { IoIosArrowForward } from 'react-icons/io';
 import ClassFilterItem from './CourseFilterItem';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import statues from '../constant/statues';
 import useRefetchMassTimetables from '../hooks/useRefetchMassTimetables';
 import ContentContainer from './ContentContainer';
+import useDayTimestampToNumOfClassesQuery from '@/reactQueries/query/useDayTimestampToNumOfClassesQueryQuery';
+import clsx from 'clsx';
+import useCustomHolidaysQuery from '@/reactQueries/query/useCustomHolidaysQuery';
 
 export default function RightColumn() {
     const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom);
     const summaryOfClassStatues = useAppSelector(s => s.student.massTimetablePage.summaryOfClassStatuses);
     const courseIds = useAppSelector(s => s.class.courses.ids);
+    const selectedFilterCourseIds = useAppSelector(s => s.student.massTimetablePage.filter.courseIds);
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
     const dispatch = useDispatch<AppDispatch>();
     const [filterByClassStatusOnPress, setFilterByClassStatusOnPress] = useState<boolean>(false);
     const [filterByCourseOnPress, setFilterByCourseOnPress] = useState<boolean>(false);
     const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
+    const holidayQuery = useCustomHolidaysQuery();
 
     const [statuesFilter, setStatuesFilter] = React.useState<StatuesFilter>({
         present: true,
@@ -49,6 +54,9 @@ export default function RightColumn() {
         onDateChanged(value.startOf('day').toDate());
     };
 
+    const { query: dayTimestampToNumOfClassesQuery } = useDayTimestampToNumOfClassesQuery(classroom);
+    const dayTimestampToCount = dayTimestampToNumOfClassesQuery.data;
+
     useEffect(() => {
         if (courseIds) {
             dispatch(studentSlice.actions.setFilterCourseIds(courseIds));
@@ -62,10 +70,19 @@ export default function RightColumn() {
                 <td>
                     <Checkbox
                         onChange={event => {
-                            setStatuesFilter(prev => ({
-                                ...prev,
-                                [updateKey]: event.target.checked,
-                            }));
+                            setStatuesFilter(prev => {
+                                const newFilter = {
+                                    ...prev,
+                                    [updateKey]: event.target.checked,
+                                };
+                                dispatch(
+                                    studentSlice.actions.setMassTimetableFilter({
+                                        ...newFilter,
+                                        courseIds: selectedFilterCourseIds,
+                                    })
+                                );
+                                return newFilter;
+                            });
                         }}
                         checked={statuesFilter[updateKey]}
                     />
@@ -84,6 +101,8 @@ export default function RightColumn() {
             </tr>
         );
     };
+
+    const badgeClassname = clsx('rounded-[25%] p-0.25 px-1 h-[17px] flex items-center justify-center text-[10px]');
 
     return (
         <div
@@ -123,6 +142,41 @@ export default function RightColumn() {
                                 const date_ = date.startOf('day').toDate();
                                 console.log('this is the date_', date_);
                                 onDateChanged(date_);
+                            }}
+                            cellRender={date => {
+                                const count = dayTimestampToCount?.[date.startOf('day').valueOf() + ''] || 0;
+
+                                if (dayTimestampToNumOfClassesQuery.isFetching) {
+                                    return (
+                                        <div className="absolute -top-2.5 -right-2.5">
+                                            <div className={badgeClassname}>
+                                                <CircularProgress color="inherit" size={10} />
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                if (count === 0) {
+                                    return null;
+                                }
+
+                                const isHoliday = holidayQuery.data?.find(
+                                    holiday => holiday.startOfTheDate === date.startOf('day').valueOf()
+                                );
+                                return (
+                                    <div className="absolute -top-2.5 -right-2.5 z-10">
+                                        <div
+                                            className={clsx(
+                                                badgeClassname,
+                                                'text-white',
+                                                isHoliday ? `bg-red-500 tex-gray-800` : 'bg-emerald-500',
+                                                ` border border-white`
+                                            )}
+                                        >
+                                            {count}
+                                        </div>
+                                    </div>
+                                );
                             }}
                             style={{ width: 290 }}
                         />

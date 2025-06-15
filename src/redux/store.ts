@@ -19,7 +19,6 @@ const createNoopStorage = () => {
         getItem(_key: string) {
             return Promise.resolve(null);
         },
-        // eslint-disable-next-line
         setItem(_key: string, value: any) {
             return Promise.resolve(value);
         },

@@ -32,7 +32,6 @@ export default function FadeIn({
 }: {
     children: ReactNode;
     delay?: number;
-    // eslint-disable-next-line
     dependencies?: any[];
 } & HTMLAttributes<HTMLDivElement>) {
     const [fadeIn, setFadeIn] = useState(false);
@@ -43,8 +42,7 @@ export default function FadeIn({
         setTimeout(() => {
             setFadeIn(true);
         }, 1 + delay);
-        // eslint-disable-next-line
-    }, [...dependencies]);
+    }, [...dependencies, delay]);
 
     return (
         <div style={{ opacity: fadeIn ? 1 : 0, ...style }} className={className} {...props}>

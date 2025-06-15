@@ -25,11 +25,7 @@ export default function AddCourseForm() {
     const submit = async () => {
         const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_COURSE, formData.current);
         if (!res.data.success) {
-            const errorMessage = res.data?.errorMessage;
             const errorObject = res.data?.errorObject;
-            if (errorMessage) {
-                toastUtil.error(errorMessage);
-            }
             if (errorObject) {
                 setError(errorObject);
             }

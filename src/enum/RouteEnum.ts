@@ -5,6 +5,7 @@ enum RouteEnum {
     DASHBOARD_STUDENTS = '/dashboard/students',
     DASHBOARD_COURSES = '/dashboard/courses',
     DASHBOARD_USERS = '/dashboard/users',
+    DASHBOARD_CUSTOM_HOLIDAYS = '/dashboard/custom-holidays',
     DASHBOARD_COMPETITIONS = '/dashboard/competitions',
     DASHBOARD_LOGGING = '/dashboard/logging',
     DASHBOARD_PRINCE_EDWARD_TIMETABLE = '/dashboard/all-students/prince-edward',

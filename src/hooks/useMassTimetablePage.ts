@@ -2,10 +2,11 @@ import { useEffect } from 'react';
 import { ClassRoom } from '../dto/kotlinDto';
 import studentSlice, { StudentThunkAction } from '../redux/slices/studentSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import dayjs from 'dayjs';
 
 export default (classroom: ClassRoom) => {
     const dispatch = useAppDispatch();
-
+    const anchorTimestamp = useAppSelector(s => s.student.massTimetablePage.selectedDate);
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const numOfDaysToDisplay = useAppSelector(s => s.student.massTimetablePage.numOfDaysToDisplay);
 
@@ -13,14 +14,15 @@ export default (classroom: ClassRoom) => {
         dispatch(studentSlice.actions.setClassroom(classroom));
     }, [dispatch]);
 
-    useEffect(() => {
-        dispatch(
+    const getDailyTimetableClasses = async () => {
+        await dispatch(
             StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                anchorTimestamp: new Date().getTime(),
+                anchorTimestamp: dayjs(anchorTimestamp).startOf('day').toDate().getTime(),
                 numOfDays: numOfDaysToDisplay,
                 classRoom: classroom,
                 filter: filter,
             })
-        );
-    }, [classroom]);
+        ).unwrap();
+    };
+    return { getDailyTimetableClasses };
 };

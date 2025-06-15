@@ -16,7 +16,6 @@ export default function CourseRow(props: { id: number }) {
 
     const [hasDistinction, setHasDistinction] = useState(false);
 
-    // eslint-disable-next-line
     const checkDataDistinction = useCallback(
         debounce(() => {
             const oldData = course;

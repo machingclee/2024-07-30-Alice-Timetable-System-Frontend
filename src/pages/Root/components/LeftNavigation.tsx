@@ -20,6 +20,7 @@ const pathRegex = {
     STUDENTS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_STUDENTS)),
     COURSES: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_COURSES)),
     USERS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_USERS)),
+    CUSTOM_HOLIDAYS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_CUSTOM_HOLIDAYS)),
     COMPETITIONS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_COMPETITIONS)),
     PRINCE_EDWARD_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE)),
     CAUSEWAY_BAY_TIMETABLE: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE)),
@@ -43,6 +44,8 @@ export default function LeftNavigation() {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_STUDENTS));
             } else if (pathRegex.USERS.test(pathname)) {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_USERS));
+            } else if (pathRegex.CUSTOM_HOLIDAYS.test(pathname)) {
+                dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_CUSTOM_HOLIDAYS));
             } else if (pathRegex.PRINCE_EDWARD_TIMETABLE.test(pathname)) {
                 dispatch(appSlice.actions.setActivePath(RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE));
             } else if (pathRegex.COURSES.test(pathname)) {
@@ -112,6 +115,12 @@ export default function LeftNavigation() {
                     title="Staffs"
                 />
 
+                <NavButton
+                    icon={<FaUserLock size={20} />}
+                    activeNavigationRegex={pathRegex.CUSTOM_HOLIDAYS}
+                    routeEnum={RouteEnum.DASHBOARD_CUSTOM_HOLIDAYS}
+                    title="Custom Holidays"
+                />
                 <NavButton
                     icon={<FaLocationDot size={20} />}
                     activeNavigationRegex={pathRegex.PRINCE_EDWARD_TIMETABLE}

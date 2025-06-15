@@ -18,6 +18,7 @@ export type TokenPayload = {
 };
 
 export type CreateStudentRequest = {
+    preferred_name: string;
     student_code: string;
     first_name: string;
     last_name: string;
@@ -117,6 +118,7 @@ export type CreateClassRequest = {
     min: number;
     studentPackageId: number;
     actualClassroom: Classroom;
+    isTimeslotInThePast: boolean;
 };
 
 export type FilterToGetClassesForDailyTimetable = {
@@ -146,6 +148,7 @@ export type UpdateStudentRenewalStatusRequest = {
 export type DuplicateClassRequest = {
     classId: number;
     numberOfWeeks: number;
+    isTimeslotInThePast: boolean;
 };
 
 export type DetachClassRequest = {
@@ -246,7 +249,6 @@ export type SummaryOfClassStatues = {
 
 export type Loggings = {
     id: number;
-    // eslint-disable-next-line
     payload: { ctx: { userEmail: string }; data: any };
     event_type: string;
     created_at: number;
@@ -278,4 +280,24 @@ export type UpdateTicketRequest = {
     title: string;
     isSolved: boolean;
     solvedBy: string;
+};
+
+export type CustomHolidayDTO = {
+    id: number;
+    name: string;
+    desc: string;
+    startOfTheDate: number;
+    createdAt: number;
+    createdAtHk: string;
+};
+
+export type UpodateHolidayDTO = {
+    name: string;
+    desc: string;
+    date: number;
+};
+
+export type CreateExtendedClassesForHolidayRequest = {
+    dayTimestamp: number;
+    classRoom: Classroom;
 };

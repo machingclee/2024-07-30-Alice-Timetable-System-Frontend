@@ -71,7 +71,7 @@ export type ClassGroupDTO = {
     id: number;
 };
 
-export type TimetableClassEvent = {
+export type TimetableLesson = {
     hourUnixTimestamp: number;
     classGroup: ClassGroupDTO | null;
     student: StudentDTO;

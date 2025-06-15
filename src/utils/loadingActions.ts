@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable-file */
 import appSlice from '../redux/slices/appSlice';
 
 type Action = {

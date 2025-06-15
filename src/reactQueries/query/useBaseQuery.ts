@@ -6,10 +6,10 @@ export default <T>(props: {
     queryFn: () => Promise<T>;
     onDataChanged?: (data: T) => void;
     gcTime?: number;
-    enabled: boolean;
+    enabled?: boolean;
     staleTime?: number;
 }) => {
-    const { queryFn, queryKey, gcTime = 100, staleTime = 100, onDataChanged, enabled } = props;
+    const { queryFn, queryKey, gcTime = 100, staleTime = 100, onDataChanged, enabled = true } = props;
     const queryClient = useQueryClient();
     const query = useQuery({
         queryFn: async () => {
@@ -28,7 +28,6 @@ export default <T>(props: {
         if (query.data) {
             onDataChanged?.(query.data);
         }
-        // eslint-disable-next-line
     }, [query.data]);
 
     return { query, invalidation };

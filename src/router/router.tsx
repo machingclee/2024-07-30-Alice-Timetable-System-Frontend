@@ -22,6 +22,7 @@ import PrinceEdwardIndex from './indexPages/PrinceEdwardIndex.tsx';
 import StudentInfo from '../pages/StudentInfo/StudentInfo.tsx';
 import Tickets from '../pages/Tickets/Tickets.tsx';
 import Notification from '@/pages/Notification/Notificaiton.tsx';
+import CustomHolidays from '@/pages/CustomHolidays/CustomHolidays.tsx';
 
 function getRouter(_store: Store) {
     return createBrowserRouter(
@@ -44,6 +45,7 @@ function getRouter(_store: Store) {
                         <Route path=":competitionId" element={<CompetitionDetail />} />
                     </Route>
                     <Route path="users" element={<Users />} />
+                    <Route path="custom-holidays" element={<CustomHolidays />} />
                     <Route path="all-students" element={<AllStudentsIndex />}>
                         <Route path="prince-edward" element={<PrinceEdwardIndex />}>
                             <Route index element={<PrinceEdwardTimetable />} />

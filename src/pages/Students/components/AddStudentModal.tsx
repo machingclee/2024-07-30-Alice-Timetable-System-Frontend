@@ -20,6 +20,7 @@ export default function AddStudentModal(props: AliceModalProps) {
     const dispatch = useAppDispatch();
     const formData = useRef<CreateStudentRequest>({
         gender: 'MALE',
+        preferred_name: '',
         birthdate: dayjs(new Date(initialDate)).valueOf(),
         chinese_first_name: '',
         chinese_last_name: '',
@@ -33,6 +34,7 @@ export default function AddStudentModal(props: AliceModalProps) {
         wechat_id: '',
         shouldAutoRenewPackage: false,
     });
+
     const update = (update_: Partial<CreateStudentRequest>) => {
         formData.current = { ...formData.current, ...update_ };
     };
@@ -49,6 +51,7 @@ export default function AddStudentModal(props: AliceModalProps) {
     const dateFormat = 'YYYY-MM-DD';
     setOkText('Ok');
     setOnOk(submit);
+
     return (
         <Box
             style={{
@@ -57,11 +60,12 @@ export default function AddStudentModal(props: AliceModalProps) {
         >
             <SectionTitle>Add Student</SectionTitle>
             <Spacer />
-            <FormInputField title="Student Code" onChange={t => update({ student_code: t })} />
+            <FormInputField title="Student Code*" onChange={t => update({ student_code: t })} />
+            <FormInputField title="Preferred Name*" onChange={t => update({ preferred_name: t })} />
             <div style={{ display: 'flex' }}>
-                <FormInputField title="姓氏" onChange={t => update({ chinese_last_name: t })} />
+                <FormInputField title="姓氏*" onChange={t => update({ chinese_last_name: t })} />
                 <Spacer />
-                <FormInputField title="名字" onChange={t => update({ chinese_first_name: t })} style={{ flex: 1 }} />
+                <FormInputField title="名字*" onChange={t => update({ chinese_first_name: t })} style={{ flex: 1 }} />
             </div>
             <div style={{ display: 'flex', marginTop: -15 }}>
                 <FormInputField title="Last Name" onChange={t => update({ last_name: t })} />
@@ -120,7 +124,7 @@ export default function AddStudentModal(props: AliceModalProps) {
                 onChange={t => update({ grade: t })}
                 remark={`(before ${dayjs(new Date()).format('YYYY')}-09-01)`}
             />
-            <FormInputField title="Phone Number" onChange={t => update({ phone_number: t })} />
+            <FormInputField title="Phone Number*" onChange={t => update({ phone_number: t })} />
             <FormInputField title="Wechat Id (Optional)" onChange={t => update({ wechat_id: t })} />
         </Box>
     );
