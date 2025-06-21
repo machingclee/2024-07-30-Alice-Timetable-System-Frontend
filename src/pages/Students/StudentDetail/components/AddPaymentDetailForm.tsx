@@ -4,31 +4,23 @@ import Spacer from '../../../../components/Spacer';
 import { Button, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { useRef } from 'react';
-import { useAppDispatch } from '../../../../redux/hooks';
-import { StudentThunkAction } from '../../../../redux/slices/studentSlice';
+
 import AddPaymentDetailDialog from './AddPaymentDetailDialog';
-import { useParams } from 'react-router-dom';
+import { studentsApi } from '@/redux/slices/studentSlice';
 
 export default function AddPaymentDetailForm(props: { packageId: number }) {
     const { packageId } = props;
     const currTimestamp = new Date().getTime();
-    const { studentId } = useParams<{ studentId: string }>();
     const currTimeString = dayjs(currTimestamp).format('YYYY-MM-DD');
     const paymentDate = useRef(currTimestamp);
-    const dispatch = useAppDispatch();
+    // mark package as paid mutation
+    const [markPackageAsPaid] = studentsApi.endpoints.markPackageAsPaid.useMutation();
     const submit = async () => {
         AddPaymentDetailDialog.setOpen(false);
-        await dispatch(
-            StudentThunkAction.markPackageAsPaid({
-                packageId,
-                paidAt: paymentDate.current,
-            })
-        ).unwrap();
-        dispatch(
-            StudentThunkAction.getStudentPackages({
-                studentId: studentId || '',
-            })
-        );
+        await markPackageAsPaid({
+            packageId,
+            paidAt: paymentDate.current,
+        }).unwrap();
     };
 
     return (

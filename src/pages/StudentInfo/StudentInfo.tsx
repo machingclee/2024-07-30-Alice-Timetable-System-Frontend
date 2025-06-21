@@ -1,8 +1,6 @@
 import { Container } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import useQueryThunk from '../../reactQueries/query/useQueryThunk';
-import { StudentThunkAction } from '../../redux/slices/studentSlice';
 import getColorForClassStatus from '@/utils/getColorForClassStatus';
 import { Separator } from '@/components/ui/separator';
 import { FaLocationDot, FaRegClock } from 'react-icons/fa6';
@@ -18,14 +16,14 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import appSlice from '@/redux/slices/appSlice';
 import React, { useEffect } from 'react';
 import ContentContainer from '@/components/ContentContainer';
+import { studentsApi } from '@/redux/slices/studentSlice';
 
 export default function StudentInfo() {
     const { studentId = '' } = useParams<{ studentId: string }>();
     const { navigateToPackage, selectPackage } = useSelectPackage();
     const accessToken = useAppSelector(s => s.auth.accessToken);
     const dispatch = useAppDispatch();
-    const { query } = useQueryThunk({ thunk: StudentThunkAction.getStudentInfo, staleTime: 2000 })({ studentId });
-    const { data, isLoading } = query;
+    const { data, isLoading } = studentsApi.endpoints.getStudentInfo.useQuery({ studentId }, { skip: !studentId });
     const { student, studentPackages = [] } = data || {};
     const { chineseFirstName = '', chineseLastName = '', firstName = '', lastName = '' } = student || {};
     const engName = `${firstName} ${lastName}`;

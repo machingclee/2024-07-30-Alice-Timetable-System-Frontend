@@ -1,12 +1,11 @@
 import { Button, DatePicker, Select } from 'antd';
 import Spacer from '../../../components/Spacer';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import SectionTitle from '../../../components/SectionTitle';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { useAppDispatch } from '../../../redux/hooks';
 import { Autocomplete, Box, TextField } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
-import { CourseThunkAction } from '../../../redux/slices/courseSlice';
-import studentSlice, { StudentThunkAction } from '../../../redux/slices/studentSlice';
+import studentSlice, { studentsApi } from '../../../redux/slices/studentSlice';
 import { TimePicker } from 'antd';
 import { CreateStudentPackageRequest } from '../../../dto/dto';
 import dayjs from 'dayjs';
@@ -15,7 +14,8 @@ import { Classroom } from '../../../prismaTypes/types';
 import { IoIosInformationCircle } from 'react-icons/io';
 import colors from '../../../constant/colors';
 import toastUtil from '../../../utils/toastUtil';
-import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
+import useAnchorTimestamp from '../../../hooks/useStudentDetailPathParam';
+import { coursesApi } from '@/redux/slices/courseSlice';
 
 // Function to convert timestamp to the start of the day (midnight)
 const toMidnight = (timestamp: number): number => {
@@ -31,10 +31,25 @@ const toMidnight = (timestamp: number): number => {
 
 export default function AddPackageForm(props: { studentId: string; studentName: string }) {
     const { studentName, studentId } = props;
+    const { weeklyClassEvent } = studentsApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
+        { studentId },
+        {
+            selectFromResult: result => {
+                const { hrUnixTimestampToLesson = {}, hrUnixTimestamps = [] } = result?.data || {};
+                return { weeklyClassEvent: { timestamps: hrUnixTimestamps, hrUnixTimestampToLesson } };
+            },
+        }
+    );
     const [error, _] = useState<Partial<CreateStudentPackageRequest>>({});
     const { setURLAnchorTimestamp } = useAnchorTimestamp();
     const dispatch = useAppDispatch();
-    const classes = useAppSelector(s => s.class.courses);
+    const { courses } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+        selectFromResult: result => {
+            const courses = result?.data;
+            return { courses };
+        },
+    });
+    const [createStudentPackage] = studentsApi.endpoints.createStudentPackage.useMutation();
     const formData = useRef<Partial<CreateStudentPackageRequest>>({});
     const updateFormData = (update: Partial<CreateStudentPackageRequest>) => {
         formData.current = { ...formData.current, ...update };
@@ -42,7 +57,7 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
 
     const submit = async () => {
         const { course_id, min, start_date, num_of_classes, start_time, default_classroom } = formData.current || {};
-        console.log('submission data', course_id, min, start_date, num_of_classes, start_time, default_classroom);
+
         if (!(course_id != null && min != null && num_of_classes != null && default_classroom != null)) {
             toastUtil.error('None of the field can be empty.');
             return;
@@ -66,26 +81,18 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
         };
         console.log('reqBody:', reqBody);
         AddPackageDialog.setOpen(false);
-        const result = await dispatch(StudentThunkAction.createStudentPackage({ req: reqBody, studentId })).unwrap();
+        const result = await createStudentPackage({ req: reqBody, studentId }).unwrap();
         toastUtil.success('Package added successfully.');
-        await dispatch(StudentThunkAction.getStudentPackages({ studentId })).unwrap();
         dispatch(
-            StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                studentId,
-            })
-        ).unwrap();
-        dispatch(
-            studentSlice.actions.setSelectedPackageId({
+            studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp({
                 packageId: result.id + '',
+                studentId: studentId,
                 setURLAnchorTimestamp: setURLAnchorTimestamp,
                 desiredAnchorTimestamp: result.startDate,
+                weeklyClassEvent,
             })
         );
     };
-
-    useEffect(() => {
-        dispatch(CourseThunkAction.getCourses());
-    }, [dispatch]);
 
     const allowedOptionsForNumberOfClasses = [1, 7, 15, 30, 50];
 
@@ -111,8 +118,8 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
                 onChange={value => {
                     updateFormData({ course_id: value });
                 }}
-                options={classes.ids?.map(id_ => {
-                    const { courseName, id } = classes.idToCourse?.[id_] || {};
+                options={courses?.ids?.map(id_ => {
+                    const { courseName, id } = courses.idToCourse?.[id_] || {};
                     return {
                         value: id || 0,
                         label: courseName || '',

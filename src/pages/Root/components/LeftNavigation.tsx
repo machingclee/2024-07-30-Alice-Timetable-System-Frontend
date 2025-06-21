@@ -15,6 +15,7 @@ import { FaLocationDot, FaUserGraduate, FaUserLock } from 'react-icons/fa6';
 import { GiChampions } from 'react-icons/gi';
 import { TiTicket } from 'react-icons/ti';
 import { GoLog } from 'react-icons/go';
+import studentSlice from '@/redux/slices/studentSlice';
 
 const pathRegex = {
     STUDENTS: new RegExp(escapeStringRegexp(RouteEnum.DASHBOARD_STUDENTS)),
@@ -126,6 +127,9 @@ export default function LeftNavigation() {
                     activeNavigationRegex={pathRegex.PRINCE_EDWARD_TIMETABLE}
                     routeEnum={RouteEnum.DASHBOARD_PRINCE_EDWARD_TIMETABLE}
                     title="Prince Ed. Timetable"
+                    onClick={() => {
+                        dispatch(studentSlice.actions.setClassroom('PRINCE_EDWARD'));
+                    }}
                 />
 
                 <NavButton
@@ -133,6 +137,9 @@ export default function LeftNavigation() {
                     activeNavigationRegex={pathRegex.CAUSEWAY_BAY_TIMETABLE}
                     routeEnum={RouteEnum.DASHBOARD_CAUSEWAY_BAY_TIMETABLE}
                     title="CWB Timetable"
+                    onClick={() => {
+                        dispatch(studentSlice.actions.setClassroom('CAUSEWAY_BAY'));
+                    }}
                 />
 
                 <NavButton

@@ -8,6 +8,7 @@ export default function NavButton(props: {
     title: string;
     routeEnum: RouteEnum;
     icon?: ReactNode;
+    onClick?: () => void;
 }) {
     const { pathname } = useLocation();
     const { activeNavigationRegex, routeEnum, title, icon } = props;
@@ -23,6 +24,7 @@ export default function NavButton(props: {
                 type={active ? 'primary' : 'text'}
                 onClick={() => {
                     navigate(routeEnum);
+                    props.onClick?.();
                 }}
             >
                 <div key={path} style={{ textTransform: 'capitalize' }} className="flex items-center gap-2">

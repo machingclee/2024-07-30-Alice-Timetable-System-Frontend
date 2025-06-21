@@ -10,7 +10,7 @@ import DeleteClassForm from '../../../components/DeleteClassForm';
 import DeleteClassDialog from '../../../components/DeleteClassDialog';
 import DuplicateClassDialog from '../../../components/DuplicateClassDialog';
 import DuplicateClassForm from '../../../components/DuplicateClassForm';
-import studentSlice, { StudentThunkAction } from '../../../redux/slices/studentSlice';
+import studentSlice, { studentsApi } from '../../../redux/slices/studentSlice';
 import colors from '../../../constant/colors';
 import Label from '../../../components/Label';
 import ViewClassDialog from '../../../components/ViewClassDialog';
@@ -23,7 +23,7 @@ import MoveConfirmationForm from './MoveConfirmationForm';
 import MoveConfirmationDialog from './MoveConfirmationDialog';
 import useGetStudentIdFromParam from '../../../hooks/useGetStudentIdFromParam';
 import classNames from 'classnames';
-import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
+import useAnchorTimestamp from '../../../hooks/useStudentDetailPathParam';
 import { AliceMenu } from '@/components/AliceMenu';
 import getColorForClassStatus from '@/utils/getColorForClassStatus';
 import getDisplayNameFromClassStatus from '@/utils/getDisplayNameFromClassStatus';
@@ -44,15 +44,22 @@ export default function StudentClassForWeeklyTimetable(props: {
         colIndex,
         rowIndex,
     } = props;
-    const lesson = useAppSelector(
-        s =>
-            s.student.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestampToLesson?.[
-                String(currGridHourUnixTimestamp)
-            ]
+
+    const { lesson } = studentsApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
+        { studentId },
+        {
+            skip: !studentId,
+            selectFromResult: ({ data }) => {
+                return {
+                    lesson: data?.hrUnixTimestampToLesson?.[String(currGridHourUnixTimestamp)],
+                };
+            },
+        }
     );
+
     const showLabel = lesson != null;
     const showAll = useAppSelector(s => s.student.studentDetailTimetablePage.showAllClassesForOneStudent);
-    const timetable = useAppSelector(s => s.student.studentDetailTimetablePage.weeklyClassEvent);
+
     const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
 
@@ -123,43 +130,44 @@ export default function StudentClassForWeeklyTimetable(props: {
         [lesson, selectedPackageId]
     );
 
+    // update class mutation
+    const [updateClass] = studentsApi.endpoints.updateClass.useMutation();
+
     const updateClassStatus = (status: Class_status) => {
         const cls = lesson?.class;
         if (cls?.classNumber && cls?.min && cls?.actualClassroom) {
-            dispatch(
-                StudentThunkAction.updateClass({
-                    class_status: status,
-                    classId: cls?.id,
-                    min: cls?.min,
-                    reason_for_absence: '',
-                    remark: cls?.remark ? cls?.remark : '',
-                    actual_classroom: cls?.actualClassroom as Classroom,
-                })
-            )
-                .unwrap()
-                .then(() => {
-                    if (!lesson) {
-                        return;
-                    }
-                    dispatch(
-                        StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                            studentId: lesson.student.id,
-                        })
-                    );
-                    dispatch(
-                        StudentThunkAction.getStudentPackages({
-                            studentId: lesson.student.id,
-                        })
-                    );
-                });
+            updateClass({
+                class_status: status,
+                classId: cls?.id,
+                min: cls?.min,
+                reason_for_absence: '',
+                remark: cls?.remark ? cls?.remark : '',
+                actual_classroom: cls?.actualClassroom as Classroom,
+            }).unwrap();
         }
     };
     // To account for the numbering of classes
+    // get hrUnixTimestampToLesson
+    const { hrUnixTimestampToLesson = {} } = studentsApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
+        { studentId },
+        {
+            skip: !studentId,
+            selectFromResult: ({ data }) => {
+                return {
+                    hrUnixTimestampToLesson: data?.hrUnixTimestampToLesson,
+                };
+            },
+        }
+    );
+
+    // detach api
+    const [detachFromGroup] = studentsApi.endpoints.detachFromGroup.useMutation();
+
     useEffect(() => {
-        if (lesson && timetable.hrUnixTimestampToLesson) {
+        if (lesson && hrUnixTimestampToLesson) {
             let currentClassNumber = 0;
 
-            const sortedClasses = Object.values(timetable.hrUnixTimestampToLesson).sort((a, b) => {
+            const sortedClasses = Object.values(hrUnixTimestampToLesson).sort((a, b) => {
                 return a.class.hourUnixTimestamp - b.class.hourUnixTimestamp;
             });
 
@@ -176,21 +184,18 @@ export default function StudentClassForWeeklyTimetable(props: {
                 }
             });
         }
-    }, [lesson, timetable.hrUnixTimestampToLesson]);
+    }, [lesson, hrUnixTimestampToLesson]);
 
+    const [moveStudentEvent] = studentsApi.endpoints.moveStudentEvent.useMutation();
     const onValidDrop = async (fromClassEvent: TimetableLesson) => {
         const move = async () => {
             try {
-                await dispatch(
-                    StudentThunkAction.moveStudentEvent({
-                        fromClassEvent,
-                        toDayTimestamp: String(currGridDayUnixTimestamp),
-                        toHourTimestamp: String(currGridHourUnixTimestamp),
-                    })
-                ).unwrap();
+                await moveStudentEvent({
+                    fromClassEvent,
+                    toDayTimestamp: String(currGridDayUnixTimestamp),
+                    toHourTimestamp: String(currGridHourUnixTimestamp),
+                }).unwrap();
             } finally {
-                dispatch(StudentThunkAction.getStudentClassesForWeeklyTimetable({ studentId }));
-                dispatch(StudentThunkAction.getStudentPackages({ studentId }));
                 MoveConfirmationDialog.setOpen(false);
             }
         };
@@ -324,11 +329,10 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     item: 'Detach from group',
                                                     disabled: !disableDuplicate,
                                                     onClick: async () => {
-                                                        await dispatch(
-                                                            StudentThunkAction.detachFromGroup({
-                                                                classId: lesson.class.id,
-                                                            })
-                                                        ).unwrap();
+                                                        await detachFromGroup({
+                                                            classId: lesson.class.id,
+                                                            studentId: studentId,
+                                                        }).unwrap();
                                                     },
                                                 },
                                                 {
@@ -341,21 +345,6 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                                 classGroup={lesson.classGroup}
                                                                 cls={lesson.class}
                                                                 course={lesson.course}
-                                                                onDeletion={async () => {
-                                                                    const studentId = lesson.student.id;
-                                                                    dispatch(
-                                                                        StudentThunkAction.getStudentClassesForWeeklyTimetable(
-                                                                            {
-                                                                                studentId: studentId,
-                                                                            }
-                                                                        )
-                                                                    );
-                                                                    dispatch(
-                                                                        StudentThunkAction.getStudentPackages({
-                                                                            studentId: studentId,
-                                                                        })
-                                                                    );
-                                                                }}
                                                             />
                                                         ));
                                                         DeleteClassDialog.setOpen(true);
@@ -371,21 +360,6 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                                 classGroup={lesson.classGroup}
                                                                 cls={lesson.class}
                                                                 course={lesson.course}
-                                                                onDeletion={async () => {
-                                                                    const studentId = lesson.student.id;
-                                                                    dispatch(
-                                                                        StudentThunkAction.getStudentClassesForWeeklyTimetable(
-                                                                            {
-                                                                                studentId: studentId,
-                                                                            }
-                                                                        )
-                                                                    );
-                                                                    dispatch(
-                                                                        StudentThunkAction.getStudentPackages({
-                                                                            studentId: studentId,
-                                                                        })
-                                                                    );
-                                                                }}
                                                             />
                                                         ));
                                                         DeleteClassDialog.setOpen(true);
@@ -434,11 +408,13 @@ export default function StudentClassForWeeklyTimetable(props: {
                                             <Box
                                                 onDoubleClick={() => {
                                                     dispatch(
-                                                        studentSlice.actions.setSelectedPackageId({
-                                                            packageId: lesson.studentPackage.id + '',
-                                                            setURLAnchorTimestamp: setURLAnchorTimestamp,
-                                                            desiredAnchorTimestamp: lesson.class.hourUnixTimestamp,
-                                                        })
+                                                        studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp(
+                                                            {
+                                                                packageId: lesson.studentPackage.id + '',
+                                                                setURLAnchorTimestamp: setURLAnchorTimestamp,
+                                                                desiredAnchorTimestamp: lesson.class.hourUnixTimestamp,
+                                                            }
+                                                        )
                                                     );
                                                 }}
                                                 sx={{

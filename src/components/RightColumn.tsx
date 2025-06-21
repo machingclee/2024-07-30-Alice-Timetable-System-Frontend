@@ -6,7 +6,7 @@ import Sep from '../components/Sep';
 import { Button, Calendar } from 'antd';
 import type { CalendarProps } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
-import studentSlice from '../redux/slices/studentSlice';
+import studentSlice, { studentsApi } from '../redux/slices/studentSlice';
 import { AppDispatch } from '../redux/store';
 import { StatuesFilter } from '../dto/dto';
 import { FaFilter } from 'react-icons/fa';
@@ -17,22 +17,67 @@ import ClassFilterItem from './CourseFilterItem';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { Box, CircularProgress } from '@mui/material';
 import statues from '../constant/statues';
-import useRefetchMassTimetables from '../hooks/useRefetchMassTimetables';
 import ContentContainer from './ContentContainer';
 import useDayTimestampToNumOfClassesQuery from '@/reactQueries/query/useDayTimestampToNumOfClassesQueryQuery';
 import clsx from 'clsx';
 import useCustomHolidaysQuery from '@/reactQueries/query/useCustomHolidaysQuery';
+import { Class_status } from '@/dto/kotlinDto';
+import { coursesApi } from '@/redux/slices/courseSlice';
 
 export default function RightColumn() {
     const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom);
-    const summaryOfClassStatues = useAppSelector(s => s.student.massTimetablePage.summaryOfClassStatuses);
-    const courseIds = useAppSelector(s => s.class.courses.ids);
-    const selectedFilterCourseIds = useAppSelector(s => s.student.massTimetablePage.filter.courseIds);
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
+    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
+    const [getFilteredStudentClassesForDailyTimetable] =
+        studentsApi.endpoints.getFilteredStudentClassesForDailyTimetable.useLazyQuery();
+
+    const { summaryOfClassStatuses, refetch: refetchClassesForDailyTimetable } =
+        studentsApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
+            {
+                classRoom: classroom || 'CAUSEWAY_BAY',
+                anchorTimestamp: dayjs(selectedDate).startOf('day').valueOf(),
+                filter: filter,
+            },
+            {
+                selectFromResult: result => {
+                    const { data } = result;
+                    const { hrUnixTimestampToTimetableClasses = {} } = data || {};
+
+                    const statusToNumOfClasses: Partial<Record<Class_status, number>> = {};
+
+                    Object.entries(hrUnixTimestampToTimetableClasses).forEach(([_hrTimestamp, timetableClasses]) => {
+                        for (const timetableClass of timetableClasses) {
+                            const status = timetableClass.class.classStatus;
+                            statusToNumOfClasses[status] = (statusToNumOfClasses[status] || 0) + 1;
+                        }
+                    });
+
+                    const summaryOfClassStatuses = {
+                        present: statusToNumOfClasses['PRESENT'] || 0,
+                        suspicious_absence: statusToNumOfClasses['SUSPICIOUS_ABSENCE'] || 0,
+                        illegit_absence: statusToNumOfClasses['ILLEGIT_ABSENCE'] || 0,
+                        legit_absence: statusToNumOfClasses['LEGIT_ABSENCE'] || 0,
+                        makeup: statusToNumOfClasses['MAKEUP'] || 0,
+                        changeOfClassroom: statusToNumOfClasses['CHANGE_OF_CLASSROOM'] || 0,
+                        trial: statusToNumOfClasses['TRIAL'] || 0,
+                        reserved: statusToNumOfClasses['RESERVED'] || 0,
+                    };
+
+                    return { summaryOfClassStatuses };
+                },
+            }
+        );
+    const { courseIds } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+        selectFromResult: result => {
+            const { ids = [] } = result?.data || {};
+            return { courseIds: ids };
+        },
+    });
+    const selectedFilterCourseIds = useAppSelector(s => s.student.massTimetablePage.filter.courseIds);
+
     const dispatch = useDispatch<AppDispatch>();
     const [filterByClassStatusOnPress, setFilterByClassStatusOnPress] = useState<boolean>(false);
     const [filterByCourseOnPress, setFilterByCourseOnPress] = useState<boolean>(false);
-    const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
     const holidayQuery = useCustomHolidaysQuery();
 
     const [statuesFilter, setStatuesFilter] = React.useState<StatuesFilter>({
@@ -45,9 +90,9 @@ export default function RightColumn() {
         trial: true,
         reserved: true,
     });
+
     const submitConfirmation = () => {
-        const currentTimestamp = dayjs(selectedDate.getTime()).startOf('day').valueOf();
-        refetchMassTimetableAnchoredAt(currentTimestamp);
+        refetchClassesForDailyTimetable();
     };
 
     const onPanelChange = (value: Dayjs, _mode: CalendarProps<Dayjs>['mode']) => {
@@ -97,7 +142,7 @@ export default function RightColumn() {
                         }}
                     />
                 </td>
-                <td>({summaryOfClassStatues[updateKey]})</td>
+                <td>({summaryOfClassStatuses[updateKey]})</td>
             </tr>
         );
     };
@@ -298,7 +343,14 @@ export default function RightColumn() {
     );
 
     function onDateChanged(date_: Date) {
+        if (!classroom) {
+            return;
+        }
         dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: date_ }));
-        refetchMassTimetableAnchoredAt(dayjs(date_).startOf('day').toDate().getTime());
+        getFilteredStudentClassesForDailyTimetable({
+            classRoom: classroom || 'CAUSEWAY_BAY',
+            anchorTimestamp: dayjs(date_).startOf('day').valueOf(),
+            filter: filter,
+        });
     }
 }

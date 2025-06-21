@@ -5,8 +5,7 @@ import SectionTitle from '../components/SectionTitle';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { Box } from '@mui/material';
 import FormInputTitle from '../components/FormInputTitle';
-import { CourseThunkAction } from '../redux/slices/courseSlice';
-import { StudentThunkAction } from '../redux/slices/studentSlice';
+import { studentsApi } from '../redux/slices/studentSlice';
 import toastUtil from '../utils/toastUtil';
 import AddClassEventDialog from '../components/AddClassEventDialog';
 import { CreateClassRequest } from '../dto/dto';
@@ -15,7 +14,7 @@ import dayjs from 'dayjs';
 import range from '../utils/range';
 import { Classroom } from '../prismaTypes/types';
 import appSlice from '../redux/slices/appSlice';
-import useQueryThunk from '../reactQueries/query/useQueryThunk';
+import { coursesApi } from '@/redux/slices/courseSlice';
 
 export default function AddClassEventForm(props: {
     isTimeslotInThePast: boolean;
@@ -26,29 +25,32 @@ export default function AddClassEventForm(props: {
 }) {
     const { dayUnixTimestamp, hourUnixTimestamp, studentId, resetDefaultNumOfClasses, isTimeslotInThePast } = props;
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
-    const defaultClassroom = useAppSelector(
-        s =>
-            s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[selectedPackageId]
-                ?.studentPackage.defaultClassroom
+    const [addClass] = studentsApi.endpoints.addClass.useMutation();
+    const { selectedPackageDetail: selectedPackageDetail } = studentsApi.endpoints.getStudentPackages.useQuery(
+        { studentId },
+        {
+            selectFromResult: result => {
+                const { idToStudentPackage } = result?.data || {};
+                const studentPackage = idToStudentPackage?.[selectedPackageId];
+                return { selectedPackageDetail: studentPackage };
+            },
+            skip: !selectedPackageId,
+        }
     );
-    const defaultCourseId = useAppSelector(
-        s =>
-            s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[selectedPackageId]?.course.id ||
-            0
-    );
-    const defaultMin = useAppSelector(
-        s =>
-            s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[selectedPackageId]
-                ?.studentPackage.min || 0
-    );
-    const defaultNumOfClasses_ = useAppSelector(
-        s =>
-            s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[selectedPackageId]
-                ?.studentPackage.numOfClasses || 1
-    );
+    const defaultClassroom = selectedPackageDetail?.studentPackage.defaultClassroom;
+    const defaultCourseId = selectedPackageDetail?.course.id;
+    const defaultMin = selectedPackageDetail?.studentPackage.min;
+
+    const defaultNumOfClasses_ = selectedPackageDetail?.studentPackage.numOfClasses || 1;
     const defaultNumOfClasses = resetDefaultNumOfClasses ? 1 : defaultNumOfClasses_;
+
     const dispatch = useAppDispatch();
-    const courses = useAppSelector(s => s.class.courses);
+    const { courses } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+        selectFromResult: result => {
+            const { idToCourse, ids } = result?.data || {};
+            return { courses: { idToCourse, ids } };
+        },
+    });
     const formData = useRef<Partial<CreateClassRequest>>({
         dayUnixTimestamp: dayUnixTimestamp,
         hourUnixTimestamp: hourUnixTimestamp,
@@ -69,25 +71,12 @@ export default function AddClassEventForm(props: {
         const createClassForm = formData.current as CreateClassRequest;
         try {
             AddClassEventDialog.setOpen(false);
-            await dispatch(
-                StudentThunkAction.createStudentClassEvent({
-                    req: { ...createClassForm, isTimeslotInThePast },
-                    studentId,
-                })
-            ).unwrap();
+            await addClass({ studentId, createClassRequest: createClassForm }).unwrap();
             toastUtil.success('Class Created');
-            dispatch(
-                StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                    studentId,
-                })
-            );
-            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
         } finally {
             dispatch(appSlice.actions.setLoading(false));
         }
     };
-
-    useQueryThunk({ thunk: CourseThunkAction.getCourses, staleTime: 1000 })();
 
     const classroomOptions: Classroom[] = ['PRINCE_EDWARD', 'CAUSEWAY_BAY'];
 

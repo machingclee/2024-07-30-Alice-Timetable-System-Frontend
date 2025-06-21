@@ -1,23 +1,24 @@
 import SectionTitle from '../../components/SectionTitle';
-import { useAppSelector } from '../../redux/hooks';
-import { CourseThunkAction } from '../../redux/slices/courseSlice';
+import { coursesApi } from '../../redux/slices/courseSlice';
 import Spacer from '../../components/Spacer';
 import ClassRow from './components/CourseRow';
 import { Button } from 'antd';
 import AddClassDialog from './components/AddCourseDialog';
 import AddClassForm from './components/AddCourseForm';
-import useQueryThunk from '../../reactQueries/query/useQueryThunk';
 import ContentContainer from '@/components/ContentContainer';
 
 export default function Courses() {
-    const ids = useAppSelector(s => s.class.courses.ids) || [];
+    const { courseIds } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+        selectFromResult: result => {
+            const courseIds = result?.data?.ids || [];
+            return { courseIds };
+        },
+    });
 
     const openAddClassDialog = () => {
         AddClassDialog.setContent(() => () => <AddClassForm />);
         AddClassDialog.setOpen(true);
     };
-
-    useQueryThunk({ thunk: CourseThunkAction.getCourses })();
 
     return (
         <div>
@@ -29,8 +30,8 @@ export default function Courses() {
             </div>
             <Spacer />
             <ContentContainer className="h-[calc(100vh-120px)] grid grid-cols-1 gap-2 min-[1550px]:grid-cols-2 overflow-y-scroll">
-                {ids.map(id => {
-                    return <ClassRow id={id} key={id} />;
+                {courseIds.map(id => {
+                    return <ClassRow courseId={id} key={id} />;
                 })}
             </ContentContainer>
             <AddClassDialog.render />

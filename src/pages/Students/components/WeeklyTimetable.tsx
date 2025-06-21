@@ -12,7 +12,7 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { Button } from 'antd';
 import CustomScrollbarContainer from '../../../components/CustomScrollbarContainer';
 import FadeIn from '../../../components/FadeIn';
-import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
+import useAnchorTimestamp from '../../../hooks/useStudentDetailPathParam';
 import ContentContainer from '@/components/ContentContainer';
 
 export type WeeklyCoordinate = {

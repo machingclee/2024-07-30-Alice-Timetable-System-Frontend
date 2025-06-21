@@ -93,7 +93,7 @@ export type CreateCourseRequest = {
     courseName: string;
 };
 
-export type CourseResponse = {
+export type CourseDTO = {
     courseName: string;
     createdAt: number;
     createdAtHk: string;
@@ -153,6 +153,7 @@ export type DuplicateClassRequest = {
 
 export type DetachClassRequest = {
     classId: number;
+    studentId: string;
 };
 
 export type UpdateClassRequest = {

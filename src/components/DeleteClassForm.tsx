@@ -2,42 +2,38 @@ import { Alert, Box, Table } from '@mui/material';
 import SectionTitle from './SectionTitle';
 import Spacer from './Spacer';
 import { Button } from 'antd';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { StudentThunkAction } from '../redux/slices/studentSlice';
 import DeleteClassDialog from './DeleteClassDialog';
 import colors from '../constant/colors';
 import dayjs from 'dayjs';
 import { ClassDTO, ClassGroupDTO, CourseDTO } from '../dto/kotlinDto';
 import Sep from './Sep';
+import { studentsApi } from '@/redux/slices/studentSlice';
 
 export default function DeleteClassForm(props: {
     deleteSingleClass: boolean;
     course: CourseDTO;
     classGroup: ClassGroupDTO | null;
     cls: ClassDTO;
-    onDeletion: () => Promise<void>;
+    onDeletion?: () => Promise<void>;
 }) {
     const { course, classGroup, cls: class_, onDeletion, deleteSingleClass } = props;
-    const courseName = useAppSelector(s => s.class.courses.idToCourse?.[course.id || 0])?.courseName;
+    const courseName = course.courseName;
     const classAt = dayjs(class_.hourUnixTimestamp).format('HH:mm');
     const classOn = dayjs(class_.dayUnixTimestamp).format('dddd');
     const startedFromDate = dayjs(class_.hourUnixTimestamp).format('YYYY-MM-DD');
-    const dispatch = useAppDispatch();
     const hasDuplicationGroup = classGroup?.id != null;
+    const [deleteClassMutation] = studentsApi.endpoints.deleteClass.useMutation();
+    const [deleteSingleClassMutation] = studentsApi.endpoints.deleteSingleClass.useMutation();
 
     const deleteClass = async () => {
         if (!deleteSingleClass) {
-            await dispatch(
-                StudentThunkAction.deleteClass({
-                    classId: class_.id,
-                })
-            ).unwrap();
+            await deleteClassMutation({
+                classId: class_.id,
+            }).unwrap();
         } else {
-            await dispatch(
-                StudentThunkAction.deleteSingleClass({
-                    classId: class_.id,
-                })
-            ).unwrap();
+            await deleteSingleClassMutation({
+                classId: class_.id,
+            }).unwrap();
         }
         onDeletion?.();
         DeleteClassDialog.setOpen(false);

@@ -5,8 +5,7 @@ import SectionTitle from '../../../components/SectionTitle';
 import dayjs from 'dayjs';
 import { Box } from '@mui/material';
 import { GetPackageClassStatusResponse } from '../../../dto/kotlinDto';
-import useQueryThunk from '../../../reactQueries/query/useQueryThunk';
-import studentSlice, { StudentDetailPage, StudentThunkAction } from '../../../redux/slices/studentSlice';
+import studentSlice, { StudentDetailPage, studentsApi } from '../../../redux/slices/studentSlice';
 import { FaChevronLeft } from 'react-icons/fa6';
 import { Button, Spin } from 'antd';
 import FadeIn from '../../../components/FadeIn';
@@ -21,6 +20,7 @@ import { CiCalendarDate } from 'react-icons/ci';
 import { IoMdTime } from 'react-icons/io';
 import { AliceMenu } from '@/components/AliceMenu';
 import ContentContainer from '@/components/ContentContainer';
+import { useParams } from 'react-router-dom';
 
 export const Container = (props: PropsWithChildren) => {
     return (
@@ -40,20 +40,41 @@ export const Container = (props: PropsWithChildren) => {
 };
 
 export default function PackageClassesStatus() {
+    const { studentId } = useParams<{ studentId: string }>();
     const packageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
-    const pkg = useAppSelector(
-        s => s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[packageId]
+
+    // get studekt package from package id
+    const { studentPackage } = studentsApi.endpoints.getStudentPackages.useQuery(
+        { studentId: studentId || '' },
+        {
+            skip: !studentId,
+            selectFromResult: ({ data }) => {
+                return {
+                    studentPackage: data?.idToStudentPackage?.[packageId],
+                };
+            },
+        }
     );
     const dispatch = useAppDispatch();
-    const course = pkg?.course;
-    const { query, invalidation: invalidateClassStatues } = useQueryThunk({
-        thunk: StudentThunkAction.getClassesStatus,
-    })({ packageId });
-    const classInfos = query.data;
+    const course = studentPackage?.course;
+
+    // use class status
+    const {
+        data: classStatuses,
+        refetch: refetchClassStatuses,
+        isLoading,
+    } = studentsApi.endpoints.getClassesStatus.useQuery(
+        {
+            packageId,
+        },
+        {
+            skip: !packageId,
+        }
+    );
+    const classInfos = classStatuses;
     const backToTimetable = () => {
         dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_TIME_TABLE));
     };
-    const { isLoading } = query;
 
     if (isLoading) {
         return <Spin />;
@@ -83,7 +104,9 @@ export default function PackageClassesStatus() {
                                 return (
                                     <ClassStatusRow
                                         classInfo={classInfo}
-                                        invalidateClassStatues={invalidateClassStatues}
+                                        invalidateClassStatues={async () => {
+                                            await refetchClassStatuses();
+                                        }}
                                     />
                                 );
                             })}
@@ -101,8 +124,6 @@ export const ClassStatusRow = (props: {
 }) => {
     const { cls, course, dateUnixTimestamp, student, classGroup } = props.classInfo;
     const invalidateClassStatues = props.invalidateClassStatues;
-
-    const dispatch = useAppDispatch();
     const hourUnixTimestamp = cls.hourUnixTimestamp;
     const classStatus = cls.classStatus;
     const formattedDay = dayjs(hourUnixTimestamp).format('YYYY-MM-DD');
@@ -157,20 +178,6 @@ export const ClassStatusRow = (props: {
                                     classGroup={classGroup}
                                     cls={cls}
                                     course={course}
-                                    onDeletion={async () => {
-                                        const studentId = student.id;
-                                        dispatch(
-                                            StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                                                studentId,
-                                            })
-                                        );
-                                        dispatch(
-                                            StudentThunkAction.getStudentPackages({
-                                                studentId,
-                                            })
-                                        );
-                                        invalidateClassStatues();
-                                    }}
                                 />
                             ));
                             DeleteClassDialog.setOpen(true);
@@ -186,20 +193,6 @@ export const ClassStatusRow = (props: {
                                     classGroup={classGroup}
                                     cls={cls}
                                     course={course}
-                                    onDeletion={async () => {
-                                        const studentId = student.id;
-                                        dispatch(
-                                            StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                                                studentId,
-                                            })
-                                        );
-                                        dispatch(
-                                            StudentThunkAction.getStudentPackages({
-                                                studentId,
-                                            })
-                                        );
-                                        invalidateClassStatues();
-                                    }}
                                 />
                             ));
                             DeleteClassDialog.setOpen(true);

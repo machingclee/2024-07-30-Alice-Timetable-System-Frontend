@@ -7,8 +7,8 @@ import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 import appSlice from './slices/appSlice';
 import authSlice, { authMiddleware } from './slices/authSlice';
 import userSlice, { userMiddleware } from './slices/userSlice';
-import studentSlice, { studentMiddleware } from './slices/studentSlice';
-import classSlice, { classMiddleware } from './slices/courseSlice';
+import studentSlice, { studentsApi } from './slices/studentSlice';
+import classSlice, { coursesApi } from './slices/courseSlice';
 import competitionSlice, { competitionMiddleware } from './slices/competitionSlice';
 import ticketSlice, { ticketMiddleware } from './slices/ticketSlice';
 import notificationSlice, { notificationMiddleware } from './slices/notificationSlice';
@@ -45,21 +45,23 @@ export const store = configureStore({
         app: appSlice.reducer,
         user: userSlice.reducer,
         student: studentSlice.reducer,
+        studentsApi: studentsApi.reducer,
+        courseApi: coursesApi.reducer,
         class: classSlice.reducer,
         competition: competitionSlice.reducer,
         ticket: ticketSlice.reducer,
         notification: notificationSlice.reducer,
     },
     middleware: getDefaultMiddleware =>
-        getDefaultMiddleware({ serializableCheck: false }).concat(
+        getDefaultMiddleware({ serializableCheck: false }).concat([
             authMiddleware.middleware,
             userMiddleware.middleware,
-            studentMiddleware.middleware,
-            classMiddleware.middleware,
             competitionMiddleware.middleware,
             ticketMiddleware.middleware,
-            notificationMiddleware.middleware
-        ),
+            notificationMiddleware.middleware,
+            studentsApi.middleware,
+            coursesApi.middleware,
+        ]),
 });
 
 export const persistor = persistStore(store);

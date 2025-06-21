@@ -1,34 +1,42 @@
 import { Box } from '@mui/material';
 import SectionTitle from '../../../../components/SectionTitle';
 import Spacer from '../../../../components/Spacer';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button, DatePicker, Select } from 'antd';
-import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
-import { StudentThunkAction } from '../../../../redux/slices/studentSlice';
 import EditPackageDialog from './../components/EditPackageDialog';
 import FormInputTitle from '../../../../components/FormInputTitle';
 import { UpdateStudentPackageRequest } from '../../../../dto/dto';
-import { CourseThunkAction } from '../../../../redux/slices/courseSlice';
 import range from '../../../../utils/range';
 import { Classroom } from '../../../../prismaTypes/types';
-import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { studentsApi } from '@/redux/slices/studentSlice';
+import { useParams } from 'react-router-dom';
+import { coursesApi } from '@/redux/slices/courseSlice';
 
 export default function EditPackageForm(props: { packageId: string }) {
     const { packageId } = props;
     const { studentId } = useParams<{ studentId: string }>();
-    const packageInfo = useAppSelector(
-        s => s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[packageId]
+    // get package info from package id
+    const { packageInfo } = studentsApi.endpoints.getStudentPackages.useQuery(
+        { studentId: studentId || '' },
+        {
+            skip: !studentId,
+            selectFromResult: ({ data }) => {
+                return {
+                    packageInfo: data?.idToStudentPackage?.[packageId],
+                };
+            },
+        }
     );
 
     const [error, _] = useState<Partial<UpdateStudentPackageRequest>>({});
-    const dispatch = useAppDispatch();
-    const classes = useAppSelector(s => s.class.courses);
+    const { data: courses } = coursesApi.endpoints.getCourses.useQuery();
     const formData = useRef<Partial<UpdateStudentPackageRequest>>({});
     const updateFormData = (update: Partial<UpdateStudentPackageRequest>) => {
         formData.current = { ...formData.current, ...update };
     };
-
+    // update package mutation
+    const [updatePackage] = studentsApi.endpoints.updatePackage.useMutation();
     const submit = async () => {
         if (!packageInfo) {
             return;
@@ -44,17 +52,8 @@ export default function EditPackageForm(props: { packageId: string }) {
             expiry_date: formData.current.expiry_date || 0,
         };
         EditPackageDialog.setOpen(false);
-        await dispatch(StudentThunkAction.updatePackage(reqBody)).unwrap();
-        await dispatch(
-            StudentThunkAction.getStudentPackages({
-                studentId: studentId || '',
-            })
-        );
+        await updatePackage({ req: reqBody }).unwrap();
     };
-
-    useEffect(() => {
-        dispatch(CourseThunkAction.getCourses());
-    }, [dispatch]);
 
     const classroomOptions: Classroom[] = ['PRINCE_EDWARD', 'CAUSEWAY_BAY'];
 
@@ -80,8 +79,8 @@ export default function EditPackageForm(props: { packageId: string }) {
                 onChange={value => {
                     updateFormData({ course_id: value });
                 }}
-                options={classes.ids?.map(id_ => {
-                    const { courseName, id } = classes.idToCourse?.[id_] || {};
+                options={courses?.ids?.map(id_ => {
+                    const { courseName, id } = courses?.idToCourse?.[id_] || {};
                     return {
                         value: id || 0,
                         label: courseName || '',

@@ -7,13 +7,12 @@ import SectionTitle from '../SectionTitle';
 import Spacer from '../Spacer';
 
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import studentSlice from '../../redux/slices/studentSlice';
+import studentSlice, { studentsApi } from '../../redux/slices/studentSlice';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import ViewClassDialog from '../ViewClassDialog';
 import TimeRow from './components/TimeRow';
 import { PrintHandler } from '../PrintButton';
 import Interval from '../../utils/Interval';
-import useRefetchMassTimetables from '../../hooks/useRefetchMassTimetables';
 import ContentContainer from '../ContentContainer';
 const gridHeight = 30;
 
@@ -28,12 +27,31 @@ export default function DailyTimetable({
 }) {
     const dispatch = useAppDispatch();
     const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
-    const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
+    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
+    const numOfDays = useAppSelector(s => s.student.massTimetablePage.numOfDaysToDisplay);
+
+    // const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
+    const [refetchMassTimetableAnchoredAt] =
+        studentsApi.endpoints.getFilteredStudentClassesForDailyTimetable.useLazyQuery();
+    const { hrUnixTimestampToClasses = {} } = studentsApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
+        {
+            anchorTimestamp: date.getTime(),
+            classRoom: classRoom!,
+            filter,
+            numOfDays,
+        },
+        {
+            skip: !classRoom,
+            selectFromResult: result => {
+                const { hrUnixTimestampToTimetableClasses } = result?.data || {};
+                return { hrUnixTimestampToClasses: hrUnixTimestampToTimetableClasses };
+            },
+        }
+    );
     const [hoursColumnGrid, setHoursColumn] = useState<string[]>([]);
     const hrUnixTimestampOnClick = useAppSelector(
         s => s.student.massTimetablePage.totalClassesInHighlight.hrUnixTimestampOnClick
     );
-    const hrUnixTimestampToClasses = useAppSelector(s => s.student.massTimetablePage.hrUnixTimestampToTimetableClasses);
 
     // Memoize the half-hour intervals to prevent recalculation on every render
     const oneForthHourIntervals = useMemo(() => {
@@ -138,7 +156,12 @@ export default function DailyTimetable({
                                 const prevDayjs = dayjs(date).subtract(1 + dayOffset, 'day');
                                 const prevDate = prevDayjs.toDate();
                                 dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDate }));
-                                refetchMassTimetableAnchoredAt(prevDate.getTime());
+                                refetchMassTimetableAnchoredAt({
+                                    anchorTimestamp: prevDate.getTime(),
+                                    classRoom: classRoom!,
+                                    filter,
+                                    numOfDays,
+                                });
                             }}
                         >
                             <div
@@ -165,7 +188,12 @@ export default function DailyTimetable({
                                 const nextDayjs = dayjs(date).add(1 - dayOffset, 'day');
                                 const nextDate = nextDayjs.toDate();
                                 dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDate }));
-                                refetchMassTimetableAnchoredAt(nextDate.getTime());
+                                refetchMassTimetableAnchoredAt({
+                                    anchorTimestamp: nextDate.getTime(),
+                                    classRoom: classRoom!,
+                                    filter,
+                                    numOfDays,
+                                });
                             }}
                         >
                             <div

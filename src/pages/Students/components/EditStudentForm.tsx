@@ -11,7 +11,7 @@ import { Box } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
-import studentSlice, { StudentThunkAction } from '../../../redux/slices/studentSlice';
+import studentSlice, { studentsApi } from '../../../redux/slices/studentSlice';
 import EditStudentDialog from './EditStudentDialog';
 import { Switch } from '@/components/ui/switch';
 
@@ -51,10 +51,12 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
         console.log('formData.current:', formData.current);
     };
 
+    const [updateStudent] = studentsApi.endpoints.updateStudent.useMutation();
+
     const submit = async () => {
         console.log('formData.current:', formData.current);
         console.log('Hi!');
-        dispatch(StudentThunkAction.updateStudent(formData.current))
+        await updateStudent({ studentId, req: formData.current })
             .unwrap()
             .then(() => {
                 toastUtil.success('User Created');

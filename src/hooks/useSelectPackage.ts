@@ -1,18 +1,20 @@
 import { useAppDispatch } from '@/redux/hooks';
 import studentSlice from '@/redux/slices/studentSlice';
-import useAnchorTimestamp from './useAnchorTimestamp';
+import useAnchorTimestamp from './useStudentDetailPathParam';
 import RouteEnum from '@/enum/RouteEnum';
 import { useNavigate } from 'react-router-dom';
 
 export default () => {
-    const { anchorTimestamp, setURLAnchorTimestamp } = useAnchorTimestamp();
+    const { anchorTimestamp, setPathParam } = useAnchorTimestamp();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const selectPackage = (packageId: string) => {
         dispatch(
-            studentSlice.actions.setSelectedPackageId({
+            studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp({
                 packageId: packageId || '',
-                setURLAnchorTimestamp: setURLAnchorTimestamp,
+                desiredAnchorTimestamp: anchorTimestamp,
+                setURLAnchorTimestamp: timestamp =>
+                    setPathParam({ anchorTimestamp: timestamp, packageId: packageId || '' }),
             })
         );
     };
@@ -22,5 +24,5 @@ export default () => {
         navigate(url, { replace: true });
     };
 
-    return { selectPackage, setURLAnchorTimestamp, anchorTimestamp, navigateToPackage };
+    return { selectPackage, setPathParam, anchorTimestamp, navigateToPackage };
 };

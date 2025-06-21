@@ -3,8 +3,6 @@ import Spacer from './Spacer';
 import { PropsWithChildren, useRef, useState } from 'react';
 import { Button, Select, Input } from 'antd';
 import durations from '../constant/durations';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { StudentThunkAction } from '../redux/slices/studentSlice';
 import { $Enums, Classroom } from '../prismaTypes/types';
 import { MdEdit } from 'react-icons/md';
 import classStatuses from '../constant/classStatuses';
@@ -13,6 +11,7 @@ import getColorForClassStatus from '../utils/getColorForClassStatus';
 import getNumberSuffix from '../utils/getNumberSuffix';
 import { ClassDTO, CourseDTO, StudentDTO } from '../dto/kotlinDto';
 import boxShadow from '../constant/boxShadow';
+import { studentsApi } from '@/redux/slices/studentSlice';
 
 export default function ViewClassForm(props: {
     student: StudentDTO;
@@ -22,10 +21,8 @@ export default function ViewClassForm(props: {
     dateUnixTimestamp: number;
     isEditing?: boolean;
 }) {
-    const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
-    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const [editing, setEditing] = useState(props.isEditing || false);
-    const { cls, course, dateUnixTimestamp, student, onSubmit = () => {} } = props;
+    const { cls, course, onSubmit = () => {} } = props;
     const formData = useRef({
         min: cls.min,
         class_status: cls.classStatus,
@@ -33,7 +30,7 @@ export default function ViewClassForm(props: {
         actual_classroom: cls.actualClassroom,
         reason_for_absence: cls.reasonForAbsence,
     });
-    const dispatch = useAppDispatch();
+    const [updateClassMutation] = studentsApi.endpoints.updateClass.useMutation();
 
     const classroomOptions: Classroom[] = ['PRINCE_EDWARD', 'CAUSEWAY_BAY'];
 
@@ -217,39 +214,14 @@ export default function ViewClassForm(props: {
                         type="primary"
                         block
                         onClick={async () => {
-                            await dispatch(
-                                StudentThunkAction.updateClass({
-                                    classId: cls.id,
-                                    min: formData.current.min,
-                                    class_status: formData.current.class_status,
-                                    reason_for_absence: '',
-                                    remark: formData.current.remark || '',
-                                    actual_classroom: formData.current.actual_classroom as $Enums.Classroom,
-                                })
-                            )
-                                .unwrap()
-                                .finally(() => {
-                                    if (classRoom && dateUnixTimestamp) {
-                                        dispatch(
-                                            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                                                classRoom: classRoom,
-                                                anchorTimestamp: dateUnixTimestamp,
-                                                filter: filter,
-                                            })
-                                        );
-                                    } else {
-                                        dispatch(
-                                            StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                                                studentId: student.id,
-                                            })
-                                        );
-                                    }
-                                });
-                            dispatch(
-                                StudentThunkAction.getStudentPackages({
-                                    studentId: student.id,
-                                })
-                            );
+                            await updateClassMutation({
+                                classId: cls.id,
+                                min: formData.current.min,
+                                class_status: formData.current.class_status,
+                                reason_for_absence: '',
+                                remark: formData.current.remark || '',
+                                actual_classroom: formData.current.actual_classroom as $Enums.Classroom,
+                            }).unwrap();
                             onSubmit();
                             ViewClassDialog.setOpen(false);
                         }}

@@ -2,11 +2,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import SectionTitle from '../../../components/SectionTitle';
 import { useEffect, useState } from 'react';
-import studentSlice, { StudentDetailPage, StudentThunkAction } from '../../../redux/slices/studentSlice';
+import studentSlice, { StudentDetailPage, studentsApi } from '../../../redux/slices/studentSlice';
 import Spacer from '../../../components/Spacer';
 import WeeklyTimetable from '../components/WeeklyTimetable';
 import AddClassEventDialog from '../../../components/AddClassEventDialog';
-import { CourseThunkAction } from '../../../redux/slices/courseSlice';
 import DuplicateClassDialog from '../../../components/DuplicateClassDialog';
 import MoveConfirmationDialog from '../components/MoveConfirmationDialog';
 import AddPackageDialog from '../components/AddPackageDialog';
@@ -17,39 +16,36 @@ import ViewClassDialog from '../../../components/ViewClassDialog';
 import EditPackageDialog from './components/EditPackageDialog';
 import { FaChevronLeft } from 'react-icons/fa6';
 import { Box, CircularProgress } from '@mui/material';
-import useQueryThunk from '../../../reactQueries/query/useQueryThunk';
 import { Button, Input } from 'antd';
 import RouteEnum from '../../../enum/RouteEnum';
 import PackageClassesStatus from '../components/PackageClassesStatus';
-import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
+import useStudentDetailPathParam from '../../../hooks/useStudentDetailPathParam';
 import { IoMdReturnLeft } from 'react-icons/io';
 import ContentContainer from '@/components/ContentContainer';
 
 export default function StudentDetail() {
-    const { anchorTimestamp, setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
+    const { anchorTimestamp, packageId, setPathParam } = useStudentDetailPathParam();
     const { studentId } = useParams<{ studentId: string }>();
     const displayType = useAppSelector(s => s.student.studentDetailTimetablePage.activePage);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [collapseTimetable, setCollapseTimetable] = useState(false);
-    const studentDetail = useAppSelector(s => s.student.studentDetailTimetablePage.detail);
-    const { firstName, lastName, chineseFirstName, chineseLastName, studentCode } = studentDetail || {};
+
+    const { studentDetail, isLoading: studentDetailLoading } = studentsApi.endpoints.getStudentDetail.useQuery(
+        { studentId: studentId || '' },
+        {
+            skip: !studentId,
+            selectFromResult: result => {
+                const studentDetail = result.data;
+                return { studentDetail, isLoading: result.isLoading };
+            },
+        }
+    );
+
+    const { firstName, lastName, chineseFirstName, chineseLastName, studentCode } = studentDetail?.student || {};
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
 
-    const {
-        query: { isLoading: studentDetailoading },
-    } = useQueryThunk({ thunk: StudentThunkAction.getStudentDetail })({ studentId: studentId || '' });
-    const {
-        query: { isLoading: packageLoading },
-    } = useQueryThunk({ thunk: StudentThunkAction.getStudentPackages })({ studentId: studentId || '' });
-
-    const {
-        query: { isLoading: timetableLoading },
-    } = useQueryThunk({ thunk: StudentThunkAction.getStudentClassesForWeeklyTimetable })({
-        studentId: studentId || '',
-    });
-
-    const isLoading = studentDetailoading || packageLoading || timetableLoading;
+    const isLoading = studentDetailLoading;
 
     const navAttendences = () => {
         const destination = `${RouteEnum.STUDENT_INFO}/${studentId}`;
@@ -65,15 +61,17 @@ export default function StudentDetail() {
 
     // To get courses in case the user wants to add a course to the timetable
 
-    useQueryThunk({ thunk: CourseThunkAction.getCourses })();
-
     useEffect(() => {
-        if (anchorTimestamp) {
-            setAnchorTimestamp(anchorTimestamp);
-        } else {
-            setAnchorTimestamp(new Date().getTime());
-        }
-    }, []);
+        dispatch(
+            studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp({
+                packageId: packageId || '',
+                desiredAnchorTimestamp: anchorTimestamp,
+                setURLAnchorTimestamp: (timestamp: number) => {
+                    setPathParam({ anchorTimestamp: timestamp, packageId: packageId || '' });
+                },
+            })
+        );
+    }, [anchorTimestamp, packageId]);
 
     useEffect(() => {
         return () => {
