@@ -34,6 +34,7 @@ import documentId from '../../constant/documentId';
 import getEnv from '@/utils/getEnv';
 import axios from 'axios';
 import baseQuery from '@/axios/baseQuery';
+import createSortedKey from '@/utils/createSortedKey';
 
 export enum StudentDetailPage {
     STUDENT_TIME_TABLE = 'STUDENT_TIME_TABLE',
@@ -108,6 +109,7 @@ export const studentsApi = createApi({
         'StudentDailyClasses',
         'StudentDetail',
     ],
+    keepUnusedDataFor: 0,
     endpoints: builder => ({
         getStudents: builder.query<
             { studentIdToStudent: { [id: string]: StudentDTO }; studentIds: string[]; total: number },
@@ -127,7 +129,9 @@ export const studentsApi = createApi({
                 url: apiRoutes.POST_CREATE_EXTENDED_CLASSES_FOR_HOLIDAY(classroom, dayTimestamp),
                 method: 'POST',
             }),
-            invalidatesTags: ['StudentDailyClasses'],
+            invalidatesTags: (_, __, { classroom, dayTimestamp }) => {
+                return [{ type: 'StudentDailyClasses', id: createSortedKey({ classroom, dayTimestamp }) }];
+            },
         }),
 
         updateStudent: builder.mutation<StudentDTO, { studentId: string; req: Partial<UpdateStudentRequest> }>({
@@ -170,7 +174,7 @@ export const studentsApi = createApi({
                 });
                 return { hrUnixTimestampToLesson: idToObject, hrUnixTimestamps: ids };
             },
-            providesTags: ['StudentWeeklyClasses'],
+            providesTags: (_, __, param) => [{ type: 'StudentWeeklyClasses', id: param?.studentId }],
             keepUnusedDataFor: 60, // 60s
         }),
         addClass: builder.mutation<StudentDTO, { studentId: string; createClassRequest: CreateClassRequest }>({
@@ -194,8 +198,7 @@ export const studentsApi = createApi({
             { studentId: string }
         >({
             query: ({ studentId }) => apiRoutes.GET_STUDENT_PACKAGES(studentId),
-            transformResponse: (response: { packages: StudentPackageRepsonse[] }) => {
-                const { packages } = response;
+            transformResponse: (packages: StudentPackageRepsonse[]) => {
                 const { idToObject: idToStudentPackage, ids: packageIds } = normalizeUtil.normalize({
                     idAttribute: 'packageId',
                     targetArr: packages,

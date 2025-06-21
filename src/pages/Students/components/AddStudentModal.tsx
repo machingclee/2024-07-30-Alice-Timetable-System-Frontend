@@ -42,7 +42,7 @@ export default function AddStudentModal(props: AliceModalProps) {
     const submit = async () => {
         const wechatId = formData.current.wechat_id?.trim();
         const createStudetnRequest = { ...formData.current, wechat_id: wechatId ? wechatId : null };
-        await createStudentMutation(createStudetnRequest);
+        await createStudentMutation(createStudetnRequest).unwrap();
         toastUtil.success('User Created');
     };
 

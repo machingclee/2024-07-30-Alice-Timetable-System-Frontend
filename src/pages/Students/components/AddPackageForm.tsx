@@ -86,7 +86,6 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
         dispatch(
             studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp({
                 packageId: result.id + '',
-                studentId: studentId,
                 setURLAnchorTimestamp: setURLAnchorTimestamp,
                 desiredAnchorTimestamp: result.startDate,
                 weeklyClassEvent,
