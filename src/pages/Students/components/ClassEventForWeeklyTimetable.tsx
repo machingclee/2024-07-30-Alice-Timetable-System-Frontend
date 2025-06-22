@@ -10,7 +10,8 @@ import DeleteClassForm from '../../../components/DeleteClassForm';
 import DeleteClassDialog from '../../../components/DeleteClassDialog';
 import DuplicateClassDialog from '../../../components/DuplicateClassDialog';
 import DuplicateClassForm from '../../../components/DuplicateClassForm';
-import studentSlice, { studentsApi } from '../../../redux/slices/studentSlice';
+import studentSlice from '../../../redux/slices/studentSlice';
+import { studentApi } from '../../../!!rtk-query/api/studentApi';
 import colors from '../../../constant/colors';
 import Label from '../../../components/Label';
 import ViewClassDialog from '../../../components/ViewClassDialog';
@@ -45,7 +46,7 @@ export default function StudentClassForWeeklyTimetable(props: {
         rowIndex,
     } = props;
 
-    const { lesson } = studentsApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
+    const { lesson } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
         { studentId },
         {
             skip: !studentId,
@@ -131,7 +132,7 @@ export default function StudentClassForWeeklyTimetable(props: {
     );
 
     // update class mutation
-    const [updateClass] = studentsApi.endpoints.updateClass.useMutation();
+    const [updateClass] = studentApi.endpoints.updateClass.useMutation();
 
     const updateClassStatus = (status: Class_status) => {
         const cls = lesson?.class;
@@ -148,7 +149,7 @@ export default function StudentClassForWeeklyTimetable(props: {
     };
     // To account for the numbering of classes
     // get hrUnixTimestampToLesson
-    const { hrUnixTimestampToLesson = {} } = studentsApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
+    const { hrUnixTimestampToLesson = {} } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
         { studentId },
         {
             skip: !studentId,
@@ -161,7 +162,7 @@ export default function StudentClassForWeeklyTimetable(props: {
     );
 
     // detach api
-    const [detachFromGroup] = studentsApi.endpoints.detachFromGroup.useMutation();
+    const [detachFromGroupMutation] = studentApi.endpoints.detachFromGroup.useMutation();
 
     useEffect(() => {
         if (lesson && hrUnixTimestampToLesson) {
@@ -186,7 +187,7 @@ export default function StudentClassForWeeklyTimetable(props: {
         }
     }, [lesson, hrUnixTimestampToLesson]);
 
-    const [moveStudentEvent] = studentsApi.endpoints.moveStudentEvent.useMutation();
+    const [moveStudentEvent] = studentApi.endpoints.moveStudentEvent.useMutation();
     const onValidDrop = async (fromClassEvent: TimetableLesson) => {
         const move = async () => {
             try {
@@ -329,7 +330,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     item: 'Detach from group',
                                                     disabled: !disableDuplicate,
                                                     onClick: async () => {
-                                                        await detachFromGroup({
+                                                        await detachFromGroupMutation({
                                                             classId: lesson.class.id,
                                                             studentId: studentId,
                                                         }).unwrap();
@@ -410,6 +411,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     dispatch(
                                                         studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp(
                                                             {
+                                                                type: 'go-to-target-lesson',
                                                                 packageId: lesson.studentPackage.id + '',
                                                                 setURLAnchorTimestamp: setURLAnchorTimestamp,
                                                                 desiredAnchorTimestamp: lesson.class.hourUnixTimestamp,

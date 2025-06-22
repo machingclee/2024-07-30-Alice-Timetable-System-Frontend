@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import studentSlice from '../redux/slices/studentSlice';
-import { useEffect } from 'react';
 import { Button, Select } from 'antd';
 import { IoMdArrowBack } from 'react-icons/io';
 import SectionTitle from './SectionTitle';
@@ -20,11 +19,6 @@ export default function MassTimetable(props: { timetableName: string }) {
         dispatch(studentSlice.actions.seMassTimetableNumOfDaysToDisplay(numOfDays));
     };
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
-    useEffect(() => {
-        return () => {
-            dispatch(studentSlice.actions.reset());
-        };
-    }, [dispatch]);
 
     return (
         <div

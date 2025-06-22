@@ -2,7 +2,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import SectionTitle from '../../../components/SectionTitle';
 import { useEffect, useState } from 'react';
-import studentSlice, { StudentDetailPage, studentsApi } from '../../../redux/slices/studentSlice';
+import studentSlice, { StudentDetailPage } from '../../../redux/slices/studentSlice';
+import { studentApi } from '../../../!!rtk-query/api/studentApi';
 import Spacer from '../../../components/Spacer';
 import WeeklyTimetable from '../components/WeeklyTimetable';
 import AddClassEventDialog from '../../../components/AddClassEventDialog';
@@ -31,7 +32,7 @@ export default function StudentDetail() {
     const dispatch = useAppDispatch();
     const [collapseTimetable, setCollapseTimetable] = useState(false);
 
-    const { studentDetail, isLoading: studentDetailLoading } = studentsApi.endpoints.getStudentDetail.useQuery(
+    const { studentDetail, isLoading: studentDetailLoading } = studentApi.endpoints.getStudentDetail.useQuery(
         { studentId: studentId || '' },
         {
             skip: !studentId,
@@ -64,6 +65,7 @@ export default function StudentDetail() {
     useEffect(() => {
         dispatch(
             studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp({
+                type: 'go-to-target-lesson',
                 packageId: packageId || '',
                 desiredAnchorTimestamp: anchorTimestamp,
                 setURLAnchorTimestamp: (timestamp: number) => {
@@ -71,7 +73,7 @@ export default function StudentDetail() {
                 },
             })
         );
-    }, [anchorTimestamp, packageId]);
+    }, [anchorTimestamp, packageId, dispatch, setPathParam]);
 
     useEffect(() => {
         return () => {

@@ -5,7 +5,7 @@ import ViewClassForm from './ViewClassForm';
 import ViewClassDialog from './ViewClassDialog';
 import StudentClassCard from './StudentClassCard';
 import dayjs from 'dayjs';
-import { studentsApi } from '../redux/slices/studentSlice';
+import { studentApi } from '../!!rtk-query/api/studentApi';
 import { useNavigate } from 'react-router-dom';
 import RouteEnum from '../enum/RouteEnum';
 import { Modal } from 'antd';
@@ -21,6 +21,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
     rowIndex: number;
 }) {
     const [moveClassConfirmationOpen, setMoveClassConfirmationOpen] = useState(false);
+    const numOfDays = useAppSelector(s => s.student.massTimetablePage.numOfDaysToDisplay);
     const [classToMove, setClassToMove] = useState<TimetableLesson | null>(null);
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
@@ -29,21 +30,16 @@ export default function StudentsClassForDailyTimetableByHour(props: {
     const dayUnixTimestamp = dayjs(currHourUnixTimestamp).startOf('day').valueOf();
     const [showSwitchStudentDetailPageConfirmation, setShowSwitchStudentDetailPageConfirmation] = useState(false);
     const navigate = useNavigate();
+    const [detachFromGroup] = studentApi.endpoints.detachFromGroup.useMutation();
 
-    const { classesThisHour } = studentsApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
-        {
-            anchorTimestamp: dayjs(selectedDate).startOf('day').toDate().getTime(),
-            classRoom: classroom as ClassRoom,
-            filter: filter,
-        },
-        {
-            skip: !classroom,
-            selectFromResult: result => {
-                const { data } = result;
-                const { hrUnixTimestampToTimetableClasses = {} } = data || {};
-                return { classesThisHour: hrUnixTimestampToTimetableClasses[currHourUnixTimestamp] || [] };
-            },
-        }
+    const classesThisHour = useAppSelector(
+        s =>
+            studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.select({
+                anchorTimestamp: dayjs(selectedDate).startOf('day').valueOf(),
+                numOfDays,
+                classRoom: classroom as ClassRoom,
+                filter: JSON.parse(JSON.stringify(filter)),
+            })(s).data?.hrUnixTimestampToTimetableClasses[currHourUnixTimestamp]
     );
 
     const time = dayjs(currHourUnixTimestamp);
@@ -58,14 +54,18 @@ export default function StudentsClassForDailyTimetableByHour(props: {
     };
 
     const { refetch: refetchMassTimetableAnchoredAt } =
-        studentsApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery({
-            anchorTimestamp: dayjs(selectedDate).startOf('day').toDate().getTime(),
-            classRoom: classroom as ClassRoom,
-            filter: filter,
-        });
+        studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
+            {
+                anchorTimestamp: dayjs(selectedDate).startOf('day').valueOf(),
+                classRoom: classroom as ClassRoom,
+                filter: JSON.parse(JSON.stringify(filter)),
+                numOfDays: 1,
+            },
+            { skip: !classroom }
+        );
 
     // use moveStudentEvent API
-    const [moveStudentEvent] = studentsApi.endpoints.moveStudentEvent.useMutation();
+    const [moveStudentEvent] = studentApi.endpoints.moveStudentEvent.useMutation();
 
     const moveClass = async (fromClass: TimetableLesson) => {
         await moveStudentEvent({
@@ -121,7 +121,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                     height: '100%',
                 }}
             >
-                {classesThisHour.map((classEvent, index) => {
+                {classesThisHour?.map((classEvent, index) => {
                     const contextMenuId = `${classEvent?.student.id || ''}-${classEvent?.class.hourUnixTimestamp || ''}`;
                     return (
                         <Draggable
@@ -160,6 +160,16 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                                         />
                                                     ));
                                                     ViewClassDialog.setOpen(true);
+                                                },
+                                            },
+                                            {
+                                                item: 'Detach from group',
+                                                disabled: classEvent.classGroup === null,
+                                                onClick: async () => {
+                                                    await detachFromGroup({
+                                                        classId: classEvent.class.id,
+                                                        studentId: classEvent.student.id,
+                                                    }).unwrap();
                                                 },
                                             },
                                             {

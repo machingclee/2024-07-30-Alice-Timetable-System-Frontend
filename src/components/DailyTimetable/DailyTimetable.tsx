@@ -7,7 +7,8 @@ import SectionTitle from '../SectionTitle';
 import Spacer from '../Spacer';
 
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import studentSlice, { studentsApi } from '../../redux/slices/studentSlice';
+import studentSlice from '../../redux/slices/studentSlice';
+import { studentApi } from '../../!!rtk-query/api/studentApi';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import ViewClassDialog from '../ViewClassDialog';
 import TimeRow from './components/TimeRow';
@@ -32,12 +33,12 @@ export default function DailyTimetable({
 
     // const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
     const [refetchMassTimetableAnchoredAt] =
-        studentsApi.endpoints.getFilteredStudentClassesForDailyTimetable.useLazyQuery();
-    const { hrUnixTimestampToClasses = {} } = studentsApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
+        studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useLazyQuery();
+    const { hrUnixTimestampToClasses = {} } = studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
         {
-            anchorTimestamp: date.getTime(),
+            anchorTimestamp: dayjs(date).startOf('day').valueOf(),
             classRoom: classRoom!,
-            filter,
+            filter: JSON.parse(JSON.stringify(filter)),
             numOfDays,
         },
         {
@@ -78,8 +79,8 @@ export default function DailyTimetable({
             const t_max = dayjs(hrUnixTimestampOnClick).add(15, 'minute').valueOf();
             const intervalOnClick = new Interval(t_min, t_max - 1);
 
-            Object.values(hrUnixTimestampToClasses).forEach(timetableClass => {
-                timetableClass.forEach(timetableClass => {
+            Object.values(hrUnixTimestampToClasses).forEach(timetableClasses => {
+                timetableClasses.forEach(timetableClass => {
                     const hourUnixTimestamp = timetableClass.class.hourUnixTimestamp;
                     const package_ = timetableClass.studentPackage;
                     const min = package_.min;
@@ -124,7 +125,7 @@ export default function DailyTimetable({
                 '& .freeze': {
                     transform: 'translate(0px,0px) !important',
                 },
-                '& .grid-hour: nth-child(n+1)': {
+                '& .grid-hour:nth-of-type(n+1)': {
                     width: '120px',
                     height: `${gridHeight - 1}px`,
                 },
@@ -157,9 +158,9 @@ export default function DailyTimetable({
                                 const prevDate = prevDayjs.toDate();
                                 dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDate }));
                                 refetchMassTimetableAnchoredAt({
-                                    anchorTimestamp: prevDate.getTime(),
+                                    anchorTimestamp: dayjs(prevDate).startOf('day').valueOf(),
                                     classRoom: classRoom!,
-                                    filter,
+                                    filter: JSON.parse(JSON.stringify(filter)),
                                     numOfDays,
                                 });
                             }}
@@ -189,9 +190,9 @@ export default function DailyTimetable({
                                 const nextDate = nextDayjs.toDate();
                                 dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDate }));
                                 refetchMassTimetableAnchoredAt({
-                                    anchorTimestamp: nextDate.getTime(),
+                                    anchorTimestamp: dayjs(nextDate).startOf('day').valueOf(),
                                     classRoom: classRoom!,
-                                    filter,
+                                    filter: JSON.parse(JSON.stringify(filter)),
                                     numOfDays,
                                 });
                             }}
@@ -220,7 +221,7 @@ export default function DailyTimetable({
                                 padding: '20px', // Print-specific padding
                                 pageBreakInside: 'avoid',
                             },
-                            '& .grid-time: nth-child(n+1)': {
+                            '& .grid-time:nth-of-type(n+1)': {
                                 paddingRight: '14px',
                                 height: `${gridHeight + 5}px`,
                                 display: 'flex',

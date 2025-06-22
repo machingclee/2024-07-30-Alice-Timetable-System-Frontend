@@ -2,21 +2,29 @@ import { Box } from '@mui/material';
 import { LuCat } from 'react-icons/lu';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { RoleInSystem, User } from '../../../dto/dto';
+import { RoleInSystem, UserDTO } from '../../../dto/dto';
 import { Button, Input, Select } from 'antd';
 import Spacer from '../../../components/Spacer';
-import { UserThunkAction } from '../../../redux/slices/userSlice';
 import lodash, { debounce } from 'lodash';
+import { userApi } from '@/!!rtk-query/api/userApi';
+import toastUtil from '@/utils/toastUtil';
+import authSlice from '@/redux/slices/authSlice';
 
-export default function UserRow(props: { id: string }) {
-    const { id } = props;
+export default function UserRow(props: { email: string }) {
+    const { email: email } = props;
     const authData = useAppSelector(s => s.auth.user);
-    const dipatch = useAppDispatch();
     const [hasDistinction, setHasDistinction] = useState(false);
     const [startEdit, setStartEdit] = useState(false);
-    const user = useAppSelector(s => s.user.users.idToObject?.[id])!;
+    const dispatch = useAppDispatch();
+    const [updateUserMutation] = userApi.endpoints.updateUser.useMutation();
 
-    const { company_email, first_name, last_name, mobile_number, role_in_company, role_in_system } = user;
+    const { user } = userApi.endpoints.getUsers.useQuery(undefined, {
+        selectFromResult: result => {
+            const user = result.data?.userToUser?.[email] || null;
+            return { user };
+        },
+    });
+
     const formData = useRef(user);
 
     const checkDataDistinction = useCallback(
@@ -29,7 +37,10 @@ export default function UserRow(props: { id: string }) {
         [user]
     );
 
-    const onFieldUpdate = (update: Partial<User>) => {
+    const onFieldUpdate = (update: Partial<UserDTO>) => {
+        if (!formData.current) {
+            return;
+        }
         formData.current = { ...formData.current, ...update };
         checkDataDistinction();
     };
@@ -41,11 +52,16 @@ export default function UserRow(props: { id: string }) {
     ];
 
     const handleSymRoleChange = (value: string) => {
-        onFieldUpdate({ role_in_system: value as RoleInSystem });
+        onFieldUpdate({ roleInSystem: value as RoleInSystem });
     };
 
     const submitUpdate = async () => {
-        await dipatch(UserThunkAction.updateUser({ ...user, ...formData.current })).unwrap();
+        if (!user) {
+            return;
+        }
+        const updatedUser = await updateUserMutation({ ...user, ...formData.current }).unwrap();
+        toastUtil.success('User Updated');
+        dispatch(authSlice.actions.updateAuthData(updatedUser));
         setStartEdit(false);
     };
 
@@ -68,16 +84,16 @@ export default function UserRow(props: { id: string }) {
             <div className="flex bg-emerald-50 border-b-[1px] border-emerald-200 px-4 py-1.5 items-center justify-between">
                 <div className="flex items-center gap-2 text-xl ">
                     <LuCat />
-                    {!startEdit && <td>{`${first_name} ${last_name}`}</td>}
+                    {!startEdit && <td>{`${user.firstName} ${user.lastName}`}</td>}
                     {startEdit && (
                         <>
                             <div className="w-full flex">
                                 <div>
                                     <Input
-                                        defaultValue={first_name}
+                                        defaultValue={user.firstName}
                                         onChange={e =>
                                             onFieldUpdate({
-                                                first_name: e.target.value,
+                                                firstName: e.target.value,
                                             })
                                         }
                                     />
@@ -85,10 +101,10 @@ export default function UserRow(props: { id: string }) {
                                 <Spacer height={1} width={15} />
                                 <div>
                                     <Input
-                                        defaultValue={last_name}
+                                        defaultValue={user.lastName}
                                         onChange={e =>
                                             onFieldUpdate({
-                                                last_name: e.target.value,
+                                                lastName: e.target.value,
                                             })
                                         }
                                     />
@@ -128,13 +144,13 @@ export default function UserRow(props: { id: string }) {
                         border: 'none',
                         outline: 'none',
                     },
-                    '& td:nth-child(1)': {
+                    '& td:nth-of-type(1)': {
                         verticalAlign: 'middle',
                         width: '100px',
                         color: 'rgb(150,150,150)',
                         marginBottom: '5px',
                     },
-                    '& td:nth-child(2), & td:nth-child(3)': {
+                    '& td:nth-of-type(2), & td:nth-of-type(3)': {
                         display: 'flex',
                         width: '300px',
                         borderRadius: '4px',
@@ -148,17 +164,17 @@ export default function UserRow(props: { id: string }) {
                     <tbody>
                         <tr>
                             <td>Email</td>
-                            <td>{company_email}</td>
+                            <td>{user.companyEmail}</td>
                         </tr>
                         <tr>
                             <td>Position</td>
-                            {!startEdit && <td>{role_in_company}</td>}
+                            {!startEdit && <td>{user.roleInCompany}</td>}
                             {startEdit && (
                                 <td>
                                     <UpdateTextField
-                                        defaultValue={role_in_company}
+                                        defaultValue={user.roleInCompany}
                                         onChange={t => {
-                                            onFieldUpdate({ role_in_company: t });
+                                            onFieldUpdate({ roleInCompany: t });
                                         }}
                                     />
                                 </td>
@@ -166,13 +182,13 @@ export default function UserRow(props: { id: string }) {
                         </tr>
                         <tr>
                             <td>Phone</td>
-                            {!startEdit && <td>{mobile_number}</td>}
+                            {!startEdit && <td>{user.mobileNumber}</td>}
                             {startEdit && (
                                 <td>
                                     <UpdateTextField
-                                        defaultValue={mobile_number}
+                                        defaultValue={user.mobileNumber}
                                         onChange={t => {
-                                            onFieldUpdate({ mobile_number: t });
+                                            onFieldUpdate({ mobileNumber: t });
                                         }}
                                     />
                                 </td>
@@ -187,14 +203,14 @@ export default function UserRow(props: { id: string }) {
                                         fontFamily: 'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
                                     }}
                                 >
-                                    {role_in_system}
+                                    {user.roleInSystem}
                                 </td>
                             )}
                             {startEdit && (
                                 <td>
                                     <Select
                                         dropdownStyle={{ zIndex: 10 ** 4 }}
-                                        defaultValue={role_in_system}
+                                        defaultValue={user.roleInSystem}
                                         style={{ width: 130 }}
                                         onChange={handleSymRoleChange}
                                         options={roleSelections}

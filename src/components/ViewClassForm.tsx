@@ -11,7 +11,7 @@ import getColorForClassStatus from '../utils/getColorForClassStatus';
 import getNumberSuffix from '../utils/getNumberSuffix';
 import { ClassDTO, CourseDTO, StudentDTO } from '../dto/kotlinDto';
 import boxShadow from '../constant/boxShadow';
-import { studentsApi } from '@/redux/slices/studentSlice';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
 
 export default function ViewClassForm(props: {
     student: StudentDTO;
@@ -30,7 +30,7 @@ export default function ViewClassForm(props: {
         actual_classroom: cls.actualClassroom,
         reason_for_absence: cls.reasonForAbsence,
     });
-    const [updateClassMutation] = studentsApi.endpoints.updateClass.useMutation();
+    const [updateClassMutation] = studentApi.endpoints.updateClass.useMutation();
 
     const classroomOptions: Classroom[] = ['PRINCE_EDWARD', 'CAUSEWAY_BAY'];
 

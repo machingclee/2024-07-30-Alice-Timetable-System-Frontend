@@ -8,19 +8,20 @@ import { Switch } from '@mui/material';
 import CustomScrollbarContainer from '../../../../components/CustomScrollbarContainer';
 import StudentPackage from './StudentPackage';
 import { useDispatch } from 'react-redux';
-import studentSlice, { studentsApi } from '../../../../redux/slices/studentSlice';
+import studentSlice from '../../../../redux/slices/studentSlice';
 import { MdOutlineEventNote } from 'react-icons/md';
 import { StudentPackageRepsonse } from '../../../../dto/kotlinDto';
 import { Separator } from '@/components/ui/separator';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
 
 export default function StudentPackageColumn(props: { packagesOffsetY: number; collapseTimtable: boolean }) {
     const { packagesOffsetY, collapseTimtable } = props;
     // get packages
     const { studentId } = useParams<{ studentId: string }>();
-    const { data: packagesRes } = studentsApi.endpoints.getStudentPackages.useQuery({ studentId: studentId || '' });
+    const { data: packagesRes } = studentApi.endpoints.getStudentPackages.useQuery({ studentId: studentId || '' });
     const dispatch = useDispatch();
     // get student detail
-    const { data: studentDetail } = studentsApi.endpoints.getStudentDetail.useQuery({ studentId: studentId || '' });
+    const { data: studentDetail } = studentApi.endpoints.getStudentDetail.useQuery({ studentId: studentId || '' });
     const { firstName, lastName } = studentDetail?.student || {};
     const label = { inputProps: { 'aria-label': 'Switch demo' } };
     const handleShowAllClassesOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {

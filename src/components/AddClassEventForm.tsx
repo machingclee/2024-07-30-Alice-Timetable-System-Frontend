@@ -5,7 +5,7 @@ import SectionTitle from '../components/SectionTitle';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { Box } from '@mui/material';
 import FormInputTitle from '../components/FormInputTitle';
-import { studentsApi } from '../redux/slices/studentSlice';
+import { studentApi } from '../!!rtk-query/api/studentApi';
 import toastUtil from '../utils/toastUtil';
 import AddClassEventDialog from '../components/AddClassEventDialog';
 import { CreateClassRequest } from '../dto/dto';
@@ -25,8 +25,8 @@ export default function AddClassEventForm(props: {
 }) {
     const { dayUnixTimestamp, hourUnixTimestamp, studentId, resetDefaultNumOfClasses, isTimeslotInThePast } = props;
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
-    const [addClass] = studentsApi.endpoints.addClass.useMutation();
-    const { selectedPackageDetail: selectedPackageDetail } = studentsApi.endpoints.getStudentPackages.useQuery(
+    const [addClass] = studentApi.endpoints.addClass.useMutation();
+    const { selectedPackageDetail: selectedPackageDetail } = studentApi.endpoints.getStudentPackages.useQuery(
         { studentId },
         {
             selectFromResult: result => {

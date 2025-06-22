@@ -1,6 +1,22 @@
+import { coursesApi } from '@/redux/slices/courseSlice';
+import { useAppDispatch } from '@/redux/hooks';
+import studentSlice from '@/redux/slices/studentSlice';
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
-const AllStudentsIndex = () => {
+const MassStudentsTimetableIndex = () => {
+    const dispatch = useAppDispatch();
+
+    const { courseIds } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+        selectFromResult: result => {
+            const courses = result?.data;
+            const courseIds = courses?.ids;
+            return { courseIds };
+        },
+    });
+    useEffect(() => {
+        dispatch(studentSlice.actions.setFilterCourseIds(courseIds || []));
+    }, [courseIds, dispatch]);
     return (
         <>
             <Outlet />
@@ -8,4 +24,4 @@ const AllStudentsIndex = () => {
     );
 };
 
-export default AllStudentsIndex;
+export default MassStudentsTimetableIndex;

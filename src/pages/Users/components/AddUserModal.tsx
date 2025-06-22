@@ -2,26 +2,21 @@ import { Select } from 'antd';
 import Spacer from '../../../components/Spacer';
 import { useRef, useState } from 'react';
 import { CreateUserRequest, RoleInSystem } from '../../../dto/dto';
-import apiClient from '../../../axios/apiClient';
-import apiRoutes from '../../../axios/apiRoutes';
-import { CustomResponse } from '../../../axios/responseTypes';
 import FormInputField from '../../../components/FormInputField';
 import toastUtil from '../../../utils/toastUtil';
 import SectionTitle from '../../../components/SectionTitle';
 import AddUserDialog from './AddUserDialog';
-import { useAppDispatch } from '../../../redux/hooks';
-import { UserThunkAction } from '../../../redux/slices/userSlice';
 import { Box } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
 import { AliceModalProps } from '../../../components/AliceModalTrigger';
+import { userApi } from '@/!!rtk-query/api/userApi';
 
 export default function AddUserModal(props: AliceModalProps) {
     const { setOnOk: setOnOk, setOkText } = props;
-    const dispatch = useAppDispatch();
     const formData = useRef<Partial<CreateUserRequest>>({
         role_in_system: 'STAFF',
     });
-    const [error, setError] = useState<Partial<CreateUserRequest>>({});
+    const [error, _setError] = useState<Partial<CreateUserRequest>>({});
     const update = (update_: Partial<CreateUserRequest>) => {
         formData.current = { ...formData.current, ...update_ };
     };
@@ -35,18 +30,12 @@ export default function AddUserModal(props: AliceModalProps) {
         { value: 'SUPER_ADMIN', label: 'Super Admin' },
     ];
 
+    const [createUserMutation] = userApi.endpoints.createUser.useMutation();
+
     const submit = async () => {
-        const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_USER, formData.current);
-        if (!res.data.success) {
-            const errorObject = res.data?.errorObject;
-            if (errorObject) {
-                setError(errorObject);
-            }
-        } else {
-            toastUtil.success('User Created');
-            AddUserDialog.setOpen(false);
-            dispatch(UserThunkAction.getUsers());
-        }
+        await createUserMutation(formData.current as CreateUserRequest).unwrap();
+        AddUserDialog.setOpen(false);
+        toastUtil.success('User Created');
     };
     setOnOk(submit);
     setOkText('Submit');

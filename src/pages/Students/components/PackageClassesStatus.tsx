@@ -5,7 +5,7 @@ import SectionTitle from '../../../components/SectionTitle';
 import dayjs from 'dayjs';
 import { Box } from '@mui/material';
 import { GetPackageClassStatusResponse } from '../../../dto/kotlinDto';
-import studentSlice, { StudentDetailPage, studentsApi } from '../../../redux/slices/studentSlice';
+import studentSlice, { StudentDetailPage } from '../../../redux/slices/studentSlice';
 import { FaChevronLeft } from 'react-icons/fa6';
 import { Button, Spin } from 'antd';
 import FadeIn from '../../../components/FadeIn';
@@ -21,6 +21,7 @@ import { IoMdTime } from 'react-icons/io';
 import { AliceMenu } from '@/components/AliceMenu';
 import ContentContainer from '@/components/ContentContainer';
 import { useParams } from 'react-router-dom';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
 
 export const Container = (props: PropsWithChildren) => {
     return (
@@ -44,7 +45,7 @@ export default function PackageClassesStatus() {
     const packageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
 
     // get studekt package from package id
-    const { studentPackage } = studentsApi.endpoints.getStudentPackages.useQuery(
+    const { studentPackage } = studentApi.endpoints.getStudentPackages.useQuery(
         { studentId: studentId || '' },
         {
             skip: !studentId,
@@ -63,7 +64,7 @@ export default function PackageClassesStatus() {
         data: classStatuses,
         refetch: refetchClassStatuses,
         isLoading,
-    } = studentsApi.endpoints.getClassesStatus.useQuery(
+    } = studentApi.endpoints.getClassesStatus.useQuery(
         {
             packageId,
         },

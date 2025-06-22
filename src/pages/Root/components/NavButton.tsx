@@ -23,8 +23,8 @@ export default function NavButton(props: {
                 block
                 type={active ? 'primary' : 'text'}
                 onClick={() => {
-                    navigate(routeEnum);
                     props.onClick?.();
+                    navigate(routeEnum);
                 }}
             >
                 <div key={path} style={{ textTransform: 'capitalize' }} className="flex items-center gap-2">

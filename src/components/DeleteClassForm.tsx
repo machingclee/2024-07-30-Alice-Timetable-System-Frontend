@@ -7,7 +7,7 @@ import colors from '../constant/colors';
 import dayjs from 'dayjs';
 import { ClassDTO, ClassGroupDTO, CourseDTO } from '../dto/kotlinDto';
 import Sep from './Sep';
-import { studentsApi } from '@/redux/slices/studentSlice';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
 
 export default function DeleteClassForm(props: {
     deleteSingleClass: boolean;
@@ -22,8 +22,8 @@ export default function DeleteClassForm(props: {
     const classOn = dayjs(class_.dayUnixTimestamp).format('dddd');
     const startedFromDate = dayjs(class_.hourUnixTimestamp).format('YYYY-MM-DD');
     const hasDuplicationGroup = classGroup?.id != null;
-    const [deleteClassMutation] = studentsApi.endpoints.deleteClass.useMutation();
-    const [deleteSingleClassMutation] = studentsApi.endpoints.deleteSingleClass.useMutation();
+    const [deleteClassMutation] = studentApi.endpoints.deleteClass.useMutation();
+    const [deleteSingleClassMutation] = studentApi.endpoints.deleteSingleClass.useMutation();
 
     const deleteClass = async () => {
         if (!deleteSingleClass) {

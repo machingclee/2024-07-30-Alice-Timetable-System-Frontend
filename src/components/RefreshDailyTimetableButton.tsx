@@ -1,7 +1,8 @@
 import { useAppSelector } from '../redux/hooks';
 import { RiRefreshLine } from 'react-icons/ri';
 import { Button } from 'antd';
-import { studentsApi } from '@/redux/slices/studentSlice';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
+import dayjs from 'dayjs';
 
 export default function RefreshDailyTimetableButton() {
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
@@ -9,11 +10,12 @@ export default function RefreshDailyTimetableButton() {
     const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom);
 
     const { refetch: refetchFilteredStudentClassesForDailyTimetable } =
-        studentsApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
+        studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
             {
                 classRoom: classroom || 'CAUSEWAY_BAY',
-                anchorTimestamp: selectedDate.getTime(),
-                filter,
+                anchorTimestamp: dayjs(selectedDate).startOf('day').valueOf(),
+                numOfDays: 1,
+                filter: JSON.parse(JSON.stringify(filter)),
             },
             { skip: !classroom }
         );

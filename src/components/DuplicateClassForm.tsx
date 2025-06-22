@@ -4,13 +4,13 @@ import { useState } from 'react';
 import { Button, Select } from 'antd';
 import DuplicateClassDialog from './DuplicateClassDialog';
 import { ClassDTO } from '../dto/kotlinDto';
-import { studentsApi } from '@/redux/slices/studentSlice';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
 
 export default function DuplicateClassForm(props: { class: ClassDTO; isTimeslotInThePast: boolean }) {
     const { class: classEvent, isTimeslotInThePast } = props;
     const { id } = classEvent;
     const [week, setWeek] = useState(2);
-    const [duplicateClassMutation] = studentsApi.endpoints.duplicateClass.useMutation();
+    const [duplicateClassMutation] = studentApi.endpoints.duplicateClass.useMutation();
     return (
         <Box
             style={{

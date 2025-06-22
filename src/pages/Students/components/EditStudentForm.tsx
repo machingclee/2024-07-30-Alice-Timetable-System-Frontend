@@ -6,24 +6,33 @@ import FormInputField from '../../../components/FormInputField';
 import toastUtil from '../../../utils/toastUtil';
 import SectionTitle from '../../../components/SectionTitle';
 
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
+import { useAppDispatch } from '../../../redux/hooks';
 import { Box } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
-import studentSlice, { studentsApi } from '../../../redux/slices/studentSlice';
+import studentSlice from '../../../redux/slices/studentSlice';
 import EditStudentDialog from './EditStudentDialog';
 import { Switch } from '@/components/ui/switch';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
 
 export default function EditStudentForm({ studentId }: { studentId: string }) {
     const dispatch = useAppDispatch();
-    const student = useAppSelector(s => s.student.students.idToStudent?.[studentId]);
+
+    const { student } = studentApi.endpoints.getStudents.useQuery(undefined, {
+        selectFromResult: result => {
+            const student = result.data?.studentIdToStudent?.[studentId] || null;
+            return { student };
+        },
+    });
+
     const [error, _setError] = useState<Partial<UpdateStudentRequest>>({});
     useEffect(() => {
         if (formData.current) {
             console.log('formData.current:', formData.current);
         }
     }, []);
+
     const formData = useRef<Partial<UpdateStudentRequest>>({
         id: studentId,
         studentCode: student?.studentCode,
@@ -51,7 +60,7 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
         console.log('formData.current:', formData.current);
     };
 
-    const [updateStudent] = studentsApi.endpoints.updateStudent.useMutation();
+    const [updateStudent] = studentApi.endpoints.updateStudent.useMutation();
 
     const submit = async () => {
         console.log('formData.current:', formData.current);
@@ -103,13 +112,13 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
                 title="Chinese Last Name"
                 defaultValue={student.chineseLastName}
                 onChange={t => update({ chineseLastName: t })}
-                error={error?.['chineseFirstName']}
+                error={error?.['chineseLastName']}
             />
             <FormInputField
                 title="Chinese First Name"
-                defaultValue={student.firstName}
+                defaultValue={student.chineseFirstName}
                 onChange={t => update({ chineseFirstName: t })}
-                error={error?.['chineseLastName']}
+                error={error?.['chineseFirstName']}
             />
             <div style={{ display: 'flex' }}>
                 <div>

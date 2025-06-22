@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import { useRef } from 'react';
 
 import AddPaymentDetailDialog from './AddPaymentDetailDialog';
-import { studentsApi } from '@/redux/slices/studentSlice';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
 
 export default function AddPaymentDetailForm(props: { packageId: number }) {
     const { packageId } = props;
@@ -14,7 +14,7 @@ export default function AddPaymentDetailForm(props: { packageId: number }) {
     const currTimeString = dayjs(currTimestamp).format('YYYY-MM-DD');
     const paymentDate = useRef(currTimestamp);
     // mark package as paid mutation
-    const [markPackageAsPaid] = studentsApi.endpoints.markPackageAsPaid.useMutation();
+    const [markPackageAsPaid] = studentApi.endpoints.markPackageAsPaid.useMutation();
     const submit = async () => {
         AddPaymentDetailDialog.setOpen(false);
         await markPackageAsPaid({

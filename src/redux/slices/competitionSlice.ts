@@ -17,7 +17,7 @@ import {
     MultipleChoiceQuestion,
     Question,
     SingleChoiceOption,
-    User,
+    UserDTO,
 } from '../../dto/dto';
 import normalizeUtil from '../../utils/normalizeUtil';
 import lodash, { debounce } from 'lodash';

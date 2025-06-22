@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import SectionTitle from '../../../../components/SectionTitle';
 import Spacer from '../../../../components/Spacer';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, DatePicker, Select } from 'antd';
 import EditPackageDialog from './../components/EditPackageDialog';
 import FormInputTitle from '../../../../components/FormInputTitle';
@@ -9,15 +9,15 @@ import { UpdateStudentPackageRequest } from '../../../../dto/dto';
 import range from '../../../../utils/range';
 import { Classroom } from '../../../../prismaTypes/types';
 import dayjs from 'dayjs';
-import { studentsApi } from '@/redux/slices/studentSlice';
 import { useParams } from 'react-router-dom';
 import { coursesApi } from '@/redux/slices/courseSlice';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
 
 export default function EditPackageForm(props: { packageId: string }) {
     const { packageId } = props;
     const { studentId } = useParams<{ studentId: string }>();
     // get package info from package id
-    const { packageInfo } = studentsApi.endpoints.getStudentPackages.useQuery(
+    const { packageInfo } = studentApi.endpoints.getStudentPackages.useQuery(
         { studentId: studentId || '' },
         {
             skip: !studentId,
@@ -36,26 +36,36 @@ export default function EditPackageForm(props: { packageId: string }) {
         formData.current = { ...formData.current, ...update };
     };
     // update package mutation
-    const [updatePackage] = studentsApi.endpoints.updatePackage.useMutation();
+    const [updatePackage] = studentApi.endpoints.updatePackage.useMutation();
     const submit = async () => {
         if (!packageInfo) {
             return;
         }
         const reqBody: UpdateStudentPackageRequest = {
             id: parseInt(packageId),
+            expiry_date: formData.current.expiry_date || packageInfo.studentPackage.expiryDate,
             course_id: formData.current.course_id || packageInfo.packageId,
             start_date: formData.current.start_date || packageInfo.studentPackage.startDate,
             num_of_classes: formData.current.num_of_classes || packageInfo.studentPackage.numOfClasses,
             min: formData.current.min || packageInfo.studentPackage.min,
             default_classroom: formData.current.default_classroom || packageInfo.studentPackage.defaultClassroom,
-            student_id: packageInfo.student.id,
-            expiry_date: formData.current.expiry_date || 0,
         };
         EditPackageDialog.setOpen(false);
         await updatePackage({ req: reqBody }).unwrap();
     };
 
     const classroomOptions: Classroom[] = ['PRINCE_EDWARD', 'CAUSEWAY_BAY'];
+
+    useEffect(() => {
+        if (packageInfo) {
+            formData.current.course_id = packageInfo.course.id;
+            formData.current.start_date = packageInfo.studentPackage.startDate;
+            formData.current.num_of_classes = packageInfo.studentPackage.numOfClasses;
+            formData.current.min = packageInfo.studentPackage.min;
+            formData.current.default_classroom = packageInfo.studentPackage.defaultClassroom;
+            formData.current.expiry_date = packageInfo.studentPackage.expiryDate;
+        }
+    }, [packageInfo]);
 
     return (
         <Box
@@ -154,7 +164,7 @@ export default function EditPackageForm(props: { packageId: string }) {
                 }))}
             />
             <Spacer />
-            {packageInfo?.studentPackage.expiryDate && (
+            {packageInfo?.studentPackage.expiryDate != null && (
                 <>
                     <div style={{ display: 'flex' }}>
                         <FormInputTitle>Update Expiry Date</FormInputTitle>

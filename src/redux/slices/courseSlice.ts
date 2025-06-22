@@ -26,8 +26,7 @@ export const coursesApi = createApi({
     endpoints: builder => ({
         getCourses: builder.query<{ idToCourse: { [id: number]: CourseDTO }; ids: number[] }, void>({
             query: () => apiRoutes.GET_COURSES,
-            transformResponse: (response: { courses: CourseDTO[] }) => {
-                const { courses } = response;
+            transformResponse: (courses: CourseDTO[]) => {
                 const { idToObject, ids } = normalizeUtil.normalize<CourseDTO, number>({
                     idAttribute: 'id',
                     targetArr: courses,

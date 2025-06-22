@@ -13,12 +13,12 @@ import { IoMdSearch } from 'react-icons/io';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import CustomScrollbarContainer from '@/components/CustomScrollbarContainer';
 import ContentContainer from '@/components/ContentContainer';
-import { studentsApi } from '@/redux/slices/studentSlice';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
 import { CircularProgress } from '@mui/material';
 
 export default function Students() {
     const [filter, setFilter] = useState('');
-    const { data: studentsData, isLoading: isLoadingStudents } = studentsApi.endpoints.getStudents.useQuery();
+    const { data: studentsData, isLoading: isLoadingStudents } = studentApi.endpoints.getStudents.useQuery();
     const { studentIdToStudent, studentIds = [] } = studentsData || {};
 
     const filterRegex = new RegExp(escapeStringRegexp(filter), 'i');

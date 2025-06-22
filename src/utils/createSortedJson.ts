@@ -7,7 +7,7 @@ type SerializableValue =
     | SerializableValue[]
     | { [key: string]: SerializableValue };
 
-const createSortedKey = (obj: SerializableValue): string => {
+const createSortedJson = (obj: SerializableValue): string => {
     const sortedStringify = (value: SerializableValue): SerializableValue => {
         if (value === null || value === undefined || typeof value !== 'object') {
             return value;
@@ -30,4 +30,4 @@ const createSortedKey = (obj: SerializableValue): string => {
     return JSON.stringify(sortedStringify(obj));
 };
 
-export default createSortedKey;
+export default createSortedJson;

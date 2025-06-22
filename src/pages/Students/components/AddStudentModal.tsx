@@ -9,8 +9,8 @@ import { Box } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
-import { studentsApi } from '../../../redux/slices/studentSlice';
 import { AliceModalProps } from '../../../components/AliceModalTrigger';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
 
 const initialDate = '2015-01-01';
 
@@ -37,7 +37,7 @@ export default function AddStudentModal(props: AliceModalProps) {
         formData.current = { ...formData.current, ...update_ };
     };
 
-    const [createStudentMutation] = studentsApi.endpoints.createStudent.useMutation();
+    const [createStudentMutation] = studentApi.endpoints.createStudent.useMutation();
 
     const submit = async () => {
         const wechatId = formData.current.wechat_id?.trim();

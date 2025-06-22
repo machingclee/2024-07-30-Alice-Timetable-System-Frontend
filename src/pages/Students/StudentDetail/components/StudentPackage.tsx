@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
-import studentSlice, { StudentDetailPage, studentsApi } from '../../../../redux/slices/studentSlice';
+import studentSlice, { StudentDetailPage } from '../../../../redux/slices/studentSlice';
 import Sep from '../../../../components/Sep';
 import Spacer from '../../../../components/Spacer';
 import colors from '../../../../constant/colors';
@@ -19,15 +19,31 @@ import toastUtil from '../../../../utils/toastUtil';
 import { AliceMenu } from '@/components/AliceMenu';
 import useSelectPackage from '@/hooks/useSelectPackage';
 import { coursesApi } from '@/redux/slices/courseSlice';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;
-    const { setPathParam, selectPackage, anchorTimestamp } = useSelectPackage();
+    const { setPathParam, selectPackageAtFirstLessonTimestamp, anchorTimestamp } = useSelectPackage();
     const dispatch = useAppDispatch();
+    const { studentId } = useParams<{ studentId: string }>();
+    const { weeklyClassEvent } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
+        { studentId: studentId || '' },
+        {
+            skip: !studentId,
+            selectFromResult: result => {
+                const { hrUnixTimestampToLesson = {}, hrUnixTimestamps = [] } = result?.data || {};
+                return {
+                    weeklyClassEvent: {
+                        timestamps: hrUnixTimestamps,
+                        hrUnixTimestampToLesson,
+                    },
+                };
+            },
+        }
+    );
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
-    const { studentId } = useParams<{ studentId: string }>();
-    const { studentPackage } = studentsApi.endpoints.getStudentPackages.useQuery(
+    const { studentPackage } = studentApi.endpoints.getStudentPackages.useQuery(
         { studentId: studentId || '' },
         {
             skip: !studentId,
@@ -75,7 +91,7 @@ export default function StudentPackage(props: { packageId: string }) {
         // }
     };
 
-    const [markPackageAsUnPaid] = studentsApi.endpoints.markPackageAsUnPaid.useMutation();
+    const [markPackageAsUnPaid] = studentApi.endpoints.markPackageAsUnPaid.useMutation();
 
     const markAsUnPaid = async () => {
         await markPackageAsUnPaid({
@@ -83,7 +99,7 @@ export default function StudentPackage(props: { packageId: string }) {
         }).unwrap();
     };
 
-    const [deletePackageMutation] = studentsApi.endpoints.deletePackage.useMutation();
+    const [deletePackageMutation] = studentApi.endpoints.deletePackage.useMutation();
 
     const deletePackage = async () => {
         if (!studentId) {
@@ -104,6 +120,7 @@ export default function StudentPackage(props: { packageId: string }) {
     const showAttendence = async () => {
         dispatch(
             studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp({
+                type: 'go-to-target-lesson',
                 packageId: packageId || '',
                 desiredAnchorTimestamp: anchorTimestamp,
                 setURLAnchorTimestamp: (timestamp: number) => {
@@ -206,7 +223,7 @@ export default function StudentPackage(props: { packageId: string }) {
                 </Modal>
                 <div
                     onClick={() => {
-                        selectPackage(packageId);
+                        selectPackageAtFirstLessonTimestamp({ packageId, weeklyClassEvent });
                     }}
                 >
                     <div className="p-[5px] flex justify-center font-[600]">{course?.courseName}</div>

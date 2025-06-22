@@ -13,12 +13,13 @@ import { IoNotifications } from 'react-icons/io5';
 import { Badge, Button } from 'antd';
 import RouteEnum from '@/enum/RouteEnum';
 import dashboard_background from '../../assets/dashboard_background.png';
+import { notificationApi } from '@/!!rtk-query/api/notificationApi';
 
 const NotificationButton = () => {
     const navigiate = useNavigate();
-    const numOfNotifications = useAppSelector(
-        s => s.notification.notificationResponses.filter(n => !n.notification.isRead).length
-    );
+    // get notification count from rtk query endpoints
+    const { data: notificationCount } = notificationApi.endpoints.getNotificationCount.useQuery();
+    const numOfNotifications = notificationCount?.count || 0;
     const { pathname } = useLocation();
     const active = /notifications/.test(pathname);
 

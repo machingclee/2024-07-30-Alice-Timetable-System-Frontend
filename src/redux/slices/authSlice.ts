@@ -5,7 +5,7 @@ import { loginApiClient } from '../../axios/apiClient';
 import { CustomResponse } from '../../axios/responseTypes';
 import apiRoutes from '../../axios/apiRoutes';
 import { loadingActions } from '../../utils/loadingActions';
-import { TokenPayload } from '../../dto/dto';
+import { TokenPayload, UserDTO } from '../../dto/dto';
 import { createApiThunk } from '@/utils/createApiThunk';
 
 export type AuthSliceState = {
@@ -36,6 +36,21 @@ const authSlice = createSlice({
     reducers: {
         setClientAccessToken: (state, action: PayloadAction<string>) => {
             state.accessToken = action.payload;
+        },
+        updateAuthData: (state, action: PayloadAction<UserDTO>) => {
+            const updatedUser = action.payload;
+            if (updatedUser.companyEmail !== state.user.company_email) {
+                return;
+            }
+            state.user.avatar_file_url = updatedUser.avatarFileUrl;
+            state.user.company_email = updatedUser.companyEmail;
+            state.user.created_at = updatedUser.createdAt || 0;
+            state.user.first_name = updatedUser.firstName;
+            state.user.is_blocked = updatedUser.isBlocked;
+            state.user.last_name = updatedUser.lastName;
+            state.user.mobile_number = updatedUser.mobileNumber;
+            state.user.role_in_company = updatedUser.roleInCompany;
+            state.user.role_in_system = updatedUser.roleInSystem;
         },
         reset: state => {
             const company_email = state.user?.company_email;

@@ -5,7 +5,7 @@ import SectionTitle from '../../../components/SectionTitle';
 import { useAppDispatch } from '../../../redux/hooks';
 import { Autocomplete, Box, TextField } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
-import studentSlice, { studentsApi } from '../../../redux/slices/studentSlice';
+import studentSlice from '../../../redux/slices/studentSlice';
 import { TimePicker } from 'antd';
 import { CreateStudentPackageRequest } from '../../../dto/dto';
 import dayjs from 'dayjs';
@@ -16,6 +16,7 @@ import colors from '../../../constant/colors';
 import toastUtil from '../../../utils/toastUtil';
 import useAnchorTimestamp from '../../../hooks/useStudentDetailPathParam';
 import { coursesApi } from '@/redux/slices/courseSlice';
+import { studentApi } from '@/!!rtk-query/api/studentApi';
 
 // Function to convert timestamp to the start of the day (midnight)
 const toMidnight = (timestamp: number): number => {
@@ -31,15 +32,6 @@ const toMidnight = (timestamp: number): number => {
 
 export default function AddPackageForm(props: { studentId: string; studentName: string }) {
     const { studentName, studentId } = props;
-    const { weeklyClassEvent } = studentsApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
-        { studentId },
-        {
-            selectFromResult: result => {
-                const { hrUnixTimestampToLesson = {}, hrUnixTimestamps = [] } = result?.data || {};
-                return { weeklyClassEvent: { timestamps: hrUnixTimestamps, hrUnixTimestampToLesson } };
-            },
-        }
-    );
     const [error, _] = useState<Partial<CreateStudentPackageRequest>>({});
     const { setURLAnchorTimestamp } = useAnchorTimestamp();
     const dispatch = useAppDispatch();
@@ -49,7 +41,7 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
             return { courses };
         },
     });
-    const [createStudentPackage] = studentsApi.endpoints.createStudentPackage.useMutation();
+    const [createStudentPackage] = studentApi.endpoints.createStudentPackage.useMutation();
     const formData = useRef<Partial<CreateStudentPackageRequest>>({});
     const updateFormData = (update: Partial<CreateStudentPackageRequest>) => {
         formData.current = { ...formData.current, ...update };
@@ -85,10 +77,10 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
         toastUtil.success('Package added successfully.');
         dispatch(
             studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp({
+                type: 'go-to-target-lesson',
                 packageId: result.id + '',
                 setURLAnchorTimestamp: setURLAnchorTimestamp,
                 desiredAnchorTimestamp: result.startDate,
-                weeklyClassEvent,
             })
         );
     };
