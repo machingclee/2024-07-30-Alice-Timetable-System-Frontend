@@ -4,7 +4,6 @@ import AddPackageForm from '../../components/AddPackageForm';
 import AddPackageDialog from '../../components/AddPackageDialog';
 import { useParams } from 'react-router-dom';
 import Spacer from '../../../../components/Spacer';
-import Sep from '../../../../components/Sep';
 import { Switch } from '@mui/material';
 import CustomScrollbarContainer from '../../../../components/CustomScrollbarContainer';
 import { useAppSelector } from '../../../../redux/hooks';
@@ -13,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import studentSlice from '../../../../redux/slices/studentSlice';
 import { MdOutlineEventNote } from 'react-icons/md';
 import { StudentPackageRepsonse } from '../../../../dto/kotlinDto';
+import { Separator } from '@/components/ui/separator';
 
 export default function StudentPackageColumn(props: { packagesOffsetY: number; collapseTimtable: boolean }) {
     const { packagesOffsetY, collapseTimtable } = props;
@@ -50,14 +50,8 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                     transition: 'opacity 0.5s eas-in-out',
                 }}
             >
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Title>Student Packages</Title>
+                <div className="flex items-center justify-between mb-2">
+                    <Title className="!mb-0">Student Packages</Title>
                     <Button
                         style={{ minWidth: 40, minHeight: 40 }}
                         onClick={() => {
@@ -73,7 +67,7 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                     </Button>
                 </div>
                 <Spacer height={5} />
-                <Sep />
+                <Separator />
                 <Spacer />
                 <div>
                     <div className="mt-2">Show All Classes</div>
@@ -99,26 +93,16 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                                     pkgRes => pkgRes.course.courseName === courseName
                                 );
                                 return (
-                                    <div>
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                            }}
-                                        >
-                                            <MdOutlineEventNote
-                                                size={24}
-                                                style={{
-                                                    marginRight: 5,
-                                                    marginLeft: 5,
-                                                }}
-                                            />
+                                    <div className="border-1 border-emerald-400 mt-2 p-2 rounded-xl space-y-2 bg-teal-100">
+                                        <div className="flex items-center gap-1.5 pl-0.5">
+                                            <MdOutlineEventNote size={19} />
                                             {courseName}
                                         </div>
                                         <div
                                             style={{
                                                 display: collapseTimtable ? 'flex' : 'unset',
                                             }}
+                                            className="!space-y-4"
                                         >
                                             {packagesRes?.map(pkgRes => {
                                                 return (
@@ -129,7 +113,6 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                                                 );
                                             })}
                                         </div>
-                                        <Spacer />
                                     </div>
                                 );
                             })}

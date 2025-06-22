@@ -9,7 +9,7 @@ import { ClickToComponent } from 'click-to-react-component';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <ClickToComponent />
+        <ClickToComponent editor="cursor" />
         <App />
     </React.StrictMode>
 );

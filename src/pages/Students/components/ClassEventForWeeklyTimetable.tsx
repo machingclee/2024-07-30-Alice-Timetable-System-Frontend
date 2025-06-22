@@ -18,13 +18,15 @@ import ViewClassForm from '../../../components/ViewClassForm';
 import { Classroom } from '../../../prismaTypes/types';
 import { Droppable } from '../../../components/DragAndDrop/Droppable';
 import { Draggable } from '../../../components/DragAndDrop/Draggable';
-import { Class_status, TimetableClassEvent as TimetableClassEvent } from '../../../dto/kotlinDto';
+import { Class_status, TimetableLesson as TimetableLesson } from '../../../dto/kotlinDto';
 import MoveConfirmationForm from './MoveConfirmationForm';
 import MoveConfirmationDialog from './MoveConfirmationDialog';
 import useGetStudentIdFromParam from '../../../hooks/useGetStudentIdFromParam';
 import classNames from 'classnames';
 import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
 import { AliceMenu } from '@/components/AliceMenu';
+import getColorForClassStatus from '@/utils/getColorForClassStatus';
+import getDisplayNameFromClassStatus from '@/utils/getDisplayNameFromClassStatus';
 
 export default function StudentClassForWeeklyTimetable(props: {
     dayUnixTimestamp: number;
@@ -42,31 +44,29 @@ export default function StudentClassForWeeklyTimetable(props: {
         colIndex,
         rowIndex,
     } = props;
-    const classEvent = useAppSelector(
+    const lesson = useAppSelector(
         s =>
-            s.student.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestampToClassEvent?.[
+            s.student.studentDetailTimetablePage.weeklyClassEvent?.hrUnixTimestampToLesson?.[
                 String(currGridHourUnixTimestamp)
             ]
     );
-    const showLabel = classEvent != null;
-    if (classEvent) {
-        console.log('studentClassstudentClass', classEvent);
-    }
+    const showLabel = lesson != null;
     const showAll = useAppSelector(s => s.student.studentDetailTimetablePage.showAllClassesForOneStudent);
     const timetable = useAppSelector(s => s.student.studentDetailTimetablePage.weeklyClassEvent);
     const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
 
-    const { dayUnixTimestamp: day_unix_timestamp = 0, hourUnixTimestamp: classUnixTimestamp = 0 } =
-        classEvent?.class || {};
-    const { id: class_group_id } = classEvent?.classGroup || {};
+    const { dayUnixTimestamp: day_unix_timestamp = 0, hourUnixTimestamp: classUnixTimestamp = 0 } = lesson?.class || {};
+    const { id: class_group_id } = lesson?.classGroup || {};
     const hasDuplicationGroup = class_group_id != null;
-    const createEvent = () => {
+    const createEvent = (isTimeslotInThePast: boolean) => {
         AddClassEventDialog.setWidth('sm');
         AddClassEventDialog.setContent(() => () => (
             <AddClassEventForm
+                isTimeslotInThePast={isTimeslotInThePast}
                 dayUnixTimestamp={currGridDayUnixTimestamp}
                 hourUnixTimestamp={currGridHourUnixTimestamp}
+                resetDefaultNumOfClasses={true}
                 studentId={studentId || ''}
             />
         ));
@@ -74,9 +74,9 @@ export default function StudentClassForWeeklyTimetable(props: {
     };
 
     const invalidData = day_unix_timestamp >= classUnixTimestamp;
-    const hasClassEvent = !!classEvent;
+    const hasClassEvent = !!lesson;
     const dayAndTime = dayjs(currGridHourUnixTimestamp).format('ddd, HH:mm');
-    const disableDuplicate = classEvent?.classGroup != null;
+    const disableDuplicate = lesson?.classGroup != null;
     // To adjust place a thick line to indicate the hour unit
     const groupedLabel = () => {
         if (!hasDuplicationGroup) {
@@ -96,29 +96,35 @@ export default function StudentClassForWeeklyTimetable(props: {
             </div>
         );
     };
-    // eslint-disable-next-line
+
     const ClassEventWrapper = useCallback(
         !hasClassEvent
-            ? ({ children }: PropsWithChildren) => (
-                  <AliceMenu
-                      items={[
-                          {
-                              item: !selectedPackageId
-                                  ? 'Please First Select a Package'
-                                  : `Add class(es) at ${dayAndTime}`,
-                              onClick: () => createEvent(),
-                          },
-                      ]}
-                  >
-                      {children}
-                  </AliceMenu>
-              )
+            ? ({ children }: PropsWithChildren) => {
+                  const isTimeslotInThePast = new Date().getTime() > currGridHourUnixTimestamp;
+                  const addClassMenuTitle = isTimeslotInThePast
+                      ? `Insert old record at ${dayAndTime}`
+                      : `Add class(es) at ${dayAndTime}`;
+
+                  return (
+                      <AliceMenu
+                          items={[
+                              {
+                                  disabled: !selectedPackageId,
+                                  item: !selectedPackageId ? 'Please First Select a Package' : addClassMenuTitle,
+                                  onClick: () => createEvent(isTimeslotInThePast),
+                              },
+                          ]}
+                      >
+                          {children}
+                      </AliceMenu>
+                  );
+              }
             : ({ children }: PropsWithChildren) => children,
-        [classEvent, selectedPackageId]
+        [lesson, selectedPackageId]
     );
 
     const updateClassStatus = (status: Class_status) => {
-        const cls = classEvent?.class;
+        const cls = lesson?.class;
         if (cls?.classNumber && cls?.min && cls?.actualClassroom) {
             dispatch(
                 StudentThunkAction.updateClass({
@@ -132,12 +138,17 @@ export default function StudentClassForWeeklyTimetable(props: {
             )
                 .unwrap()
                 .then(() => {
-                    if (!classEvent) {
+                    if (!lesson) {
                         return;
                     }
                     dispatch(
                         StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                            studentId: classEvent.student.id,
+                            studentId: lesson.student.id,
+                        })
+                    );
+                    dispatch(
+                        StudentThunkAction.getStudentPackages({
+                            studentId: lesson.student.id,
                         })
                     );
                 });
@@ -145,29 +156,29 @@ export default function StudentClassForWeeklyTimetable(props: {
     };
     // To account for the numbering of classes
     useEffect(() => {
-        if (classEvent && timetable.hrUnixTimestampToClassEvent) {
+        if (lesson && timetable.hrUnixTimestampToLesson) {
             let currentClassNumber = 0;
 
-            const sortedClasses = Object.values(timetable.hrUnixTimestampToClassEvent).sort((a, b) => {
+            const sortedClasses = Object.values(timetable.hrUnixTimestampToLesson).sort((a, b) => {
                 return a.class.hourUnixTimestamp - b.class.hourUnixTimestamp;
             });
 
             sortedClasses.forEach(item => {
                 const classStatus = item.class.classStatus;
                 if (
-                    item.course.courseName === classEvent.course.courseName &&
+                    item.course.courseName === lesson.course.courseName &&
                     (classStatus === 'PRESENT' || classStatus === 'MAKEUP' || classStatus === 'ILLEGIT_ABSENCE')
                 ) {
                     currentClassNumber++;
-                    if (item.class.hourUnixTimestamp === classEvent.class.hourUnixTimestamp) {
+                    if (item.class.hourUnixTimestamp === lesson.class.hourUnixTimestamp) {
                         setClassNumber(currentClassNumber);
                     }
                 }
             });
         }
-    }, [classEvent, timetable.hrUnixTimestampToClassEvent]);
+    }, [lesson, timetable.hrUnixTimestampToLesson]);
 
-    const onValidDrop = async (fromClassEvent: TimetableClassEvent) => {
+    const onValidDrop = async (fromClassEvent: TimetableLesson) => {
         const move = async () => {
             try {
                 await dispatch(
@@ -192,9 +203,9 @@ export default function StudentClassForWeeklyTimetable(props: {
         }
     };
 
-    const isInTheFuture = () => (classEvent?.class?.hourUnixTimestamp || 0) >= new Date().getTime();
+    const isInTheFuture = () => (lesson?.class?.hourUnixTimestamp || 0) >= new Date().getTime();
     const getHeight = () => {
-        return classEventHeight || 1.35 * (classEvent?.class.min || 0) - 10;
+        return classEventHeight || 1.35 * (lesson?.class.min || 0) - 10;
     };
 
     return (
@@ -203,7 +214,7 @@ export default function StudentClassForWeeklyTimetable(props: {
             style={{
                 position: 'relative',
             }}
-            isValidMove={(_data: TimetableClassEvent) => {
+            isValidMove={(_data: TimetableLesson) => {
                 return true;
             }}
             onValidDrop={onValidDrop}
@@ -252,14 +263,13 @@ export default function StudentClassForWeeklyTimetable(props: {
                         }}
                     >
                         {/* Control what to show on the entire timetable */}
-                        {(showAll || (!showAll && Number(selectedPackageId) === classEvent?.studentPackage.id)) &&
-                            classEvent && (
+                        {(showAll || (!showAll && Number(selectedPackageId) === lesson?.studentPackage.id)) &&
+                            lesson && (
                                 <>
                                     <Draggable
-                                        // eslint-disable-next-line
-                                        data={classEvent!!}
-                                        key={classEvent?.class.id}
-                                        canDrag={!!classEvent && isInTheFuture()}
+                                        data={lesson}
+                                        key={lesson?.class.id}
+                                        canDrag={!!lesson && isInTheFuture()}
                                     >
                                         <AliceMenu
                                             items={[
@@ -268,10 +278,10 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     onClick: () => {
                                                         ViewClassDialog.setContent(() => () => (
                                                             <ViewClassForm
-                                                                dateUnixTimestamp={classEvent.class.dayUnixTimestamp}
-                                                                cls={classEvent.class}
-                                                                course={classEvent.course}
-                                                                student={classEvent.student}
+                                                                dateUnixTimestamp={lesson.class.dayUnixTimestamp}
+                                                                cls={lesson.class}
+                                                                course={lesson.course}
+                                                                student={lesson.student}
                                                             />
                                                         ));
                                                         ViewClassDialog.setOpen(true);
@@ -284,10 +294,10 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                         ViewClassDialog.setContent(() => () => (
                                                             <ViewClassForm
                                                                 isEditing={true}
-                                                                dateUnixTimestamp={classEvent.class.dayUnixTimestamp}
-                                                                cls={classEvent.class}
-                                                                course={classEvent.course}
-                                                                student={classEvent.student}
+                                                                dateUnixTimestamp={lesson.class.dayUnixTimestamp}
+                                                                cls={lesson.class}
+                                                                course={lesson.course}
+                                                                student={lesson.student}
                                                             />
                                                         ));
                                                         ViewClassDialog.setOpen(true);
@@ -295,14 +305,17 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                 },
                                                 {
                                                     item: 'Duplicate class',
-                                                    disabled: disableDuplicate || !classEvent,
+                                                    disabled: disableDuplicate || !lesson,
                                                     onClick: () => {
-                                                        if (!classEvent?.class) {
+                                                        if (!lesson?.class) {
                                                             return;
                                                         }
                                                         DuplicateClassDialog.setWidth('xs');
                                                         DuplicateClassDialog.setContent(() => () => (
-                                                            <DuplicateClassForm class={classEvent?.class} />
+                                                            <DuplicateClassForm
+                                                                class={lesson?.class}
+                                                                isTimeslotInThePast={isInTheFuture()}
+                                                            />
                                                         ));
                                                         DuplicateClassDialog.setOpen(true);
                                                     },
@@ -313,7 +326,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     onClick: async () => {
                                                         await dispatch(
                                                             StudentThunkAction.detachFromGroup({
-                                                                classId: classEvent.class.id,
+                                                                classId: lesson.class.id,
                                                             })
                                                         ).unwrap();
                                                     },
@@ -325,11 +338,11 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                         DeleteClassDialog.setContent(() => () => (
                                                             <DeleteClassForm
                                                                 deleteSingleClass={true}
-                                                                classGroup={classEvent.classGroup}
-                                                                cls={classEvent.class}
-                                                                course={classEvent.course}
+                                                                classGroup={lesson.classGroup}
+                                                                cls={lesson.class}
+                                                                course={lesson.course}
                                                                 onDeletion={async () => {
-                                                                    const studentId = classEvent.student.id;
+                                                                    const studentId = lesson.student.id;
                                                                     dispatch(
                                                                         StudentThunkAction.getStudentClassesForWeeklyTimetable(
                                                                             {
@@ -355,11 +368,11 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                         DeleteClassDialog.setContent(() => () => (
                                                             <DeleteClassForm
                                                                 deleteSingleClass={false}
-                                                                classGroup={classEvent.classGroup}
-                                                                cls={classEvent.class}
-                                                                course={classEvent.course}
+                                                                classGroup={lesson.classGroup}
+                                                                cls={lesson.class}
+                                                                course={lesson.course}
                                                                 onDeletion={async () => {
-                                                                    const studentId = classEvent.student.id;
+                                                                    const studentId = lesson.student.id;
                                                                     dispatch(
                                                                         StudentThunkAction.getStudentClassesForWeeklyTimetable(
                                                                             {
@@ -379,33 +392,42 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     },
                                                 },
                                                 {
-                                                    item: 'Change Status',
-                                                    subItems: [
-                                                        {
-                                                            item: <Present />,
-                                                            onClick: () => updateClassStatus('PRESENT'),
-                                                        },
-                                                        {
-                                                            item: <SuspiciousAbsent />,
-                                                            onClick: () => updateClassStatus('SUSPICIOUS_ABSENCE'),
-                                                        },
-                                                        {
-                                                            item: <IllegitAbsent />,
-                                                            onClick: () => updateClassStatus('ILLEGIT_ABSENCE'),
-                                                        },
-                                                        {
-                                                            item: <LegitAbsent />,
-                                                            onClick: () => updateClassStatus('LEGIT_ABSENCE'),
-                                                        },
-                                                        {
-                                                            item: <MarkUp />,
-                                                            onClick: () => updateClassStatus('MAKEUP'),
-                                                        },
-                                                        {
-                                                            item: <AdverseWhether />,
-                                                            onClick: () => updateClassStatus('BAD_WHETHER'),
-                                                        },
-                                                    ],
+                                                    item: (
+                                                        <div>
+                                                            <div>Change Status</div>
+                                                            <div className="flex items-center gap-2">
+                                                                <span
+                                                                    style={{
+                                                                        color: getColorForClassStatus(
+                                                                            lesson.class.classStatus
+                                                                        ),
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        getDisplayNameFromClassStatus[
+                                                                            lesson.class.classStatus
+                                                                        ]
+                                                                    }
+                                                                </span>
+                                                                <div
+                                                                    style={{
+                                                                        background: getColorForClassStatus(
+                                                                            lesson.class.classStatus
+                                                                        ),
+                                                                        width: '15px',
+                                                                        height: '15px',
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ),
+                                                    subItems: Object.keys(getDisplayNameFromClassStatus).map(
+                                                        status => ({
+                                                            disabled: lesson.class.classStatus === status,
+                                                            item: <StatusLabel status={status as Class_status} />,
+                                                            onClick: () => updateClassStatus(status as Class_status),
+                                                        })
+                                                    ),
                                                 },
                                             ]}
                                         >
@@ -413,9 +435,9 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                 onDoubleClick={() => {
                                                     dispatch(
                                                         studentSlice.actions.setSelectedPackageId({
-                                                            packageId: classEvent.studentPackage.id + '',
+                                                            packageId: lesson.studentPackage.id + '',
                                                             setURLAnchorTimestamp: setURLAnchorTimestamp,
-                                                            desiredAnchorTimestamp: classEvent.class.hourUnixTimestamp,
+                                                            desiredAnchorTimestamp: lesson.class.hourUnixTimestamp,
                                                         })
                                                     );
                                                 }}
@@ -429,14 +451,14 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     setClassEventHeight(null);
                                                 }}
                                                 style={{
-                                                    border: classEvent
-                                                        ? selectedPackageId === classEvent.studentPackage.id + ''
+                                                    border: lesson
+                                                        ? selectedPackageId === lesson.studentPackage.id + ''
                                                             ? `1px solid ${colors.ORANGE}`
                                                             : '1px solid rgba(0,0,0,0.2)'
                                                         : '',
                                                     position: 'absolute',
-                                                    boxShadow: classEvent
-                                                        ? selectedPackageId === classEvent.studentPackage.id + ''
+                                                    boxShadow: lesson
+                                                        ? selectedPackageId === lesson.studentPackage.id + ''
                                                             ? boxShadow.SHADOW_25
                                                             : boxShadow.SHADOW_62
                                                         : '',
@@ -447,15 +469,19 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     left: 5,
                                                     width: 'calc(100% - 20px)',
                                                     height: getHeight(),
-                                                    filter: isInTheFuture() ? '' : 'grayscale(80%) brightness(120%)',
+                                                    filter: isInTheFuture()
+                                                        ? ''
+                                                        : selectedPackageId === lesson.studentPackage.id + ''
+                                                          ? 'grayscale(90%) brightness(120%) drop-shadow(0px 0px 1px yellow)'
+                                                          : 'grayscale(90%) brightness(120%)',
                                                     backgroundColor: (() => {
-                                                        if (!classEvent) {
+                                                        if (!lesson) {
                                                             return '';
                                                         }
                                                         if (invalidData) {
                                                             return 'red';
                                                         } else {
-                                                            switch (classEvent?.class.classStatus) {
+                                                            switch (lesson?.class.classStatus) {
                                                                 case 'PRESENT':
                                                                     return colors.GREEN_BLUE;
                                                                 case 'TRIAL':
@@ -506,7 +532,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                             padding: 4,
                                                         }}
                                                     >
-                                                        {classEvent?.course.courseName}
+                                                        {lesson?.course.courseName}
                                                     </div>
                                                     {classNumber !== 0 && (
                                                         <div
@@ -539,131 +565,20 @@ export default function StudentClassForWeeklyTimetable(props: {
         </Droppable>
     );
 }
-function MarkUp() {
-    return (
-        <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-            }}
-        >
-            <span>Makeup</span>
-            <div
-                style={{
-                    background: colors.BLUE,
-                    width: '15px',
-                    height: '15px',
-                }}
-            />
-        </div>
-    );
-}
 
-function LegitAbsent() {
+function StatusLabel(props: { status: Class_status }) {
+    const status = props.status;
     return (
         <div
+            className="gap-4 flex justify-between items-center"
             style={{
                 width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
             }}
         >
-            <span>Legit Absence</span>
+            <span>{getDisplayNameFromClassStatus[status]}</span>
             <div
                 style={{
-                    background: colors.GREY,
-                    width: '15px',
-                    height: '15px',
-                }}
-            />
-        </div>
-    );
-}
-
-function IllegitAbsent() {
-    return (
-        <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-            }}
-        >
-            <span>Illegit Absence</span>
-            <div
-                style={{
-                    background: colors.RED,
-                    width: '15px',
-                    height: '15px',
-                }}
-            />
-        </div>
-    );
-}
-
-function SuspiciousAbsent() {
-    return (
-        <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-            }}
-        >
-            <span>Suspicious Absence</span>
-            <div
-                style={{
-                    background: colors.ORANGE,
-                    width: '15px',
-                    height: '15px',
-                }}
-            />
-        </div>
-    );
-}
-
-function Present() {
-    return (
-        <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-            }}
-        >
-            <span>Present</span>
-            <div
-                style={{
-                    background: colors.GREEN_BLUE,
-                    width: '15px',
-                    height: '15px',
-                }}
-            />
-        </div>
-    );
-}
-
-function AdverseWhether() {
-    return (
-        <div
-            style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-            }}
-        >
-            <span>ADVERSE WHETHER</span>
-            <div
-                style={{
-                    background: colors.BLACK,
-                    color: 'white',
+                    background: getColorForClassStatus(status),
                     width: '15px',
                     height: '15px',
                 }}

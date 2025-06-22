@@ -33,14 +33,14 @@ export default function CloseLeftColumnButton() {
                 <FadeIn>
                     <Button
                         type="text"
-                        className="ml-3"
+                        className="ml-0"
                         onClick={() => {
                             dispatch(appSlice.actions.setleftNavigatorCollapsed(!leftNavigatorCollapsed));
                         }}
                     >
                         <div style={{ fontSize: 16, display: 'flex', alignItems: 'center' }}>
                             <FaAngleLeft
-                                size={20}
+                                size={16}
                                 style={{
                                     cursor: 'pointer',
                                     transition: 'transform 0.3s ease-out-in',

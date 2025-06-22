@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable-file */
 import { normalize as normalize_, schema } from 'normalizr';
 const normalize = <T>({ targetArr, idAttribute }: { targetArr: T[]; idAttribute: string }) => {
     const objectEntity = new schema.Entity<Selection>('object', undefined, {

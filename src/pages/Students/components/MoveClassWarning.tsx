@@ -1,10 +1,10 @@
 import { Alert, Box } from '@mui/material';
 import SectionTitle from '../../../components/SectionTitle';
 import Spacer from '../../../components/Spacer';
-import { TimetableClassEvent } from '../../../dto/kotlinDto';
+import { TimetableLesson } from '../../../dto/kotlinDto';
 import dayjs from 'dayjs';
 
-export default function MoveClassWarning(props: { classToMove: TimetableClassEvent | null }) {
+export default function MoveClassWarning(props: { classToMove: TimetableLesson | null }) {
     const { classToMove } = props;
     if (!classToMove) {
         return null;

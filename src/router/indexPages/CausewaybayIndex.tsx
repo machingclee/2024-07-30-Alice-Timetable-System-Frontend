@@ -9,13 +9,17 @@ import dayjs from 'dayjs';
 const CausewaybayIndex = () => {
     const dispatch = useAppDispatch();
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
-    useMassTimetablePage('CAUSEWAY_BAY');
+    const { getDailyTimetableClasses } = useMassTimetablePage('CAUSEWAY_BAY');
 
     useEffect(() => {
         return () => {
             dispatch(studentSlice.actions.resetMassTimetablerFilter());
         };
     }, [dispatch]);
+
+    useEffect(() => {
+        getDailyTimetableClasses();
+    }, []);
 
     useEffect(() => {
         dispatch(CourseThunkAction.getCourses())
@@ -31,7 +35,6 @@ const CausewaybayIndex = () => {
                     })
                 ).unwrap();
             });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return <Outlet />;
 };

@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { RiRefreshLine } from 'react-icons/ri';
-import { Box } from '@mui/material';
 import { StudentThunkAction } from '../redux/slices/studentSlice';
+import { Button } from 'antd';
 
 export default function RefreshDailyTimetableButton() {
     const dispatch = useAppDispatch();
@@ -22,18 +22,9 @@ export default function RefreshDailyTimetableButton() {
         );
     };
     return (
-        <Box
-            sx={{
-                '& svg': {
-                    cursor: 'pointer',
-                    transition: 'opacity 0.3s ease-in-out',
-                    '&:hover': {
-                        opacity: 0.5,
-                    },
-                },
-            }}
-        >
-            <RiRefreshLine size={35} onClick={() => refresh()} />
-        </Box>
+        <Button className="flex items-center" onClick={() => refresh()}>
+            <RiRefreshLine size={20} />
+            Refresh
+        </Button>
     );
 }

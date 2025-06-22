@@ -11,7 +11,6 @@ enum HoveredState {
     INVALID_MOVE = 'INVALID_MOVE',
 }
 
-// eslint-disable-next-line
 export const Droppable = <T extends Record<string, any>>(
     props: {
         idleColor?: string;

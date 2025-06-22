@@ -38,51 +38,54 @@ export default function MassTimetable(props: { timetableName: string }) {
                 display: 'flex',
                 flexDirection: 'column',
             }}
+            className="space-y-2"
         >
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Button
-                    shape="circle"
-                    onClick={() => {
-                        navigate(-1);
-                    }}
-                >
-                    <IoMdArrowBack />
-                </Button>
-                <Spacer height={1} />
-                <SectionTitle>{timetableName}</SectionTitle>
-                <Spacer />
-                <Select
-                    title="Number of Day to Display"
-                    dropdownStyle={{ zIndex: 10 ** 4 }}
-                    style={{ width: 80 }}
-                    defaultValue={1}
-                    onChange={value => {
-                        setNumOfDayToDisplay(value);
-                        if (!classRoom) {
-                            return;
-                        }
+            <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                    <Button
+                        shape="circle"
+                        onClick={() => {
+                            navigate(-1);
+                        }}
+                    >
+                        <IoMdArrowBack />
+                    </Button>
+                    <Spacer height={1} />
+                    <SectionTitle>{timetableName}</SectionTitle>
+                    <Spacer />
+                    <Select
+                        title="Number of Day to Display"
+                        dropdownStyle={{ zIndex: 10 ** 4 }}
+                        style={{ width: 80 }}
+                        defaultValue={1}
+                        onChange={value => {
+                            setNumOfDayToDisplay(value);
+                            if (!classRoom) {
+                                return;
+                            }
 
-                        dispatch(
-                            StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                                classRoom,
-                                anchorTimestamp: dayjs(anchorTimestamp.getTime()).startOf('day').valueOf(),
-                                filter,
-                                numOfDays: value,
-                            })
-                        );
-                    }}
-                    options={[1, 2, 3].map(num => ({ label: num, value: num }))}
-                />
-                <Spacer width={7} />
-                {`day${numOfDaysToDisplay > 1 ? 's' : ''}`}
+                            dispatch(
+                                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
+                                    classRoom,
+                                    anchorTimestamp: dayjs(anchorTimestamp.getTime()).startOf('day').valueOf(),
+                                    filter,
+                                    numOfDays: value,
+                                })
+                            );
+                        }}
+                        options={[1, 2, 3].map(num => ({ label: num, value: num }))}
+                    />
+                    <Spacer width={7} />
+                    {`day${numOfDaysToDisplay > 1 ? 's' : ''}`}
+                </div>
             </div>
             <div style={{ width: '100%', display: 'flex' }}>
-                <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap' }}>
+                <div className="w-full flex gap-2 grid-cols-3">
                     {Array(numOfDaysToDisplay)
                         .fill(null)
                         .map((_, dayOffset) => {
                             return (
-                                <div style={{ flex: 1 }}>
+                                <div style={{ flex: 1 }} key={dayOffset}>
                                     <PrintableDailyTable
                                         date={dayjs(selectedDate).add(dayOffset, 'day').toDate()}
                                         dayOffset={dayOffset}

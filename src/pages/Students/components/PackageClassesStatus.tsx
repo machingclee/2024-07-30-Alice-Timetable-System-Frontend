@@ -5,18 +5,22 @@ import SectionTitle from '../../../components/SectionTitle';
 import dayjs from 'dayjs';
 import { Box } from '@mui/material';
 import { GetPackageClassStatusResponse } from '../../../dto/kotlinDto';
-import useQueryThunk from '../../../reactQueries/useQueryThunk';
+import useQueryThunk from '../../../reactQueries/query/useQueryThunk';
 import studentSlice, { StudentDetailPage, StudentThunkAction } from '../../../redux/slices/studentSlice';
 import { FaChevronLeft } from 'react-icons/fa6';
 import { Button, Spin } from 'antd';
 import FadeIn from '../../../components/FadeIn';
 import statues from '../../../constant/statues';
 import boxShadow from '../../../constant/boxShadow';
-import { ContextMenuTrigger, ContextMenu, MenuItem } from 'react-contextmenu';
 import ViewClassDialog from '../../../components/ViewClassDialog';
 import ViewClassForm from '../../../components/ViewClassForm';
 import DeleteClassDialog from '../../../components/DeleteClassDialog';
 import DeleteClassForm from '../../../components/DeleteClassForm';
+import getDisplayNameFromClassStatus from '@/utils/getDisplayNameFromClassStatus';
+import { CiCalendarDate } from 'react-icons/ci';
+import { IoMdTime } from 'react-icons/io';
+import { AliceMenu } from '@/components/AliceMenu';
+import ContentContainer from '@/components/ContentContainer';
 
 export const Container = (props: PropsWithChildren) => {
     return (
@@ -73,13 +77,18 @@ export default function PackageClassesStatus() {
                     <Spacer />
                     <SectionTitle>{course?.courseName || ''}</SectionTitle>
                     <Spacer />
-                    <Box>
-                        {classInfos?.map(classInfo => {
-                            return (
-                                <ClassStatusRow classInfo={classInfo} invalidateClassStatues={invalidateClassStatues} />
-                            );
-                        })}
-                    </Box>
+                    <ContentContainer className="mr-4">
+                        <Box>
+                            {classInfos?.map(classInfo => {
+                                return (
+                                    <ClassStatusRow
+                                        classInfo={classInfo}
+                                        invalidateClassStatues={invalidateClassStatues}
+                                    />
+                                );
+                            })}
+                        </Box>
+                    </ContentContainer>
                 </div>
             </FadeIn>
         </div>
@@ -99,58 +108,13 @@ export const ClassStatusRow = (props: {
     const formattedDay = dayjs(hourUnixTimestamp).format('YYYY-MM-DD');
     const formattedTime = dayjs(hourUnixTimestamp).format('HH:mm');
     const color = statues?.[classStatus.toLocaleLowerCase() as keyof typeof statues]?.color;
-    const menuId = `${cls.id}_${hourUnixTimestamp}`;
     return (
         <>
-            {/*@ts-expect-error - context menu has problem in typing */}
-            <ContextMenuTrigger id={menuId}>
-                <div
-                    style={{
-                        cursor: 'pointer',
-                        boxShadow: boxShadow.SHADOW_61,
-                        display: 'flex',
-                        marginBottom: 10,
-                        background: 'white',
-                        padding: 10,
-                        borderRadius: 4,
-                        marginRight: 10,
-                    }}
-                >
-                    <div style={{ flex: 1, display: 'flex' }}>
-                        <div>{formattedDay}</div>
-                        <Spacer />
-                        <div>{formattedTime}</div>
-                    </div>
-                    <div style={{ color: color || 'black' }}>{classStatus}</div>
-                </div>
-            </ContextMenuTrigger>
-            {/*@ts-expect-error - context menu has problem in typing */}
-            <ContextMenu
-                id={menuId}
-                style={{
-                    borderRadius: '8px',
-                    zIndex: 10 ** 7 + 1,
-                    boxShadow: boxShadow.SHADOW_62,
-                    backgroundColor: 'white',
-                }}
-            >
-                <Box
-                    sx={{
-                        '& .menu-item': {
-                            padding: '10px',
-                            cursor: 'pointer',
-                            '&:hover': {
-                                '&:hover': {
-                                    color: 'rgb(64, 150, 255)',
-                                },
-                            },
-                        },
-                    }}
-                >
-                    {/*@ts-expect-error - context menu has problem in typing */}
-                    <MenuItem
-                        className="menu-item"
-                        onClick={() => {
+            <AliceMenu
+                items={[
+                    {
+                        item: ' View class detail',
+                        onClick: () => {
                             ViewClassDialog.setWidth('xs');
                             ViewClassDialog.setContent(() => () => (
                                 <ViewClassForm
@@ -162,18 +126,18 @@ export const ClassStatusRow = (props: {
                                 />
                             ));
                             ViewClassDialog.setOpen(true);
-                        }}
-                    >
-                        View class detail
-                    </MenuItem>
-                    {/*@ts-expect-error - context menu has problem in typing */}
-                    <MenuItem
-                        className="menu-item"
-                        onClick={() => {
+                        },
+                    },
+                    {
+                        item: 'Edit class',
+                        onClick: () => {
                             ViewClassDialog.setWidth('xs');
                             ViewClassDialog.setContent(() => () => (
                                 <ViewClassForm
                                     isEditing={true}
+                                    onSubmit={() => {
+                                        invalidateClassStatues();
+                                    }}
                                     dateUnixTimestamp={dateUnixTimestamp}
                                     cls={cls}
                                     course={course}
@@ -181,14 +145,11 @@ export const ClassStatusRow = (props: {
                                 />
                             ));
                             ViewClassDialog.setOpen(true);
-                        }}
-                    >
-                        Edit class
-                    </MenuItem>
-                    {/*@ts-expect-error - context menu has problem in typing */}
-                    <MenuItem
-                        className="menu-item"
-                        onClick={() => {
+                        },
+                    },
+                    {
+                        item: 'Delete a class',
+                        onClick: () => {
                             DeleteClassDialog.setWidth('xs');
                             DeleteClassDialog.setContent(() => () => (
                                 <DeleteClassForm
@@ -213,20 +174,11 @@ export const ClassStatusRow = (props: {
                                 />
                             ));
                             DeleteClassDialog.setOpen(true);
-                        }}
-                    >
-                        <span
-                            style={{
-                                color: 'red',
-                            }}
-                        >
-                            Delete a class
-                        </span>
-                    </MenuItem>
-                    {/*@ts-expect-error - context menu has problem in typing */}
-                    <MenuItem
-                        className="menu-item"
-                        onClick={() => {
+                        },
+                    },
+                    {
+                        item: 'Delete a group of classes',
+                        onClick: () => {
                             DeleteClassDialog.setWidth('xs');
                             DeleteClassDialog.setContent(() => () => (
                                 <DeleteClassForm
@@ -251,18 +203,33 @@ export const ClassStatusRow = (props: {
                                 />
                             ));
                             DeleteClassDialog.setOpen(true);
-                        }}
-                    >
-                        <span
-                            style={{
-                                color: 'red',
-                            }}
-                        >
-                            Delete a group of classes
-                        </span>
-                    </MenuItem>
-                </Box>
-            </ContextMenu>
+                        },
+                    },
+                ]}
+            >
+                <div
+                    className="m-1 rounded-sm"
+                    style={{
+                        cursor: 'pointer',
+                        boxShadow: boxShadow.SHADOW_61,
+                        display: 'flex',
+                        background: 'white',
+                        padding: 10,
+                        marginRight: 10,
+                    }}
+                >
+                    <div className="flex flex-1 items-center gap-2">
+                        <div className="flex w-40 items-center gap-2">
+                            <CiCalendarDate size={24} /> {formattedDay}
+                        </div>
+                        <div className="flex w-40 items-center gap-2">
+                            <IoMdTime size={22} />
+                            {formattedTime}
+                        </div>
+                    </div>
+                    <div style={{ color: color || 'black' }}>{getDisplayNameFromClassStatus[classStatus]}</div>
+                </div>
+            </AliceMenu>
         </>
     );
 };

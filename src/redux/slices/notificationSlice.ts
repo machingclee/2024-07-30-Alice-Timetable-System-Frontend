@@ -9,10 +9,12 @@ import { NotificationDTO, NotificationResponse } from '@/dto/kotlinDto';
 
 export type NotificationSliceState = {
     notificationResponses: NotificationResponse[];
+    count: number | null;
 };
 
 const initialState: NotificationSliceState = {
     notificationResponses: [],
+    count: null,
 };
 
 const notificationSlice = createSlice({
@@ -36,6 +38,9 @@ const notificationSlice = createSlice({
                 notificationResponse.notification = notificationDTO;
             }
         });
+        builder.addCase(NotificationThunkAction.getNotificationCount.fulfilled, (state, action) => {
+            state.count = action.payload;
+        });
     },
 });
 
@@ -44,6 +49,13 @@ export class NotificationThunkAction {
         const res = await apiClient.get<CustomResponse<NotificationResponse[]>>(apiRoutes.GET_NOTIFICATIONS);
         return processRes(res, api);
     });
+    public static getNotificationCount = createAsyncThunk(
+        'notificationSlice/getNotificationCount',
+        async (_undefined, api) => {
+            const res = await apiClient.get<CustomResponse<number>>(apiRoutes.GET_NOTIFICATIONS);
+            return processRes(res, api);
+        }
+    );
     public static updateReadOrUnread = createAsyncThunk(
         'notificationSlice/updateReadOrUnread',
         async (notificationId: number, api) => {

@@ -7,6 +7,15 @@ import getEnv from '../utils/getEnv';
 const baseURL = getEnv().VITE_BACKEND_URL || '';
 console.log('baseURLbaseURLbaseURL', baseURL);
 
+declare module 'axios' {
+    interface AxiosInstance {
+        post<T = any, D = any>(url: string, data?: D): Promise<AxiosResponse<T, D>>;
+    }
+    interface AxiosInstance {
+        put<T = any, D = any>(url: string, data?: D): Promise<AxiosResponse<T, D>>;
+    }
+}
+
 export const loginApiClient = axios.create({
     baseURL,
     responseEncoding: 'utf8',

@@ -1,10 +1,16 @@
 import { Button } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import RouteEnum from '../../../enum/RouteEnum';
+import { ReactNode } from 'react';
 
-export default function NavButton(props: { activeNavigationRegex: RegExp; title: string; routeEnum: RouteEnum }) {
+export default function NavButton(props: {
+    activeNavigationRegex: RegExp;
+    title: string;
+    routeEnum: RouteEnum;
+    icon?: ReactNode;
+}) {
     const { pathname } = useLocation();
-    const { activeNavigationRegex, routeEnum, title } = props;
+    const { activeNavigationRegex, routeEnum, title, icon } = props;
     const navigate = useNavigate();
     const path = routeEnum.toString();
     const active = activeNavigationRegex.test(pathname || '');
@@ -12,15 +18,15 @@ export default function NavButton(props: { activeNavigationRegex: RegExp; title:
     return (
         <>
             <Button
-                className="!p-4 !rounded-4xl"
+                className={`!py-4.5 !p-4 !rounded-md ${!active ? '!bg-[rgb(255,255,255,1)]' : ''} !shadow-none hover:opacity-60 !justify-start`}
                 block
-                type={active ? 'primary' : 'default'}
+                type={active ? 'primary' : 'text'}
                 onClick={() => {
                     navigate(routeEnum);
                 }}
             >
-                <div key={path} style={{ textTransform: 'capitalize' }}>
-                    {title}
+                <div key={path} style={{ textTransform: 'capitalize' }} className="flex items-center gap-2">
+                    {icon} {title}
                 </div>
             </Button>
         </>

@@ -20,11 +20,12 @@ type Item = {
 const renderItems = (items: Item[]) => {
     return (
         <>
-            {items.map(item => {
+            {items.map((item, index) => {
                 const { disabled = false } = item;
                 if (!item.subItems) {
                     return (
                         <DropdownMenuItem
+                            key={index}
                             disabled={disabled}
                             onClick={() => item.onClick?.()}
                             className="cursor-pointer hover:bg-gray-100 hover:outline-none px-2 py-1"
@@ -34,7 +35,7 @@ const renderItems = (items: Item[]) => {
                     );
                 } else {
                     return (
-                        <DropdownMenuGroup>
+                        <DropdownMenuGroup key={index}>
                             <DropdownMenuSubTrigger>{item.item}</DropdownMenuSubTrigger>
                             <DropdownMenuPortal>
                                 <DropdownMenuSubContent>{renderItems(item.subItems)}</DropdownMenuSubContent>

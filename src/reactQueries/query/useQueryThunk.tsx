@@ -1,7 +1,7 @@
 import { AsyncThunk } from '@reduxjs/toolkit';
 import useBaseQuery from './useBaseQuery';
-import hashUtil from '../utils/hashUtil';
-import { useAppDispatch } from '../redux/hooks';
+import hashUtil from '../../utils/hashUtil';
+import { useAppDispatch } from '../../redux/hooks';
 
 /**
  * - This wrap a thunk into a useQuery call, the purpose is to debounce and make cache appropriately.
@@ -10,9 +10,8 @@ import { useAppDispatch } from '../redux/hooks';
  * - At the end it is simply calling useQuery({..., queryFn}), with queryFn being the dispatched thunk action.
  * - Default staleTime and gcTime is 1000.
  */
-// eslint-disable-next-line react-refresh/only-export-components
+
 export default <ThunkInputParam, ReturnType>(param: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         thunk: AsyncThunk<ReturnType, ThunkInputParam, any>;
         staleTime?: number;
         enabled?: boolean;
@@ -29,7 +28,6 @@ export default <ThunkInputParam, ReturnType>(param: {
             },
             onDataChanged: data => {
                 const requestID = crypto.randomUUID() || Math.random() + '';
-                // eslint-disable-next-line
                 dispatch(thunk.fulfilled(data, requestID, inputParam as any));
             },
             enabled,

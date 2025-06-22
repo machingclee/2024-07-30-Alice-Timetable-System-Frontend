@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable-file */
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';

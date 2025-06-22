@@ -5,7 +5,7 @@ import ViewClassForm from './ViewClassForm';
 import ViewClassDialog from './ViewClassDialog';
 import StudentClassCard from './StudentClassCard';
 import dayjs from 'dayjs';
-import useQueryThunk from '../reactQueries/useQueryThunk';
+import useQueryThunk from '../reactQueries/query/useQueryThunk';
 import studentSlice, { StudentThunkAction } from '../redux/slices/studentSlice';
 import { useNavigate } from 'react-router-dom';
 import RouteEnum from '../enum/RouteEnum';
@@ -15,7 +15,7 @@ import { useState } from 'react';
 import useAnchorTimestamp from '../hooks/useAnchorTimestamp';
 import { Draggable } from './DragAndDrop/Draggable';
 import { Droppable } from './DragAndDrop/Droppable';
-import { TimetableClassEvent } from '../dto/kotlinDto';
+import { TimetableLesson } from '../dto/kotlinDto';
 import useRefetchMassTimetables from '../hooks/useRefetchMassTimetables';
 import MoveClassWarning from '../pages/Students/components/MoveClassWarning';
 import { AliceMenu } from './AliceMenu';
@@ -25,7 +25,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
     rowIndex: number;
 }) {
     const [moveClassConfirmationOpen, setMoveClassConfirmationOpen] = useState(false);
-    const [classToMove, setClassToMove] = useState<TimetableClassEvent | null>(null);
+    const [classToMove, setClassToMove] = useState<TimetableLesson | null>(null);
     const { setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
     const { currHourUnixTimestamp, rowIndex } = props;
     const dayUnixTimestamp = dayjs(currHourUnixTimestamp).startOf('day').valueOf();
@@ -62,7 +62,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
 
     const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
 
-    const moveClass = async (fromClass: TimetableClassEvent) => {
+    const moveClass = async (fromClass: TimetableLesson) => {
         try {
             await dispatch(
                 StudentThunkAction.moveStudentEvent({
@@ -76,7 +76,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
         }
     };
 
-    const onValidDrop = async (fromClass: TimetableClassEvent) => {
+    const onValidDrop = async (fromClass: TimetableLesson) => {
         if (fromClass.classGroup) {
             setClassToMove(fromClass);
             setMoveClassConfirmationOpen(true);
@@ -112,7 +112,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
         <div style={{ position: 'relative', background: 'white', width: '100%', height: '100%' }}>
             <div style={{ ...timeSlotStyle }} />
             <Droppable
-                isValidMove={(_: TimetableClassEvent) => true}
+                isValidMove={(_: TimetableLesson) => true}
                 onValidDrop={onValidDrop}
                 className="daily-class-container"
                 style={{
@@ -239,7 +239,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                             classEvent={classEvent}
                                             classminToHeight={min => {
                                                 const numOfChunks = min / 15;
-                                                return numOfChunks * 35 - 15;
+                                                return numOfChunks * 35 - 13;
                                             }}
                                         />
                                     </AliceMenu>

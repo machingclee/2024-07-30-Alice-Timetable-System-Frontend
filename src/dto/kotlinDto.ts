@@ -60,6 +60,9 @@ export type StudentPackageRepsonse = {
     studentPackage: StudentPackageDTO;
     scheduledMinutes: number;
     consumedMinutes: number;
+    consumedextendedClassMins: number;
+    numOfNormalClasses: number;
+    numOfExtendedClass: number;
     student: StudentDTO;
     course: CourseDTO;
 };
@@ -68,7 +71,7 @@ export type ClassGroupDTO = {
     id: number;
 };
 
-export type TimetableClassEvent = {
+export type TimetableLesson = {
     hourUnixTimestamp: number;
     classGroup: ClassGroupDTO | null;
     student: StudentDTO;
@@ -121,7 +124,8 @@ export type TicketDTO = {
 export type NotificationDTO = {
     id?: number;
     message: string;
-    type: 'PACKAGE_DEADLINE_COMING';
+    studentPackageId: number;
+    type: 'PACKAGE_DEADLINE_COMING' | 'ATTENDENCE_WARNING';
     isRead: boolean;
     createdAt?: number;
     createdAtHk?: string;

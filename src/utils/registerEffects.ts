@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable-file */
 import {
     // @ts-expect-error - don't want to deal with redux types which are too complex
     UnknownAction,
