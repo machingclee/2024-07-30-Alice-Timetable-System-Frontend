@@ -8,13 +8,14 @@ export default function RefreshDailyTimetableButton() {
     const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
     const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom);
+    const numOfDays = useAppSelector(s => s.student.massTimetablePage.numOfDaysToDisplay);
 
     const { refetch: refetchFilteredStudentClassesForDailyTimetable } =
         studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
             {
                 classRoom: classroom || 'CAUSEWAY_BAY',
                 anchorTimestamp: dayjs(selectedDate).startOf('day').valueOf(),
-                numOfDays: 1,
+                numOfDays,
                 filter: JSON.parse(JSON.stringify(filter)),
             },
             { skip: !classroom }
