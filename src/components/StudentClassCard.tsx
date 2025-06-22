@@ -1,4 +1,4 @@
-import { HrUnixTimestampToLessons } from '@/redux/slices/studentSlice';
+import type { HrUnixTimestampToLessons } from '@/!rtk-query/api/studentApi';
 import getColorForClassStatus from '@/utils/getColorForClassStatus';
 import { useState } from 'react';
 
