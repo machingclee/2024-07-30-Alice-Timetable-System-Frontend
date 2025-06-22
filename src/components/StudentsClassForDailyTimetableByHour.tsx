@@ -32,14 +32,29 @@ export default function StudentsClassForDailyTimetableByHour(props: {
     const navigate = useNavigate();
     const [detachFromGroup] = studentApi.endpoints.detachFromGroup.useMutation();
 
-    const classesThisHour = useAppSelector(
-        s =>
-            studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.select({
-                anchorTimestamp: dayjs(selectedDate).startOf('day').valueOf(),
-                numOfDays,
-                classRoom: classroom as ClassRoom,
-                filter: JSON.parse(JSON.stringify(filter)),
-            })(s).data?.hrUnixTimestampToTimetableClasses[currHourUnixTimestamp]
+    // const classesThisHour = useAppSelector(
+    //     s =>
+    //         studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.select({
+    //             anchorTimestamp: dayjs(selectedDate).startOf('day').valueOf(),
+    //             numOfDays,
+    //             classRoom: classroom as ClassRoom,
+    //             filter: JSON.parse(JSON.stringify(filter)),
+    //         })(s).data?.hrUnixTimestampToTimetableClasses[currHourUnixTimestamp]
+    // );
+
+    const { classesThisHour } = studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
+        {
+            anchorTimestamp: dayjs(selectedDate).startOf('day').valueOf(),
+            numOfDays,
+            classRoom: classroom as ClassRoom,
+            filter: JSON.parse(JSON.stringify(filter)),
+        },
+        {
+            selectFromResult: result => {
+                const classesThisHour = result.data?.hrUnixTimestampToTimetableClasses[currHourUnixTimestamp];
+                return { classesThisHour };
+            },
+        }
     );
 
     const time = dayjs(currHourUnixTimestamp);
