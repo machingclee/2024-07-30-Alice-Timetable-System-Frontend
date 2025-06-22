@@ -1,22 +1,18 @@
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { useAppSelector } from '../redux/hooks';
 import DeleteClassForm from './DeleteClassForm';
 import DeleteClassDialog from './DeleteClassDialog';
 import ViewClassForm from './ViewClassForm';
 import ViewClassDialog from './ViewClassDialog';
 import StudentClassCard from './StudentClassCard';
 import dayjs from 'dayjs';
-import useQueryThunk from '../reactQueries/query/useQueryThunk';
-import studentSlice, { StudentThunkAction } from '../redux/slices/studentSlice';
+import { studentApi } from '../!rtk-query/api/studentApi';
 import { useNavigate } from 'react-router-dom';
 import RouteEnum from '../enum/RouteEnum';
-import appSlice from '../redux/slices/appSlice';
 import { Modal } from 'antd';
 import { useState } from 'react';
-import useAnchorTimestamp from '../hooks/useAnchorTimestamp';
 import { Draggable } from './DragAndDrop/Draggable';
 import { Droppable } from './DragAndDrop/Droppable';
-import { TimetableLesson } from '../dto/kotlinDto';
-import useRefetchMassTimetables from '../hooks/useRefetchMassTimetables';
+import { ClassRoom, TimetableLesson } from '../dto/kotlinDto';
 import MoveClassWarning from '../pages/Students/components/MoveClassWarning';
 import { AliceMenu } from './AliceMenu';
 
@@ -25,18 +21,27 @@ export default function StudentsClassForDailyTimetableByHour(props: {
     rowIndex: number;
 }) {
     const [moveClassConfirmationOpen, setMoveClassConfirmationOpen] = useState(false);
+    const numOfDays = useAppSelector(s => s.student.massTimetablePage.numOfDaysToDisplay);
     const [classToMove, setClassToMove] = useState<TimetableLesson | null>(null);
-    const { setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
+    const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
+    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
+    const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom);
     const { currHourUnixTimestamp, rowIndex } = props;
     const dayUnixTimestamp = dayjs(currHourUnixTimestamp).startOf('day').valueOf();
     const [showSwitchStudentDetailPageConfirmation, setShowSwitchStudentDetailPageConfirmation] = useState(false);
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
-    const classesThisHour =
-        useAppSelector(s => s.student.massTimetablePage?.hrUnixTimestampToTimetableClasses?.[currHourUnixTimestamp]) ||
-        [];
-    const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom);
-    const selectedAnchorDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
+    const [detachFromGroup] = studentApi.endpoints.detachFromGroup.useMutation();
+
+    const classesThisHour = useAppSelector(
+        s =>
+            studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.select({
+                anchorTimestamp: dayjs(selectedDate).startOf('day').valueOf(),
+                numOfDays,
+                classRoom: classroom as ClassRoom,
+                filter: JSON.parse(JSON.stringify(filter)),
+            })(s).data?.hrUnixTimestampToTimetableClasses[currHourUnixTimestamp]
+    );
+
     const time = dayjs(currHourUnixTimestamp);
     const isFullHour = time.minute() === 0;
     const timeSlotStyle: React.CSSProperties = {
@@ -47,33 +52,27 @@ export default function StudentsClassForDailyTimetableByHour(props: {
         backgroundColor: 'black',
         position: 'absolute',
     };
-    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
-    const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
 
-    const { invalidation: invalidateFilteredClasses } = useQueryThunk({
-        thunk: StudentThunkAction.getFilteredStudentClassesForDailyTimetable,
-        staleTime: 5000,
-        enabled: false,
-    })({
-        anchorTimestamp: dayjs(selectedDate).startOf('day').toDate().getTime(),
-        classRoom: classroom || 'CAUSEWAY_BAY',
-        filter: filter,
-    });
+    const { refetch: refetchMassTimetableAnchoredAt } =
+        studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
+            {
+                anchorTimestamp: dayjs(selectedDate).startOf('day').valueOf(),
+                classRoom: classroom as ClassRoom,
+                filter: JSON.parse(JSON.stringify(filter)),
+                numOfDays: 1,
+            },
+            { skip: !classroom }
+        );
 
-    const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
+    // use moveStudentEvent API
+    const [moveStudentEvent] = studentApi.endpoints.moveStudentEvent.useMutation();
 
     const moveClass = async (fromClass: TimetableLesson) => {
-        try {
-            await dispatch(
-                StudentThunkAction.moveStudentEvent({
-                    fromClassEvent: fromClass,
-                    toDayTimestamp: String(dayjs(currHourUnixTimestamp).startOf('day').valueOf()),
-                    toHourTimestamp: String(currHourUnixTimestamp),
-                })
-            ).unwrap();
-        } finally {
-            refetchMassTimetableAnchoredAt(selectedAnchorDate.getTime());
-        }
+        await moveStudentEvent({
+            fromClassEvent: fromClass,
+            toDayTimestamp: String(dayjs(currHourUnixTimestamp).startOf('day').valueOf()),
+            toHourTimestamp: String(currHourUnixTimestamp),
+        }).unwrap();
     };
 
     const onValidDrop = async (fromClass: TimetableLesson) => {
@@ -122,7 +121,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                     height: '100%',
                 }}
             >
-                {classesThisHour.map((classEvent, index) => {
+                {classesThisHour?.map((classEvent, index) => {
                     const contextMenuId = `${classEvent?.student.id || ''}-${classEvent?.class.hourUnixTimestamp || ''}`;
                     return (
                         <Draggable
@@ -164,6 +163,16 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                                 },
                                             },
                                             {
+                                                item: 'Detach from group',
+                                                disabled: classEvent.classGroup === null,
+                                                onClick: async () => {
+                                                    await detachFromGroup({
+                                                        classId: classEvent.class.id,
+                                                        studentId: classEvent.student.id,
+                                                    }).unwrap();
+                                                },
+                                            },
+                                            {
                                                 item: 'View from student package',
                                                 onClick: () => setShowSwitchStudentDetailPageConfirmation(true),
                                             },
@@ -178,7 +187,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                                             cls={classEvent.class}
                                                             course={classEvent.course}
                                                             onDeletion={async () => {
-                                                                invalidateFilteredClasses();
+                                                                refetchMassTimetableAnchoredAt();
                                                             }}
                                                         />
                                                     ));
@@ -196,7 +205,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                                             cls={classEvent.class}
                                                             course={classEvent.course}
                                                             onDeletion={async () => {
-                                                                invalidateFilteredClasses();
+                                                                refetchMassTimetableAnchoredAt();
                                                             }}
                                                         />
                                                     ));
@@ -210,21 +219,9 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                             okText={'I do'}
                                             onOk={() => {
                                                 const { student, studentPackage } = classEvent;
-
-                                                navigate(`${RouteEnum.DASHBOARD_STUDENTS}/${student.id}`);
-                                                setTimeout(() => {
-                                                    dispatch(appSlice.actions.setLoading(true));
-                                                }, 1000);
-                                                setTimeout(() => {
-                                                    dispatch(
-                                                        studentSlice.actions.setSelectedPackageId({
-                                                            packageId: studentPackage.id + '',
-                                                            desiredAnchorTimestamp: classEvent.class.dayUnixTimestamp,
-                                                            setURLAnchorTimestamp: setAnchorTimestamp,
-                                                        })
-                                                    );
-                                                    dispatch(appSlice.actions.setLoading(false));
-                                                }, 1500);
+                                                navigate(
+                                                    `${RouteEnum.DASHBOARD_STUDENTS}/${student.id}?packageId=${studentPackage.id}&anchorTimestamp=${classEvent.class.dayUnixTimestamp}`
+                                                );
                                             }}
                                             onCancel={() => setShowSwitchStudentDetailPageConfirmation(false)}
                                             onClose={() => setShowSwitchStudentDetailPageConfirmation(false)}
@@ -236,7 +233,7 @@ export default function StudentsClassForDailyTimetableByHour(props: {
                                         <StudentClassCard
                                             dayUnixTimestamp={dayUnixTimestamp}
                                             currHourUnixTimestamp={currHourUnixTimestamp}
-                                            classEvent={classEvent}
+                                            lesson={classEvent}
                                             classminToHeight={min => {
                                                 const numOfChunks = min / 15;
                                                 return numOfChunks * 35 - 13;

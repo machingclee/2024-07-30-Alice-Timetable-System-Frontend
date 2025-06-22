@@ -2,7 +2,7 @@ import { Box, Checkbox, Radio, TextField } from "@mui/material";
 import boxShadow from "../../../../constant/boxShadow";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MultipleChoiceOption, MultipleChoiceQuestion, RoleInSystem, User } from "../../../../dto/dto";
+import { MultipleChoiceOption, MultipleChoiceQuestion, RoleInSystem, UserDTO } from "../../../../dto/dto";
 import { Property } from "csstype";
 import Spacer from "../../../../components/Spacer";
 import lodash, { debounce } from "lodash";

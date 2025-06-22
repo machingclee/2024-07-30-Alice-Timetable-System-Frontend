@@ -1,26 +1,50 @@
 import { useAppDispatch } from '@/redux/hooks';
 import studentSlice from '@/redux/slices/studentSlice';
-import useAnchorTimestamp from './useAnchorTimestamp';
+import { WeeklyClassEvent } from '@/!rtk-query/api/studentApi';
+import useAnchorTimestamp from './useStudentDetailPathParam';
 import RouteEnum from '@/enum/RouteEnum';
 import { useNavigate } from 'react-router-dom';
 
 export default () => {
-    const { anchorTimestamp, setURLAnchorTimestamp } = useAnchorTimestamp();
+    const { anchorTimestamp, setPathParam } = useAnchorTimestamp();
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const selectPackage = (packageId: string) => {
+
+    const selectPackageAtCurrentAchoorTimestamp = (packageId: string) => {
         dispatch(
-            studentSlice.actions.setSelectedPackageId({
+            studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp({
+                type: 'go-to-target-lesson',
                 packageId: packageId || '',
-                setURLAnchorTimestamp: setURLAnchorTimestamp,
+                desiredAnchorTimestamp: anchorTimestamp,
+                setURLAnchorTimestamp: timestamp =>
+                    setPathParam({ anchorTimestamp: timestamp, packageId: packageId || '' }),
             })
         );
     };
-    const navigateToPackage = (props: { studentId: string; anchorTimestamp: string }) => {
-        const { anchorTimestamp, studentId } = props;
-        const url = `${RouteEnum.DASHBOARD_STUDENTS}/${studentId}/?anchorTimestamp=${anchorTimestamp}`;
-        navigate(url, { replace: true });
+
+    const selectPackageAtFirstLessonTimestamp = (props: { packageId: string; weeklyClassEvent: WeeklyClassEvent }) => {
+        const { packageId, weeklyClassEvent } = props;
+        dispatch(
+            studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp({
+                type: 'go-to-first-lesson',
+                packageId: packageId || '',
+                weeklyClassEvent,
+                setURLAnchorTimestamp: timestamp =>
+                    setPathParam({ anchorTimestamp: timestamp, packageId: packageId || '' }),
+            })
+        );
+    };
+    const navigateToPackage = (props: { studentId: string; anchorTimestamp: string; packageId: string }) => {
+        const { anchorTimestamp, studentId, packageId } = props;
+        const url = `${RouteEnum.DASHBOARD_STUDENTS}/${studentId}/?anchorTimestamp=${anchorTimestamp}&&packageId=${packageId}`;
+        navigate(url, { replace: false });
     };
 
-    return { selectPackage, setURLAnchorTimestamp, anchorTimestamp, navigateToPackage };
+    return {
+        selectPackageAtCurrentAchoorTimestamp,
+        selectPackageAtFirstLessonTimestamp,
+        setPathParam,
+        anchorTimestamp,
+        navigateToPackage,
+    };
 };

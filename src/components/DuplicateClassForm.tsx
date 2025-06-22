@@ -2,19 +2,15 @@ import { Box } from '@mui/material';
 import Spacer from './Spacer';
 import { useState } from 'react';
 import { Button, Select } from 'antd';
-import { useAppDispatch } from '../redux/hooks';
-import { StudentThunkAction } from '../redux/slices/studentSlice';
 import DuplicateClassDialog from './DuplicateClassDialog';
 import { ClassDTO } from '../dto/kotlinDto';
-import useGetStudentIdFromParam from '../hooks/useGetStudentIdFromParam';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function DuplicateClassForm(props: { class: ClassDTO; isTimeslotInThePast: boolean }) {
     const { class: classEvent, isTimeslotInThePast } = props;
-    const { studentId } = useGetStudentIdFromParam();
-    const dispatch = useAppDispatch();
     const { id } = classEvent;
     const [week, setWeek] = useState(2);
-
+    const [duplicateClassMutation] = studentApi.endpoints.duplicateClass.useMutation();
     return (
         <Box
             style={{
@@ -49,14 +45,11 @@ export default function DuplicateClassForm(props: { class: ClassDTO; isTimeslotI
                 type="primary"
                 block
                 onClick={async () => {
-                    await dispatch(
-                        StudentThunkAction.duplicateClases({
-                            classId: id,
-                            numberOfWeeks: week,
-                            isTimeslotInThePast,
-                        })
-                    ).unwrap();
-                    await dispatch(StudentThunkAction.getStudentPackages({ studentId }));
+                    await duplicateClassMutation({
+                        classId: id,
+                        numberOfWeeks: week,
+                        isTimeslotInThePast,
+                    }).unwrap();
                     DuplicateClassDialog.close();
                 }}
             >

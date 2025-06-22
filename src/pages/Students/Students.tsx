@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useState } from 'react';
 import { Button } from 'antd';
 import AddStudentModal from './components/AddStudentModal';
 import Spacer from '../../components/Spacer';
@@ -8,23 +7,23 @@ import StudentRow from './components/StudentRow';
 
 import EditStudentDialog from './components/EditStudentDialog';
 import escapeStringRegexp from 'escape-string-regexp';
-import { StudentThunkAction } from '../../redux/slices/studentSlice';
 import AliceModalTrigger from '../../components/AliceModalTrigger';
 import { Input } from '@/components/ui/input';
 import { IoMdSearch } from 'react-icons/io';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import CustomScrollbarContainer from '@/components/CustomScrollbarContainer';
 import ContentContainer from '@/components/ContentContainer';
+import { studentApi } from '@/!rtk-query/api/studentApi';
+import { CircularProgress } from '@mui/material';
 
 export default function Students() {
-    const dispatch = useAppDispatch();
-    const ids = useAppSelector(s => s.student.students.ids) || [];
     const [filter, setFilter] = useState('');
-    const idToStudent = useAppSelector(s => s.student.students.idToStudent);
+    const { data: studentsData, isLoading: isLoadingStudents } = studentApi.endpoints.getStudents.useQuery();
+    const { studentIdToStudent, studentIds = [] } = studentsData || {};
 
     const filterRegex = new RegExp(escapeStringRegexp(filter), 'i');
-    const filteredIds = ids.filter(id => {
-        const student = idToStudent?.[id];
+    const filteredIds = studentIds.filter(id => {
+        const student = studentIdToStudent?.[id];
         const {
             studentCode = '',
             chineseFirstName = '',
@@ -54,12 +53,6 @@ export default function Students() {
 
         return sum >= 1;
     });
-
-    console.log('filteredIds', filteredIds);
-
-    useEffect(() => {
-        dispatch(StudentThunkAction.getStudents());
-    }, [dispatch]);
 
     return (
         <div
@@ -107,7 +100,12 @@ export default function Students() {
                     height: 20,
                 }}
             >
-                <div className="space-y-2">{filteredIds?.map(studentId => <StudentRow studentId={studentId} />)}</div>
+                {isLoadingStudents && <CircularProgress />}
+                {!isLoadingStudents && (
+                    <div className="space-y-2">
+                        {filteredIds?.map(studentId => <StudentRow studentId={studentId} />)}
+                    </div>
+                )}
                 <Spacer height={100} />
             </CustomScrollbarContainer>
 

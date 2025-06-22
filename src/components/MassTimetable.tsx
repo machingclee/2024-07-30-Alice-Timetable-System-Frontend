@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import studentSlice, { StudentThunkAction } from '../redux/slices/studentSlice';
-import { useEffect } from 'react';
+import studentSlice from '../redux/slices/studentSlice';
 import { Button, Select } from 'antd';
 import { IoMdArrowBack } from 'react-icons/io';
 import SectionTitle from './SectionTitle';
@@ -16,17 +15,10 @@ export default function MassTimetable(props: { timetableName: string }) {
     const navigate = useNavigate();
     const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
     const numOfDaysToDisplay = useAppSelector(s => s.student.massTimetablePage.numOfDaysToDisplay);
-    const anchorTimestamp = useAppSelector(s => s.student.massTimetablePage.selectedDate);
-    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
     const setNumOfDayToDisplay = (numOfDays: number) => {
         dispatch(studentSlice.actions.seMassTimetableNumOfDaysToDisplay(numOfDays));
     };
     const selectedDate = useAppSelector(s => s.student.massTimetablePage.selectedDate);
-    useEffect(() => {
-        return () => {
-            dispatch(studentSlice.actions.reset());
-        };
-    }, [dispatch]);
 
     return (
         <div
@@ -63,15 +55,6 @@ export default function MassTimetable(props: { timetableName: string }) {
                             if (!classRoom) {
                                 return;
                             }
-
-                            dispatch(
-                                StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                                    classRoom,
-                                    anchorTimestamp: dayjs(anchorTimestamp.getTime()).startOf('day').valueOf(),
-                                    filter,
-                                    numOfDays: value,
-                                })
-                            );
                         }}
                         options={[1, 2, 3].map(num => ({ label: num, value: num }))}
                     />

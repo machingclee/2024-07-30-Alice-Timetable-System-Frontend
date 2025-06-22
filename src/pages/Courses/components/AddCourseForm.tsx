@@ -4,36 +4,27 @@ import FormInputField from '../../../components/FormInputField';
 import { CreateCourseRequest } from '../../../dto/dto';
 import { useRef, useState } from 'react';
 import { Box } from '@mui/material';
-import { CustomResponse } from '../../../axios/responseTypes';
-import apiRoutes from '../../../axios/apiRoutes';
-import apiClient from '../../../axios/apiClient';
 import toastUtil from '../../../utils/toastUtil';
 import AddClassDialog from './AddCourseDialog';
-import { useAppDispatch } from '../../../redux/hooks';
-import { CourseThunkAction } from '../../../redux/slices/courseSlice';
 import { Button } from 'antd';
+import { coursesApi } from '@/redux/slices/courseSlice';
 
 export default function AddCourseForm() {
-    const dispatch = useAppDispatch();
     const formData = useRef<Partial<CreateCourseRequest>>({
         courseName: '',
     });
-    const [error, setError] = useState<Partial<CreateCourseRequest>>({});
+    const [error, _setError] = useState<Partial<CreateCourseRequest>>({});
     const update = (update_: Partial<CreateCourseRequest>) => {
         formData.current = { ...formData.current, ...update_ };
     };
+
+    // create course mutation
+    const [createCourse] = coursesApi.endpoints.createCourse.useMutation();
+
     const submit = async () => {
-        const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_COURSE, formData.current);
-        if (!res.data.success) {
-            const errorObject = res.data?.errorObject;
-            if (errorObject) {
-                setError(errorObject);
-            }
-        } else {
-            toastUtil.success('Course Created');
-            AddClassDialog.setOpen(false);
-            dispatch(CourseThunkAction.getCourses());
-        }
+        await createCourse({ course: formData.current as CreateCourseRequest });
+        toastUtil.success('Course Created');
+        AddClassDialog.setOpen(false);
     };
     return (
         <Box

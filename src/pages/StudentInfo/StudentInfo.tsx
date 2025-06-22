@@ -1,8 +1,6 @@
 import { Container } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
-import useQueryThunk from '../../reactQueries/query/useQueryThunk';
-import { StudentThunkAction } from '../../redux/slices/studentSlice';
 import getColorForClassStatus from '@/utils/getColorForClassStatus';
 import { Separator } from '@/components/ui/separator';
 import { FaLocationDot, FaRegClock } from 'react-icons/fa6';
@@ -14,18 +12,17 @@ import { Button } from 'antd';
 import { GrFormNextLink } from 'react-icons/gr';
 import { LucideCalendarDays } from 'lucide-react';
 import useSelectPackage from '@/hooks/useSelectPackage';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import appSlice from '@/redux/slices/appSlice';
+import { useAppSelector } from '@/redux/hooks';
 import React, { useEffect } from 'react';
 import ContentContainer from '@/components/ContentContainer';
+import { studentApi } from '@/!rtk-query/api/studentApi';
+import { cloneDeep } from 'lodash';
 
 export default function StudentInfo() {
     const { studentId = '' } = useParams<{ studentId: string }>();
-    const { navigateToPackage, selectPackage } = useSelectPackage();
+    const { navigateToPackage } = useSelectPackage();
     const accessToken = useAppSelector(s => s.auth.accessToken);
-    const dispatch = useAppDispatch();
-    const { query } = useQueryThunk({ thunk: StudentThunkAction.getStudentInfo, staleTime: 2000 })({ studentId });
-    const { data, isLoading } = query;
+    const { data, isLoading } = studentApi.endpoints.getStudentInfo.useQuery({ studentId }, { skip: !studentId });
     const { student, studentPackages = [] } = data || {};
     const { chineseFirstName = '', chineseLastName = '', firstName = '', lastName = '' } = student || {};
     const engName = `${firstName} ${lastName}`;
@@ -81,10 +78,11 @@ export default function StudentInfo() {
                             )}
                             {studentPackages.length > 0 && (
                                 <div className="space-y-6">
-                                    {studentPackages
+                                    {cloneDeep(studentPackages)
                                         .sort((pkg1, pkg2) => pkg1.package.startDate - pkg2.package.startDate)
                                         .map(pkgInfo => {
-                                            const { classes, course, package: pkg } = pkgInfo;
+                                            const { classes = [], course, package: pkg } = pkgInfo;
+                                            console.log('pkgInfopkgInfopkgInfo', pkgInfo);
                                             return (
                                                 <React.Fragment key={pkg.id + ''}>
                                                     <a id={pkg.id + ''} />
@@ -105,22 +103,8 @@ export default function StudentInfo() {
                                                                                 navigateToPackage({
                                                                                     anchorTimestamp: pkg.startDate + '',
                                                                                     studentId,
+                                                                                    packageId: pkg.id + '',
                                                                                 });
-                                                                                setTimeout(() => {
-                                                                                    dispatch(
-                                                                                        appSlice.actions.setLoading(
-                                                                                            true
-                                                                                        )
-                                                                                    );
-                                                                                }, 1000);
-                                                                                setTimeout(() => {
-                                                                                    selectPackage(pkg.id + '');
-                                                                                    dispatch(
-                                                                                        appSlice.actions.setLoading(
-                                                                                            false
-                                                                                        )
-                                                                                    );
-                                                                                }, 2000);
                                                                             }}
                                                                         >
                                                                             <GrFormNextLink size={22} />

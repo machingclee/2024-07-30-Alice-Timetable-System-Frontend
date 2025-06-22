@@ -12,7 +12,7 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { Button } from 'antd';
 import CustomScrollbarContainer from '../../../components/CustomScrollbarContainer';
 import FadeIn from '../../../components/FadeIn';
-import useAnchorTimestamp from '../../../hooks/useAnchorTimestamp';
+import useAnchorTimestamp from '../../../hooks/useStudentDetailPathParam';
 import ContentContainer from '@/components/ContentContainer';
 
 export type WeeklyCoordinate = {
@@ -53,7 +53,7 @@ export default function WeeklyTimeTable() {
             });
         });
         setTimegrid(timetable_);
-    }, [anchorTimestamp, selectedPackageId, getHalfHourTimeIntervalsForDay]);
+    }, [anchorTimestamp, selectedPackageId, getHalfHourTimeIntervalsForDay, weekStart, weekEnd]);
 
     const goNextWeek = () => {
         const nextAnchorTimestamp = anchorTimestamp + ONE_DAY_IN_MS * 7;

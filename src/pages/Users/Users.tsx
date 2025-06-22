@@ -1,21 +1,18 @@
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { UserThunkAction } from '../../redux/slices/userSlice';
 import { Button } from 'antd';
-
 import Spacer from '../../components/Spacer';
 import SectionTitle from '../../components/SectionTitle';
 import UserRow from './components/UserRow';
 import AliceModalTrigger from '../../components/AliceModalTrigger';
 import AddUserModal from './components/AddUserModal';
+import { userApi } from '@/!rtk-query/api/userApi';
 
 export default function User() {
-    const dispatch = useAppDispatch();
-    const emails = useAppSelector(s => s.user.users.ids) || [];
-
-    useEffect(() => {
-        dispatch(UserThunkAction.getUsers());
-    }, [dispatch]);
+    const { emails } = userApi.endpoints.getUsers.useQuery(undefined, {
+        selectFromResult: result => {
+            const emails = result.data?.userEmails || [];
+            return { emails };
+        },
+    });
 
     return (
         <div>
@@ -28,7 +25,11 @@ export default function User() {
             <Spacer />
             <div className="space-y-2">
                 {emails.map(email => {
-                    return <UserRow id={email} key={email} />;
+                    return (
+                        <>
+                            <UserRow email={email} key={email} />
+                        </>
+                    );
                 })}
             </div>
             {/* <AddUserDialog.render /> */}

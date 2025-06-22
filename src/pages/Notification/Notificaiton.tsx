@@ -1,10 +1,8 @@
 import SectionTitle from '@/components/SectionTitle';
 import Spacer from '@/components/Spacer';
 import { NotificationDTO, NotificationResponse } from '@/dto/kotlinDto';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { NotificationThunkAction } from '@/redux/slices/notificationSlice';
 import toastUtil from '@/utils/toastUtil';
-import { Button, Spin } from 'antd';
+import { Button } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FaRegCopy } from 'react-icons/fa6';
 import { MdOutlineRefresh } from 'react-icons/md';
@@ -15,12 +13,8 @@ import { AliceDropdownMenu } from '@/components/CustomDropdownMenu';
 import classnames from 'classnames';
 import boxShadow from '@/constant/boxShadow';
 import RouteEnum from '@/enum/RouteEnum';
-import useNotificationQuery from '@/reactQueries/query/useNotificationQuery';
-import apiClient from '@/axios/apiClient';
-import { CustomResponse } from '@/axios/responseTypes';
-import apiRoutes from '@/axios/apiRoutes';
-import { useMutation } from '@tanstack/react-query';
-import appSlice from '@/redux/slices/appSlice';
+import { notificationApi } from '@/!rtk-query/api/notificationApi';
+import { CircularProgress } from '@mui/material';
 
 const notificationTypeToDisplayName: Record<NotificationDTO['type'], string> = {
     PACKAGE_DEADLINE_COMING: 'Package Deadline Coming',
@@ -28,36 +22,21 @@ const notificationTypeToDisplayName: Record<NotificationDTO['type'], string> = {
 };
 
 export default function Notification() {
-    const notifications = useAppSelector(s => s.notification.notificationResponses);
-    const { query, invalidation: invalidateNotifications } = useNotificationQuery();
-    const dispatch = useAppDispatch();
-    const createNotificationForDeadlinePackages = useMutation({
-        mutationFn: async () => {
-            return await apiClient.post<CustomResponse<void>>(apiRoutes.POST_CREATE_NOTIFICATION_FOR_DEADLINE_PACKAGES);
-        },
-        onMutate: () => {
-            dispatch(appSlice.actions.setLoading(true));
-        },
-        onSettled: () => {
-            dispatch(appSlice.actions.setLoading(false));
-        },
-        onSuccess: () => {
-            invalidateNotifications();
-        },
-    });
-    if (query.isFetching) {
-        return <Spin />;
-    }
+    const { data: notifications = [], isLoading: isLoadingNotifications } =
+        notificationApi.endpoints.getNotifications.useQuery();
+
+    const [scheduleDeadlineNotifications, { isLoading: isLoadingScheduleDeadlineNotifications }] =
+        notificationApi.endpoints.activelyScheduleForDeadlineNotifications.useMutation();
 
     return (
         <div className="flex flex-col">
             <div className="flex gap-4 items-center">
                 <SectionTitle>Notification</SectionTitle>
                 <Button
-                    loading={query.isFetching}
+                    loading={isLoadingNotifications || isLoadingScheduleDeadlineNotifications}
                     className="!rounded-2xl active:scale-75"
-                    onClick={() => {
-                        createNotificationForDeadlinePackages.mutate();
+                    onClick={async () => {
+                        await scheduleDeadlineNotifications().unwrap();
                     }}
                 >
                     <MdOutlineRefresh size={24} /> Refresh
@@ -81,7 +60,7 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
     const { notification, student } = notificationResponse;
     const { message } = notification;
     const { phoneNumber } = student;
-    const dispatch = useAppDispatch();
+    const [updateReadOrUnread, { isLoading }] = notificationApi.endpoints.updateReadOrUnread.useMutation();
 
     return (
         <div
@@ -115,7 +94,7 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
 
                     <div
                         className={`font-mono text-xs border-1 px-4 border-emerald-500 rounded-md cursor-pointer
-                             hover:text-gray-600 hover:border-gray-800 bg-white py-1 transition-all duration-300 ease-in-out`}
+                                hover:text-gray-600 hover:border-gray-800 bg-white py-1 transition-all duration-300 ease-in-out`}
                         onClick={() => {
                             window.open(`${RouteEnum.STUDENT_INFO}/${student.id}#${notification.studentPackageId}`);
                         }}
@@ -134,13 +113,14 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
                             {
                                 item: notification.isRead ? 'Mark as unread' : 'Mark as read',
                                 onClick: () => {
-                                    dispatch(NotificationThunkAction.updateReadOrUnread(notification.id!));
+                                    updateReadOrUnread(notification.id!);
                                 },
                             },
                         ]}
                     >
-                        <Button>
-                            <SlOptions />
+                        <Button disabled={isLoading}>
+                            {isLoading && <CircularProgress size={16} />}
+                            {!isLoading && <SlOptions />}
                         </Button>
                     </AliceDropdownMenu>
 

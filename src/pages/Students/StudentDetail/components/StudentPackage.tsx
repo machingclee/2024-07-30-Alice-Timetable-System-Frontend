@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '../../../../redux/hooks';
-import studentSlice, { StudentDetailPage, StudentThunkAction } from '../../../../redux/slices/studentSlice';
+import studentSlice, { StudentDetailPage } from '../../../../redux/slices/studentSlice';
 import Sep from '../../../../components/Sep';
 import Spacer from '../../../../components/Spacer';
 import colors from '../../../../constant/colors';
@@ -18,17 +18,43 @@ import documentId from '../../../../constant/documentId';
 import toastUtil from '../../../../utils/toastUtil';
 import { AliceMenu } from '@/components/AliceMenu';
 import useSelectPackage from '@/hooks/useSelectPackage';
+import { coursesApi } from '@/redux/slices/courseSlice';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;
-    const { setURLAnchorTimestamp, selectPackage, anchorTimestamp } = useSelectPackage();
+    const { setPathParam, selectPackageAtFirstLessonTimestamp, anchorTimestamp } = useSelectPackage();
     const dispatch = useAppDispatch();
+    const { studentId } = useParams<{ studentId: string }>();
+    const { weeklyClassEvent } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
+        { studentId: studentId || '' },
+        {
+            skip: !studentId,
+            selectFromResult: result => {
+                const { hrUnixTimestampToLesson = {}, hrUnixTimestamps = [] } = result?.data || {};
+                return {
+                    weeklyClassEvent: {
+                        timestamps: hrUnixTimestamps,
+                        hrUnixTimestampToLesson,
+                    },
+                };
+            },
+        }
+    );
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
-    const { studentId } = useParams<{ studentId: string }>();
-    const pkgResonse = useAppSelector(
-        s => s.student.studentDetailTimetablePage.studentPackages.idToPackageResponse?.[packageId]
+    const { studentPackage } = studentApi.endpoints.getStudentPackages.useQuery(
+        { studentId: studentId || '' },
+        {
+            skip: !studentId,
+            selectFromResult: result => {
+                const { idToStudentPackage } = result?.data || {};
+                const studentPackage = idToStudentPackage?.[packageId];
+                return { studentPackage: studentPackage };
+            },
+        }
     );
+
     const {
         consumedMinutes,
         consumedextendedClassMins,
@@ -36,9 +62,15 @@ export default function StudentPackage(props: { packageId: string }) {
         studentPackage: studentPkg,
         numOfNormalClasses,
         numOfExtendedClass,
-    } = pkgResonse || {};
+    } = studentPackage || {};
     const courseId = studentPkg?.courseId;
-    const course = useAppSelector(s => s.class.courses?.idToCourse?.[courseId || -1]);
+    const { course } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+        selectFromResult: result => {
+            const { idToCourse } = result?.data || {};
+            const course = idToCourse?.[courseId || -1];
+            return { course };
+        },
+    });
     const consumedClasses = Math.floor(((schedumeMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
     const consumedExtendedClass = Math.floor(((consumedextendedClassMins || 0) / (studentPkg?.min || 1)) * 10) / 10;
     console.log('consumed_minutes:', consumedMinutes);
@@ -59,45 +91,41 @@ export default function StudentPackage(props: { packageId: string }) {
         // }
     };
 
+    const [markPackageAsUnPaid] = studentApi.endpoints.markPackageAsUnPaid.useMutation();
+
     const markAsUnPaid = async () => {
-        await dispatch(
-            StudentThunkAction.markPackageAsUnPaid({
-                packageId: Number(packageId),
-            })
-        ).unwrap();
-        if (studentId) {
-            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
-        }
+        await markPackageAsUnPaid({
+            packageId: Number(packageId),
+        }).unwrap();
     };
+
+    const [deletePackageMutation] = studentApi.endpoints.deletePackage.useMutation();
 
     const deletePackage = async () => {
         if (!studentId) {
             return;
         }
-        await dispatch(
-            StudentThunkAction.deletePackage({
-                studentId,
-                packageId: Number(packageId),
-            })
-        ).unwrap();
+
+        await deletePackageMutation({
+            studentId,
+            packageId: Number(packageId),
+        }).unwrap();
+
         if (studentId) {
             dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_TIME_TABLE));
-            dispatch(StudentThunkAction.getStudentPackages({ studentId }));
-            dispatch(
-                StudentThunkAction.getStudentClassesForWeeklyTimetable({
-                    studentId,
-                })
-            );
             toastUtil.success('Class deleted successfully.');
         }
     };
 
     const showAttendence = async () => {
         dispatch(
-            studentSlice.actions.setSelectedPackageId({
+            studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp({
+                type: 'go-to-target-lesson',
                 packageId: packageId || '',
                 desiredAnchorTimestamp: anchorTimestamp,
-                setURLAnchorTimestamp,
+                setURLAnchorTimestamp: (timestamp: number) => {
+                    setPathParam({ anchorTimestamp: timestamp, packageId: packageId || '' });
+                },
             })
         );
         dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_PACKAGE_CLASS_STATUES));
@@ -195,7 +223,7 @@ export default function StudentPackage(props: { packageId: string }) {
                 </Modal>
                 <div
                     onClick={() => {
-                        selectPackage(packageId);
+                        selectPackageAtFirstLessonTimestamp({ packageId, weeklyClassEvent });
                     }}
                 >
                     <div className="p-[5px] flex justify-center font-[600]">{course?.courseName}</div>

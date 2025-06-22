@@ -2,7 +2,7 @@ import { Box, Radio, TextField } from "@mui/material";
 import boxShadow from "../../../../constant/boxShadow";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { MultipleChoiceOption, SingleChoiceOption, SingleChoiceQuestion, User } from "../../../../dto/dto";
+import { MultipleChoiceOption, SingleChoiceOption, SingleChoiceQuestion, UserDTO } from "../../../../dto/dto";
 import { Button, Select } from "antd";
 import Spacer from "../../../../components/Spacer";
 import { UserThunkAction } from "../../../../redux/slices/userSlice";

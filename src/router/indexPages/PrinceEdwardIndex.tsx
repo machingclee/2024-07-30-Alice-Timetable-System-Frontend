@@ -1,41 +1,15 @@
-import { Outlet } from 'react-router-dom';
-import { CourseThunkAction } from '../../redux/slices/courseSlice';
-import useMassTimetablePage from '../../hooks/useMassTimetablePage';
+import { useAppDispatch } from '@/redux/hooks';
+import studentSlice from '@/redux/slices/studentSlice';
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import studentSlice, { StudentThunkAction } from '../../redux/slices/studentSlice';
-import dayjs from 'dayjs';
+import { Outlet } from 'react-router-dom';
 
 const PrinceEdwardIndex = () => {
     const dispatch = useAppDispatch();
-    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
-    const { getDailyTimetableClasses } = useMassTimetablePage('PRINCE_EDWARD');
 
     useEffect(() => {
-        return () => {
-            dispatch(studentSlice.actions.resetMassTimetablerFilter());
-        };
+        dispatch(studentSlice.actions.setClassroom('PRINCE_EDWARD'));
     }, [dispatch]);
 
-    useEffect(() => {
-        getDailyTimetableClasses();
-    }, []);
-
-    useEffect(() => {
-        dispatch(CourseThunkAction.getCourses())
-            .unwrap()
-            .then(result => {
-                const courseIds = result.map(r => r.id);
-                dispatch(
-                    StudentThunkAction.getFilteredStudentClassesForDailyTimetable({
-                        classRoom: 'PRINCE_EDWARD',
-                        anchorTimestamp: dayjs(new Date()).startOf('day').toDate().getTime(),
-                        numOfDays: 1,
-                        filter: { ...filter, courseIds },
-                    })
-                ).unwrap();
-            });
-    }, []);
     return <Outlet />;
 };
 

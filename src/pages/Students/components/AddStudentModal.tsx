@@ -5,19 +5,17 @@ import { CreateStudentRequest, Gender } from '../../../dto/dto';
 import FormInputField from '../../../components/FormInputField';
 import toastUtil from '../../../utils/toastUtil';
 import SectionTitle from '../../../components/SectionTitle';
-import { useAppDispatch } from '../../../redux/hooks';
 import { Box } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
-import { StudentThunkAction } from '../../../redux/slices/studentSlice';
 import { AliceModalProps } from '../../../components/AliceModalTrigger';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 const initialDate = '2015-01-01';
 
 export default function AddStudentModal(props: AliceModalProps) {
     const { setOkText, setOnOk } = props;
-    const dispatch = useAppDispatch();
     const formData = useRef<CreateStudentRequest>({
         gender: 'MALE',
         preferred_name: '',
@@ -39,13 +37,13 @@ export default function AddStudentModal(props: AliceModalProps) {
         formData.current = { ...formData.current, ...update_ };
     };
 
+    const [createStudentMutation] = studentApi.endpoints.createStudent.useMutation();
+
     const submit = async () => {
         const wechatId = formData.current.wechat_id?.trim();
-        await dispatch(
-            StudentThunkAction.createStudent({ ...formData.current, wechat_id: wechatId ? wechatId : null })
-        ).unwrap();
+        const createStudetnRequest = { ...formData.current, wechat_id: wechatId ? wechatId : null };
+        await createStudentMutation(createStudetnRequest).unwrap();
         toastUtil.success('User Created');
-        dispatch(StudentThunkAction.getStudents());
     };
 
     const dateFormat = 'YYYY-MM-DD';

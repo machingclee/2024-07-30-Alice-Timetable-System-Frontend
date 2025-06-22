@@ -1,18 +1,22 @@
 import { Button, Input } from 'antd';
-import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { CourseResponse } from '../../../dto/dto';
-import { CourseThunkAction } from '../../../redux/slices/courseSlice';
+import { CourseDTO } from '../../../dto/dto';
+import { coursesApi } from '../../../redux/slices/courseSlice';
 import { debounce } from 'lodash';
 import lodash from 'lodash';
 import { MdEdit } from 'react-icons/md';
 import { CgPushUp } from 'react-icons/cg';
 import { IoBookOutline, IoReturnDownBackOutline } from 'react-icons/io5';
 
-export default function CourseRow(props: { id: number }) {
-    const { id } = props;
-    const dispatch = useAppDispatch();
-    const course = useAppSelector(s => s.class.courses.idToCourse?.[id])!;
+export default function CourseRow(props: { courseId: number }) {
+    const { courseId: id } = props;
+    const { course } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+        selectFromResult: result => {
+            const course = result?.data?.idToCourse?.[id];
+            return { course };
+        },
+    });
+    const [updateCourse] = coursesApi.endpoints.updateCourse.useMutation();
 
     const [hasDistinction, setHasDistinction] = useState(false);
 
@@ -30,14 +34,17 @@ export default function CourseRow(props: { id: number }) {
 
     const [editing, setEditing] = useState(false);
     const formData = useRef(course);
-    const updateField = (update: Partial<CourseResponse>) => {
+    const updateField = (update: Partial<CourseDTO>) => {
+        if (!formData.current) {
+            return;
+        }
         formData.current = { ...formData.current, ...update };
         checkDataDistinction();
     };
     const { courseName } = course || {};
     const submitUpdate = async () => {
-        const updatedClass = { ...course, ...formData.current };
-        await dispatch(CourseThunkAction.updateCourse(updatedClass));
+        const updatedCourse = { ...course, ...formData.current } as CourseDTO;
+        await updateCourse({ course: updatedCourse });
         setEditing(false);
     };
 

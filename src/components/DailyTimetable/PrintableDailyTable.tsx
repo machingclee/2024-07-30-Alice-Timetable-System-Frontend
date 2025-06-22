@@ -9,27 +9,34 @@ import AddClassEventDialog from '../AddClassEventDialog';
 import MoveConfirmationDialog from '../../pages/Students/components/MoveConfirmationDialog';
 import Spacer from '../Spacer';
 import { Button } from 'antd';
-import useCustomHolidaysQuery from '@/reactQueries/query/useCustomHolidaysQuery';
-import useExtendClassesForHolidayMutation from '@/reactQueries/mutation/useExtendClassesForHolidayMutation';
 import { useAppSelector } from '@/redux/hooks';
 import dayjs from 'dayjs';
+import { studentApi } from '@/!rtk-query/api/studentApi';
+import { customHolidayApi } from '@/!rtk-query/api/customHolidayApi';
 
 const PrintableDailyTable = (props: { date: Date; dayOffset: number }) => {
     const { date, dayOffset } = props;
     const printButtonRef = useRef<PrintHandler>(null);
-    const holidaysQuery = useCustomHolidaysQuery();
+    const { data: customHolidaysQuery } = customHolidayApi.endpoints.getCustomHolidays.useQuery();
     const timetableDayTimestamp = dayjs(date).add(dayOffset, 'day').startOf('day').toDate().getTime();
-    const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom)!;
-    const extendClassesMutation = useExtendClassesForHolidayMutation({
-        classRoom,
-        dayTimestamp: timetableDayTimestamp,
-    });
+    const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom)!;
+    const [createExtendedClassesForHoliday] = studentApi.endpoints.createExtendedClassesForHoliday.useMutation();
+
     const holidayButton = () => {
-        const holiday = holidaysQuery.data?.find(holiday => holiday.startOfTheDate === timetableDayTimestamp);
+        const holiday = customHolidaysQuery?.find(holiday => holiday.startOfTheDate === timetableDayTimestamp);
         if (holiday) {
             return (
                 <div className="flex items-center gap-2">
-                    <Button onClick={() => extendClassesMutation.mutate()}>Extend Classes</Button>
+                    <Button
+                        onClick={() =>
+                            createExtendedClassesForHoliday({
+                                classroom,
+                                dayTimestamp: timetableDayTimestamp,
+                            })
+                        }
+                    >
+                        Extend Classes
+                    </Button>
                     <span>for holiday: {holiday?.name || ''}</span>
                 </div>
             );

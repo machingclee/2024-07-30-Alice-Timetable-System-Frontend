@@ -1,27 +1,13 @@
-import { createAsyncThunk, createListenerMiddleware, createSlice } from '@reduxjs/toolkit';
-import registerDialogAndActions from '../../utils/registerEffects';
-import apiClient from '../../axios/apiClient';
-import { CustomResponse } from '../../axios/responseTypes';
+import { createSlice } from '@reduxjs/toolkit';
 import apiRoutes from '../../axios/apiRoutes';
-import { processRes } from '../../utils/processRes';
-import { CourseResponse, CreateCourseRequest } from '../../dto/dto';
+import { CourseDTO, CreateCourseRequest } from '../../dto/dto';
 import normalizeUtil from '../../utils/normalizeUtil';
-import { loadingActions } from '../../utils/loadingActions';
-import { Class } from '../../prismaTypes/types';
-import { CourseDTO } from '../../dto/kotlinDto';
+import baseQuery from '@/axios/baseQuery';
+import { createApi } from '@reduxjs/toolkit/query/react';
 
-export type ClassSliceState = {
-    courses: {
-        ids?: number[];
-        idToCourse?: { [id: number]: CourseResponse };
-    };
-    classTimetable: Class[];
-};
+export type ClassSliceState = Record<string, never>;
 
-const initialState: ClassSliceState = {
-    courses: {},
-    classTimetable: [],
-};
+const initialState: ClassSliceState = {};
 
 const classSlice = createSlice({
     name: 'courses',
@@ -31,56 +17,54 @@ const classSlice = createSlice({
             return initialState;
         },
     },
-    extraReducers: builder => {
-        builder
-            .addCase(CourseThunkAction.getCourses.fulfilled, (state, action) => {
-                const classes = action.payload;
-                const { idToObject, ids } = normalizeUtil.normalize({
-                    idAttribute: 'id',
-                    targetArr: classes,
-                });
-                state.courses.ids = ids.map(id => Number(id));
-                state.courses.idToCourse = idToObject;
-            })
-            .addCase(CourseThunkAction.updateCourse.fulfilled, (state, action) => {
-                const id = action.payload.id;
-                if (state.courses.idToCourse?.[id]) {
-                    state.courses.idToCourse[id] = action.payload;
-                }
-            });
-    },
 });
 
-export class CourseThunkAction {
-    public static getCourses = createAsyncThunk('courseSlice/getClasses', async (_: undefined, api) => {
-        const res = await apiClient.get<CustomResponse<CourseResponse[]>>(apiRoutes.GET_COURSES);
-        return processRes(res, api);
-    });
-    public static createCourse = createAsyncThunk(
-        'courseSlice/createClass',
-        async (props: CreateCourseRequest, api) => {
-            const res = await apiClient.post<CustomResponse<undefined>>(apiRoutes.POST_CREATE_COURSE, props);
-            return processRes(res, api);
-        }
-    );
-    public static updateCourse = createAsyncThunk('courseSlice/updateCourse', async (props: CourseResponse, api) => {
-        const res = await apiClient.patch<CustomResponse<CourseDTO>>(apiRoutes.PATCH_UPDATE_COURSE, props);
-        return processRes(res, api);
-    });
-}
-
-export const classMiddleware = createListenerMiddleware();
-registerDialogAndActions(classMiddleware, [
-    ...loadingActions(CourseThunkAction.createCourse),
-    ...loadingActions(CourseThunkAction.getCourses),
-    ...loadingActions(CourseThunkAction.updateCourse),
-    {
-        rejections: [
-            CourseThunkAction.createCourse.rejected,
-            CourseThunkAction.updateCourse.rejected,
-            CourseThunkAction.getCourses.rejected,
-        ],
-    },
-]);
+export const coursesApi = createApi({
+    reducerPath: 'courseApi',
+    baseQuery: baseQuery,
+    tagTypes: ['Courses'],
+    endpoints: builder => ({
+        getCourses: builder.query<{ idToCourse: { [id: number]: CourseDTO }; ids: number[] }, void>({
+            query: () => apiRoutes.GET_COURSES,
+            transformResponse: (courses: CourseDTO[]) => {
+                const { idToObject, ids } = normalizeUtil.normalize<CourseDTO, number>({
+                    idAttribute: 'id',
+                    targetArr: courses,
+                });
+                return { idToCourse: idToObject, ids };
+            },
+            providesTags: ['Courses'],
+            keepUnusedDataFor: 60, // 60s
+        }),
+        createCourse: builder.mutation<CourseDTO, { course: CreateCourseRequest }>({
+            query: ({ course }) => ({
+                url: apiRoutes.POST_CREATE_COURSE,
+                method: 'POST',
+                body: course,
+            }),
+        }),
+        updateCourse: builder.mutation<CourseDTO, { course: CourseDTO }>({
+            query: ({ course: req }) => ({
+                url: apiRoutes.PATCH_UPDATE_COURSE,
+                method: 'PATCH',
+                body: req,
+            }),
+            onQueryStarted: async ({ course: req }, { dispatch, queryFulfilled }) => {
+                try {
+                    await queryFulfilled;
+                    dispatch(
+                        coursesApi.util.updateQueryData('getCourses', undefined, draft => {
+                            if (draft?.idToCourse?.[req.id]) {
+                                draft.idToCourse[req.id] = req;
+                            }
+                        })
+                    );
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+        }),
+    }),
+});
 
 export default classSlice;

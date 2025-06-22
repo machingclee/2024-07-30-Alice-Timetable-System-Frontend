@@ -5,15 +5,20 @@ import EditStudentDialog from './EditStudentDialog';
 import EditStudentForm from './EditStudentForm';
 import RouteEnum from '../../../enum/RouteEnum';
 import dayjs from 'dayjs';
-import { useAppSelector } from '../../../redux/hooks';
 import { Button } from 'antd';
 import { AliceMenu } from '@/components/AliceMenu';
 import { IoLogoOctocat } from 'react-icons/io5';
 import { Separator } from '@/components/ui/separator';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
-export default function StudenRow(props: { studentId: string }) {
+export default function StudentRow(props: { studentId: string }) {
     const { studentId } = props;
-    const student = useAppSelector(s => s.student.students.idToStudent?.[studentId]);
+    const { student } = studentApi.endpoints.getStudents.useQuery(undefined, {
+        selectFromResult: ({ data }) => {
+            return { student: data?.studentIdToStudent?.[studentId] };
+        },
+    });
+
     const navigate = useNavigate();
 
     const goDetailPage = () => {

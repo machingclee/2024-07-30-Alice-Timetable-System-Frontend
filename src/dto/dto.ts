@@ -77,23 +77,28 @@ export type CreateUserRequest = {
 //   public val roleInCompany: String,
 //   public val createdAtHk: String?,
 
-export type User = {
-    first_name: string;
-    last_name: string;
-    chinese_first_name: string;
-    chinese_last_name: string;
-    company_email: string;
-    mobile_number: string;
-    role_in_system: RoleInSystem;
-    role_in_company: string;
-    id: string;
+export type UserDTO = {
+    id?: string;
+    firstName: string;
+    lastName: string;
+    chineseFirstName?: string;
+    chineseLastName?: string;
+    isBlocked: boolean;
+    companyEmail: string;
+    passwordHash: string;
+    avatarFileUrl: string;
+    createdAt?: number;
+    mobileNumber: string;
+    roleInSystem: RoleInSystem;
+    roleInCompany: string;
+    createdAtHk: string;
 };
 
 export type CreateCourseRequest = {
     courseName: string;
 };
 
-export type CourseResponse = {
+export type CourseDTO = {
     courseName: string;
     createdAt: number;
     createdAtHk: string;
@@ -153,6 +158,7 @@ export type DuplicateClassRequest = {
 
 export type DetachClassRequest = {
     classId: number;
+    studentId: string;
 };
 
 export type UpdateClassRequest = {
@@ -176,12 +182,11 @@ export type CreateStudentPackageRequest = {
 export type UpdateStudentPackageRequest = {
     id: number;
     num_of_classes: number;
-    default_classroom: Classroom;
     start_date: number;
     expiry_date: number;
     min: number;
     course_id: number;
-    student_id: string;
+    default_classroom: Classroom;
 };
 
 export type Competition = {
@@ -257,7 +262,7 @@ export type Loggings = {
 
 export type PreDailyTimetableRequest = {
     anchorTimestamp: number;
-    numOfDays?: number;
+    numOfDays: number;
     classRoom: Classroom;
     filter: FilterToGetClassesForDailyTimetable;
 };
@@ -291,7 +296,8 @@ export type CustomHolidayDTO = {
     createdAtHk: string;
 };
 
-export type UpodateHolidayDTO = {
+export type UpdateHolidayDTO = {
+    holidayId: number;
     name: string;
     desc: string;
     date: number;

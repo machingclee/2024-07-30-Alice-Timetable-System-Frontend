@@ -1,17 +1,21 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
-
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 import persistStore from 'redux-persist/es/persistStore';
 import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 import appSlice from './slices/appSlice';
 import authSlice, { authMiddleware } from './slices/authSlice';
-import userSlice, { userMiddleware } from './slices/userSlice';
-import studentSlice, { studentMiddleware } from './slices/studentSlice';
-import classSlice, { classMiddleware } from './slices/courseSlice';
+import studentSlice from './slices/studentSlice';
+import { studentApi } from '../!rtk-query/api/studentApi';
+import { coursesApi } from './slices/courseSlice';
+import classSlice from './slices/courseSlice';
 import competitionSlice, { competitionMiddleware } from './slices/competitionSlice';
 import ticketSlice, { ticketMiddleware } from './slices/ticketSlice';
-import notificationSlice, { notificationMiddleware } from './slices/notificationSlice';
+import { userApi } from '../!rtk-query/api/userApi';
+import { notificationApi } from '@/!rtk-query/api/notificationApi';
+import { massDailyTimetableApi } from '@/!rtk-query/api/massDailyTimetableApi';
+import { studentDetailWeeklyTimetablApi } from '@/!rtk-query/api/studentDetailWeeklyTimetablApi';
+import { customHolidayApi } from '@/!rtk-query/api/customHolidayApi';
 
 // a fix following the guide from https://www.youtube.com/watch?v=fjPIJZ1Eokg
 const createNoopStorage = () => {
@@ -43,23 +47,31 @@ export const store = configureStore({
     reducer: {
         auth: persistReducer<ReturnType<typeof authSlice.reducer>>(authPersistConfig, authSlice.reducer),
         app: appSlice.reducer,
-        user: userSlice.reducer,
         student: studentSlice.reducer,
+        userApi: userApi.reducer,
+        studentApi: studentApi.reducer,
+        courseApi: coursesApi.reducer,
         class: classSlice.reducer,
         competition: competitionSlice.reducer,
         ticket: ticketSlice.reducer,
-        notification: notificationSlice.reducer,
+        notificationApi: notificationApi.reducer,
+        massDailyTimetableApi: massDailyTimetableApi.reducer,
+        studentDetailWeeklyTimetablApi: studentDetailWeeklyTimetablApi.reducer,
+        customHolidayApi: customHolidayApi.reducer,
     },
     middleware: getDefaultMiddleware =>
-        getDefaultMiddleware({ serializableCheck: false }).concat(
+        getDefaultMiddleware({ serializableCheck: false }).concat([
             authMiddleware.middleware,
-            userMiddleware.middleware,
-            studentMiddleware.middleware,
-            classMiddleware.middleware,
             competitionMiddleware.middleware,
             ticketMiddleware.middleware,
-            notificationMiddleware.middleware
-        ),
+            studentApi.middleware,
+            coursesApi.middleware,
+            userApi.middleware,
+            notificationApi.middleware,
+            massDailyTimetableApi.middleware,
+            studentDetailWeeklyTimetablApi.middleware,
+            customHolidayApi.middleware,
+        ]),
 });
 
 export const persistor = persistStore(store);

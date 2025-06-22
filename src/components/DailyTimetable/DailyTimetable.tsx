@@ -8,12 +8,12 @@ import Spacer from '../Spacer';
 
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import studentSlice from '../../redux/slices/studentSlice';
+import { studentApi } from '../../!rtk-query/api/studentApi';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import ViewClassDialog from '../ViewClassDialog';
 import TimeRow from './components/TimeRow';
 import { PrintHandler } from '../PrintButton';
 import Interval from '../../utils/Interval';
-import useRefetchMassTimetables from '../../hooks/useRefetchMassTimetables';
 import ContentContainer from '../ContentContainer';
 const gridHeight = 30;
 
@@ -28,12 +28,31 @@ export default function DailyTimetable({
 }) {
     const dispatch = useAppDispatch();
     const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom);
-    const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
+    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
+    const numOfDays = useAppSelector(s => s.student.massTimetablePage.numOfDaysToDisplay);
+
+    // const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
+    const [refetchMassTimetableAnchoredAt] =
+        studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useLazyQuery();
+    const { hrUnixTimestampToClasses = {} } = studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
+        {
+            anchorTimestamp: dayjs(date).startOf('day').valueOf(),
+            classRoom: classRoom!,
+            filter: JSON.parse(JSON.stringify(filter)),
+            numOfDays,
+        },
+        {
+            skip: !classRoom,
+            selectFromResult: result => {
+                const { hrUnixTimestampToTimetableClasses } = result?.data || {};
+                return { hrUnixTimestampToClasses: hrUnixTimestampToTimetableClasses };
+            },
+        }
+    );
     const [hoursColumnGrid, setHoursColumn] = useState<string[]>([]);
     const hrUnixTimestampOnClick = useAppSelector(
         s => s.student.massTimetablePage.totalClassesInHighlight.hrUnixTimestampOnClick
     );
-    const hrUnixTimestampToClasses = useAppSelector(s => s.student.massTimetablePage.hrUnixTimestampToTimetableClasses);
 
     // Memoize the half-hour intervals to prevent recalculation on every render
     const oneForthHourIntervals = useMemo(() => {
@@ -60,8 +79,8 @@ export default function DailyTimetable({
             const t_max = dayjs(hrUnixTimestampOnClick).add(15, 'minute').valueOf();
             const intervalOnClick = new Interval(t_min, t_max - 1);
 
-            Object.values(hrUnixTimestampToClasses).forEach(timetableClass => {
-                timetableClass.forEach(timetableClass => {
+            Object.values(hrUnixTimestampToClasses).forEach(timetableClasses => {
+                timetableClasses.forEach(timetableClass => {
                     const hourUnixTimestamp = timetableClass.class.hourUnixTimestamp;
                     const package_ = timetableClass.studentPackage;
                     const min = package_.min;
@@ -106,7 +125,7 @@ export default function DailyTimetable({
                 '& .freeze': {
                     transform: 'translate(0px,0px) !important',
                 },
-                '& .grid-hour: nth-child(n+1)': {
+                '& .grid-hour:nth-of-type(n+1)': {
                     width: '120px',
                     height: `${gridHeight - 1}px`,
                 },
@@ -138,7 +157,12 @@ export default function DailyTimetable({
                                 const prevDayjs = dayjs(date).subtract(1 + dayOffset, 'day');
                                 const prevDate = prevDayjs.toDate();
                                 dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: prevDate }));
-                                refetchMassTimetableAnchoredAt(prevDate.getTime());
+                                refetchMassTimetableAnchoredAt({
+                                    anchorTimestamp: dayjs(prevDate).startOf('day').valueOf(),
+                                    classRoom: classRoom!,
+                                    filter: JSON.parse(JSON.stringify(filter)),
+                                    numOfDays,
+                                });
                             }}
                         >
                             <div
@@ -165,7 +189,12 @@ export default function DailyTimetable({
                                 const nextDayjs = dayjs(date).add(1 - dayOffset, 'day');
                                 const nextDate = nextDayjs.toDate();
                                 dispatch(studentSlice.actions.setDailyTimetableSelectedDate({ date: nextDate }));
-                                refetchMassTimetableAnchoredAt(nextDate.getTime());
+                                refetchMassTimetableAnchoredAt({
+                                    anchorTimestamp: dayjs(nextDate).startOf('day').valueOf(),
+                                    classRoom: classRoom!,
+                                    filter: JSON.parse(JSON.stringify(filter)),
+                                    numOfDays,
+                                });
                             }}
                         >
                             <div
@@ -192,7 +221,7 @@ export default function DailyTimetable({
                                 padding: '20px', // Print-specific padding
                                 pageBreakInside: 'avoid',
                             },
-                            '& .grid-time: nth-child(n+1)': {
+                            '& .grid-time:nth-of-type(n+1)': {
                                 paddingRight: '14px',
                                 height: `${gridHeight + 5}px`,
                                 display: 'flex',

@@ -1,13 +1,11 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import RouteEnum from '../../enum/RouteEnum';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { useAppSelector } from '../../redux/hooks';
 import { useEffect } from 'react';
-import { NotificationThunkAction } from '@/redux/slices/notificationSlice';
 
 const Dashboard = () => {
     const accessToken = useAppSelector(s => s.auth.accessToken);
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (!accessToken) {
@@ -19,10 +17,6 @@ const Dashboard = () => {
             }
         }
     }, [accessToken, navigate]);
-
-    useEffect(() => {
-        dispatch(NotificationThunkAction.getNotifications());
-    }, [dispatch]);
 
     return (
         <div style={{ display: 'flex', flexDirection: 'row', height: '100vh' }} className="bg-teal-200">

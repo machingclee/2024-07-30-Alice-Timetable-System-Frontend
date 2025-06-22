@@ -14,7 +14,7 @@ import CompetitionDetail from '../pages/Competitions/competitionDetail/Competiti
 import Logging from '../pages/Logging/Logging.tsx';
 import type { Store } from '@reduxjs/toolkit';
 import Dashboard from './indexPages/Dashboard.tsx';
-import AllStudentsIndex from './indexPages/AllStudentsIndex.tsx';
+import MassStudentsTimetableIndex from './indexPages/AllStudentsIndex.tsx';
 import CausewaybayIndex from './indexPages/CausewaybayIndex.tsx';
 import LogginIndex from './indexPages/LogginIndex.tsx';
 import ClassStatusIndex from './indexPages/ClassStatusIndex.tsx';
@@ -35,7 +35,7 @@ function getRouter(_store: Store) {
                 <Route path="/dashboard" element={<Dashboard />}>
                     <Route path="tickets" element={<Tickets />} />
                     <Route path="notifications" element={<Notification />} />
-                    <Route path={'students'} element={<RouteIndex />}>
+                    <Route path="students" element={<RouteIndex />}>
                         <Route index element={<Students />} />
                         <Route path=":studentId" element={<StudentDetail />} />
                     </Route>
@@ -46,7 +46,7 @@ function getRouter(_store: Store) {
                     </Route>
                     <Route path="users" element={<Users />} />
                     <Route path="custom-holidays" element={<CustomHolidays />} />
-                    <Route path="all-students" element={<AllStudentsIndex />}>
+                    <Route path="all-students" element={<MassStudentsTimetableIndex />}>
                         <Route path="prince-edward" element={<PrinceEdwardIndex />}>
                             <Route index element={<PrinceEdwardTimetable />} />
                         </Route>

@@ -8,6 +8,7 @@ export default function NavButton(props: {
     title: string;
     routeEnum: RouteEnum;
     icon?: ReactNode;
+    onClick?: () => void;
 }) {
     const { pathname } = useLocation();
     const { activeNavigationRegex, routeEnum, title, icon } = props;
@@ -22,6 +23,7 @@ export default function NavButton(props: {
                 block
                 type={active ? 'primary' : 'text'}
                 onClick={() => {
+                    props.onClick?.();
                     navigate(routeEnum);
                 }}
             >

@@ -8,23 +8,14 @@ import { DatePicker } from 'antd';
 import { useState } from 'react';
 import { MdOutlineEventBusy } from 'react-icons/md';
 import FormInputTitle from '@/components/FormInputTitle';
-import useCustomHolidaysQuery from '@/reactQueries/query/useCustomHolidaysQuery';
-import useCreateHolidayMutation from '@/reactQueries/mutation/useCreateHolidayMutation';
 import { Box } from '@mui/material';
 import { BsCalendar2MonthFill } from 'react-icons/bs';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import queryKeys from '@/reactQueries/query/queryKeys';
-import apiClient from '@/axios/apiClient';
-import { UpodateHolidayDTO } from '@/dto/dto';
-import apiRoutes from '@/axios/apiRoutes';
-import { CustomResponse } from '@/axios/responseTypes';
-import { useAppDispatch } from '@/redux/hooks';
-import appSlice from '@/redux/slices/appSlice';
 import clsx from 'clsx';
+import { customHolidayApi } from '@/!rtk-query/api/customHolidayApi';
 
 const CALENDAR_IS_TODAY_COLOR = '#3bc289';
 
-export const CalendarCell = (props: { className: string; date: dayjs.Dayjs }) => {
+const CalendarCell = (props: { className: string; date: dayjs.Dayjs }) => {
     const { className, date } = props;
     return (
         <div className="w-full h-full flex items-center justify-center" style={{ position: 'relative', zIndex: 1 }}>
@@ -33,13 +24,12 @@ export const CalendarCell = (props: { className: string; date: dayjs.Dayjs }) =>
     );
 };
 
-export const HIGHLIGHT_CALEDAR_DATE_STYLE = clsx(
+const HIGHLIGHT_CALEDAR_DATE_STYLE = clsx(
     'w-7 h-7 bg-emerald-200 rounded-md flex items-center justify-center font-semibold text-emerald-700'
 );
 
 export default function CustomHolidays() {
-    const customHolidaysQuery = useCustomHolidaysQuery();
-
+    const { data: customHolidaysQuery } = customHolidayApi.endpoints.getCustomHolidays.useQuery();
     return (
         <div className="space-y-4">
             <SectionTitle>Custom Holidays</SectionTitle>
@@ -52,7 +42,7 @@ export default function CustomHolidays() {
             <div className="flex gap-4">
                 <div className="flex-1">
                     <div className="space-y-2.5 pr-4">
-                        {customHolidaysQuery.data?.map(holiday => {
+                        {customHolidaysQuery?.map(holiday => {
                             const { id, desc, name, startOfTheDate } = holiday;
                             return <Holiday holidayId={id} name={name} date={startOfTheDate} desc={desc} />;
                         })}
@@ -95,7 +85,7 @@ export default function CustomHolidays() {
 
     function determineStyle(date: dayjs.Dayjs) {
         const isToday = date.format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD');
-        const isHoliday = customHolidaysQuery.data?.some(
+        const isHoliday = customHolidaysQuery?.some(
             holiday => dayjs(holiday.startOfTheDate).format('YYYY-MM-DD') === date.format('YYYY-MM-DD')
         );
         const className = clsx({
@@ -117,16 +107,18 @@ const AddHolidayModal = (props: AliceModalProps) => {
         console.log(name, desc);
     });
 
-    const createHoliday = useCreateHolidayMutation({
-        date,
-        desc,
-        name,
-        onSuccess: () => {
-            setOpen(false);
-        },
-    });
+    const [createHolidayMutation] = customHolidayApi.endpoints.addCustomHoliday.useMutation();
 
-    setOnOk(createHoliday.mutate);
+    const createHoliday = async () => {
+        await createHolidayMutation({
+            name,
+            desc,
+            date: date.valueOf(),
+        }).unwrap();
+        setOpen(false);
+    };
+
+    setOnOk(createHoliday);
 
     return (
         <div>
@@ -199,57 +191,28 @@ function Holiday(props: { date: number; name: string; desc: string; holidayId: n
     );
 }
 
-const EditHolidayModal = (props: AliceModalProps<{ holidayId: number; date: number; desc: string; name: string }>) => {
+type EditModalContext = { holidayId: number; date: number; desc: string; name: string };
+
+const EditHolidayModal = (props: AliceModalProps<EditModalContext>) => {
     const { setOkText, setOnOk, context, setOpen } = props;
-    const dispatch = useAppDispatch();
     const { holidayId, date: initialDate, desc: initialDesc, name: initialName } = context || {};
     setOkText('Confirm');
     const [name, setName] = useState(initialName);
     const [desc, setDesc] = useState(initialDesc);
     const [date, setDate] = useState<dayjs.Dayjs>(dayjs(initialDate));
+    const [deleteHoliday] = customHolidayApi.endpoints.deleteCustomHoliday.useMutation();
+    const [updateHolidayMutation] = customHolidayApi.endpoints.updateCustomHoliday.useMutation();
 
-    const deleteHoliday = useMutation({
-        mutationKey: queryKeys.CUSTOM_HOLIDAYS,
-        mutationFn: async () => {
-            return await apiClient.delete<CustomResponse<void>>(apiRoutes.DELETE_CUSTOM_HOLIDAY(holidayId));
-        },
-        onMutate: () => {
-            dispatch(appSlice.actions.setLoading(true));
-        },
-        onSettled: () => {
-            dispatch(appSlice.actions.setLoading(false));
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: queryKeys.CUSTOM_HOLIDAYS });
-        },
-    });
+    const updateHoliday = async () => {
+        await updateHolidayMutation({
+            holidayId,
+            date: date.valueOf(),
+            desc,
+            name,
+        }).unwrap();
+    };
 
-    const queryClient = useQueryClient();
-
-    const updateHoliday = useMutation({
-        mutationKey: queryKeys.CUSTOM_HOLIDAYS,
-        onMutate: () => {
-            dispatch(appSlice.actions.setLoading(true));
-        },
-        onSettled: () => {
-            dispatch(appSlice.actions.setLoading(false));
-        },
-        mutationFn: async () => {
-            return await apiClient.put<CustomResponse<void>, UpodateHolidayDTO>(
-                apiRoutes.PUT_UPDATE_CUSTOM_HOLIDAY(holidayId),
-                {
-                    date: date.valueOf(),
-                    desc,
-                    name,
-                }
-            );
-        },
-        onSuccess: async () => {
-            queryClient.invalidateQueries({ queryKey: queryKeys.CUSTOM_HOLIDAYS });
-        },
-    });
-
-    setOnOk(updateHoliday.mutate);
+    setOnOk(updateHoliday);
 
     return (
         <div>
@@ -260,7 +223,7 @@ const EditHolidayModal = (props: AliceModalProps<{ holidayId: number; date: numb
                         modalContent={props => {
                             props.setOkText('Yes');
                             props.setOnOk(async () => {
-                                await deleteHoliday.mutateAsync();
+                                await deleteHoliday({ holidayId }).unwrap();
                                 props.setOpen(false);
                             });
                             return <div>Are you sure to delete?</div>;
