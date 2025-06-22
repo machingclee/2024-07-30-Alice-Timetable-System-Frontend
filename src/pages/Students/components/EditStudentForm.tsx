@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import studentSlice from '../../../redux/slices/studentSlice';
 import EditStudentDialog from './EditStudentDialog';
 import { Switch } from '@/components/ui/switch';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function EditStudentForm({ studentId }: { studentId: string }) {
     const dispatch = useAppDispatch();

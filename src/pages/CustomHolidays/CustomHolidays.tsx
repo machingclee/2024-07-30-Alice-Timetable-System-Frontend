@@ -11,7 +11,7 @@ import FormInputTitle from '@/components/FormInputTitle';
 import { Box } from '@mui/material';
 import { BsCalendar2MonthFill } from 'react-icons/bs';
 import clsx from 'clsx';
-import { customHolidayApi } from '@/!!rtk-query/api/customHolidayApi';
+import { customHolidayApi } from '@/!rtk-query/api/customHolidayApi';
 
 const CALENDAR_IS_TODAY_COLOR = '#3bc289';
 

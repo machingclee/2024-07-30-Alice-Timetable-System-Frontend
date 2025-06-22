@@ -1,6 +1,6 @@
 import { useAppDispatch } from '@/redux/hooks';
 import studentSlice from '@/redux/slices/studentSlice';
-import { WeeklyClassEvent } from '@/!!rtk-query/api/studentApi';
+import { WeeklyClassEvent } from '@/!rtk-query/api/studentApi';
 import useAnchorTimestamp from './useStudentDetailPathParam';
 import RouteEnum from '@/enum/RouteEnum';
 import { useNavigate } from 'react-router-dom';

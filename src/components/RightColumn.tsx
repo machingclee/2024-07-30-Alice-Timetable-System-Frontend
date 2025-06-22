@@ -7,7 +7,7 @@ import { Calendar } from 'antd';
 import type { CalendarProps } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import studentSlice from '../redux/slices/studentSlice';
-import { studentApi } from '../!!rtk-query/api/studentApi';
+import { studentApi } from '../!rtk-query/api/studentApi';
 import { AppDispatch } from '../redux/store';
 import { StatuesFilter } from '../dto/dto';
 import { FaFilter } from 'react-icons/fa';
@@ -23,8 +23,8 @@ import clsx from 'clsx';
 import { Class_status } from '@/dto/kotlinDto';
 import { coursesApi } from '@/redux/slices/courseSlice';
 import { cloneDeep } from 'lodash';
-import { massDailyTimetableApi } from '@/!!rtk-query/api/massDailyTimetableApi';
-import { customHolidayApi } from '@/!!rtk-query/api/customHolidayApi';
+import { massDailyTimetableApi } from '@/!rtk-query/api/massDailyTimetableApi';
+import { customHolidayApi } from '@/!rtk-query/api/customHolidayApi';
 
 export default function RightColumn() {
     const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom);

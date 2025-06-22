@@ -13,7 +13,7 @@ import { IoNotifications } from 'react-icons/io5';
 import { Badge, Button } from 'antd';
 import RouteEnum from '@/enum/RouteEnum';
 import dashboard_background from '../../assets/dashboard_background.png';
-import { notificationApi } from '@/!!rtk-query/api/notificationApi';
+import { notificationApi } from '@/!rtk-query/api/notificationApi';
 
 const NotificationButton = () => {
     const navigiate = useNavigate();

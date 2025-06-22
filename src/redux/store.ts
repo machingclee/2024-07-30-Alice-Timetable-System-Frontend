@@ -6,16 +6,16 @@ import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 import appSlice from './slices/appSlice';
 import authSlice, { authMiddleware } from './slices/authSlice';
 import studentSlice from './slices/studentSlice';
-import { studentApi } from '../!!rtk-query/api/studentApi';
+import { studentApi } from '../!rtk-query/api/studentApi';
 import { coursesApi } from './slices/courseSlice';
 import classSlice from './slices/courseSlice';
 import competitionSlice, { competitionMiddleware } from './slices/competitionSlice';
 import ticketSlice, { ticketMiddleware } from './slices/ticketSlice';
-import { userApi } from '../!!rtk-query/api/userApi';
-import { notificationApi } from '@/!!rtk-query/api/notificationApi';
-import { massDailyTimetableApi } from '@/!!rtk-query/api/massDailyTimetableApi';
-import { studentDetailWeeklyTimetablApi } from '@/!!rtk-query/api/studentDetailWeeklyTimetablApi';
-import { customHolidayApi } from '@/!!rtk-query/api/customHolidayApi';
+import { userApi } from '../!rtk-query/api/userApi';
+import { notificationApi } from '@/!rtk-query/api/notificationApi';
+import { massDailyTimetableApi } from '@/!rtk-query/api/massDailyTimetableApi';
+import { studentDetailWeeklyTimetablApi } from '@/!rtk-query/api/studentDetailWeeklyTimetablApi';
+import { customHolidayApi } from '@/!rtk-query/api/customHolidayApi';
 
 // a fix following the guide from https://www.youtube.com/watch?v=fjPIJZ1Eokg
 const createNoopStorage = () => {

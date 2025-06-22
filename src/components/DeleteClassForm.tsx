@@ -7,7 +7,7 @@ import colors from '../constant/colors';
 import dayjs from 'dayjs';
 import { ClassDTO, ClassGroupDTO, CourseDTO } from '../dto/kotlinDto';
 import Sep from './Sep';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function DeleteClassForm(props: {
     deleteSingleClass: boolean;

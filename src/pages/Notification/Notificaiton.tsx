@@ -13,7 +13,7 @@ import { AliceDropdownMenu } from '@/components/CustomDropdownMenu';
 import classnames from 'classnames';
 import boxShadow from '@/constant/boxShadow';
 import RouteEnum from '@/enum/RouteEnum';
-import { notificationApi } from '@/!!rtk-query/api/notificationApi';
+import { notificationApi } from '@/!rtk-query/api/notificationApi';
 import { CircularProgress } from '@mui/material';
 
 const notificationTypeToDisplayName: Record<NotificationDTO['type'], string> = {

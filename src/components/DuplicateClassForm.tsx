@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button, Select } from 'antd';
 import DuplicateClassDialog from './DuplicateClassDialog';
 import { ClassDTO } from '../dto/kotlinDto';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function DuplicateClassForm(props: { class: ClassDTO; isTimeslotInThePast: boolean }) {
     const { class: classEvent, isTimeslotInThePast } = props;

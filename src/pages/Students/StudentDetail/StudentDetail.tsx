@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import SectionTitle from '../../../components/SectionTitle';
 import { useEffect, useState } from 'react';
 import studentSlice, { StudentDetailPage } from '../../../redux/slices/studentSlice';
-import { studentApi } from '../../../!!rtk-query/api/studentApi';
+import { studentApi } from '../../../!rtk-query/api/studentApi';
 import Spacer from '../../../components/Spacer';
 import WeeklyTimetable from '../components/WeeklyTimetable';
 import AddClassEventDialog from '../../../components/AddClassEventDialog';

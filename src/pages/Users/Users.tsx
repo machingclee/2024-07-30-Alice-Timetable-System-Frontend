@@ -4,7 +4,7 @@ import SectionTitle from '../../components/SectionTitle';
 import UserRow from './components/UserRow';
 import AliceModalTrigger from '../../components/AliceModalTrigger';
 import AddUserModal from './components/AddUserModal';
-import { userApi } from '@/!!rtk-query/api/userApi';
+import { userApi } from '@/!rtk-query/api/userApi';
 
 export default function User() {
     const { emails } = userApi.endpoints.getUsers.useQuery(undefined, {

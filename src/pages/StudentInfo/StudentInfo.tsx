@@ -15,7 +15,7 @@ import useSelectPackage from '@/hooks/useSelectPackage';
 import { useAppSelector } from '@/redux/hooks';
 import React, { useEffect } from 'react';
 import ContentContainer from '@/components/ContentContainer';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 import { cloneDeep } from 'lodash';
 
 export default function StudentInfo() {

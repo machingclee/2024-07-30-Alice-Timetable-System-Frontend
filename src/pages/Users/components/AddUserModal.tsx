@@ -9,7 +9,7 @@ import AddUserDialog from './AddUserDialog';
 import { Box } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
 import { AliceModalProps } from '../../../components/AliceModalTrigger';
-import { userApi } from '@/!!rtk-query/api/userApi';
+import { userApi } from '@/!rtk-query/api/userApi';
 
 export default function AddUserModal(props: AliceModalProps) {
     const { setOnOk: setOnOk, setOkText } = props;

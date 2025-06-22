@@ -11,7 +11,7 @@ import { Classroom } from '../../../../prismaTypes/types';
 import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
 import { coursesApi } from '@/redux/slices/courseSlice';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function EditPackageForm(props: { packageId: string }) {
     const { packageId } = props;

@@ -5,7 +5,7 @@ import ViewClassForm from './ViewClassForm';
 import ViewClassDialog from './ViewClassDialog';
 import StudentClassCard from './StudentClassCard';
 import dayjs from 'dayjs';
-import { studentApi } from '../!!rtk-query/api/studentApi';
+import { studentApi } from '../!rtk-query/api/studentApi';
 import { useNavigate } from 'react-router-dom';
 import RouteEnum from '../enum/RouteEnum';
 import { Modal } from 'antd';

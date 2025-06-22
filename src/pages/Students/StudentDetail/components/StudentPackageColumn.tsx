@@ -12,7 +12,7 @@ import studentSlice from '../../../../redux/slices/studentSlice';
 import { MdOutlineEventNote } from 'react-icons/md';
 import { StudentPackageRepsonse } from '../../../../dto/kotlinDto';
 import { Separator } from '@/components/ui/separator';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function StudentPackageColumn(props: { packagesOffsetY: number; collapseTimtable: boolean }) {
     const { packagesOffsetY, collapseTimtable } = props;

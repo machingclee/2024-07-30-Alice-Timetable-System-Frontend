@@ -5,7 +5,7 @@ import SectionTitle from '../components/SectionTitle';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { Box } from '@mui/material';
 import FormInputTitle from '../components/FormInputTitle';
-import { studentApi } from '../!!rtk-query/api/studentApi';
+import { studentApi } from '../!rtk-query/api/studentApi';
 import toastUtil from '../utils/toastUtil';
 import AddClassEventDialog from '../components/AddClassEventDialog';
 import { CreateClassRequest } from '../dto/dto';

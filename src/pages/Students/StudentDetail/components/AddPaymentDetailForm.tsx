@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import { useRef } from 'react';
 
 import AddPaymentDetailDialog from './AddPaymentDetailDialog';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function AddPaymentDetailForm(props: { packageId: number }) {
     const { packageId } = props;

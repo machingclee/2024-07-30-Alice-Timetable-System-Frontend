@@ -16,7 +16,7 @@ import colors from '../../../constant/colors';
 import toastUtil from '../../../utils/toastUtil';
 import useAnchorTimestamp from '../../../hooks/useStudentDetailPathParam';
 import { coursesApi } from '@/redux/slices/courseSlice';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 // Function to convert timestamp to the start of the day (midnight)
 const toMidnight = (timestamp: number): number => {

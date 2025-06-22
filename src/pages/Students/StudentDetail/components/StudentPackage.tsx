@@ -19,7 +19,7 @@ import toastUtil from '../../../../utils/toastUtil';
 import { AliceMenu } from '@/components/AliceMenu';
 import useSelectPackage from '@/hooks/useSelectPackage';
 import { coursesApi } from '@/redux/slices/courseSlice';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;

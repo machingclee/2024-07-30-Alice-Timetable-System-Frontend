@@ -11,7 +11,7 @@ import DeleteClassDialog from '../../../components/DeleteClassDialog';
 import DuplicateClassDialog from '../../../components/DuplicateClassDialog';
 import DuplicateClassForm from '../../../components/DuplicateClassForm';
 import studentSlice from '../../../redux/slices/studentSlice';
-import { studentApi } from '../../../!!rtk-query/api/studentApi';
+import { studentApi } from '../../../!rtk-query/api/studentApi';
 import colors from '../../../constant/colors';
 import Label from '../../../components/Label';
 import ViewClassDialog from '../../../components/ViewClassDialog';

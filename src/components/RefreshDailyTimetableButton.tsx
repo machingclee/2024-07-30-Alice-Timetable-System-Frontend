@@ -1,7 +1,7 @@
 import { useAppSelector } from '../redux/hooks';
 import { RiRefreshLine } from 'react-icons/ri';
 import { Button } from 'antd';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 import dayjs from 'dayjs';
 
 export default function RefreshDailyTimetableButton() {

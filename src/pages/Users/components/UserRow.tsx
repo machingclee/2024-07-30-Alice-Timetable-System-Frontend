@@ -6,7 +6,7 @@ import { RoleInSystem, UserDTO } from '../../../dto/dto';
 import { Button, Input, Select } from 'antd';
 import Spacer from '../../../components/Spacer';
 import lodash, { debounce } from 'lodash';
-import { userApi } from '@/!!rtk-query/api/userApi';
+import { userApi } from '@/!rtk-query/api/userApi';
 import toastUtil from '@/utils/toastUtil';
 import authSlice from '@/redux/slices/authSlice';
 

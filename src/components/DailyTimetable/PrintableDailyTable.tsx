@@ -11,8 +11,8 @@ import Spacer from '../Spacer';
 import { Button } from 'antd';
 import { useAppSelector } from '@/redux/hooks';
 import dayjs from 'dayjs';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
-import { customHolidayApi } from '@/!!rtk-query/api/customHolidayApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
+import { customHolidayApi } from '@/!rtk-query/api/customHolidayApi';
 
 const PrintableDailyTable = (props: { date: Date; dayOffset: number }) => {
     const { date, dayOffset } = props;

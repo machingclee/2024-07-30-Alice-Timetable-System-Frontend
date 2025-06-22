@@ -13,7 +13,7 @@ import { IoMdSearch } from 'react-icons/io';
 import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import CustomScrollbarContainer from '@/components/CustomScrollbarContainer';
 import ContentContainer from '@/components/ContentContainer';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 import { CircularProgress } from '@mui/material';
 
 export default function Students() {

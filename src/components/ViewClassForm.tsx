@@ -11,7 +11,7 @@ import getColorForClassStatus from '../utils/getColorForClassStatus';
 import getNumberSuffix from '../utils/getNumberSuffix';
 import { ClassDTO, CourseDTO, StudentDTO } from '../dto/kotlinDto';
 import boxShadow from '../constant/boxShadow';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function ViewClassForm(props: {
     student: StudentDTO;

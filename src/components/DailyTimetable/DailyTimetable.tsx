@@ -8,7 +8,7 @@ import Spacer from '../Spacer';
 
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import studentSlice from '../../redux/slices/studentSlice';
-import { studentApi } from '../../!!rtk-query/api/studentApi';
+import { studentApi } from '../../!rtk-query/api/studentApi';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import ViewClassDialog from '../ViewClassDialog';
 import TimeRow from './components/TimeRow';

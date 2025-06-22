@@ -21,7 +21,7 @@ import { IoMdTime } from 'react-icons/io';
 import { AliceMenu } from '@/components/AliceMenu';
 import ContentContainer from '@/components/ContentContainer';
 import { useParams } from 'react-router-dom';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export const Container = (props: PropsWithChildren) => {
     return (

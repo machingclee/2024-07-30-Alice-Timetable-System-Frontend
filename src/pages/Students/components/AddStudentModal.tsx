@@ -10,7 +10,7 @@ import FormInputTitle from '../../../components/FormInputTitle';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { AliceModalProps } from '../../../components/AliceModalTrigger';
-import { studentApi } from '@/!!rtk-query/api/studentApi';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
 const initialDate = '2015-01-01';
 

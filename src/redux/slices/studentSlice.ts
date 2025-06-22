@@ -3,7 +3,7 @@ import { FilterToGetClassesForDailyTimetable } from '../../dto/dto';
 import { cloneDeep } from 'lodash';
 import { Classroom } from '../../prismaTypes/types';
 import { StudentDTO } from '../../dto/kotlinDto';
-import { WeeklyClassEvent } from '../../!!rtk-query/api/studentApi';
+import { WeeklyClassEvent } from '../../!rtk-query/api/studentApi';
 
 export enum StudentDetailPage {
     STUDENT_TIME_TABLE = 'STUDENT_TIME_TABLE',
