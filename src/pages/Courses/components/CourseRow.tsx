@@ -1,7 +1,7 @@
 import { Button, Input } from 'antd';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CourseDTO } from '../../../dto/dto';
-import { coursesApi } from '../../../redux/slices/courseSlice';
+import { courseApi } from '@/!rtk-query/api/courseApi';
 import { debounce } from 'lodash';
 import lodash from 'lodash';
 import { MdEdit } from 'react-icons/md';
@@ -10,13 +10,13 @@ import { IoBookOutline, IoReturnDownBackOutline } from 'react-icons/io5';
 
 export default function CourseRow(props: { courseId: number }) {
     const { courseId: id } = props;
-    const { course } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+    const { course } = courseApi.endpoints.getCourses.useQuery(undefined, {
         selectFromResult: result => {
             const course = result?.data?.idToCourse?.[id];
             return { course };
         },
     });
-    const [updateCourse] = coursesApi.endpoints.updateCourse.useMutation();
+    const [updateCourse] = courseApi.endpoints.updateCourse.useMutation();
 
     const [hasDistinction, setHasDistinction] = useState(false);
 

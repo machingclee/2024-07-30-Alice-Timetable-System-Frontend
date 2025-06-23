@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 import range from '../utils/range';
 import { Classroom } from '../prismaTypes/types';
 import appSlice from '../redux/slices/appSlice';
-import { coursesApi } from '@/redux/slices/courseSlice';
+import { courseApi } from '@/!rtk-query/api/courseApi';
 
 export default function AddClassEventForm(props: {
     isTimeslotInThePast: boolean;
@@ -45,7 +45,7 @@ export default function AddClassEventForm(props: {
     const defaultNumOfClasses = resetDefaultNumOfClasses ? 1 : defaultNumOfClasses_;
 
     const dispatch = useAppDispatch();
-    const { courses } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+    const { courses } = courseApi.endpoints.getCourses.useQuery(undefined, {
         selectFromResult: result => {
             const { idToCourse, ids } = result?.data || {};
             return { courses: { idToCourse, ids } };

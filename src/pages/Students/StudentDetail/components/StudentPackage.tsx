@@ -18,7 +18,7 @@ import documentId from '../../../../constant/documentId';
 import toastUtil from '../../../../utils/toastUtil';
 import { AliceMenu } from '@/components/AliceMenu';
 import useSelectPackage from '@/hooks/useSelectPackage';
-import { coursesApi } from '@/redux/slices/courseSlice';
+import { courseApi } from '@/!rtk-query/api/courseApi';
 import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function StudentPackage(props: { packageId: string }) {
@@ -64,7 +64,7 @@ export default function StudentPackage(props: { packageId: string }) {
         numOfExtendedClass,
     } = studentPackage || {};
     const courseId = studentPkg?.courseId;
-    const { course } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+    const { course } = courseApi.endpoints.getCourses.useQuery(undefined, {
         selectFromResult: result => {
             const { idToCourse } = result?.data || {};
             const course = idToCourse?.[courseId || -1];

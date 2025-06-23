@@ -15,7 +15,7 @@ import { IoIosInformationCircle } from 'react-icons/io';
 import colors from '../../../constant/colors';
 import toastUtil from '../../../utils/toastUtil';
 import useAnchorTimestamp from '../../../hooks/useStudentDetailPathParam';
-import { coursesApi } from '@/redux/slices/courseSlice';
+import { courseApi } from '@/!rtk-query/api/courseApi';
 import { studentApi } from '@/!rtk-query/api/studentApi';
 
 // Function to convert timestamp to the start of the day (midnight)
@@ -35,7 +35,7 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
     const [error, _] = useState<Partial<CreateStudentPackageRequest>>({});
     const { setURLAnchorTimestamp } = useAnchorTimestamp();
     const dispatch = useAppDispatch();
-    const { courses } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+    const { courses } = courseApi.endpoints.getCourses.useQuery(undefined, {
         selectFromResult: result => {
             const courses = result?.data;
             return { courses };

@@ -14,17 +14,23 @@ export default function Login() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const login = async () => {
+        setIsLoading(true);
         console.log('login with', email, password);
-        await dispatch(
-            AuthThunkAction.userLogin({
-                email,
-                password,
-            })
-        ).unwrap();
+        try {
+            await dispatch(
+                AuthThunkAction.userLogin({
+                    email,
+                    password,
+                })
+            ).unwrap();
 
-        navigate(RouteEnum.DASHBOARD_STUDENTS);
+            navigate(RouteEnum.DASHBOARD_STUDENTS);
+        } finally {
+            setIsLoading(false);
+        }
     };
     useEffect(() => {
         if (reduxEmail) {
@@ -87,7 +93,7 @@ export default function Login() {
                         />
                         <Spacer />
                         <Spacer />
-                        <Button type="primary" block onClick={login} style={{ minWidth: 400 }}>
+                        <Button loading={isLoading} type="primary" block onClick={login} style={{ minWidth: 400 }}>
                             Login
                         </Button>
                     </div>

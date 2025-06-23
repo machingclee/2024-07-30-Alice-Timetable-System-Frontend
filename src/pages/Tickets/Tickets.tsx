@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { TicketThunkAction } from '../../redux/slices/ticketSlice';
+import React, { useState } from 'react';
 import SectionTitle from '../../components/SectionTitle';
 import Spacer from '../../components/Spacer';
 import AliceModalTrigger, { AliceModalProps } from '../../components/AliceModalTrigger';
@@ -16,16 +14,13 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { TicketDTO } from '../../dto/kotlinDto';
 import FormInputTitle from '../../components/FormInputTitle';
+import { ticketApi } from '@/!rtk-query/api/ticketApi';
 
 const CONTAINER_WIDTH = 400;
 
 export default function Tickets() {
-    const dispatch = useAppDispatch();
-    const tickets = useAppSelector(s => s.ticket.tickets);
-
-    useEffect(() => {
-        dispatch(TicketThunkAction.getTickets());
-    }, [dispatch]);
+    const { data: tickets = [] } = ticketApi.endpoints.getTickets.useQuery();
+    const [updateTicketMutation] = ticketApi.endpoints.updateTicket.useMutation();
 
     return (
         <div>
@@ -69,16 +64,13 @@ export default function Tickets() {
                             }}
                             onValidDrop={async fromTicket => {
                                 if (fromTicket.isSolved) {
-                                    await dispatch(
-                                        TicketThunkAction.updateTicket({
-                                            content: fromTicket.content,
-                                            isSolved: false,
-                                            solvedBy: fromTicket.solvedBy,
-                                            ticketId: fromTicket.id,
-                                            title: fromTicket.title,
-                                        })
-                                    );
-                                    await dispatch(TicketThunkAction.getTickets());
+                                    await updateTicketMutation({
+                                        content: fromTicket.content,
+                                        isSolved: false,
+                                        solvedBy: fromTicket.solvedBy,
+                                        ticketId: fromTicket.id,
+                                        title: fromTicket.title,
+                                    });
                                 }
                             }}
                         >
@@ -123,16 +115,13 @@ export default function Tickets() {
                             }}
                             onValidDrop={async fromTicket => {
                                 if (!fromTicket.isSolved) {
-                                    await dispatch(
-                                        TicketThunkAction.updateTicket({
-                                            content: fromTicket.content,
-                                            isSolved: true,
-                                            solvedBy: fromTicket.solvedBy,
-                                            ticketId: fromTicket.id,
-                                            title: fromTicket.title,
-                                        })
-                                    );
-                                    await dispatch(TicketThunkAction.getTickets());
+                                    await updateTicketMutation({
+                                        content: fromTicket.content,
+                                        isSolved: true,
+                                        solvedBy: fromTicket.solvedBy,
+                                        ticketId: fromTicket.id,
+                                        title: fromTicket.title,
+                                    }).unwrap();
                                 }
                             }}
                         >
@@ -156,23 +145,21 @@ export default function Tickets() {
 
 const EditTicketModal = (props: AliceModalProps & { ticket: TicketDTO }) => {
     const { ticket, setOpen: setTicketEditorOpen } = props;
-    const dispatch = useAppDispatch();
     const [ticketData, setTicketData] = useState<TicketDTO>(ticket);
     const updateField = (key: keyof TicketDTO) => (text: string) => setTicketData(data => ({ ...data, [key]: text }));
+    const [updateTicketMutation] = ticketApi.endpoints.updateTicket.useMutation();
     const submit = async () => {
-        await dispatch(
-            TicketThunkAction.updateTicket({
-                content: ticketData.content,
-                isSolved: ticketData.isSolved,
-                solvedBy: ticketData.solvedBy,
-                ticketId: ticketData.id,
-                title: ticketData.title,
-            })
-        ).unwrap();
-        await dispatch(TicketThunkAction.getTickets());
+        await updateTicketMutation({
+            content: ticketData.content,
+            isSolved: ticketData.isSolved,
+            solvedBy: ticketData.solvedBy,
+            ticketId: ticketData.id,
+            title: ticketData.title,
+        }).unwrap();
     };
     props.setOkText('Edit');
     props.setOnOk(submit);
+    const [deleteTicketMutation] = ticketApi.endpoints.deleteTicket.useMutation();
 
     return (
         <div>
@@ -181,9 +168,8 @@ const EditTicketModal = (props: AliceModalProps & { ticket: TicketDTO }) => {
                     modalContent={props => {
                         props.setOkText('Yes');
                         props.setOnOk(async () => {
-                            await dispatch(TicketThunkAction.deleteTicket({ ticketId: ticket.id }));
+                            await deleteTicketMutation({ ticketId: ticket.id }).unwrap();
                             props.setOpen(false);
-                            dispatch(TicketThunkAction.getTickets());
                         });
                         return <div>Are you sure to delete?</div>;
                     }}
@@ -274,11 +260,10 @@ const initialState: CreateTicketRequest = {
 };
 
 const CreateTicketModal = (props: AliceModalProps) => {
-    const dispatch = useAppDispatch();
     const [request, setRequest] = useState<CreateTicketRequest>(initialState);
+    const [createTicketMutation] = ticketApi.endpoints.createTicket.useMutation();
     const submit = async () => {
-        await dispatch(TicketThunkAction.createTicket(request));
-        dispatch(TicketThunkAction.getTickets());
+        await createTicketMutation(request).unwrap();
     };
 
     props.setOnOk(submit);

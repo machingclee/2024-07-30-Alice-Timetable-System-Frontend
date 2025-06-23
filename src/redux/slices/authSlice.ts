@@ -1,10 +1,8 @@
-import { PayloadAction, createListenerMiddleware, createSlice } from '@reduxjs/toolkit';
-import registerDialogAndActions from '../../utils/registerEffects';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { processRes } from '../../utils/processRes';
 import { loginApiClient } from '../../axios/apiClient';
 import { CustomResponse } from '../../axios/responseTypes';
 import apiRoutes from '../../axios/apiRoutes';
-import { loadingActions } from '../../utils/loadingActions';
 import { TokenPayload, UserDTO } from '../../dto/dto';
 import { createApiThunk } from '@/utils/createApiThunk';
 
@@ -88,13 +86,5 @@ export class AuthThunkAction {
         }
     );
 }
-
-export const authMiddleware = createListenerMiddleware();
-registerDialogAndActions(authMiddleware, [
-    ...loadingActions(AuthThunkAction.userLogin),
-    {
-        rejections: [AuthThunkAction.userLogin.rejected],
-    },
-]);
 
 export default authSlice;

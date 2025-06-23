@@ -10,7 +10,7 @@ import range from '../../../../utils/range';
 import { Classroom } from '../../../../prismaTypes/types';
 import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
-import { coursesApi } from '@/redux/slices/courseSlice';
+import { courseApi } from '@/!rtk-query/api/courseApi';
 import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function EditPackageForm(props: { packageId: string }) {
@@ -30,7 +30,7 @@ export default function EditPackageForm(props: { packageId: string }) {
     );
 
     const [error, _] = useState<Partial<UpdateStudentPackageRequest>>({});
-    const { data: courses } = coursesApi.endpoints.getCourses.useQuery();
+    const { data: courses } = courseApi.endpoints.getCourses.useQuery();
     const formData = useRef<Partial<UpdateStudentPackageRequest>>({});
     const updateFormData = (update: Partial<UpdateStudentPackageRequest>) => {
         formData.current = { ...formData.current, ...update };

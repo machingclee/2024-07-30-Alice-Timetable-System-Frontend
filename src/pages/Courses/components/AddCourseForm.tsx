@@ -7,7 +7,7 @@ import { Box } from '@mui/material';
 import toastUtil from '../../../utils/toastUtil';
 import AddClassDialog from './AddCourseDialog';
 import { Button } from 'antd';
-import { coursesApi } from '@/redux/slices/courseSlice';
+import { courseApi } from '@/!rtk-query/api/courseApi';
 
 export default function AddCourseForm() {
     const formData = useRef<Partial<CreateCourseRequest>>({
@@ -19,7 +19,7 @@ export default function AddCourseForm() {
     };
 
     // create course mutation
-    const [createCourse] = coursesApi.endpoints.createCourse.useMutation();
+    const [createCourse] = courseApi.endpoints.createCourse.useMutation();
 
     const submit = async () => {
         await createCourse({ course: formData.current as CreateCourseRequest });

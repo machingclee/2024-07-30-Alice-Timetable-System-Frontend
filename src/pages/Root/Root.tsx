@@ -41,20 +41,29 @@ export default function Root() {
     const location = useLocation();
     const navigiate = useNavigate();
     const leftNavigatorCollapsed = useAppSelector(s => s.app.leftNavigatorCollapsed);
+    const accessToken = useAppSelector(s => s.auth.accessToken);
     const isInDashboard = /dashboard/.test(location.pathname);
 
     useEffect(() => {
         // document.title = titles?.[location.pathname as RouteEnum] || ""
     }, [location.pathname]);
 
+    const inFirstPage = location.pathname === '/' || location.pathname === '/login';
+
     useEffect(() => {
-        if (location.pathname === '/') {
-            navigiate('/login');
+        if (!accessToken) {
+            if (location.pathname === '/') {
+                navigiate('/login');
+            }
+            if (location.pathname === '/login') {
+                dispatch(appSlice.actions.setActivePath('/login'));
+            }
+        } else {
+            if (inFirstPage) {
+                navigiate(RouteEnum.DASHBOARD_STUDENTS);
+            }
         }
-        if (location.pathname === '/login') {
-            dispatch(appSlice.actions.setActivePath('/login'));
-        }
-    }, [location.pathname, dispatch, navigiate]);
+    }, [location.pathname, dispatch, navigiate, accessToken]);
 
     return (
         <>

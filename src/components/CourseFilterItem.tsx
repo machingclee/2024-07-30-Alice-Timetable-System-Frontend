@@ -3,12 +3,12 @@ import Label from './Label';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { cloneDeep } from 'lodash';
 import studentSlice from '../redux/slices/studentSlice';
-import { coursesApi } from '@/redux/slices/courseSlice';
+import { courseApi } from '@/!rtk-query/api/courseApi';
 
 export default function CourseFilterItem({ id: courseId }: { id: number }) {
     // const course = useAppSelector(s => s.class.courses.idToCourse?.[courseId]);
     // get course from rtk query
-    const { course } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+    const { course } = courseApi.endpoints.getCourses.useQuery(undefined, {
         selectFromResult: result => {
             const courses = result?.data;
             const course = courses?.idToCourse?.[courseId];

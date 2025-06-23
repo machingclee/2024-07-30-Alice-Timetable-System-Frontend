@@ -21,7 +21,7 @@ import statues from '../constant/statues';
 import ContentContainer from './ContentContainer';
 import clsx from 'clsx';
 import { Class_status } from '@/dto/kotlinDto';
-import { coursesApi } from '@/redux/slices/courseSlice';
+import { courseApi } from '@/!rtk-query/api/courseApi';
 import { cloneDeep } from 'lodash';
 import { massDailyTimetableApi } from '@/!rtk-query/api/massDailyTimetableApi';
 import { customHolidayApi } from '@/!rtk-query/api/customHolidayApi';
@@ -70,7 +70,7 @@ export default function RightColumn() {
             },
         }
     );
-    const { courseIds } = coursesApi.endpoints.getCourses.useQuery(undefined, {
+    const { courseIds } = courseApi.endpoints.getCourses.useQuery(undefined, {
         selectFromResult: result => {
             const { ids = [] } = result?.data || {};
             return { courseIds: ids };
