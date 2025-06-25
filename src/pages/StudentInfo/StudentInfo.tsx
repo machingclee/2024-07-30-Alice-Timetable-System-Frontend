@@ -101,7 +101,7 @@ export default function StudentInfo() {
                                                                             className="flex items-center"
                                                                             onClick={() => {
                                                                                 navigateToPackage({
-                                                                                    anchorTimestamp: pkg.startDate + '',
+                                                                                    anchorTimestamp: pkg.startDate,
                                                                                     studentId,
                                                                                     packageId: pkg.id + '',
                                                                                 });

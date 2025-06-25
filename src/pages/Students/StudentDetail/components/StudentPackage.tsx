@@ -13,19 +13,88 @@ import EditPackageDialog from './EditPackageDialog';
 import EditPackageForm from './EditPackageForm';
 import classnames from 'classnames';
 import { useState } from 'react';
-import { Modal } from 'antd';
+import { Button, Modal } from 'antd';
 import documentId from '../../../../constant/documentId';
 import toastUtil from '../../../../utils/toastUtil';
 import { AliceMenu } from '@/components/AliceMenu';
 import useSelectPackage from '@/hooks/useSelectPackage';
-import { courseApi } from '@/!rtk-query/api/courseApi';
 import { studentApi } from '@/!rtk-query/api/studentApi';
+import useGetStudentIdFromParam from '@/hooks/useGetStudentIdFromParam';
+import normalizeUtil from '@/utils/normalizeUtil';
+
+const SwitchClassTypeButton = (props: { packageId: string }) => {
+    const { packageId } = props;
+    const { studentId } = useGetStudentIdFromParam();
+    const { selectPackageAtFirstLessonTimestamp } = useSelectPackage();
+    const filteredLessons = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
+        { studentId: studentId || '' },
+        {
+            skip: !studentId,
+            selectFromResult: result => {
+                const { hrUnixTimestampToLesson: allLessons = {} } = result?.data || {};
+                const extendedLessons = Object.values(allLessons).filter(lesson => {
+                    return (
+                        lesson.studentPackage.id === Number(packageId) &&
+                        lesson.student.id === studentId &&
+                        lesson.classExtensionRecord != null
+                    );
+                });
+                const { idToObject: hrUnixTimestampToLesson = {}, ids: timestamps = [] } = normalizeUtil.normalize({
+                    targetArr: extendedLessons,
+                    idAttribute: 'hourUnixTimestamp',
+                });
+                return { hrUnixTimestampToLesson, timestamps };
+            },
+        }
+    );
+
+    const navigateToFirstExtendedLesson = () => {
+        console.log('filteredLessonsfilteredLessonsfilteredLessons', filteredLessons);
+        selectPackageAtFirstLessonTimestamp({ packageId, weeklyClassEvent: filteredLessons });
+    };
+
+    const { isShowingExtendedClasses } = studentApi.endpoints.getStudentPackages.useQueryState(
+        { studentId: studentId || '' },
+        {
+            selectFromResult: result => {
+                const isShowingExtendedClasses =
+                    result.data?.idToStudentPackage[packageId].display === 'EXTENDED_CLASSES';
+                return { isShowingExtendedClasses };
+            },
+        }
+    );
+    const dispatch = useAppDispatch();
+
+    return (
+        <Button
+            onClick={() => {
+                dispatch(
+                    studentApi.util.updateQueryData('getStudentPackages', { studentId: studentId || '' }, draft => {
+                        if (!isShowingExtendedClasses) {
+                            navigateToFirstExtendedLesson();
+                            Object.values(draft.idToStudentPackage).forEach(pkg => {
+                                pkg.display = 'CLASSES';
+                            });
+                            draft.idToStudentPackage[packageId].display = 'EXTENDED_CLASSES';
+                        } else {
+                            draft.idToStudentPackage[packageId].display = 'CLASSES';
+                        }
+                    })
+                );
+            }}
+        >
+            {isShowingExtendedClasses ? 'Show Normal Classes' : 'Show Extended Classes'}
+        </Button>
+    );
+};
 
 export default function StudentPackage(props: { packageId: string }) {
     const { packageId } = props;
+
     const { setPathParam, selectPackageAtFirstLessonTimestamp, anchorTimestamp } = useSelectPackage();
     const dispatch = useAppDispatch();
     const { studentId } = useParams<{ studentId: string }>();
+
     const { weeklyClassEvent } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
         { studentId: studentId || '' },
         {
@@ -64,13 +133,6 @@ export default function StudentPackage(props: { packageId: string }) {
         numOfExtendedClass,
     } = studentPackage || {};
     const courseId = studentPkg?.courseId;
-    const { course } = courseApi.endpoints.getCourses.useQuery(undefined, {
-        selectFromResult: result => {
-            const { idToCourse } = result?.data || {};
-            const course = idToCourse?.[courseId || -1];
-            return { course };
-        },
-    });
     const consumedClasses = Math.floor(((schedumeMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
     const consumedExtendedClass = Math.floor(((consumedextendedClassMins || 0) / (studentPkg?.min || 1)) * 10) / 10;
     console.log('consumed_minutes:', consumedMinutes);
@@ -167,117 +229,126 @@ export default function StudentPackage(props: { packageId: string }) {
     const isPaid = studentPkg.paidAt != null;
 
     return (
-        <div
-            id={documentId.STUDENT_PACKAGE_ID(packageId)}
-            style={{
-                maxWidth: 300,
-            }}
-            className={classnames(
-                'border-1 border-emerald-400 rounded-sm',
-                'cursor-pointer',
-                'bg-white',
-                isSelected ? `outline outline-2 outline-blue-600` : '',
-                '[&_table]:w-full [&_table]:border-separate [&_table]:border-spacing-1',
-                '[&_td]:whitespace-nowrap',
-                '[&_td:first-child]:w-[0.1%]',
-                '[&_td:nth-child(2)]:p-[4px_6px] [&_td:nth-child(2)]:rounded-[4px] [&_td:nth-child(2)]:bg-gray-200',
-                'p-[10px] rounded-none m-1'
-            )}
-        >
-            <AliceMenu
-                items={[
-                    {
-                        item: 'Edit package',
-                        onClick: editPackage,
-                    },
-                    {
-                        item: 'Delete package',
-                        onClick: () => setShowDeleteConfirmation(true),
-                    },
-                    {
-                        item: 'Show attendence',
-                        onClick: showAttendence,
-                    },
-                    {
-                        item: 'Add payment detail',
-                        disabled: isPaid,
-                        onClick: addPaymentDetail,
-                    },
-                    {
-                        item: 'Mark as unpaid',
-                        disabled: !isPaid,
-                        onClick: markAsUnPaid,
-                    },
-                ]}
+        <div>
+            <div className="flex justify-between">
+                <div></div>
+                <div>
+                    <SwitchClassTypeButton packageId={packageId} />
+                </div>
+            </div>
+            <div
+                id={documentId.STUDENT_PACKAGE_ID(packageId)}
+                style={{
+                    maxWidth: 300,
+                }}
+                className={classnames(
+                    'border-1 border-emerald-400 rounded-sm',
+                    'cursor-pointer',
+                    'bg-white',
+                    isSelected ? `outline outline-2 outline-blue-600` : '',
+                    '[&_table]:w-full [&_table]:border-separate [&_table]:border-spacing-1',
+                    '[&_td]:whitespace-nowrap',
+                    '[&_td:first-child]:w-[0.1%]',
+                    '[&_td:nth-child(2)]:p-[4px_6px] [&_td:nth-child(2)]:rounded-[4px] [&_td:nth-child(2)]:bg-gray-200',
+                    'p-[10px] rounded-none m-1'
+                )}
             >
-                <Modal
-                    closable={false}
-                    okText={'I do'}
-                    onOk={deletePackage}
-                    onCancel={() => setShowDeleteConfirmation(false)}
-                    onClose={() => setShowDeleteConfirmation(false)}
-                    centered
-                    open={showDeleteConfirmation}
+                <AliceMenu
+                    items={[
+                        {
+                            item: 'Edit package',
+                            onClick: editPackage,
+                        },
+                        {
+                            item: 'Delete package',
+                            onClick: () => setShowDeleteConfirmation(true),
+                        },
+                        {
+                            item: 'Show attendence',
+                            onClick: showAttendence,
+                        },
+                        {
+                            item: 'Add payment detail',
+                            disabled: isPaid,
+                            onClick: addPaymentDetail,
+                        },
+                        {
+                            item: 'Mark as unpaid',
+                            disabled: !isPaid,
+                            onClick: markAsUnPaid,
+                        },
+                    ]}
                 >
-                    <div>Are you sure to delete? Data will be lost and cannot be reverted.</div>
-                </Modal>
-                <div
-                    onClick={() => {
-                        selectPackageAtFirstLessonTimestamp({ packageId, weeklyClassEvent });
-                    }}
-                >
-                    <div className="p-[5px] flex justify-center font-[600]">{course?.courseName}</div>
+                    <Modal
+                        closable={false}
+                        okText={'I do'}
+                        onOk={deletePackage}
+                        onCancel={() => setShowDeleteConfirmation(false)}
+                        onClose={() => setShowDeleteConfirmation(false)}
+                        centered
+                        open={showDeleteConfirmation}
+                    >
+                        <div>Are you sure to delete? Data will be lost and cannot be reverted.</div>
+                    </Modal>
+
                     <Sep />
                     <Spacer height={5} />
-                    <table className="[&_td]:pr-[10px]">
-                        <tbody>
-                            <tr>
-                                <td>Classroom</td>
-                                <td>{studentPkg.defaultClassroom}</td>
-                            </tr>
-                            <tr>
-                                <td>Duration</td>
-                                <td>{studentPkg.min}</td>
-                            </tr>
-                            <tr>
-                                <td>Start</td>
-                                <td>{dayjs(studentPkg.startDate).format('YYYY-MM-DD')}</td>
-                            </tr>
-                            <tr>
-                                <td>End Date</td>
-                                <td>
-                                    {studentPkg.officialEndDate === 0
-                                        ? '???'
-                                        : dayjs(studentPkg.officialEndDate).format('YYYY-MM-DD')}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Expiry Date</td>
-                                <td>{dayjs(studentPkg.expiryDate).format('YYYY-MM-DD')}</td>
-                            </tr>
-                            <tr>
-                                <td>Scheduled Classes</td>
-                                <td>{`${consumedClasses}/${numOfNormalClasses}`}</td>
-                            </tr>
-                            <tr>
-                                <td>Extended Classes</td>
-                                <td>{`${consumedExtendedClass}/${numOfExtendedClass}`}</td>
-                            </tr>
-                            <tr>
-                                <td>Finished Classes</td>
-                                <td>{`${finishedClasses}/${studentPkg.numOfClasses}`}</td>
-                            </tr>
-                            <tr>
-                                <td>Payment Status</td>
-                                <td>
-                                    {isPaid && paidIcon()}
-                                    {!isPaid && unpaidIcon()}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </AliceMenu>
+                    <div
+                        className="relative"
+                        onClick={() => {
+                            selectPackageAtFirstLessonTimestamp({ packageId, weeklyClassEvent });
+                        }}
+                    >
+                        <table className="[&_td]:pr-[10px]">
+                            <tbody>
+                                <tr>
+                                    <td>Classroom</td>
+                                    <td>{studentPkg.defaultClassroom}</td>
+                                </tr>
+                                <tr>
+                                    <td>Duration</td>
+                                    <td>{studentPkg.min}</td>
+                                </tr>
+                                <tr>
+                                    <td>Start</td>
+                                    <td>{dayjs(studentPkg.startDate).format('YYYY-MM-DD')}</td>
+                                </tr>
+                                <tr>
+                                    <td>End Date</td>
+                                    <td>
+                                        {studentPkg.officialEndDate === 0
+                                            ? '???'
+                                            : dayjs(studentPkg.officialEndDate).format('YYYY-MM-DD')}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Expiry Date</td>
+                                    <td>{dayjs(studentPkg.expiryDate).format('YYYY-MM-DD')}</td>
+                                </tr>
+                                <tr>
+                                    <td>Scheduled Classes</td>
+                                    <td>{`${consumedClasses}/${numOfNormalClasses}`}</td>
+                                </tr>
+                                <tr>
+                                    <td>Extended Classes</td>
+                                    <td>{`${consumedExtendedClass}/${numOfExtendedClass}`}</td>
+                                </tr>
+                                <tr>
+                                    <td>Finished Classes</td>
+                                    <td>{`${finishedClasses}/${studentPkg.numOfClasses}`}</td>
+                                </tr>
+                                <tr>
+                                    <td>Payment Status</td>
+                                    <td>
+                                        {isPaid && paidIcon()}
+                                        {!isPaid && unpaidIcon()}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </AliceMenu>
+            </div>
         </div>
     );
 }

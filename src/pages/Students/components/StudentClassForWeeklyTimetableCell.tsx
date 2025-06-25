@@ -29,16 +29,30 @@ import { AliceMenu } from '@/components/AliceMenu';
 import getColorForClassStatus from '@/utils/getColorForClassStatus';
 import getDisplayNameFromClassStatus from '@/utils/getDisplayNameFromClassStatus';
 
-export default function StudentClassForWeeklyTimetable(props: {
+export default function StudentClassForWeeklyTimetableCell(props: {
     dayUnixTimestamp: number;
     hourUnixTimestamp: number;
     colIndex: number;
     rowIndex: number;
 }) {
-    const dispatch = useAppDispatch();
-    const { setURLAnchorTimestamp } = useAnchorTimestamp();
     const { studentId } = useGetStudentIdFromParam();
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+
+    const dispatch = useAppDispatch();
+
+    const { isShowingExtendedClasses } = studentApi.endpoints.getStudentPackages.useQueryState(
+        { studentId: studentId || '' },
+        {
+            selectFromResult: result => {
+                const isShowingExtendedClasses =
+                    result.data?.idToStudentPackage?.[selectedPackageId || '']?.display === 'EXTENDED_CLASSES';
+                return { isShowingExtendedClasses };
+            },
+        }
+    );
+
+    const { setURLAnchorTimestamp } = useAnchorTimestamp();
+
     const {
         hourUnixTimestamp: currGridHourUnixTimestamp,
         dayUnixTimestamp: currGridDayUnixTimestamp,
@@ -57,6 +71,9 @@ export default function StudentClassForWeeklyTimetable(props: {
             },
         }
     );
+
+    const isNormalClass = lesson?.classExtensionRecord === null;
+    const hideNormalClass = isNormalClass && isShowingExtendedClasses;
 
     const showLabel = lesson != null;
     const showAll = useAppSelector(s => s.student.studentDetailTimetablePage.showAllClassesForOneStudent);
@@ -270,6 +287,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                     >
                         {/* Control what to show on the entire timetable */}
                         {(showAll || (!showAll && Number(selectedPackageId) === lesson?.studentPackage.id)) &&
+                            !hideNormalClass &&
                             lesson && (
                                 <>
                                     <Draggable
@@ -284,6 +302,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                     onClick: () => {
                                                         ViewClassDialog.setContent(() => () => (
                                                             <ViewClassForm
+                                                                classExtensionRecord={lesson.classExtensionRecord}
                                                                 dateUnixTimestamp={lesson.class.dayUnixTimestamp}
                                                                 cls={lesson.class}
                                                                 course={lesson.course}
@@ -299,6 +318,7 @@ export default function StudentClassForWeeklyTimetable(props: {
                                                         ViewClassDialog.setWidth('xs');
                                                         ViewClassDialog.setContent(() => () => (
                                                             <ViewClassForm
+                                                                classExtensionRecord={lesson.classExtensionRecord}
                                                                 isEditing={true}
                                                                 dateUnixTimestamp={lesson.class.dayUnixTimestamp}
                                                                 cls={lesson.class}

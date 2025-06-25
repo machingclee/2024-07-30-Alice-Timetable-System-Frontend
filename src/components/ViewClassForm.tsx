@@ -9,9 +9,10 @@ import classStatuses from '../constant/classStatuses';
 import ViewClassDialog from './ViewClassDialog';
 import getColorForClassStatus from '../utils/getColorForClassStatus';
 import getNumberSuffix from '../utils/getNumberSuffix';
-import { ClassDTO, CourseDTO, StudentDTO } from '../dto/kotlinDto';
+import { ClassDTO, ClassExtensionRecordDTO, CourseDTO, StudentDTO } from '../dto/kotlinDto';
 import boxShadow from '../constant/boxShadow';
 import { studentApi } from '@/!rtk-query/api/studentApi';
+import { LuStickyNote } from 'react-icons/lu';
 
 export default function ViewClassForm(props: {
     student: StudentDTO;
@@ -20,6 +21,7 @@ export default function ViewClassForm(props: {
     onSubmit?: () => void;
     dateUnixTimestamp: number;
     isEditing?: boolean;
+    classExtensionRecord?: ClassExtensionRecordDTO | null;
 }) {
     const [editing, setEditing] = useState(props.isEditing || false);
     const { cls, course, onSubmit = () => {} } = props;
@@ -33,6 +35,8 @@ export default function ViewClassForm(props: {
     const [updateClassMutation] = studentApi.endpoints.updateClass.useMutation();
 
     const classroomOptions: Classroom[] = ['PRINCE_EDWARD', 'CAUSEWAY_BAY'];
+
+    const classExtensionReason = props.classExtensionRecord?.extendReason?.trim() || '';
 
     return (
         <Box
@@ -183,6 +187,19 @@ export default function ViewClassForm(props: {
                     />
                 )}
             </div>
+            {classExtensionReason && (
+                <div className="border border-1 border-red-100 rounded-sm p-2 text-s mb-3">
+                    <div className="flex gap-2">
+                        <div>
+                            <LuStickyNote className="w-5 h-5 text-gray-400" />
+                        </div>
+                        <div>
+                            <div className="font-semibold">Extension Reason.</div>
+                            <div>{classExtensionReason}</div>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className="space-y-1.5 mb-3">
                 <div
                     style={{

@@ -41,6 +41,8 @@ export type WeeklyClassEvent = {
     hrUnixTimestampToLesson?: { [id: string]: TimetableLesson };
 };
 
+export type UIStudentPackage = StudentPackageRepsonse & { display: 'CLASSES' | 'EXTENDED_CLASSES' };
+
 export const studentApi = createApi({
     reducerPath: 'studentApi',
     baseQuery: baseQuery,
@@ -113,6 +115,7 @@ export const studentApi = createApi({
                     idAttribute: 'hourUnixTimestamp',
                     targetArr: classes,
                 });
+
                 return { hrUnixTimestampToLesson: idToObject, hrUnixTimestamps: ids };
             },
             providesTags: (_, __, param) => [
@@ -140,14 +143,20 @@ export const studentApi = createApi({
             invalidatesTags: ['Students'],
         }),
         getStudentPackages: builder.query<
-            { idToStudentPackage: { [id: string]: StudentPackageRepsonse }; packageIds: string[] },
+            {
+                idToStudentPackage: {
+                    [id: string]: UIStudentPackage;
+                };
+                packageIds: string[];
+            },
             { studentId: string }
         >({
             query: ({ studentId }) => apiRoutes.GET_STUDENT_PACKAGES(studentId),
             transformResponse: (packages: StudentPackageRepsonse[]) => {
+                const uiPackages: UIStudentPackage[] = packages.map(pkg => ({ ...pkg, display: 'CLASSES' }));
                 const { idToObject: idToStudentPackage, ids: packageIds } = normalizeUtil.normalize({
                     idAttribute: 'packageId',
-                    targetArr: packages,
+                    targetArr: uiPackages,
                 });
                 packageIds.sort(
                     (id1, id2) =>

@@ -97,7 +97,10 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                                     pkgRes => pkgRes.course.courseName === courseName
                                 );
                                 return (
-                                    <div className="border-1 border-emerald-400 mt-2 p-2 rounded-xl space-y-2 bg-teal-100">
+                                    <div
+                                        className="border-1 border-emerald-400 mt-2 p-2 rounded-xl space-y-2 bg-teal-100"
+                                        key={courseName}
+                                    >
                                         <div className="flex items-center gap-1.5 pl-0.5">
                                             <MdOutlineEventNote size={19} />
                                             {courseName}

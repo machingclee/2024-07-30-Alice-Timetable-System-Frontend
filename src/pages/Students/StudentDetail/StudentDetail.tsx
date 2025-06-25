@@ -68,9 +68,7 @@ export default function StudentDetail() {
                 type: 'go-to-target-lesson',
                 packageId: packageId || '',
                 desiredAnchorTimestamp: anchorTimestamp,
-                setURLAnchorTimestamp: (timestamp: number) => {
-                    setPathParam({ anchorTimestamp: timestamp, packageId: packageId || '' });
-                },
+                setURLAnchorTimestamp: (_timestamp: number) => {},
             })
         );
     }, [anchorTimestamp, packageId, dispatch, setPathParam]);

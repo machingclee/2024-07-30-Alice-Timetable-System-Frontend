@@ -1,11 +1,9 @@
-import { Button, Input } from "antd";
+import { Button} from "antd";
 import boxShadow from "../../../constant/boxShadow";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Spacer from "../../../components/Spacer";
-import { Competition, CourseDTO } from "../../../dto/dto";
-import Label from "../../../components/Label";
-import { CourseThunkAction } from "../../../redux/slices/courseSlice";
+import { Competition } from "../../../dto/dto";
 import { debounce } from "lodash";
 import lodash from "lodash";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +15,6 @@ export default (props: { id: string }) => {
     const { id } = props;
     const [editing, setEditing] = useState(false);
     const navigate = useNavigate();
-    const ref = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const dispatch = useAppDispatch();
     const competition = useAppSelector((s) => s.competition.competitions.idToObject?.[id]);

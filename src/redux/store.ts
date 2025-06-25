@@ -43,6 +43,22 @@ const authPersistConfig = {
     stateReconciler: autoMergeLevel2,
 };
 
+// example for multiple persisted slices
+// const persisedReducers = [conversationSlice, authSlice, persisSlice];
+// const rootRudcer = combineReducers({
+//     auth: authSlice.reducer,
+//     team: teamSlice.reducer,
+//     persist: persisSlice.reducer,
+// });
+// const persistedRootReducer = persistReducer<ReturnType<typeof rootRudcer>>(
+//     {
+//         key: 'root',
+//         storage: reduxStorage,
+//         whitelist: [...persisedReducers?.map(reducer => reducer.name), userSettingApi.reducerPath],
+//     },
+//     rootRudcer
+// );
+
 export const store = configureStore({
     reducer: {
         auth: persistReducer<ReturnType<typeof authSlice.reducer>>(authPersistConfig, authSlice.reducer),

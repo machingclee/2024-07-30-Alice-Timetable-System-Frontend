@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import SectionTitle from '../../../components/SectionTitle';
 import Spacer from '../../../components/Spacer';
 import lodash from 'lodash';
-import ClassEventForWeeklyTimetable from './ClassEventForWeeklyTimetable';
+import StudentClassForWeeklyTimetableCell from './StudentClassForWeeklyTimetableCell';
 import { useAppSelector } from '../../../redux/hooks';
 import { PiArrowRightBold } from 'react-icons/pi';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
@@ -24,7 +24,8 @@ export type WeeklyCoordinate = {
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 export default function WeeklyTimeTable() {
-    const { anchorTimestamp, setURLAnchorTimestamp: setAnchorTimestamp } = useAnchorTimestamp();
+    const packageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const { anchorTimestamp, setPathParam } = useAnchorTimestamp();
     const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const getHalfHourTimeIntervalsForDay = useCallback((date: Date) => {
@@ -57,11 +58,11 @@ export default function WeeklyTimeTable() {
 
     const goNextWeek = () => {
         const nextAnchorTimestamp = anchorTimestamp + ONE_DAY_IN_MS * 7;
-        setAnchorTimestamp(nextAnchorTimestamp);
+        setPathParam({ anchorTimestamp: nextAnchorTimestamp, packageId: packageId || '' });
     };
     const goPrevWeek = () => {
         const nextAnchorTimestamp = anchorTimestamp - ONE_DAY_IN_MS * 7;
-        setAnchorTimestamp(nextAnchorTimestamp);
+        setPathParam({ anchorTimestamp: nextAnchorTimestamp, packageId: packageId || '' });
     };
 
     useEffect(() => {}, [selectedPackageId, anchorTimestamp]);
@@ -148,7 +149,7 @@ export default function WeeklyTimeTable() {
                     borderTop: '1px solid rgba(0,0,0,0.1)',
                     borderLeft: '2px solid rgba(0, 0, 0, 0.1)',
                 },
-                '& .draggable-container:nth-child(n+1)': {
+                '& .draggable-container:nth-of-type(n+1)': {
                     borderTop: '0.12rem solid rgba(0,0,0,0.15)',
                 },
                 '& .day-column': {
@@ -165,7 +166,7 @@ export default function WeeklyTimeTable() {
                 '& .freeze': {
                     transform: 'translate(0px,0px) !important',
                 },
-                '& .grid-time:nth-child(n+2)': {
+                '& .grid-time:nth-of-type(n+2)': {
                     zIndex: '5 !important',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -177,7 +178,7 @@ export default function WeeklyTimeTable() {
                     whiteSpace: 'nowrap',
                 },
                 '& .grid-hour': {
-                    '&:nth-child(n+1)': {
+                    '&:nth-of-type(n+1)': {
                         width: '100%',
                         height: `${gridHeight - 1}px`,
                     },
@@ -244,7 +245,7 @@ export default function WeeklyTimeTable() {
                                                             .sort()
                                                             .map((hourUnixTimestamp, rowIndex) => {
                                                                 return (
-                                                                    <ClassEventForWeeklyTimetable
+                                                                    <StudentClassForWeeklyTimetableCell
                                                                         key={hourUnixTimestamp}
                                                                         colIndex={colIndex}
                                                                         rowIndex={rowIndex}

@@ -71,6 +71,16 @@ export type ClassGroupDTO = {
     id: number;
 };
 
+export type ExtendedClassType = 'MAKE_UP';
+
+export type ClassExtensionRecordDTO = {
+    id?: number;
+    classid: number;
+    type: ExtendedClassType;
+    extendFromClassId?: number;
+    extendReason?: string;
+};
+
 export type TimetableLesson = {
     hourUnixTimestamp: number;
     classGroup: ClassGroupDTO | null;
@@ -78,6 +88,7 @@ export type TimetableLesson = {
     course: CourseDTO;
     class: ClassDTO;
     studentPackage: StudentPackageDTO;
+    classExtensionRecord: ClassExtensionRecordDTO | null;
 };
 
 export type GetPackageClassStatusResponse = {
