@@ -16,7 +16,7 @@ export default function CourseRow(props: { courseId: number }) {
             return { course };
         },
     });
-    const [updateCourse] = courseApi.endpoints.updateCourse.useMutation();
+    const [updateCourse, { isLoading: isUpdatingCourse }] = courseApi.endpoints.updateCourse.useMutation();
 
     const [hasDistinction, setHasDistinction] = useState(false);
 
@@ -65,8 +65,8 @@ export default function CourseRow(props: { courseId: number }) {
     return (
         <div className="items-center bg-white mb-0 px-4 py-1 rounded-md shadow-sm border-1 border-emerald-400 h-40">
             <div className="my-2">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                <div className="flex flex-col items-center justify-between space-y-4">
+                    <div className="flex items-center gap-3 w-full">
                         <IoBookOutline size={20} className="translate-y-[1px]" />
                         {!editing && <div>{courseName}</div>}
                         {editing && (
@@ -81,7 +81,7 @@ export default function CourseRow(props: { courseId: number }) {
                             />
                         )}
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 w-full justify-end">
                         <Button
                             className="!px-5 !py-0"
                             onClick={() => {
@@ -108,6 +108,7 @@ export default function CourseRow(props: { courseId: number }) {
                         {editing && (
                             <>
                                 <Button
+                                    loading={isUpdatingCourse}
                                     className="!px-5 !py-0 flex items-center gap-2"
                                     onClick={submitUpdate}
                                     disabled={!hasDistinction}

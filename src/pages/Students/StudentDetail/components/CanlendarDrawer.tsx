@@ -12,7 +12,7 @@ const CalendarDrawer = () => {
     return (
         <Drawer
             closable
-            title={<p>Loading Drawer</p>}
+            title={<p>Navigation via Calendar</p>}
             placement="right"
             open={openCalendar}
             onClose={() => setOpenCalendar(false)}

@@ -86,7 +86,7 @@ export default function StudentDetail() {
     const studentNameDisplay = () => {
         return (
             <>
-                <ContentContainer className="mr-4 !border-0">
+                <ContentContainer className="mr-0 !border-0">
                     <LoadingOverlay isLoading={studentDetailLoading} defaultOffsetTop={10} size={30}>
                         <div className="flex justify-between mb-2">
                             {studentDetail && (

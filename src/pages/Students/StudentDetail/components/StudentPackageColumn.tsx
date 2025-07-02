@@ -14,6 +14,7 @@ import { StudentPackageRepsonse } from '../../../../dto/kotlinDto';
 import { Separator } from '@/components/ui/separator';
 import { studentApi } from '@/!rtk-query/api/studentApi';
 import LoadingOverlay from '@/components/LoadingOverlay';
+import { courseApi } from '@/!rtk-query/api/courseApi';
 
 export default function StudentPackageColumn(props: { packagesOffsetY: number; collapseTimtable: boolean }) {
     const { packagesOffsetY, collapseTimtable } = props;
@@ -34,9 +35,8 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
     const flattedPackages = packagesRes?.packageIds.map(
         id => packagesRes?.idToStudentPackage?.[id || '']
     ) as StudentPackageRepsonse[];
-    const courseNames = Array.from(new Set(flattedPackages?.map(pkg => pkg.course.courseName)));
-    console.log('courseNames', courseNames);
-
+    const { data: courses } = courseApi.endpoints.getCourses.useQuery();
+    const courseIds = Array.from(new Set(flattedPackages?.map(pkg => pkg.course.id)));
     return (
         <div
             style={{
@@ -97,10 +97,9 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                     <div className="flex justify-center w-full h-full">
                         <div style={{ width: '100%' }}>
                             <LoadingOverlay isLoading={isFetching} listLength={flattedPackages?.length || 0}>
-                                {courseNames.map(courseName => {
-                                    const packagesRes = flattedPackages.filter(
-                                        pkgRes => pkgRes.course.courseName === courseName
-                                    );
+                                {courseIds.map(courseId => {
+                                    const packagesRes = flattedPackages.filter(pkgRes => pkgRes.course.id === courseId);
+                                    const courseName = courses?.idToCourse?.[courseId]?.courseName || '';
                                     return (
                                         <div
                                             className="border-1 border-emerald-400 mt-2 p-2 rounded-xl space-y-2 bg-teal-100"

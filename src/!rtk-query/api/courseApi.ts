@@ -48,6 +48,7 @@ export const courseApi = createApi({
                     console.error(error);
                 }
             },
+            invalidatesTags: ['Courses'],
         }),
     }),
 });
