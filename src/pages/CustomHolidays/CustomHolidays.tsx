@@ -15,8 +15,6 @@ import { customHolidayApi } from '@/!rtk-query/api/customHolidayApi';
 import CustomScrollbarContainer from '@/components/CustomScrollbarContainer';
 import LoadingOverlay from '@/components/LoadingOverlay';
 
-const CALENDAR_IS_TODAY_COLOR = '#3bc289';
-
 const CalendarCell = (props: { className: string; date: dayjs.Dayjs }) => {
     const { className, date } = props;
     return (
@@ -29,6 +27,7 @@ const CalendarCell = (props: { className: string; date: dayjs.Dayjs }) => {
 const HIGHLIGHT_CALEDAR_DATE_STYLE = clsx(
     'w-7 h-7 bg-emerald-200 rounded-md flex items-center justify-center font-semibold text-emerald-700'
 );
+const CALENDAR_IS_TODAY_COLOR = '#3bc289';
 
 export default function CustomHolidays() {
     const { data: customHolidaysQuery, isFetching } = customHolidayApi.endpoints.getCustomHolidays.useQuery();

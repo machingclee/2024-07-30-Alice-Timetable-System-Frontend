@@ -25,41 +25,9 @@ export type WeeklyCoordinate = {
 
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 
-export default function WeeklyTimeTable() {
-    const packageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+export const WeekNavigator = () => {
     const { anchorTimestamp, setPathParam } = useAnchorTimestamp();
-    const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
-    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
-    const getHalfHourTimeIntervalsForDay = useCallback((date: Date) => {
-        const dayJS = dayjs(date);
-        const start = dayJS.startOf('day').add(9, 'hour');
-        const intervals: Dayjs[] = [];
-        for (let offset = 0; offset < 44; offset++) {
-            const time = start.add(offset * 0.25, 'hour');
-            intervals.push(time);
-        }
-        return intervals;
-    }, []);
-
-    const weekStart = useMemo(
-        () => dayjs(startOfWeek(anchorTimestamp, { weekStartsOn: 1 })).toDate(),
-        [anchorTimestamp]
-    );
-    const weekEnd = useMemo(() => dayjs(endOfWeek(anchorTimestamp, { weekStartsOn: 1 })).toDate(), [anchorTimestamp]);
-
-    const timeGrid: WeeklyCoordinate = useMemo(() => {
-        const timetable_: WeeklyCoordinate = {};
-        const daysOfWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
-        daysOfWeek.forEach(dateObj => {
-            const timeOfTheDay = dateObj.getTime();
-            const hoursOfTheDay = getHalfHourTimeIntervalsForDay(dateObj).map(dayJS => dayJS.valueOf());
-            hoursOfTheDay.forEach(hr => {
-                lodash.setWith(timetable_, `["${timeOfTheDay}"]["${hr}"]`, { data: null }, Object);
-            });
-        });
-        return timetable_;
-    }, [selectedPackageId, getHalfHourTimeIntervalsForDay, weekStart, weekEnd]);
-
+    const packageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const goNextWeek = () => {
         const nextAnchorTimestamp = anchorTimestamp + ONE_DAY_IN_MS * 7;
         setPathParam({ anchorTimestamp: nextAnchorTimestamp, packageId: packageId || '' });
@@ -69,30 +37,11 @@ export default function WeeklyTimeTable() {
         setPathParam({ anchorTimestamp: nextAnchorTimestamp, packageId: packageId || '' });
     };
 
-    const timetableContainerRef = useRef<HTMLDivElement | null>(null);
-
-    const gridHeight = 20;
-    const gridTimeColTop = 18;
-
-    const adjustWidth = useCallback(() => {
-        const width = window.innerWidth;
-        const columnWidth = Math.min((width - 720) / 7, 200);
-        setTimetableAvailableWidth(columnWidth);
-    }, []);
-
-    const adjustWidthDefined = useRef(false);
-
-    useEffect(() => {
-        adjustWidth();
-        if (!adjustWidthDefined.current) {
-            window.addEventListener('resize', adjustWidth);
-            adjustWidthDefined.current = true;
-        }
-        return () => {
-            window.removeEventListener('resize', adjustWidth);
-            adjustWidthDefined.current = false;
-        };
-    }, [adjustWidth]);
+    const weekStart = useMemo(
+        () => dayjs(startOfWeek(anchorTimestamp, { weekStartsOn: 1 })).toDate(),
+        [anchorTimestamp]
+    );
+    const weekEnd = useMemo(() => dayjs(endOfWeek(anchorTimestamp, { weekStartsOn: 1 })).toDate(), [anchorTimestamp]);
 
     const weekNavigator = () => {
         return (
@@ -139,6 +88,71 @@ export default function WeeklyTimeTable() {
             </SectionTitle>
         );
     };
+    return (
+        <div className="flex justify-center overflow-auto">
+            <div className="flex justify-center overflow-auto">{weekNavigator()}</div>
+        </div>
+    );
+};
+
+export default function WeeklyTimeTable() {
+    const { anchorTimestamp } = useAnchorTimestamp();
+    const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
+    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const getHalfHourTimeIntervalsForDay = useCallback((date: Date) => {
+        const dayJS = dayjs(date);
+        const start = dayJS.startOf('day').add(9, 'hour');
+        const intervals: Dayjs[] = [];
+        for (let offset = 0; offset < 44; offset++) {
+            const time = start.add(offset * 0.25, 'hour');
+            intervals.push(time);
+        }
+        return intervals;
+    }, []);
+
+    const weekStart = useMemo(
+        () => dayjs(startOfWeek(anchorTimestamp, { weekStartsOn: 1 })).toDate(),
+        [anchorTimestamp]
+    );
+    const weekEnd = useMemo(() => dayjs(endOfWeek(anchorTimestamp, { weekStartsOn: 1 })).toDate(), [anchorTimestamp]);
+
+    const timeGrid: WeeklyCoordinate = useMemo(() => {
+        const timetable_: WeeklyCoordinate = {};
+        const daysOfWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
+        daysOfWeek.forEach(dateObj => {
+            const timeOfTheDay = dateObj.getTime();
+            const hoursOfTheDay = getHalfHourTimeIntervalsForDay(dateObj).map(dayJS => dayJS.valueOf());
+            hoursOfTheDay.forEach(hr => {
+                lodash.setWith(timetable_, `["${timeOfTheDay}"]["${hr}"]`, { data: null }, Object);
+            });
+        });
+        return timetable_;
+    }, [selectedPackageId, getHalfHourTimeIntervalsForDay, weekStart, weekEnd]);
+
+    const timetableContainerRef = useRef<HTMLDivElement | null>(null);
+
+    const gridHeight = 20;
+    const gridTimeColTop = 18;
+
+    const adjustWidth = useCallback(() => {
+        const width = window.innerWidth;
+        const columnWidth = Math.min((width - 720) / 7, 200);
+        setTimetableAvailableWidth(columnWidth);
+    }, []);
+
+    const adjustWidthDefined = useRef(false);
+
+    useEffect(() => {
+        adjustWidth();
+        if (!adjustWidthDefined.current) {
+            window.addEventListener('resize', adjustWidth);
+            adjustWidthDefined.current = true;
+        }
+        return () => {
+            window.removeEventListener('resize', adjustWidth);
+            adjustWidthDefined.current = false;
+        };
+    }, [adjustWidth]);
 
     // got from userParam
     const { studentId = '' } = useParams<{ studentId: string }>();
@@ -218,7 +232,6 @@ export default function WeeklyTimeTable() {
                     },
                 }}
             >
-                <div className="flex justify-center overflow-auto">{weekNavigator()}</div>
                 <div className="flex ml-[62px] mr-[37px]  py-1 mb-1">
                     {Object.keys(timeGrid)
                         .sort()
@@ -233,9 +246,9 @@ export default function WeeklyTimeTable() {
                             );
                         })}
                 </div>
-                <CustomScrollbarContainer className="my-fadein flex flex-col h-[calc(100vh-250px)] mr-4 ">
+                <CustomScrollbarContainer className="my-fadein flex flex-col h-[calc(100vh-320px)] mr-4 ">
                     <FadeIn className="scrollbar-hide">
-                        <div className="flex">
+                        <div className="flex mt-2">
                             <div style={{ flex: 1 }}>
                                 <div style={{ display: 'flex' }}>
                                     <div>

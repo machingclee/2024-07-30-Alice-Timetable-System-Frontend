@@ -18,6 +18,7 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 export default function StudentPackageColumn(props: { packagesOffsetY: number; collapseTimtable: boolean }) {
     const { packagesOffsetY, collapseTimtable } = props;
     // get packages
+
     const { studentId } = useParams<{ studentId: string }>();
     const { data: packagesRes, isFetching } = studentApi.endpoints.getStudentPackages.useQuery({
         studentId: studentId || '',
@@ -72,6 +73,7 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                 </div>
                 <Spacer height={5} />
                 <Separator />
+
                 <Spacer />
                 <div>
                     <div className="mt-2">Show All Classes</div>

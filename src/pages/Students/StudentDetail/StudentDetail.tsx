@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import studentSlice, { StudentDetailPage } from '../../../redux/slices/studentSlice';
 import { studentApi } from '../../../!rtk-query/api/studentApi';
 import Spacer from '../../../components/Spacer';
-import WeeklyTimetable from '../components/WeeklyTimetable';
+import WeeklyTimetable, { WeekNavigator } from '../components/WeeklyTimetable';
 import AddClassEventDialog from '../../../components/AddClassEventDialog';
 import DuplicateClassDialog from '../../../components/DuplicateClassDialog';
 import MoveConfirmationDialog from '../components/MoveConfirmationDialog';
@@ -24,6 +24,7 @@ import useStudentDetailPathParam from '../../../hooks/useStudentDetailPathParam'
 import { IoMdReturnLeft } from 'react-icons/io';
 import ContentContainer from '@/components/ContentContainer';
 import LoadingOverlay from '@/components/LoadingOverlay';
+import CalendarView from './components/CalendarView';
 
 export default function StudentDetail() {
     const { anchorTimestamp, packageId, setPathParam } = useStudentDetailPathParam();
@@ -158,7 +159,18 @@ export default function StudentDetail() {
                 >
                     {!collapseTimetable && (
                         <>
-                            <div className="w-full mb-4">{studentNameDisplay()}</div>
+                            <div className="flex mr-10">
+                                <div className="flex-1 flex flex-col justify-between">
+                                    <div className="w-full mb-4">{studentNameDisplay()}</div>
+                                    <div>
+                                        <WeekNavigator />
+                                    </div>
+                                </div>
+                                <div style={{ width: 250 }}>
+                                    <CalendarView />
+                                </div>
+                            </div>
+
                             <div style={{ width: '100%' }}>
                                 {displayType === StudentDetailPage.STUDENT_TIME_TABLE && (
                                     <>
