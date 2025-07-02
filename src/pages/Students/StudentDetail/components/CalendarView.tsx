@@ -62,9 +62,7 @@ const CalendarView = () => {
     return (
         <LoadingOverlay isLoading={isFetching}>
             <Box
-                className="-mt-12 -mb-6 -mr-10 -ml-6"
                 sx={{
-                    transform: 'scale(0.7)',
                     '& .ant-picker-calendar-date-value': {
                         display: 'none',
                     },

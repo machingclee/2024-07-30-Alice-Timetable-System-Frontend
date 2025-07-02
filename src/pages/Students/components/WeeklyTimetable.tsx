@@ -6,9 +6,9 @@ import SectionTitle from '../../../components/SectionTitle';
 import Spacer from '../../../components/Spacer';
 import lodash from 'lodash';
 import StudentClassForWeeklyTimetableCell from './StudentClassForWeeklyTimetableCell';
-import { useAppSelector } from '../../../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import { LiaLongArrowAltRightSolid } from 'react-icons/lia';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaCalendarAlt, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { Button } from 'antd';
 import CustomScrollbarContainer from '../../../components/CustomScrollbarContainer';
 import FadeIn from '../../../components/FadeIn';
@@ -16,6 +16,7 @@ import useAnchorTimestamp from '../../../hooks/useStudentDetailPathParam';
 import { studentApi } from '@/!rtk-query/api/studentApi';
 import { useParams } from 'react-router-dom';
 import LoadingOverlay from '@/components/LoadingOverlay';
+import studentSlice from '@/redux/slices/studentSlice';
 
 export type WeeklyCoordinate = {
     [dateUnixTimestamp: string]: {
@@ -26,6 +27,7 @@ export type WeeklyCoordinate = {
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 export const WeekNavigator = () => {
+    const dispatch = useAppDispatch();
     const { anchorTimestamp, setPathParam } = useAnchorTimestamp();
     const packageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const goNextWeek = () => {
@@ -90,7 +92,16 @@ export const WeekNavigator = () => {
     };
     return (
         <div className="flex justify-center overflow-auto">
-            <div className="flex justify-center overflow-auto">{weekNavigator()}</div>
+            <div className="flex justify-center overflow-auto flex-1">{weekNavigator()}</div>
+            <div className="flex items-center">
+                <Button
+                    onClick={() => dispatch(studentSlice.actions.setOpenCalendar(true))}
+                    className="flex items-center"
+                >
+                    <FaCalendarAlt />
+                    Show Calendar
+                </Button>
+            </div>
         </div>
     );
 };
@@ -246,7 +257,7 @@ export default function WeeklyTimeTable() {
                             );
                         })}
                 </div>
-                <CustomScrollbarContainer className="my-fadein flex flex-col h-[calc(100vh-320px)] mr-4 ">
+                <CustomScrollbarContainer className="my-fadein flex flex-col h-[calc(100vh-260px)] mr-4 ">
                     <FadeIn className="scrollbar-hide">
                         <div className="flex mt-2">
                             <div style={{ flex: 1 }}>

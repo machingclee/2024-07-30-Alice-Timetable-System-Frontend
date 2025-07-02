@@ -20,6 +20,7 @@ export type StudentSliceState = {
         };
     };
     studentDetailTimetablePage: {
+        openCalendar: boolean;
         isMutatingClass: boolean;
         activePage: StudentDetailPage;
         showAllClassesForOneStudent: boolean;
@@ -58,6 +59,7 @@ const initialState: StudentSliceState = {
     },
     students: {},
     studentDetailTimetablePage: {
+        openCalendar: false,
         isMutatingClass: false,
         activePage: StudentDetailPage.STUDENT_TIME_TABLE,
         selectedPackageId: '',
@@ -89,6 +91,9 @@ const studentSlice = createSlice({
     name: 'students',
     initialState,
     reducers: {
+        setOpenCalendar: (state, action: PayloadAction<boolean>) => {
+            state.studentDetailTimetablePage.openCalendar = action.payload;
+        },
         resetAddStudentForm: state => {
             state.addStudentForm = cloneDeep(initialState.addStudentForm);
         },

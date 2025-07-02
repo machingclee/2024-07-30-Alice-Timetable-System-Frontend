@@ -24,7 +24,7 @@ import useStudentDetailPathParam from '../../../hooks/useStudentDetailPathParam'
 import { IoMdReturnLeft } from 'react-icons/io';
 import ContentContainer from '@/components/ContentContainer';
 import LoadingOverlay from '@/components/LoadingOverlay';
-import CalendarView from './components/CalendarView';
+import CalendarDrawer from './components/CanlendarDrawer';
 
 export default function StudentDetail() {
     const { anchorTimestamp, packageId, setPathParam } = useStudentDetailPathParam();
@@ -166,11 +166,7 @@ export default function StudentDetail() {
                                         <WeekNavigator />
                                     </div>
                                 </div>
-                                <div style={{ width: 250 }}>
-                                    <CalendarView />
-                                </div>
                             </div>
-
                             <div style={{ width: '100%' }}>
                                 {displayType === StudentDetailPage.STUDENT_TIME_TABLE && (
                                     <>
@@ -192,7 +188,7 @@ export default function StudentDetail() {
                 />
                 <StudentPackageColumn packagesOffsetY={200} collapseTimtable={collapseTimetable} />
             </div>
-
+            <CalendarDrawer />
             {/* <Calendar /> */}
             <DuplicateClassDialog.render />
             <ViewClassDialog.render />
