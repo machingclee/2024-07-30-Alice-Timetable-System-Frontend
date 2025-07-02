@@ -7,6 +7,7 @@ export type AliceModalProps<T = any> = {
     setOnOk: (action: Action) => void;
     setOkText: (text: string) => void;
     setOpen: (open: boolean) => void;
+    setOnClose: (action: Action) => void;
 };
 
 type Action = () => void | Promise<void>;
@@ -28,9 +29,11 @@ const AliceModalTrigger = <T,>(props: {
     const modalRef = useRef<{
         okText: string;
         onOk: Action;
+        onClose: Action;
     }>({
         okText: 'Ok',
         onOk: () => {},
+        onClose: () => {},
     });
 
     const setOkText = (text: string) => {
@@ -39,6 +42,9 @@ const AliceModalTrigger = <T,>(props: {
     const setOnOk = (action: Action) => {
         modalRef.current.onOk = action;
     };
+    const setOnClose = (action: Action) => {
+        modalRef.current.onClose = action;
+    };
 
     const ModalContent = useCallback(
         () =>
@@ -46,6 +52,7 @@ const AliceModalTrigger = <T,>(props: {
                 setOkText,
                 setOnOk,
                 setOpen,
+                setOnClose,
                 context: props?.context || {},
             }),
         [props]
@@ -74,11 +81,18 @@ const AliceModalTrigger = <T,>(props: {
                     setOpen(false);
                 }}
                 onClose={() => {
+                    modalRef.current.onClose();
                     setOpen(false);
                 }}
                 okText={modalRef.current.okText}
                 footer={[
-                    <Button key="back" onClick={() => setOpen(false)}>
+                    <Button
+                        key="back"
+                        onClick={() => {
+                            modalRef.current.onClose();
+                            setOpen(false);
+                        }}
+                    >
                         Cancel
                     </Button>,
                     <Button

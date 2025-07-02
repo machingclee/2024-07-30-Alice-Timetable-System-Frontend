@@ -12,6 +12,8 @@ import { Box } from '@mui/material';
 import { BsCalendar2MonthFill } from 'react-icons/bs';
 import clsx from 'clsx';
 import { customHolidayApi } from '@/!rtk-query/api/customHolidayApi';
+import CustomScrollbarContainer from '@/components/CustomScrollbarContainer';
+import LoadingOverlay from '@/components/LoadingOverlay';
 
 const CALENDAR_IS_TODAY_COLOR = '#3bc289';
 
@@ -29,7 +31,8 @@ const HIGHLIGHT_CALEDAR_DATE_STYLE = clsx(
 );
 
 export default function CustomHolidays() {
-    const { data: customHolidaysQuery } = customHolidayApi.endpoints.getCustomHolidays.useQuery();
+    const { data: customHolidaysQuery, isFetching } = customHolidayApi.endpoints.getCustomHolidays.useQuery();
+
     return (
         <div className="space-y-4">
             <SectionTitle>Custom Holidays</SectionTitle>
@@ -40,14 +43,16 @@ export default function CustomHolidays() {
                 </Button>
             </AliceModalTrigger>
             <div className="flex gap-4">
-                <div className="flex-1">
-                    <div className="space-y-2.5 pr-4">
-                        {customHolidaysQuery?.map(holiday => {
-                            const { id, desc, name, startOfTheDate } = holiday;
-                            return <Holiday holidayId={id} name={name} date={startOfTheDate} desc={desc} />;
-                        })}
-                    </div>
-                </div>
+                <CustomScrollbarContainer className="flex-1" style={{ height: 'calc(100vh - 130px)' }}>
+                    <LoadingOverlay isLoading={isFetching}>
+                        <div className="space-y-2.5 pr-4">
+                            {customHolidaysQuery?.map(holiday => {
+                                const { id, desc, name, startOfTheDate } = holiday;
+                                return <Holiday holidayId={id} name={name} date={startOfTheDate} desc={desc} />;
+                            })}
+                        </div>
+                    </LoadingOverlay>
+                </CustomScrollbarContainer>
                 <div className="w-[320px]">
                     <Box
                         sx={{

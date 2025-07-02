@@ -31,7 +31,7 @@ export default function Logging() {
                         fontSize: 12,
                     },
                     '& td': { padding: '4px 10px' },
-                    '& tr:nth-child(2n+1)': {
+                    '& tr:nth-of-type(2n+1)': {
                         backgroundColor: 'rgba(0,0,0,0.05)',
                     },
                 }}

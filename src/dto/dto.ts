@@ -180,11 +180,9 @@ export type CreateStudentPackageRequest = {
 };
 
 export type UpdateStudentPackageRequest = {
-    id: number;
+    packageId: number;
     num_of_classes: number;
-    start_date: number;
     expiry_date: number;
-    min: number;
     course_id: number;
     default_classroom: Classroom;
 };

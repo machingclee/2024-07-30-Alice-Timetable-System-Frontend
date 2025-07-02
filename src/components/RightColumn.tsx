@@ -271,7 +271,7 @@ export default function RightColumn() {
                                                         verticalAlign: 'middle',
                                                         textAlign: 'left',
                                                     },
-                                                    '& td:nth-child(2)': {
+                                                    '& td:nth-of-type(2)': {
                                                         width: 'unset',
                                                     },
                                                 }}

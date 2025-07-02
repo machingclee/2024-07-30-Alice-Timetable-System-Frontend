@@ -13,79 +13,15 @@ import EditPackageDialog from './EditPackageDialog';
 import EditPackageForm from './EditPackageForm';
 import classnames from 'classnames';
 import { useState } from 'react';
-import { Button, Modal } from 'antd';
+import { Modal } from 'antd';
 import documentId from '../../../../constant/documentId';
 import toastUtil from '../../../../utils/toastUtil';
 import { AliceMenu } from '@/components/AliceMenu';
 import useSelectPackage from '@/hooks/useSelectPackage';
 import { studentApi } from '@/!rtk-query/api/studentApi';
-import useGetStudentIdFromParam from '@/hooks/useGetStudentIdFromParam';
-import normalizeUtil from '@/utils/normalizeUtil';
 
-const SwitchClassTypeButton = (props: { packageId: string }) => {
-    const { packageId } = props;
-    const { studentId } = useGetStudentIdFromParam();
-    const { selectPackageAtFirstLessonTimestamp } = useSelectPackage();
-    const filteredLessons = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
-        { studentId: studentId || '' },
-        {
-            skip: !studentId,
-            selectFromResult: result => {
-                const { hrUnixTimestampToLesson: allLessons = {} } = result?.data || {};
-                const extendedLessons = Object.values(allLessons).filter(lesson => {
-                    return (
-                        lesson.studentPackage.id === Number(packageId) &&
-                        lesson.student.id === studentId &&
-                        lesson.classExtensionRecord != null
-                    );
-                });
-                const { idToObject: hrUnixTimestampToLesson = {}, ids: timestamps = [] } = normalizeUtil.normalize({
-                    targetArr: extendedLessons,
-                    idAttribute: 'hourUnixTimestamp',
-                });
-                return { hrUnixTimestampToLesson, timestamps };
-            },
-        }
-    );
-
-    const navigateToFirstExtendedLesson = () => {
-        console.log('filteredLessonsfilteredLessonsfilteredLessons', filteredLessons);
-        selectPackageAtFirstLessonTimestamp({ packageId, weeklyClassEvent: filteredLessons });
-    };
-
-    const { isShowingExtendedClasses } = studentApi.endpoints.getStudentPackages.useQueryState(
-        { studentId: studentId || '' },
-        {
-            selectFromResult: result => {
-                const isShowingExtendedClasses =
-                    result.data?.idToStudentPackage[packageId].display === 'EXTENDED_CLASSES';
-                return { isShowingExtendedClasses };
-            },
-        }
-    );
-    const dispatch = useAppDispatch();
-
-    return (
-        <Button
-            onClick={() => {
-                dispatch(
-                    studentApi.util.updateQueryData('getStudentPackages', { studentId: studentId || '' }, draft => {
-                        if (!isShowingExtendedClasses) {
-                            navigateToFirstExtendedLesson();
-                            Object.values(draft.idToStudentPackage).forEach(pkg => {
-                                pkg.display = 'CLASSES';
-                            });
-                            draft.idToStudentPackage[packageId].display = 'EXTENDED_CLASSES';
-                        } else {
-                            draft.idToStudentPackage[packageId].display = 'CLASSES';
-                        }
-                    })
-                );
-            }}
-        >
-            {isShowingExtendedClasses ? 'Show Normal Classes' : 'Show Extended Classes'}
-        </Button>
-    );
+const toOneDecimal = (value: number) => {
+    return Math.floor(value * 10) / 10;
 };
 
 export default function StudentPackage(props: { packageId: string }) {
@@ -127,16 +63,20 @@ export default function StudentPackage(props: { packageId: string }) {
     const {
         consumedMinutes,
         consumedextendedClassMins,
-        scheduledMinutes: schedumeMinutes,
+        scheduledMinutes: _schedumeMinutes,
         studentPackage: studentPkg,
         numOfNormalClasses,
+        packageEndDate,
         numOfExtendedClass,
     } = studentPackage || {};
     const courseId = studentPkg?.courseId;
-    const consumedClasses = Math.floor(((schedumeMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
-    const consumedExtendedClass = Math.floor(((consumedextendedClassMins || 0) / (studentPkg?.min || 1)) * 10) / 10;
+    const consumedClasses = toOneDecimal((consumedMinutes || 0) / (studentPkg?.min || 1));
+    const consumedExtendedClass = toOneDecimal((consumedextendedClassMins || 0) / (studentPkg?.min || 1));
+    const totalClassesConsumed = toOneDecimal(
+        ((consumedMinutes || 0) + (consumedextendedClassMins || 0)) / (studentPkg?.min || 1)
+    );
     console.log('consumed_minutes:', consumedMinutes);
-    const finishedClasses = Math.floor(((consumedMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
+    // const finishedClasses = Math.floor(((consumedMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
 
     if (!courseId) {
         return null;
@@ -168,15 +108,15 @@ export default function StudentPackage(props: { packageId: string }) {
             return;
         }
 
-        await deletePackageMutation({
+        deletePackageMutation({
             studentId,
             packageId: Number(packageId),
-        }).unwrap();
-
-        if (studentId) {
-            dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_TIME_TABLE));
-            toastUtil.success('Class deleted successfully.');
-        }
+        })
+            .unwrap()
+            .then(() => {
+                dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_TIME_TABLE));
+                toastUtil.success('Class deleted successfully.');
+            });
     };
 
     const showAttendence = async () => {
@@ -230,12 +170,12 @@ export default function StudentPackage(props: { packageId: string }) {
 
     return (
         <div>
-            <div className="flex justify-between">
+            {/* <div className="flex justify-between">
                 <div></div>
                 <div>
                     <SwitchClassTypeButton packageId={packageId} />
                 </div>
-            </div>
+            </div> */}
             <div
                 id={documentId.STUDENT_PACKAGE_ID(packageId)}
                 style={{
@@ -249,7 +189,7 @@ export default function StudentPackage(props: { packageId: string }) {
                     '[&_table]:w-full [&_table]:border-separate [&_table]:border-spacing-1',
                     '[&_td]:whitespace-nowrap',
                     '[&_td:first-child]:w-[0.1%]',
-                    '[&_td:nth-child(2)]:p-[4px_6px] [&_td:nth-child(2)]:rounded-[4px] [&_td:nth-child(2)]:bg-gray-200',
+                    '[&_td:nth-of-type(2)]:p-[4px_6px] [&_td:nth-of-type(2)]:rounded-[4px] [&_td:nth-of-type(2)]:bg-gray-200',
                     'p-[10px] rounded-none m-1'
                 )}
             >
@@ -316,9 +256,7 @@ export default function StudentPackage(props: { packageId: string }) {
                                 <tr>
                                     <td>End Date</td>
                                     <td>
-                                        {studentPkg.officialEndDate === 0
-                                            ? '???'
-                                            : dayjs(studentPkg.officialEndDate).format('YYYY-MM-DD')}
+                                        {packageEndDate != null ? dayjs(packageEndDate).format('YYYY-MM-DD') : '???'}
                                     </td>
                                 </tr>
                                 <tr>
@@ -331,11 +269,11 @@ export default function StudentPackage(props: { packageId: string }) {
                                 </tr>
                                 <tr>
                                     <td>Extended Classes</td>
-                                    <td>{`${consumedExtendedClass}/${numOfExtendedClass}`}</td>
+                                    <td>{`${consumedExtendedClass}/${numOfExtendedClass || 0}`}</td>
                                 </tr>
                                 <tr>
                                     <td>Finished Classes</td>
-                                    <td>{`${finishedClasses}/${studentPkg.numOfClasses}`}</td>
+                                    <td>{`${totalClassesConsumed}/${studentPkg.numOfClasses + (numOfExtendedClass || 0)}`}</td>
                                 </tr>
                                 <tr>
                                     <td>Payment Status</td>

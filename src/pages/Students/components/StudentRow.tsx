@@ -79,7 +79,7 @@ export default function StudentRow(props: { studentId: string }) {
                     '& td': {
                         marginBottom: '4px',
                     },
-                    '& td:nth-child(1), & td:nth-child(3)': {
+                    '& td:nth-of-type(1), & td:nth-of-type(3)': {
                         verticalAlign: 'top',
                         textAlign: 'left',
                         width: '120px',
@@ -90,10 +90,10 @@ export default function StudentRow(props: { studentId: string }) {
                     '& .react-contextmenu-wrapper': {
                         width: '100%',
                     },
-                    '& td:nth-child(3)': {
+                    '& td:nth-of-type(3)': {
                         paddingLeft: '20px',
                     },
-                    '& td:nth-child(2), & td:nth-child(4)': {
+                    '& td:nth-of-type(2), & td:nth-of-type(4)': {
                         display: 'flex',
                         width: '260px',
                         minHeight: '16px',
@@ -101,7 +101,7 @@ export default function StudentRow(props: { studentId: string }) {
                         background: 'rgb(0,0,0,0.08)',
                         padding: '5px',
                     },
-                    '& td:nth-child(5)': {
+                    '& td:nth-of-type(5)': {
                         width: '100%',
                     },
                 }}
@@ -131,7 +131,7 @@ export default function StudentRow(props: { studentId: string }) {
                         <div className="w-full bg-emerald-50">
                             <div className="flex justify-start items-center text-xl pl-4 pt-1 pb-0.5 shadow-gray-300 gap-2">
                                 <IoLogoOctocat />
-                                <div>{`${firstName} ${lastName}`}</div>
+                                <div>{chineseName || `${firstName} ${lastName}`}</div>
                             </div>
                         </div>
                         <Separator className="bg-emerald-200 -mt-2" />

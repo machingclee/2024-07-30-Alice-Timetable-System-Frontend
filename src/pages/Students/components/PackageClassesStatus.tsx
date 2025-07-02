@@ -22,6 +22,7 @@ import { AliceMenu } from '@/components/AliceMenu';
 import ContentContainer from '@/components/ContentContainer';
 import { useParams } from 'react-router-dom';
 import { studentApi } from '@/!rtk-query/api/studentApi';
+import CustomScrollbarContainer from '@/components/CustomScrollbarContainer';
 
 export const Container = (props: PropsWithChildren) => {
     return (
@@ -101,16 +102,19 @@ export default function PackageClassesStatus() {
                     <Spacer />
                     <ContentContainer className="mr-4">
                         <Box>
-                            {classInfos?.map(classInfo => {
-                                return (
-                                    <ClassStatusRow
-                                        classInfo={classInfo}
-                                        invalidateClassStatues={async () => {
-                                            await refetchClassStatuses();
-                                        }}
-                                    />
-                                );
-                            })}
+                            {' '}
+                            <CustomScrollbarContainer className="h-[calc(100vh-280px)]">
+                                {classInfos?.map(classInfo => {
+                                    return (
+                                        <ClassStatusRow
+                                            classInfo={classInfo}
+                                            invalidateClassStatues={async () => {
+                                                await refetchClassStatuses();
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </CustomScrollbarContainer>
                         </Box>
                     </ContentContainer>
                 </div>
@@ -123,13 +127,23 @@ export const ClassStatusRow = (props: {
     classInfo: GetPackageClassStatusResponse;
     invalidateClassStatues: () => Promise<void>;
 }) => {
-    const { cls, course, dateUnixTimestamp, student, classGroup } = props.classInfo;
+    const {
+        cls,
+        course,
+        dateUnixTimestamp,
+        student,
+        classGroup,
+        classExtendedFrom: classExtendedFrom,
+        classExtendedTo: classExtendedTo,
+        extensionRecord,
+    } = props.classInfo;
     const invalidateClassStatues = props.invalidateClassStatues;
     const hourUnixTimestamp = cls.hourUnixTimestamp;
     const classStatus = cls.classStatus;
     const formattedDay = dayjs(hourUnixTimestamp).format('YYYY-MM-DD');
     const formattedTime = dayjs(hourUnixTimestamp).format('HH:mm');
     const color = statues?.[classStatus.toLocaleLowerCase() as keyof typeof statues]?.color;
+
     return (
         <>
             <AliceMenu
@@ -141,6 +155,7 @@ export const ClassStatusRow = (props: {
                             ViewClassDialog.setContent(() => () => (
                                 <ViewClassForm
                                     isEditing={false}
+                                    classExtensionRecord={extensionRecord}
                                     dateUnixTimestamp={dateUnixTimestamp}
                                     cls={cls}
                                     course={course}
@@ -202,7 +217,7 @@ export const ClassStatusRow = (props: {
                 ]}
             >
                 <div
-                    className="m-1 rounded-sm"
+                    className="border-1 border-teal-50"
                     style={{
                         cursor: 'pointer',
                         boxShadow: boxShadow.SHADOW_61,
@@ -216,9 +231,17 @@ export const ClassStatusRow = (props: {
                         <div className="flex w-40 items-center gap-2">
                             <CiCalendarDate size={24} /> {formattedDay}
                         </div>
-                        <div className="flex w-40 items-center gap-2">
+                        <div className="flex w-30 items-center gap-2">
                             <IoMdTime size={22} />
                             {formattedTime}
+                        </div>
+                        <div className="flex-1">
+                            {classExtendedTo
+                                ? `Extended to ${dayjs(classExtendedTo.hourUnixTimestamp).format('YYYY-MM-DD')}`
+                                : ''}
+                            {classExtendedFrom
+                                ? `Extended From ${dayjs(classExtendedFrom.hourUnixTimestamp).format('YYYY-MM-DD')}`
+                                : ''}
                         </div>
                     </div>
                     <div style={{ color: color || 'black' }}>{getDisplayNameFromClassStatus[classStatus]}</div>

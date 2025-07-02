@@ -1,6 +1,5 @@
 import { Select, Switch } from 'antd';
 import Spacer from '../../../components/Spacer';
-import { useRef } from 'react';
 import { CreateStudentRequest, Gender } from '../../../dto/dto';
 import FormInputField from '../../../components/FormInputField';
 import toastUtil from '../../../utils/toastUtil';
@@ -11,44 +10,35 @@ import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { AliceModalProps } from '../../../components/AliceModalTrigger';
 import { studentApi } from '@/!rtk-query/api/studentApi';
-
-const initialDate = '2015-01-01';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import studentSlice from '@/redux/slices/studentSlice';
 
 export default function AddStudentModal(props: AliceModalProps) {
-    const { setOkText, setOnOk } = props;
-    const formData = useRef<CreateStudentRequest>({
-        gender: 'MALE',
-        preferred_name: '',
-        birthdate: dayjs(new Date(initialDate)).valueOf(),
-        chinese_first_name: '',
-        chinese_last_name: '',
-        first_name: '',
-        grade: '',
-        last_name: '',
-        parent_email: '',
-        phone_number: '',
-        school_name: '',
-        student_code: '',
-        wechat_id: '',
-        shouldAutoRenewPackage: false,
-    });
+    const { setOkText, setOnOk, setOnClose } = props;
+
+    const dispatch = useAppDispatch();
+    const formData = useAppSelector(state => state.student.addStudentForm);
 
     const update = (update_: Partial<CreateStudentRequest>) => {
-        formData.current = { ...formData.current, ...update_ };
+        dispatch(studentSlice.actions.updateAddStudentForm(update_));
     };
 
     const [createStudentMutation] = studentApi.endpoints.createStudent.useMutation();
 
     const submit = async () => {
-        const wechatId = formData.current.wechat_id?.trim();
-        const createStudetnRequest = { ...formData.current, wechat_id: wechatId ? wechatId : null };
+        const wechatId = formData.wechat_id?.trim();
+        const createStudetnRequest = { ...formData, wechat_id: wechatId ? wechatId : null };
         await createStudentMutation(createStudetnRequest).unwrap();
+        dispatch(studentSlice.actions.resetAddStudentForm());
         toastUtil.success('User Created');
     };
+    const resetForm = () => {
+        dispatch(studentSlice.actions.resetAddStudentForm());
+    };
 
-    const dateFormat = 'YYYY-MM-DD';
     setOkText('Ok');
     setOnOk(submit);
+    setOnClose(resetForm);
 
     return (
         <Box
@@ -58,24 +48,46 @@ export default function AddStudentModal(props: AliceModalProps) {
         >
             <SectionTitle>Add Student</SectionTitle>
             <Spacer />
-            <FormInputField title="Student Code*" onChange={t => update({ student_code: t })} />
-            <FormInputField title="Preferred Name*" onChange={t => update({ preferred_name: t })} />
+            <FormInputField
+                title="Student Code*"
+                value={formData.student_code}
+                onChange={t => update({ student_code: t })}
+            />
+            <FormInputField
+                title="Preferred Name*"
+                value={formData.preferred_name}
+                onChange={t => update({ preferred_name: t })}
+            />
             <div style={{ display: 'flex' }}>
-                <FormInputField title="姓氏*" onChange={t => update({ chinese_last_name: t })} />
+                <FormInputField
+                    title="姓氏*"
+                    value={formData.chinese_last_name}
+                    onChange={t => update({ chinese_last_name: t })}
+                />
                 <Spacer />
-                <FormInputField title="名字*" onChange={t => update({ chinese_first_name: t })} style={{ flex: 1 }} />
+                <FormInputField
+                    title="名字*"
+                    value={formData.chinese_first_name}
+                    onChange={t => update({ chinese_first_name: t })}
+                    style={{ flex: 1 }}
+                />
             </div>
             <div style={{ display: 'flex', marginTop: -15 }}>
-                <FormInputField title="Last Name" onChange={t => update({ last_name: t })} />
+                <FormInputField title="Last Name" value={formData.last_name} onChange={t => update({ last_name: t })} />
                 <Spacer />
-                <FormInputField title="First Name" onChange={t => update({ first_name: t })} style={{ flex: 1 }} />
+                <FormInputField
+                    title="First Name"
+                    value={formData.first_name}
+                    onChange={t => update({ first_name: t })}
+                    style={{ flex: 1 }}
+                />
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <div> Auto Renew Packages?</div>
                 <Spacer />
                 <Switch
                     size="small"
-                    defaultValue={false}
+                    value={formData.shouldAutoRenewPackage}
                     onChange={checked => {
                         update({ shouldAutoRenewPackage: checked });
                     }}
@@ -90,7 +102,7 @@ export default function AddStudentModal(props: AliceModalProps) {
                     <Spacer height={5} />
                     <Select
                         dropdownStyle={{ zIndex: 10 ** 4 }}
-                        defaultValue="MALE"
+                        value={formData.gender}
                         style={{ width: 130 }}
                         onChange={value => {
                             update({ gender: value as Gender });
@@ -107,23 +119,40 @@ export default function AddStudentModal(props: AliceModalProps) {
                     <Spacer height={5} />
                     <DatePicker
                         onChange={val => {
-                            formData.current.birthdate = val.valueOf();
+                            update({ birthdate: val.valueOf() });
                         }}
+                        value={dayjs(formData.birthdate)}
                         popupStyle={{ zIndex: 10 ** 7 }}
-                        defaultValue={dayjs('2015-01-01', dateFormat)}
                     />
                 </div>
             </div>
             <Spacer />
-            <FormInputField title="Parent Email" onChange={t => update({ parent_email: t })} />
-            <FormInputField title="School Name" onChange={t => update({ school_name: t })} />
+            <FormInputField
+                title="Parent Email"
+                value={formData.parent_email}
+                onChange={t => update({ parent_email: t })}
+            />
+            <FormInputField
+                title="School Name"
+                value={formData.school_name}
+                onChange={t => update({ school_name: t })}
+            />
             <FormInputField
                 title="Grade"
+                value={formData.grade}
                 onChange={t => update({ grade: t })}
                 remark={`(before ${dayjs(new Date()).format('YYYY')}-09-01)`}
             />
-            <FormInputField title="Phone Number*" onChange={t => update({ phone_number: t })} />
-            <FormInputField title="Wechat Id (Optional)" onChange={t => update({ wechat_id: t })} />
+            <FormInputField
+                title="Phone Number*"
+                value={formData.phone_number}
+                onChange={t => update({ phone_number: t })}
+            />
+            <FormInputField
+                title="Wechat Id (Optional)"
+                value={formData.wechat_id || ''}
+                onChange={t => update({ wechat_id: t })}
+            />
         </Box>
     );
 }

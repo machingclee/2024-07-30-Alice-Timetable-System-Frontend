@@ -15,11 +15,12 @@ import remarkGfm from 'remark-gfm';
 import { TicketDTO } from '../../dto/kotlinDto';
 import FormInputTitle from '../../components/FormInputTitle';
 import { ticketApi } from '@/!rtk-query/api/ticketApi';
+import LoadingContainer from '@/components/LoadingContainer';
 
 const CONTAINER_WIDTH = 400;
 
 export default function Tickets() {
-    const { data: tickets = [] } = ticketApi.endpoints.getTickets.useQuery();
+    const { data: tickets = [], isFetching } = ticketApi.endpoints.getTickets.useQuery();
     const [updateTicketMutation] = ticketApi.endpoints.updateTicket.useMutation();
 
     return (
@@ -27,7 +28,9 @@ export default function Tickets() {
             <SectionTitle>Tickets</SectionTitle>
             <Spacer />
             <AliceModalTrigger destroyOnClose={true} modalContent={CreateTicketModal}>
-                <Button type="primary">Create Ticket</Button>
+                <Button type="primary" loading={isFetching}>
+                    Create Ticket
+                </Button>
             </AliceModalTrigger>
             <Spacer />
             <div style={{ display: 'flex' }}>
@@ -53,39 +56,40 @@ export default function Tickets() {
                         >
                             Doing
                         </div>
+                        <LoadingContainer isLoading={isFetching} hideContentWhenLoading={true}>
+                            <Droppable
+                                style={{ flex: 1 }}
+                                idleColor="transparent"
+                                activeColor="rgba(255,255,255,0.2)"
+                                isValidMove={(_data: TicketDTO) => {
+                                    // return _data.isSolved == true;
+                                    return true;
+                                }}
+                                onValidDrop={async fromTicket => {
+                                    if (fromTicket.isSolved) {
+                                        await updateTicketMutation({
+                                            content: fromTicket.content,
+                                            isSolved: false,
+                                            solvedBy: fromTicket.solvedBy,
+                                            ticketId: fromTicket.id,
+                                            title: fromTicket.title,
+                                        });
+                                    }
+                                }}
+                            >
+                                {tickets
+                                    .filter(t => t.isSolved === false)
+                                    .map(ticket => {
+                                        return (
+                                            <React.Fragment key={ticket.id}>
+                                                <ResizableDraggableCard ticket={ticket} />
 
-                        <Droppable
-                            style={{ flex: 1 }}
-                            idleColor="transparent"
-                            activeColor="rgba(255,255,255,0.2)"
-                            isValidMove={(_data: TicketDTO) => {
-                                // return _data.isSolved == true;
-                                return true;
-                            }}
-                            onValidDrop={async fromTicket => {
-                                if (fromTicket.isSolved) {
-                                    await updateTicketMutation({
-                                        content: fromTicket.content,
-                                        isSolved: false,
-                                        solvedBy: fromTicket.solvedBy,
-                                        ticketId: fromTicket.id,
-                                        title: fromTicket.title,
-                                    });
-                                }
-                            }}
-                        >
-                            {tickets
-                                .filter(t => t.isSolved === false)
-                                .map(ticket => {
-                                    return (
-                                        <React.Fragment key={ticket.id}>
-                                            <ResizableDraggableCard ticket={ticket} />
-
-                                            <Spacer height={10} />
-                                        </React.Fragment>
-                                    );
-                                })}
-                        </Droppable>
+                                                <Spacer height={10} />
+                                            </React.Fragment>
+                                        );
+                                    })}
+                            </Droppable>
+                        </LoadingContainer>
                     </div>
                 </div>
                 <Spacer />
@@ -102,40 +106,41 @@ export default function Tickets() {
                 >
                     <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column' }}>
                         <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 5 }}>Done</div>
+                        <LoadingContainer isLoading={isFetching} hideContentWhenLoading={true}>
+                            <Spacer height={5} />
 
-                        <Spacer height={5} />
-
-                        <Droppable
-                            style={{ flex: 1, background: 'red' }}
-                            idleColor="transparent"
-                            activeColor="rgba(255,255,255,0.2)"
-                            isValidMove={(_data: TicketDTO) => {
-                                // return _data.isSolved == false;
-                                return true;
-                            }}
-                            onValidDrop={async fromTicket => {
-                                if (!fromTicket.isSolved) {
-                                    await updateTicketMutation({
-                                        content: fromTicket.content,
-                                        isSolved: true,
-                                        solvedBy: fromTicket.solvedBy,
-                                        ticketId: fromTicket.id,
-                                        title: fromTicket.title,
-                                    }).unwrap();
-                                }
-                            }}
-                        >
-                            {tickets
-                                .filter(t => t.isSolved === true)
-                                .map(ticket => {
-                                    return (
-                                        <>
-                                            <ResizableDraggableCard ticket={ticket} />
-                                            <Spacer height={10} />
-                                        </>
-                                    );
-                                })}
-                        </Droppable>
+                            <Droppable
+                                style={{ flex: 1, background: 'red' }}
+                                idleColor="transparent"
+                                activeColor="rgba(255,255,255,0.2)"
+                                isValidMove={(_data: TicketDTO) => {
+                                    // return _data.isSolved == false;
+                                    return true;
+                                }}
+                                onValidDrop={async fromTicket => {
+                                    if (!fromTicket.isSolved) {
+                                        await updateTicketMutation({
+                                            content: fromTicket.content,
+                                            isSolved: true,
+                                            solvedBy: fromTicket.solvedBy,
+                                            ticketId: fromTicket.id,
+                                            title: fromTicket.title,
+                                        }).unwrap();
+                                    }
+                                }}
+                            >
+                                {tickets
+                                    .filter(t => t.isSolved === true)
+                                    .map(ticket => {
+                                        return (
+                                            <>
+                                                <ResizableDraggableCard ticket={ticket} />
+                                                <Spacer height={10} />
+                                            </>
+                                        );
+                                    })}
+                            </Droppable>
+                        </LoadingContainer>
                     </div>
                 </div>
             </div>

@@ -14,7 +14,6 @@ export type ClassRoom = 'PRINCE_EDWARD' | 'CAUSEWAY_BAY';
 export type StudentPackageDTO = {
     startDate: number;
     paidAt: number;
-    officialEndDate: number;
     expiryDate: number;
     min: number;
     courseId: number;
@@ -59,6 +58,7 @@ export type StudentPackageRepsonse = {
     packageId: number;
     studentPackage: StudentPackageDTO;
     scheduledMinutes: number;
+    packageEndDate: number | null;
     consumedMinutes: number;
     consumedextendedClassMins: number;
     numOfNormalClasses: number;
@@ -89,6 +89,8 @@ export type TimetableLesson = {
     class: ClassDTO;
     studentPackage: StudentPackageDTO;
     classExtensionRecord: ClassExtensionRecordDTO | null;
+    classExtendedTo: ClassDTO | null;
+    classExtendedFrom: ClassDTO | null;
 };
 
 export type GetPackageClassStatusResponse = {
@@ -97,6 +99,9 @@ export type GetPackageClassStatusResponse = {
     cls: ClassDTO;
     course: CourseDTO;
     student: StudentDTO;
+    classExtendedTo: ClassDTO | null;
+    classExtendedFrom: ClassDTO | null;
+    extensionRecord: ClassExtensionRecordDTO | null;
 };
 
 export type ClassDTO = {

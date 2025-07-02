@@ -15,6 +15,7 @@ type Item = {
     disabled?: boolean;
     onClick?: () => void | Promise<void>;
     subItems?: Item[];
+    modelTrigger?: ReactNode;
 };
 
 const renderItems = (items: Item[]) => {
@@ -22,6 +23,9 @@ const renderItems = (items: Item[]) => {
         <>
             {items.map((item, index) => {
                 const { disabled = false } = item;
+                if (item.modelTrigger) {
+                    return item.modelTrigger;
+                }
                 if (!item.subItems) {
                     return (
                         <ContextMenuItem

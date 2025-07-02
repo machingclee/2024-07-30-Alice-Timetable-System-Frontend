@@ -63,7 +63,7 @@ export default function CourseRow(props: { courseId: number }) {
     }
 
     return (
-        <div className="items-center bg-white mb-0 px-4 py-1 rounded-md shadow-sm border-1 border-emerald-400">
+        <div className="items-center bg-white mb-0 px-4 py-1 rounded-md shadow-sm border-1 border-emerald-400 h-40">
             <div className="my-2">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">

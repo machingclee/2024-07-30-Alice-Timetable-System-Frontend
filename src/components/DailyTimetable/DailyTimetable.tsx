@@ -15,6 +15,7 @@ import TimeRow from './components/TimeRow';
 import { PrintHandler } from '../PrintButton';
 import Interval from '../../utils/Interval';
 import ContentContainer from '../ContentContainer';
+import LoadingOverlay from '../LoadingOverlay';
 const gridHeight = 30;
 
 export default function DailyTimetable({
@@ -34,21 +35,25 @@ export default function DailyTimetable({
     // const { refetchMassTimetableAnchoredAt } = useRefetchMassTimetables();
     const [refetchMassTimetableAnchoredAt] =
         studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useLazyQuery();
-    const { hrUnixTimestampToClasses = {} } = studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
-        {
-            anchorTimestamp: dayjs(date).startOf('day').valueOf(),
-            classRoom: classRoom!,
-            filter: JSON.parse(JSON.stringify(filter)),
-            numOfDays,
-        },
-        {
-            skip: !classRoom,
-            selectFromResult: result => {
-                const { hrUnixTimestampToTimetableClasses } = result?.data || {};
-                return { hrUnixTimestampToClasses: hrUnixTimestampToTimetableClasses };
+    const { hrUnixTimestampToClasses = {}, isFetching } =
+        studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery(
+            {
+                anchorTimestamp: dayjs(date).startOf('day').valueOf(),
+                classRoom: classRoom!,
+                filter: JSON.parse(JSON.stringify(filter)),
+                numOfDays,
             },
-        }
-    );
+            {
+                skip: !classRoom,
+                selectFromResult: result => {
+                    const { hrUnixTimestampToTimetableClasses } = result?.data || {};
+                    return {
+                        hrUnixTimestampToClasses: hrUnixTimestampToTimetableClasses,
+                        isFetching: result.isFetching,
+                    };
+                },
+            }
+        );
     const [hoursColumnGrid, setHoursColumn] = useState<string[]>([]);
     const hrUnixTimestampOnClick = useAppSelector(
         s => s.student.massTimetablePage.totalClassesInHighlight.hrUnixTimestampOnClick
@@ -233,37 +238,39 @@ export default function DailyTimetable({
                             },
                         }}
                     >
-                        <div style={{ display: 'flex' }}>
-                            <div style={{ flex: 1 }}>
-                                <div style={{ display: 'flex' }}>
-                                    <div>
-                                        {oneForthHourIntervals.map(dayJS => {
-                                            return (
-                                                <div
-                                                    style={{ fontSize: 13 }}
-                                                    className="grid-time"
-                                                    key={dayJS.valueOf().toString()}
-                                                >
-                                                    {dayJS.format('HH:mm')}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                    <div style={{ flex: 1 }}>
-                                        {hoursColumnGrid.sort().map((hourUnixTimestamp, index) => {
-                                            return (
-                                                <TimeRow
-                                                    key={`${hourUnixTimestamp}-${date?.getTime() || 0}`}
-                                                    rowIndex={index}
-                                                    hourUnixTimestamp={hourUnixTimestamp}
-                                                />
-                                            );
-                                        })}
+                        <LoadingOverlay isLoading={isFetching}>
+                            <div style={{ display: 'flex' }}>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ display: 'flex' }}>
+                                        <div>
+                                            {oneForthHourIntervals.map(dayJS => {
+                                                return (
+                                                    <div
+                                                        style={{ fontSize: 13 }}
+                                                        className="grid-time"
+                                                        key={dayJS.valueOf().toString()}
+                                                    >
+                                                        {dayJS.format('HH:mm')}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            {hoursColumnGrid.sort().map((hourUnixTimestamp, index) => {
+                                                return (
+                                                    <TimeRow
+                                                        key={`${hourUnixTimestamp}-${date?.getTime() || 0}`}
+                                                        rowIndex={index}
+                                                        hourUnixTimestamp={hourUnixTimestamp}
+                                                    />
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                 </div>
+                                <Spacer />
                             </div>
-                            <Spacer />
-                        </div>
+                        </LoadingOverlay>
                     </Box>
                     <Spacer />
                     <ViewClassDialog.render />

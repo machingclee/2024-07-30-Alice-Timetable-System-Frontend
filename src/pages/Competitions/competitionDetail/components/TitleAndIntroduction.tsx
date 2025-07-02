@@ -80,11 +80,11 @@ export default ({ title, intro, competitionId }: { title: string; intro: string;
                     border: "none",
                     outline: "none",
                 },
-                "& td:nth-child(1)": {
+                "& td:nth-of-type(1)": {
                     verticalAlign: "middle",
                     width: "100px",
                 },
-                "& td:nth-child(2), & td:nth-child(3)": {
+                "& td:nth-of-type(2), & td:nth-of-type(3)": {
                     display: "flex",
                     width: "300px",
                     borderRadius: "4px",

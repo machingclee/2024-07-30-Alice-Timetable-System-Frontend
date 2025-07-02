@@ -42,12 +42,10 @@ export default function EditPackageForm(props: { packageId: string }) {
             return;
         }
         const reqBody: UpdateStudentPackageRequest = {
-            id: parseInt(packageId),
+            packageId: parseInt(packageId),
             expiry_date: formData.current.expiry_date || packageInfo.studentPackage.expiryDate,
             course_id: formData.current.course_id || packageInfo.packageId,
-            start_date: formData.current.start_date || packageInfo.studentPackage.startDate,
             num_of_classes: formData.current.num_of_classes || packageInfo.studentPackage.numOfClasses,
-            min: formData.current.min || packageInfo.studentPackage.min,
             default_classroom: formData.current.default_classroom || packageInfo.studentPackage.defaultClassroom,
         };
         EditPackageDialog.setOpen(false);
@@ -59,9 +57,7 @@ export default function EditPackageForm(props: { packageId: string }) {
     useEffect(() => {
         if (packageInfo) {
             formData.current.course_id = packageInfo.course.id;
-            formData.current.start_date = packageInfo.studentPackage.startDate;
             formData.current.num_of_classes = packageInfo.studentPackage.numOfClasses;
-            formData.current.min = packageInfo.studentPackage.min;
             formData.current.default_classroom = packageInfo.studentPackage.defaultClassroom;
             formData.current.expiry_date = packageInfo.studentPackage.expiryDate;
         }
@@ -112,16 +108,15 @@ export default function EditPackageForm(props: { packageId: string }) {
             <div style={{ display: 'flex' }}>
                 <FormInputTitle>Select a Duration (in minutes)</FormInputTitle>
                 <Spacer />
-                {error.min && <div>{error.min}</div>}
             </div>
             <Spacer height={5} />
             <Select
                 disabled={true}
                 dropdownStyle={{ zIndex: 10 ** 4 }}
                 style={{ width: '100%' }}
-                onChange={value => {
-                    updateFormData({ min: value });
-                }}
+                // onChange={value => {
+                //     updateFormData({ min: value });
+                // }}
                 defaultValue={packageInfo?.studentPackage.min}
                 options={[
                     { value: 45, label: '45' },

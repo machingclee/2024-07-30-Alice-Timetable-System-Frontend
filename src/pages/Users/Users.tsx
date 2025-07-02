@@ -5,12 +5,13 @@ import UserRow from './components/UserRow';
 import AliceModalTrigger from '../../components/AliceModalTrigger';
 import AddUserModal from './components/AddUserModal';
 import { userApi } from '@/!rtk-query/api/userApi';
+import LoadingContainer from '@/components/LoadingContainer';
 
 export default function User() {
-    const { emails } = userApi.endpoints.getUsers.useQuery(undefined, {
+    const { emails, isFetching } = userApi.endpoints.getUsers.useQuery(undefined, {
         selectFromResult: result => {
             const emails = result.data?.userEmails || [];
-            return { emails };
+            return { emails, isFetching: result.isFetching };
         },
     });
 
@@ -24,13 +25,15 @@ export default function User() {
             </div>
             <Spacer />
             <div className="space-y-2">
-                {emails.map(email => {
-                    return (
-                        <>
-                            <UserRow email={email} key={email} />
-                        </>
-                    );
-                })}
+                <LoadingContainer isLoading={isFetching}>
+                    {emails.map(email => {
+                        return (
+                            <>
+                                <UserRow email={email} key={email} />
+                            </>
+                        );
+                    })}
+                </LoadingContainer>
             </div>
             {/* <AddUserDialog.render /> */}
         </div>

@@ -31,6 +31,8 @@ import getEnv from '@/utils/getEnv';
 import axios from 'axios';
 import baseQuery from '@/axios/baseQuery';
 import createSortedJson from '@/utils/createSortedJson';
+import appSlice from '@/redux/slices/appSlice';
+import studentSlice from '@/redux/slices/studentSlice';
 
 export type HrUnixTimestampToLessons = {
     [timestamp: string]: (TimetableLesson & { isPlaceHolderForPaddingDisplay?: boolean })[];
@@ -55,6 +57,21 @@ export const studentApi = createApi({
         'StudentDetail',
     ],
     endpoints: builder => ({
+        deleteStudent: builder.mutation<void, { studentId: string }>({
+            query: ({ studentId }) => ({
+                url: apiRoutes.DELETE_STUDENT(studentId),
+                method: 'DELETE',
+            }),
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+                try {
+                    dispatch(appSlice.actions.setLoading(true));
+                    await queryFulfilled;
+                } finally {
+                    dispatch(appSlice.actions.setLoading(false));
+                }
+            },
+            invalidatesTags: ['Students'],
+        }),
         getStudents: builder.query<
             { studentIdToStudent: { [id: string]: StudentDTO }; studentIds: string[]; total: number },
             void
@@ -74,7 +91,18 @@ export const studentApi = createApi({
                 method: 'POST',
             }),
             invalidatesTags: (_, __, { classroom, dayTimestamp }) => {
-                return [{ type: 'StudentDailyClasses', id: createSortedJson({ classroom, dayTimestamp }) }];
+                return [
+                    { type: 'StudentDailyClasses', id: createSortedJson({ classroom, dayTimestamp }) },
+                    'StudentDailyClasses',
+                ];
+            },
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+                try {
+                    dispatch(appSlice.actions.setLoading(true));
+                    await queryFulfilled;
+                } finally {
+                    dispatch(appSlice.actions.setLoading(false));
+                }
             },
         }),
 
@@ -166,8 +194,7 @@ export const studentApi = createApi({
 
                 return { idToStudentPackage, packageIds: packageIds };
             },
-            providesTags: (response, _, __) =>
-                response?.packageIds?.map(packageId => ({ type: 'StudentPackages', id: packageId })) || [],
+            providesTags: ['StudentPackages'],
         }),
         updatePackageRenewalStatus: builder.mutation<
             StudentPackageRepsonse,
@@ -190,7 +217,19 @@ export const studentApi = createApi({
                 method: 'PUT',
                 body: req,
             }),
-            invalidatesTags: (_, __, param) => [{ type: 'StudentPackages', id: param.req.id }],
+            invalidatesTags: (_, __, param) => [
+                { type: 'StudentPackages', id: param.req.packageId },
+                'StudentPackages',
+                'StudentWeeklyClasses',
+            ],
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+                try {
+                    dispatch(appSlice.actions.setLoading(true));
+                    await queryFulfilled;
+                } finally {
+                    dispatch(appSlice.actions.setLoading(false));
+                }
+            },
         }),
         getStudentDetail: builder.query<UIStudentDetail, { studentId: string }>({
             query: ({ studentId }) => apiRoutes.GET_STUDENT_DETAIL(studentId),
@@ -253,6 +292,14 @@ export const studentApi = createApi({
                     'StudentDailyClasses',
                     { type: 'StudentDailyClasses', id: 'LIST' }, // Invalidate all daily timetable queries
                 ];
+            },
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+                try {
+                    dispatch(studentSlice.actions.setMutatingClass(true));
+                    await queryFulfilled;
+                } finally {
+                    dispatch(studentSlice.actions.setMutatingClass(false));
+                }
             },
         }),
 
@@ -377,6 +424,14 @@ export const studentApi = createApi({
                 body: props,
             }),
             invalidatesTags: ['StudentPackages', 'StudentWeeklyClasses', 'StudentDailyClasses'],
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+                try {
+                    dispatch(studentSlice.actions.setMutatingClass(true));
+                    await queryFulfilled;
+                } finally {
+                    dispatch(studentSlice.actions.setMutatingClass(false));
+                }
+            },
         }),
         createStudentPackage: builder.mutation<
             StudentPackageDTO,
@@ -388,6 +443,14 @@ export const studentApi = createApi({
                 body: req,
             }),
             invalidatesTags: ['StudentPackages', 'StudentWeeklyClasses', 'StudentDailyClasses'],
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+                try {
+                    dispatch(appSlice.actions.setLoading(true));
+                    await queryFulfilled;
+                } finally {
+                    dispatch(appSlice.actions.setLoading(false));
+                }
+            },
         }),
         markPackageAsPaid: builder.mutation<void, { packageId: number; paidAt: number }>({
             query: props => ({
@@ -411,6 +474,14 @@ export const studentApi = createApi({
                 method: 'DELETE',
             }),
             invalidatesTags: ['StudentPackages', 'StudentWeeklyClasses', 'StudentDailyClasses'],
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+                try {
+                    dispatch(appSlice.actions.setLoading(true));
+                    await queryFulfilled;
+                } finally {
+                    dispatch(appSlice.actions.setLoading(false));
+                }
+            },
         }),
     }),
 });

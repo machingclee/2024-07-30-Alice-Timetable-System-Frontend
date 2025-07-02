@@ -14,7 +14,7 @@ import { MdOutlinePersonAddAlt } from 'react-icons/md';
 import CustomScrollbarContainer from '@/components/CustomScrollbarContainer';
 import ContentContainer from '@/components/ContentContainer';
 import { studentApi } from '@/!rtk-query/api/studentApi';
-import { CircularProgress } from '@mui/material';
+import LoadingContainer from '@/components/LoadingContainer';
 
 export default function Students() {
     const [filter, setFilter] = useState('');
@@ -100,12 +100,11 @@ export default function Students() {
                     height: 20,
                 }}
             >
-                {isLoadingStudents && <CircularProgress />}
-                {!isLoadingStudents && (
+                <LoadingContainer isLoading={isLoadingStudents}>
                     <div className="space-y-2">
                         {filteredIds?.map(studentId => <StudentRow studentId={studentId} />)}
                     </div>
-                )}
+                </LoadingContainer>
                 <Spacer height={100} />
             </CustomScrollbarContainer>
 

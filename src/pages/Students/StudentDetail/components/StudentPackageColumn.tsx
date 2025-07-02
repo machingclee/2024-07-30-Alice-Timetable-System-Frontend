@@ -13,12 +13,15 @@ import { MdOutlineEventNote } from 'react-icons/md';
 import { StudentPackageRepsonse } from '../../../../dto/kotlinDto';
 import { Separator } from '@/components/ui/separator';
 import { studentApi } from '@/!rtk-query/api/studentApi';
+import LoadingOverlay from '@/components/LoadingOverlay';
 
 export default function StudentPackageColumn(props: { packagesOffsetY: number; collapseTimtable: boolean }) {
     const { packagesOffsetY, collapseTimtable } = props;
     // get packages
     const { studentId } = useParams<{ studentId: string }>();
-    const { data: packagesRes } = studentApi.endpoints.getStudentPackages.useQuery({ studentId: studentId || '' });
+    const { data: packagesRes, isFetching } = studentApi.endpoints.getStudentPackages.useQuery({
+        studentId: studentId || '',
+    });
     const dispatch = useDispatch();
     // get student detail
     const { data: studentDetail } = studentApi.endpoints.getStudentDetail.useQuery({ studentId: studentId || '' });
@@ -30,10 +33,9 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
     const flattedPackages = packagesRes?.packageIds.map(
         id => packagesRes?.idToStudentPackage?.[id || '']
     ) as StudentPackageRepsonse[];
-    console.log('packagesRes', packagesRes);
-    console.log('flattedPackages', flattedPackages);
     const courseNames = Array.from(new Set(flattedPackages?.map(pkg => pkg.course.courseName)));
     console.log('courseNames', courseNames);
+
     return (
         <div
             style={{
@@ -45,8 +47,8 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
             }}
         >
             <div
+                className="!scrollbar-hide"
                 style={{
-                    overflowY: 'scroll',
                     minWidth: 300,
                     height: 'calc(100vh - 40px)',
                     display: 'flex',
@@ -54,10 +56,9 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                     transition: 'opacity 0.5s eas-in-out',
                 }}
             >
-                <div className="flex items-center justify-between mb-2">
+                <div className="scrollbar-hide flex items-center justify-between mb-2">
                     <Title className="!mb-0">Student Packages</Title>
                     <Button
-                        style={{ minWidth: 40, minHeight: 40 }}
                         onClick={() => {
                             AddPackageDialog.setWidth('sm');
                             AddPackageDialog.setContent(() => () => (
@@ -65,7 +66,6 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                             ));
                             AddPackageDialog.setOpen(true);
                         }}
-                        shape="circle"
                     >
                         Add
                     </Button>
@@ -85,44 +85,48 @@ export default function StudentPackageColumn(props: { packagesOffsetY: number; c
                     />
                 </div>
                 <CustomScrollbarContainer
+                    className="scrollbar-hide"
                     style={{
                         width: '100%',
                         height: `calc(100vh-${packagesOffsetY}px)`,
+                        overflowY: 'scroll',
                     }}
                 >
-                    <div className="flex justify-center w-full">
+                    <div className="flex justify-center w-full h-full">
                         <div style={{ width: '100%' }}>
-                            {courseNames.map(courseName => {
-                                const packagesRes = flattedPackages.filter(
-                                    pkgRes => pkgRes.course.courseName === courseName
-                                );
-                                return (
-                                    <div
-                                        className="border-1 border-emerald-400 mt-2 p-2 rounded-xl space-y-2 bg-teal-100"
-                                        key={courseName}
-                                    >
-                                        <div className="flex items-center gap-1.5 pl-0.5">
-                                            <MdOutlineEventNote size={19} />
-                                            {courseName}
-                                        </div>
+                            <LoadingOverlay isLoading={isFetching} listLength={flattedPackages?.length || 0}>
+                                {courseNames.map(courseName => {
+                                    const packagesRes = flattedPackages.filter(
+                                        pkgRes => pkgRes.course.courseName === courseName
+                                    );
+                                    return (
                                         <div
-                                            style={{
-                                                display: collapseTimtable ? 'flex' : 'unset',
-                                            }}
-                                            className="!space-y-4"
+                                            className="border-1 border-emerald-400 mt-2 p-2 rounded-xl space-y-2 bg-teal-100"
+                                            key={courseName}
                                         >
-                                            {packagesRes?.map(pkgRes => {
-                                                return (
-                                                    <StudentPackage
-                                                        packageId={String(pkgRes.studentPackage.id)}
-                                                        key={pkgRes.studentPackage.id}
-                                                    />
-                                                );
-                                            })}
+                                            <div className="flex items-center gap-1.5 pl-0.5">
+                                                <MdOutlineEventNote size={19} />
+                                                {courseName}
+                                            </div>
+                                            <div
+                                                style={{
+                                                    display: collapseTimtable ? 'flex' : 'unset',
+                                                }}
+                                                className="!space-y-4"
+                                            >
+                                                {packagesRes?.map(pkgRes => {
+                                                    return (
+                                                        <StudentPackage
+                                                            packageId={String(pkgRes.studentPackage.id)}
+                                                            key={pkgRes.studentPackage.id}
+                                                        />
+                                                    );
+                                                })}
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
+                            </LoadingOverlay>
                         </div>
                     </div>
                 </CustomScrollbarContainer>

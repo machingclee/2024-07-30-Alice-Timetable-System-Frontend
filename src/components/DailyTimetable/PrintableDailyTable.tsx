@@ -19,8 +19,19 @@ const PrintableDailyTable = (props: { date: Date; dayOffset: number }) => {
     const printButtonRef = useRef<PrintHandler>(null);
     const { data: customHolidaysQuery } = customHolidayApi.endpoints.getCustomHolidays.useQuery();
     const timetableDayTimestamp = dayjs(date).add(dayOffset, 'day').startOf('day').toDate().getTime();
-    const classroom = useAppSelector(s => s.student.massTimetablePage.classRoom)!;
+    const filter = useAppSelector(s => s.student.massTimetablePage.filter);
+    const classRoom = useAppSelector(s => s.student.massTimetablePage.classRoom)!;
     const [createExtendedClassesForHoliday] = studentApi.endpoints.createExtendedClassesForHoliday.useMutation();
+    // get the classes of all the current day timestamp in filtered ti
+
+    const { data: classes } = studentApi.endpoints.getFilteredStudentClassesForDailyTimetable.useQuery({
+        classRoom,
+        numOfDays: 1,
+        anchorTimestamp: timetableDayTimestamp,
+        filter,
+    });
+
+    const disableExtenClasses = (classes?.lessons || [])?.every(lesson => lesson.class.classStatus === 'LEGIT_ABSENCE');
 
     const holidayButton = () => {
         const holiday = customHolidaysQuery?.find(holiday => holiday.startOfTheDate === timetableDayTimestamp);
@@ -28,9 +39,10 @@ const PrintableDailyTable = (props: { date: Date; dayOffset: number }) => {
             return (
                 <div className="flex items-center gap-2">
                     <Button
+                        disabled={disableExtenClasses}
                         onClick={() =>
                             createExtendedClassesForHoliday({
-                                classroom,
+                                classroom: classRoom,
                                 dayTimestamp: timetableDayTimestamp,
                             })
                         }

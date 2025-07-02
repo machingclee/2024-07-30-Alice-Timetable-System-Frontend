@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { FilterToGetClassesForDailyTimetable } from '../../dto/dto';
+import { CreateStudentRequest, FilterToGetClassesForDailyTimetable } from '../../dto/dto';
 import { cloneDeep } from 'lodash';
 import { Classroom } from '../../prismaTypes/types';
 import { StudentDTO } from '../../dto/kotlinDto';
 import { WeeklyClassEvent } from '../../!rtk-query/api/studentApi';
+import dayjs from 'dayjs';
 
 export enum StudentDetailPage {
     STUDENT_TIME_TABLE = 'STUDENT_TIME_TABLE',
@@ -11,6 +12,7 @@ export enum StudentDetailPage {
 }
 
 export type StudentSliceState = {
+    addStudentForm: CreateStudentRequest;
     students: {
         ids?: string[];
         idToStudent?: {
@@ -18,6 +20,7 @@ export type StudentSliceState = {
         };
     };
     studentDetailTimetablePage: {
+        isMutatingClass: boolean;
         activePage: StudentDetailPage;
         showAllClassesForOneStudent: boolean;
         selectedPackageId: string;
@@ -34,9 +37,28 @@ export type StudentSliceState = {
     };
 };
 
+const initialDate = '2015-01-01';
+
 const initialState: StudentSliceState = {
+    addStudentForm: {
+        gender: 'MALE',
+        preferred_name: '',
+        birthdate: dayjs(new Date(initialDate)).valueOf(),
+        chinese_first_name: '',
+        chinese_last_name: '',
+        first_name: '',
+        grade: '',
+        last_name: '',
+        parent_email: '',
+        phone_number: '',
+        school_name: '',
+        student_code: '',
+        wechat_id: '',
+        shouldAutoRenewPackage: false,
+    },
     students: {},
     studentDetailTimetablePage: {
+        isMutatingClass: false,
         activePage: StudentDetailPage.STUDENT_TIME_TABLE,
         selectedPackageId: '',
         showAllClassesForOneStudent: true,
@@ -67,6 +89,15 @@ const studentSlice = createSlice({
     name: 'students',
     initialState,
     reducers: {
+        resetAddStudentForm: state => {
+            state.addStudentForm = cloneDeep(initialState.addStudentForm);
+        },
+        updateAddStudentForm: (state, action: PayloadAction<Partial<CreateStudentRequest>>) => {
+            state.addStudentForm = { ...state.addStudentForm, ...action.payload };
+        },
+        setMutatingClass: (state, action: PayloadAction<boolean>) => {
+            state.studentDetailTimetablePage.isMutatingClass = action.payload;
+        },
         seMassTimetableNumOfDaysToDisplay: (state, action: PayloadAction<number>) => {
             state.massTimetablePage.numOfDaysToDisplay = action.payload;
         },

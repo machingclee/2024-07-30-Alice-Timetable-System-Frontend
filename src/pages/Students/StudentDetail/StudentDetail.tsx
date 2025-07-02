@@ -16,13 +16,14 @@ import AddPaymentDetailDialog from './components/AddPaymentDetailDialog';
 import ViewClassDialog from '../../../components/ViewClassDialog';
 import EditPackageDialog from './components/EditPackageDialog';
 import { FaChevronLeft } from 'react-icons/fa6';
-import { Box, CircularProgress } from '@mui/material';
+import { Box } from '@mui/material';
 import { Button, Input } from 'antd';
 import RouteEnum from '../../../enum/RouteEnum';
 import PackageClassesStatus from '../components/PackageClassesStatus';
 import useStudentDetailPathParam from '../../../hooks/useStudentDetailPathParam';
 import { IoMdReturnLeft } from 'react-icons/io';
 import ContentContainer from '@/components/ContentContainer';
+import LoadingOverlay from '@/components/LoadingOverlay';
 
 export default function StudentDetail() {
     const { anchorTimestamp, packageId, setPathParam } = useStudentDetailPathParam();
@@ -45,8 +46,6 @@ export default function StudentDetail() {
 
     const { firstName, lastName, chineseFirstName, chineseLastName, studentCode } = studentDetail?.student || {};
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
-
-    const isLoading = studentDetailLoading;
 
     const navAttendences = () => {
         const destination = `${RouteEnum.STUDENT_INFO}/${studentId}`;
@@ -87,33 +86,38 @@ export default function StudentDetail() {
         return (
             <>
                 <ContentContainer className="mr-4 !border-0">
-                    <div className="flex justify-between mb-2">
-                        <SectionTitle style={{ fontSize: 30 }}>
-                            <Button
-                                type="primary"
-                                style={{ display: 'flex', alignItems: 'center' }}
-                                onClick={() => navigate(RouteEnum.DASHBOARD_STUDENTS)}
-                            >
-                                <IoMdReturnLeft />
-                                Students
-                            </Button>
-                            <Spacer />
-                            <div>{`${chineseLastName} ${chineseFirstName}`}</div>
-                            <Spacer width={20} />
-                            {`${firstName} ${lastName}`}
-                            <Spacer width={20} />
-                        </SectionTitle>
-                        <div className="rounded-2xl mr-4 flex overflow-hidden">
-                            <div className="flex pl-4 pr-2 text-xs font-mono items-center">Student Code</div>
-                            <div className="pl-1 font-mono text-xs py-1 flex items-center ">
-                                <Input
-                                    value={studentCode}
-                                    className="!w-full !rounded-2xl !py-0"
-                                    contentEditable={false}
-                                />
+                    <LoadingOverlay isLoading={studentDetailLoading} defaultOffsetTop={10} size={30}>
+                        <div className="flex justify-between mb-2">
+                            {studentDetail && (
+                                <SectionTitle style={{ fontSize: 30 }}>
+                                    <Button
+                                        type="primary"
+                                        style={{ display: 'flex', alignItems: 'center' }}
+                                        onClick={() => navigate(RouteEnum.DASHBOARD_STUDENTS)}
+                                    >
+                                        <IoMdReturnLeft />
+                                        Students
+                                    </Button>
+                                    <Spacer />
+                                    <div>{`${chineseLastName} ${chineseFirstName}`}</div>
+                                    <Spacer width={20} />
+                                    {`${firstName} ${lastName}`}
+                                    <Spacer width={20} />
+                                </SectionTitle>
+                            )}
+
+                            <div className="rounded-2xl mr-4 flex overflow-hidden">
+                                <div className="flex pl-4 pr-2 text-xs font-mono items-center">Student Code</div>
+                                <div className="pl-1 font-mono text-xs py-1 flex items-center ">
+                                    <Input
+                                        value={studentCode}
+                                        className="!w-full !rounded-2xl !py-0"
+                                        contentEditable={false}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    </div>
+                        </div>{' '}
+                    </LoadingOverlay>
                     <div className="flex items-center gap-2">
                         <div>
                             <Button block type="default" onClick={navAttendences}>
@@ -130,10 +134,6 @@ export default function StudentDetail() {
             </>
         );
     };
-
-    if (!studentDetail) {
-        return null;
-    }
 
     return (
         <div
@@ -162,8 +162,7 @@ export default function StudentDetail() {
                             <div style={{ width: '100%' }}>
                                 {displayType === StudentDetailPage.STUDENT_TIME_TABLE && (
                                     <>
-                                        {isLoading && <CircularProgress />}
-                                        {!isLoading && <WeeklyTimetable />}
+                                        <WeeklyTimetable />
                                     </>
                                 )}
                                 {displayType === StudentDetailPage.STUDENT_PACKAGE_CLASS_STATUES && (

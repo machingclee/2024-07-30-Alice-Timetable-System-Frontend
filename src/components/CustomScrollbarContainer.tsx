@@ -7,11 +7,11 @@ export default function CustomScrollbarContainer(
         setPrintContent?: (ref: HTMLDivElement | null) => void;
     } & HTMLAttributes<HTMLDivElement>
 ) {
-    const { children, setPrintContent, ...props_ } = props;
+    const { children, setPrintContent, style, ...props_ } = props;
     const ref = useRef<OverlayScrollbarsComponentRef<'div'> | null>(null);
 
     return (
-        <div {...props_}>
+        <div {...props_} style={{ ...style }}>
             <OverlayScrollbarsComponent
                 style={{ height: '100%', width: '100%', overflowY: 'auto', zIndex: 1 }}
                 ref={ref}
@@ -22,7 +22,9 @@ export default function CustomScrollbarContainer(
                     },
                 }}
             >
-                <div ref={div => setPrintContent?.(div)}>{children}</div>
+                <div className="overflow-y-auto" ref={div => setPrintContent?.(div)}>
+                    {children}
+                </div>
             </OverlayScrollbarsComponent>
         </div>
     );

@@ -1,9 +1,9 @@
 {
-    "Location": "https://cloudfront.amazonaws.com/2020-05-31/distribution/E528ATQC51NNO/invalidation/I91OI7FKML0N9PD99WZCB3E6U5",
+    "Location": "https://cloudfront.amazonaws.com/2020-05-31/distribution/E528ATQC51NNO/invalidation/ICTWTHO6JBQFESOOGKCABU5V1P",
     "Invalidation": {
-        "Id": "I91OI7FKML0N9PD99WZCB3E6U5",
+        "Id": "ICTWTHO6JBQFESOOGKCABU5V1P",
         "Status": "InProgress",
-        "CreateTime": "2025-06-24T22:32:22.063000+00:00",
+        "CreateTime": "2025-07-02T07:12:39.349000+00:00",
         "InvalidationBatch": {
             "Paths": {
                 "Quantity": 1,
@@ -11,7 +11,7 @@
                     "/*"
                 ]
             },
-            "CallerReference": "cli-1750804340-901687"
+            "CallerReference": "cli-1751440358-640911"
         }
     }
 }

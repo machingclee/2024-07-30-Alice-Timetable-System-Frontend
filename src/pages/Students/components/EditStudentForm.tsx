@@ -18,7 +18,7 @@ import { studentApi } from '@/!rtk-query/api/studentApi';
 
 export default function EditStudentForm({ studentId }: { studentId: string }) {
     const dispatch = useAppDispatch();
-
+    const [deleteStudent] = studentApi.endpoints.deleteStudent.useMutation();
     const { student } = studentApi.endpoints.getStudents.useQuery(undefined, {
         selectFromResult: result => {
             const student = result.data?.studentIdToStudent?.[studentId] || null;
@@ -49,8 +49,6 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
         wechatId: student?.wechatId || '',
     });
 
-    if (!student) return;
-
     const update = (update_: Partial<UpdateStudentRequest>) => {
         console.log('update_:', update_);
         formData.current = {
@@ -73,6 +71,13 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
                 dispatch(studentSlice.actions.resetStudentDetail());
             });
     };
+    useEffect(() => {
+        if (!student) {
+            EditStudentDialog.close();
+        }
+    }, [student]);
+
+    if (!student) return;
 
     return (
         <Box
@@ -82,9 +87,21 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
         >
             <div className="flex items-center justify-between">
                 <SectionTitle>Edit Student Info</SectionTitle>
-                <div>
+                <div className="flex gap-2">
+                    <div>
+                        <Button
+                            type="primary"
+                            className="!bg-red-500"
+                            onClick={async () => {
+                                EditStudentDialog.close();
+                                await deleteStudent({ studentId }).unwrap();
+                            }}
+                        >
+                            Delete Student
+                        </Button>
+                    </div>
                     <div className="flex items-center gap-2">
-                        Rew Package
+                        Renew Package
                         <Switch id="renewal-status" />
                     </div>
                 </div>

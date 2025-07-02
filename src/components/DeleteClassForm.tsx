@@ -26,6 +26,8 @@ export default function DeleteClassForm(props: {
     const [deleteSingleClassMutation] = studentApi.endpoints.deleteSingleClass.useMutation();
 
     const deleteClass = async () => {
+        DeleteClassDialog.setOpen(false);
+
         if (!deleteSingleClass) {
             await deleteClassMutation({
                 classId: class_.id,
@@ -36,7 +38,6 @@ export default function DeleteClassForm(props: {
             }).unwrap();
         }
         onDeletion?.();
-        DeleteClassDialog.setOpen(false);
     };
 
     return (
@@ -57,7 +58,7 @@ export default function DeleteClassForm(props: {
             <div style={{}}>
                 <Table
                     sx={{
-                        '& td:nth-child(1)': {
+                        '& td:nth-of-type(1)': {
                             width: '120px',
                         },
                     }}

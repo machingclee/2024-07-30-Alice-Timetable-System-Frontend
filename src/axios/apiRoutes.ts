@@ -48,7 +48,7 @@ export default {
         `/students/package?studentId=${studentId}&packageId=${packageId}`,
     DELETE_CLASSES_BY_GROUP: (classId: number) => `/students/classes/${classId}/group`,
     DELETE_CLASS_BY_INDIVIDUAL: (classId: number) => `/students/classes/${classId}/single`,
-    DELETE_STUDENT: (studentId: number) => `/students/delete-student/${studentId}`,
+    DELETE_STUDENT: (studentId: string) => `/students/${studentId}`,
     DELETE_TICKET: (ticketId: number) => `/tickets/${ticketId}`,
     DELETE_CUSTOM_HOLIDAY: (holidayId: number) => `/holidays/custom-holiday/${holidayId}`,
 };

@@ -24,10 +24,12 @@ import MoveConfirmationForm from './MoveConfirmationForm';
 import MoveConfirmationDialog from './MoveConfirmationDialog';
 import useGetStudentIdFromParam from '../../../hooks/useGetStudentIdFromParam';
 import classNames from 'classnames';
-import useAnchorTimestamp from '../../../hooks/useStudentDetailPathParam';
 import { AliceMenu } from '@/components/AliceMenu';
 import getColorForClassStatus from '@/utils/getColorForClassStatus';
 import getDisplayNameFromClassStatus from '@/utils/getDisplayNameFromClassStatus';
+import useStudentDetailPathParam from '../../../hooks/useStudentDetailPathParam';
+import { MdOutlineKeyboardDoubleArrowDown } from 'react-icons/md';
+import Spacer from '@/components/Spacer';
 
 export default function StudentClassForWeeklyTimetableCell(props: {
     dayUnixTimestamp: number;
@@ -37,21 +39,9 @@ export default function StudentClassForWeeklyTimetableCell(props: {
 }) {
     const { studentId } = useGetStudentIdFromParam();
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const { setPathParam } = useStudentDetailPathParam();
 
     const dispatch = useAppDispatch();
-
-    const { isShowingExtendedClasses } = studentApi.endpoints.getStudentPackages.useQueryState(
-        { studentId: studentId || '' },
-        {
-            selectFromResult: result => {
-                const isShowingExtendedClasses =
-                    result.data?.idToStudentPackage?.[selectedPackageId || '']?.display === 'EXTENDED_CLASSES';
-                return { isShowingExtendedClasses };
-            },
-        }
-    );
-
-    const { setURLAnchorTimestamp } = useAnchorTimestamp();
 
     const {
         hourUnixTimestamp: currGridHourUnixTimestamp,
@@ -71,10 +61,6 @@ export default function StudentClassForWeeklyTimetableCell(props: {
             },
         }
     );
-
-    const isNormalClass = lesson?.classExtensionRecord === null;
-    const hideNormalClass = isNormalClass && isShowingExtendedClasses;
-
     const showLabel = lesson != null;
     const showAll = useAppSelector(s => s.student.studentDetailTimetablePage.showAllClassesForOneStudent);
 
@@ -287,7 +273,6 @@ export default function StudentClassForWeeklyTimetableCell(props: {
                     >
                         {/* Control what to show on the entire timetable */}
                         {(showAll || (!showAll && Number(selectedPackageId) === lesson?.studentPackage.id)) &&
-                            !hideNormalClass &&
                             lesson && (
                                 <>
                                     <Draggable
@@ -312,6 +297,36 @@ export default function StudentClassForWeeklyTimetableCell(props: {
                                                         ViewClassDialog.setOpen(true);
                                                     },
                                                 },
+                                                ...(lesson?.classExtendedTo
+                                                    ? [
+                                                          {
+                                                              item: `View class extended to ${dayjs(lesson.classExtendedTo.hourUnixTimestamp).format('YYYY-MM-DD')}`,
+                                                              onClick: () => {
+                                                                  setPathParam({
+                                                                      anchorTimestamp:
+                                                                          lesson?.classExtendedTo?.hourUnixTimestamp ||
+                                                                          0,
+                                                                      packageId: lesson.studentPackage.id + '',
+                                                                  });
+                                                              },
+                                                          },
+                                                      ]
+                                                    : []),
+                                                ...(lesson?.classExtendedFrom
+                                                    ? [
+                                                          {
+                                                              item: `View class extended from ${dayjs(lesson.classExtendedFrom.hourUnixTimestamp).format('YYYY-MM-DD')}`,
+                                                              onClick: () => {
+                                                                  setPathParam({
+                                                                      anchorTimestamp:
+                                                                          lesson?.classExtendedFrom
+                                                                              ?.hourUnixTimestamp || 0,
+                                                                      packageId: lesson.studentPackage.id + '',
+                                                                  });
+                                                              },
+                                                          },
+                                                      ]
+                                                    : []),
                                                 {
                                                     item: 'Edit class',
                                                     onClick: () => {
@@ -428,12 +443,20 @@ export default function StudentClassForWeeklyTimetableCell(props: {
                                         >
                                             <Box
                                                 onDoubleClick={() => {
+                                                    console.log(
+                                                        ' lesson.studentPackage.id ',
+                                                        lesson.studentPackage.id + ''
+                                                    );
                                                     dispatch(
                                                         studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp(
                                                             {
                                                                 type: 'go-to-target-lesson',
                                                                 packageId: lesson.studentPackage.id + '',
-                                                                setURLAnchorTimestamp: setURLAnchorTimestamp,
+                                                                setURLAnchorTimestamp: timestamp =>
+                                                                    setPathParam({
+                                                                        anchorTimestamp: timestamp,
+                                                                        packageId: lesson.studentPackage.id + '' || '',
+                                                                    }),
                                                                 desiredAnchorTimestamp: lesson.class.hourUnixTimestamp,
                                                             }
                                                         )
@@ -549,6 +572,20 @@ export default function StudentClassForWeeklyTimetableCell(props: {
                                                             }}
                                                         >
                                                             Class: {classNumber}
+                                                        </div>
+                                                    )}
+                                                    {lesson.classExtendedTo && (
+                                                        <div className="!text-xs">
+                                                            <Spacer height={2} />
+                                                            <div>{`Extended to`}</div>
+                                                            <div className="flex items-center justify-center">
+                                                                <MdOutlineKeyboardDoubleArrowDown size={16} />
+                                                            </div>
+                                                            <div>
+                                                                {dayjs(lesson.classExtendedTo.hourUnixTimestamp).format(
+                                                                    'YYYY-MM-DD'
+                                                                )}
+                                                            </div>
                                                         </div>
                                                     )}
                                                 </div>
