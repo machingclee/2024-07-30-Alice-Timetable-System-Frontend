@@ -62,11 +62,18 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
     const { phoneNumber } = student;
     const [updateReadOrUnread, { isLoading }] = notificationApi.endpoints.updateReadOrUnread.useMutation();
 
+    const createWaLink = (props: { phoneNumber: string; text: string }) => {
+        const { phoneNumber, text } = props;
+        const urlEncodedText = encodeURIComponent(text);
+        const url = `https://api.whatsapp.com/send?phone=852${phoneNumber}&text=${urlEncodedText}`;
+        return url;
+    };
+
     return (
         <div
             style={{ boxShadow: boxShadow.SHADOW_62 }}
             className={classnames(
-                'p-4 pt-2 mb-3 rounded-md flex flex-col space-y-2 border-green-500 border-1 max-h-[200px]',
+                'p-4 pt-2 mb-3 rounded-md flex flex-col space-y-2 border-green-500 border-1 min-h-[200px]',
                 {
                     'bg-[#f0fdf9] opacity-70': notification.isRead,
                     'bg-teal-50': !notification.isRead,
@@ -88,8 +95,16 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
                         <div>Message</div>
                     </div>
 
-                    <div className="flex items-center">
-                        <IoLogoWhatsapp className="mr-2" /> {phoneNumber}
+                    <div
+                        className="flex items-center cursor-pointer"
+                        onClick={() => {
+                            const url = createWaLink({ phoneNumber, text: message });
+                            window.open(url, '_blank');
+                        }}
+                    >
+                        <Button className="!rounded-2xl active:scale-75 !text-emerald-500">
+                            <IoLogoWhatsapp className="mr-2" /> {phoneNumber}
+                        </Button>
                     </div>
 
                     <div

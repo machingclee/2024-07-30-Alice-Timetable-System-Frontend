@@ -31,6 +31,61 @@ import useStudentDetailPathParam from '../../../hooks/useStudentDetailPathParam'
 import { MdOutlineKeyboardDoubleArrowDown } from 'react-icons/md';
 import Spacer from '@/components/Spacer';
 
+export const useChangeStatusMenuItem = (props: { lesson: TimetableLesson | undefined }) => {
+    const { lesson } = props;
+    const [updateClass] = studentApi.endpoints.updateClass.useMutation();
+
+    const updateClassStatus = (status: Class_status) => {
+        const cls = lesson?.class;
+        if (cls?.classNumber && cls?.min && cls?.actualClassroom) {
+            updateClass({
+                class_status: status,
+                classId: cls?.id,
+                min: cls?.min,
+                reason_for_absence: '',
+                remark: cls?.remark ? cls?.remark : '',
+                actual_classroom: cls?.actualClassroom as Classroom,
+            }).unwrap();
+        }
+    };
+
+    if (!lesson) {
+        return {
+            item: null,
+            subItems: [],
+        };
+    }
+
+    return {
+        item: (
+            <div>
+                <div>Change Status</div>
+                <div className="flex items-center gap-2">
+                    <span
+                        style={{
+                            color: getColorForClassStatus(lesson.class.classStatus),
+                        }}
+                    >
+                        {getDisplayNameFromClassStatus[lesson.class.classStatus]}
+                    </span>
+                    <div
+                        style={{
+                            background: getColorForClassStatus(lesson.class.classStatus),
+                            width: '15px',
+                            height: '15px',
+                        }}
+                    />
+                </div>
+            </div>
+        ),
+        subItems: Object.keys(getDisplayNameFromClassStatus).map(status => ({
+            disabled: lesson.class.classStatus === status,
+            item: <StatusLabel status={status as Class_status} />,
+            onClick: () => updateClassStatus(status as Class_status),
+        })),
+    };
+};
+
 export default function StudentClassForWeeklyTimetableCell(props: {
     dayUnixTimestamp: number;
     hourUnixTimestamp: number;
@@ -61,6 +116,8 @@ export default function StudentClassForWeeklyTimetableCell(props: {
             },
         }
     );
+
+    const menuItem = useChangeStatusMenuItem({ lesson });
     const showLabel = lesson != null;
     const showAll = useAppSelector(s => s.student.studentDetailTimetablePage.showAllClassesForOneStudent);
 
@@ -134,22 +191,6 @@ export default function StudentClassForWeeklyTimetableCell(props: {
         [lesson, selectedPackageId]
     );
 
-    // update class mutation
-    const [updateClass] = studentApi.endpoints.updateClass.useMutation();
-
-    const updateClassStatus = (status: Class_status) => {
-        const cls = lesson?.class;
-        if (cls?.classNumber && cls?.min && cls?.actualClassroom) {
-            updateClass({
-                class_status: status,
-                classId: cls?.id,
-                min: cls?.min,
-                reason_for_absence: '',
-                remark: cls?.remark ? cls?.remark : '',
-                actual_classroom: cls?.actualClassroom as Classroom,
-            }).unwrap();
-        }
-    };
     // To account for the numbering of classes
     // get hrUnixTimestampToLesson
     const { hrUnixTimestampToLesson = {} } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
@@ -401,44 +442,7 @@ export default function StudentClassForWeeklyTimetableCell(props: {
                                                         DeleteClassDialog.setOpen(true);
                                                     },
                                                 },
-                                                {
-                                                    item: (
-                                                        <div>
-                                                            <div>Change Status</div>
-                                                            <div className="flex items-center gap-2">
-                                                                <span
-                                                                    style={{
-                                                                        color: getColorForClassStatus(
-                                                                            lesson.class.classStatus
-                                                                        ),
-                                                                    }}
-                                                                >
-                                                                    {
-                                                                        getDisplayNameFromClassStatus[
-                                                                            lesson.class.classStatus
-                                                                        ]
-                                                                    }
-                                                                </span>
-                                                                <div
-                                                                    style={{
-                                                                        background: getColorForClassStatus(
-                                                                            lesson.class.classStatus
-                                                                        ),
-                                                                        width: '15px',
-                                                                        height: '15px',
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    ),
-                                                    subItems: Object.keys(getDisplayNameFromClassStatus).map(
-                                                        status => ({
-                                                            disabled: lesson.class.classStatus === status,
-                                                            item: <StatusLabel status={status as Class_status} />,
-                                                            onClick: () => updateClassStatus(status as Class_status),
-                                                        })
-                                                    ),
-                                                },
+                                                menuItem,
                                             ]}
                                         >
                                             <Box

@@ -5,7 +5,7 @@ import EditStudentDialog from './EditStudentDialog';
 import EditStudentForm from './EditStudentForm';
 import RouteEnum from '../../../enum/RouteEnum';
 import dayjs from 'dayjs';
-import { Button } from 'antd';
+import { Alert, Button } from 'antd';
 import { AliceMenu } from '@/components/AliceMenu';
 import { IoLogoOctocat } from 'react-icons/io5';
 import { Separator } from '@/components/ui/separator';
@@ -41,6 +41,7 @@ export default function StudentRow(props: { studentId: string }) {
         schoolName = '',
         phoneNumber = '',
         wechatId = '',
+        remark,
     } = student;
 
     const chineseName = (() => {
@@ -135,7 +136,33 @@ export default function StudentRow(props: { studentId: string }) {
                             </div>
                         </div>
                         <Separator className="bg-emerald-200 -mt-2" />
-
+                        <div className="flex flex-start w-full px-4">
+                            {remark && (
+                                <Box
+                                    sx={{
+                                        width: '100%',
+                                        '& .ant-alert': {
+                                            padding: '10px 20px',
+                                        },
+                                        '& .ant-alert-message, & .ant-alert-description': {
+                                            display: 'flex',
+                                            justifyContent: 'flext-start',
+                                        },
+                                        '& .ant-alert-message': {
+                                            fontWeight: 600,
+                                        },
+                                    }}
+                                >
+                                    <Alert
+                                        className="w-full flex flex-start"
+                                        message="Remark"
+                                        description={remark}
+                                        type="warning"
+                                        showIcon
+                                    />
+                                </Box>
+                            )}
+                        </div>
                         <div className="flex justify-between w-full pl-2 pb-2 pr-2 pt-2">
                             <div>
                                 <div

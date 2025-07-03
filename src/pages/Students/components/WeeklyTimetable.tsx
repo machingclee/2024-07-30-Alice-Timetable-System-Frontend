@@ -179,85 +179,85 @@ export default function WeeklyTimeTable() {
     );
 
     return (
-        <LoadingOverlay isLoading={isFetchingStudentClasses || isMutatingClass}>
-            <Box
-                ref={timetableContainerRef}
-                style={{ width: '100%' }}
-                sx={{
-                    overflowY: 'hidden',
+        <Box
+            ref={timetableContainerRef}
+            style={{ width: '100%' }}
+            sx={{
+                overflowY: 'hidden',
+                '& .draggable-container': {
+                    position: 'relative',
+                    borderTop: '1px solid rgba(0,0,0,0.1)',
+                    borderLeft: '2px solid rgba(0, 0, 0, 0.1)',
+                },
+                '& .draggable-container:nth-of-type(n+1)': {
+                    borderTop: '0.12rem solid rgba(0,0,0,0.15)',
+                },
+                '& .day-column': {
+                    flex: 1,
+                },
+                '& .day-column:last-child': {
                     '& .draggable-container': {
-                        position: 'relative',
-                        borderTop: '1px solid rgba(0,0,0,0.1)',
-                        borderLeft: '2px solid rgba(0, 0, 0, 0.1)',
+                        borderRight: '2px solid rgba(0, 0, 0, 0.1)',
                     },
-                    '& .draggable-container:nth-of-type(n+1)': {
-                        borderTop: '0.12rem solid rgba(0,0,0,0.15)',
+                },
+                '& .draggable-container:last-child': {
+                    borderBottom: '1px solid rgba(0,0,0,0.1)',
+                },
+                '& .freeze': {
+                    transform: 'translate(0px,0px) !important',
+                },
+                '& .grid-time:nth-of-type(n+2)': {
+                    zIndex: '5 !important',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    paddingRight: '14px',
+                    height: `${gridHeight + 0.8}px`,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    whiteSpace: 'nowrap',
+                },
+                '& .grid-hour': {
+                    '&:nth-of-type(n+1)': {
+                        width: '100%',
+                        height: `${gridHeight - 1}px`,
                     },
-                    '& .day-column': {
-                        flex: 1,
-                    },
-                    '& .day-column:last-child': {
-                        '& .draggable-container': {
-                            borderRight: '2px solid rgba(0, 0, 0, 0.1)',
-                        },
-                    },
-                    '& .draggable-container:last-child': {
-                        borderBottom: '1px solid rgba(0,0,0,0.1)',
-                    },
-                    '& .freeze': {
-                        transform: 'translate(0px,0px) !important',
-                    },
-                    '& .grid-time:nth-of-type(n+2)': {
-                        zIndex: '5 !important',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        paddingRight: '14px',
-                        height: `${gridHeight + 0.8}px`,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        whiteSpace: 'nowrap',
-                    },
-                    '& .grid-hour': {
-                        '&:nth-of-type(n+1)': {
-                            width: '100%',
-                            height: `${gridHeight - 1}px`,
-                        },
 
-                        '&:hover': {
-                            cursor: 'pointer',
-                            // backgroundColor: 'rgba(22,119,255,0.2)',
-                        },
+                    '&:hover': {
+                        cursor: 'pointer',
+                        // backgroundColor: 'rgba(22,119,255,0.2)',
                     },
-                    '& .grid-hour.header': {
-                        top: 0,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        padding: 0,
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        margin: 0,
-                        zIndex: 10 ** 7,
-                    },
-                }}
-            >
-                <div className="flex ml-[62px] mr-[37px]  py-1 mb-1">
-                    {Object.keys(timeGrid)
-                        .sort()
-                        .map((dayUnixTimestamp, _colIndex) => {
-                            const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
-                            return (
-                                <div key={dayUnixTimestamp} className="day-column rounded-sm  p-1">
-                                    <div className="bg-teal-100 p-1 rounded-sm">
-                                        {DayColumnHeader(timetableAvailableWidth, dayDayJS)}
-                                    </div>
+                },
+                '& .grid-hour.header': {
+                    top: 0,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    padding: 0,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    margin: 0,
+                    zIndex: 10 ** 7,
+                },
+            }}
+        >
+            <div className="flex ml-[62px] mr-[37px]  py-1 mb-1">
+                {Object.keys(timeGrid)
+                    .sort()
+                    .map((dayUnixTimestamp, _colIndex) => {
+                        const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
+                        return (
+                            <div key={dayUnixTimestamp} className="day-column rounded-sm  p-1">
+                                <div className="bg-teal-100 p-1 rounded-sm">
+                                    {DayColumnHeader(timetableAvailableWidth, dayDayJS)}
                                 </div>
-                            );
-                        })}
-                </div>
-                <CustomScrollbarContainer className="my-fadein flex flex-col h-[calc(100vh-260px)] mr-4 ">
+                            </div>
+                        );
+                    })}
+            </div>
+            <CustomScrollbarContainer className="my-fadein flex flex-col h-[calc(100vh-260px)] mr-4">
+                <LoadingOverlay isLoading={isFetchingStudentClasses || isMutatingClass}>
                     <FadeIn className="scrollbar-hide">
                         <div className="flex mt-2">
                             <div style={{ flex: 1 }}>
@@ -306,9 +306,9 @@ export default function WeeklyTimeTable() {
 
                         <Spacer />
                     </FadeIn>
-                </CustomScrollbarContainer>
-            </Box>
-        </LoadingOverlay>
+                </LoadingOverlay>
+            </CustomScrollbarContainer>
+        </Box>
     );
 }
 function DayColumnHeader(timetableAvailableWidth: number, dayDayJS: dayjs.Dayjs) {

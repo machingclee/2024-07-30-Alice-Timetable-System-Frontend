@@ -93,9 +93,7 @@ export default function AddStudentModal(props: AliceModalProps) {
                     }}
                 />
             </div>
-
             <Spacer />
-
             <div style={{ display: 'flex' }}>
                 <div>
                     <FormInputTitle>Gender</FormInputTitle>
@@ -153,6 +151,7 @@ export default function AddStudentModal(props: AliceModalProps) {
                 value={formData.wechat_id || ''}
                 onChange={t => update({ wechat_id: t })}
             />
+            <FormInputField title="Remark" value={formData.wechat_id || ''} onChange={t => update({ remark: t })} />
         </Box>
     );
 }

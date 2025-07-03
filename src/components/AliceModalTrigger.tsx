@@ -13,6 +13,8 @@ export type AliceModalProps<T = any> = {
 type Action = () => void | Promise<void>;
 
 const AliceModalTrigger = <T,>(props: {
+    width?: string;
+    maxWidth?: string;
     style?: CSSProperties;
     centered?: boolean;
     context?: T;
@@ -22,7 +24,14 @@ const AliceModalTrigger = <T,>(props: {
     destroyOnClose?: boolean;
     children: ReactNode;
 }) => {
-    const { okButtonType = 'primary', style, destroyOnClose = true, centered = true } = props;
+    const {
+        okButtonType = 'primary',
+        style,
+        destroyOnClose = true,
+        centered = true,
+        width = '600px',
+        maxWidth = '600px',
+    } = props;
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
 
@@ -69,8 +78,9 @@ const AliceModalTrigger = <T,>(props: {
                 styles={{
                     content: {
                         maxHeight: '80vh',
-                        maxWidth: '60vw',
+                        maxWidth: maxWidth,
                         overflowY: 'scroll',
+                        width: width,
                     },
                 }}
                 open={open}

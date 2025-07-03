@@ -67,7 +67,7 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
         await updateStudent({ studentId, req: formData.current })
             .unwrap()
             .then(() => {
-                toastUtil.success('User Created');
+                toastUtil.success('User Updated');
                 EditStudentDialog.setOpen(false);
                 dispatch(studentSlice.actions.resetStudentDetail());
             });
@@ -239,6 +239,7 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
                     onChange={t => update({ wechatId: t })}
                     error={error?.['wechatId']}
                 />
+                <FormInputField title="Remark" defaultValue={student.remark} onChange={t => update({ remark: t })} />
                 <Spacer />
                 <Spacer />
                 <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

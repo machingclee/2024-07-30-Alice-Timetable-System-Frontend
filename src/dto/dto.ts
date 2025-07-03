@@ -32,6 +32,7 @@ export type CreateStudentRequest = {
     phone_number: string;
     wechat_id?: string | null;
     shouldAutoRenewPackage: boolean;
+    remark: string;
 };
 
 export type UpdateStudentRequest = {
@@ -48,6 +49,7 @@ export type UpdateStudentRequest = {
     grade: string;
     phoneNumber: string;
     wechatId?: string;
+    remark: string;
 };
 
 export type CreateUserRequest = {
