@@ -153,6 +153,8 @@ export type UpdateStudentRenewalStatusRequest = {
 };
 
 export type DuplicateClassRequest = {
+    studentId: string;
+    studentPackageId: number;
     classId: number;
     numberOfWeeks: number;
     isTimeslotInThePast: boolean;

@@ -395,6 +395,8 @@ export default function StudentClassForWeeklyTimetableCell(props: {
                                                         DuplicateClassDialog.setWidth('xs');
                                                         DuplicateClassDialog.setContent(() => () => (
                                                             <DuplicateClassForm
+                                                                student={lesson.student}
+                                                                studentPackage={lesson.studentPackage}
                                                                 class={lesson?.class}
                                                                 isTimeslotInThePast={isInTheFuture()}
                                                             />

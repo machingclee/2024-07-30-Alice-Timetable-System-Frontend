@@ -27,6 +27,7 @@ export const courseApi = createApi({
                 method: 'POST',
                 body: course,
             }),
+            invalidatesTags: ['Courses'],
         }),
         updateCourse: builder.mutation<CourseDTO, { course: CourseDTO }>({
             query: ({ course: req }) => ({

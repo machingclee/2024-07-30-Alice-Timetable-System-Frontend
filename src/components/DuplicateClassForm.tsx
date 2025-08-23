@@ -3,13 +3,19 @@ import Spacer from './Spacer';
 import { useState } from 'react';
 import { Button, Select } from 'antd';
 import DuplicateClassDialog from './DuplicateClassDialog';
-import { ClassDTO } from '../dto/kotlinDto';
+import { ClassDTO, StudentDTO, StudentPackageDTO } from '../dto/kotlinDto';
 import { studentApi } from '@/!rtk-query/api/studentApi';
 
-export default function DuplicateClassForm(props: { class: ClassDTO; isTimeslotInThePast: boolean }) {
-    const { class: classEvent, isTimeslotInThePast } = props;
+export default function DuplicateClassForm(props: {
+    class: ClassDTO;
+    student: StudentDTO;
+    studentPackage: StudentPackageDTO;
+    isTimeslotInThePast: boolean;
+}) {
+    const { student, studentPackage, class: classEvent, isTimeslotInThePast } = props;
     const { id } = classEvent;
     const [week, setWeek] = useState(2);
+    const studentId = student.id;
     const [duplicateClassMutation] = studentApi.endpoints.duplicateClass.useMutation();
     return (
         <Box
@@ -46,6 +52,8 @@ export default function DuplicateClassForm(props: { class: ClassDTO; isTimeslotI
                 block
                 onClick={async () => {
                     await duplicateClassMutation({
+                        studentId,
+                        studentPackageId: studentPackage.id,
                         classId: id,
                         numberOfWeeks: week,
                         isTimeslotInThePast,

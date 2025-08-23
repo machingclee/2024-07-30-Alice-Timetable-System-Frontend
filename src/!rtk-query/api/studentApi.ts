@@ -401,11 +401,11 @@ export const studentApi = createApi({
             }),
             invalidatesTags: ['StudentPackages', 'StudentDailyClasses'],
         }),
-        duplicateClass: builder.mutation<{ classId: number }, DuplicateClassRequest>({
-            query: ({ classId, numberOfWeeks, isTimeslotInThePast }) => ({
+        duplicateClass: builder.mutation<{ classId: number; studentId: string }, DuplicateClassRequest>({
+            query: ({ studentId, classId, numberOfWeeks, isTimeslotInThePast }) => ({
                 url: apiRoutes.POST_DUPLICATE_CLASSES,
                 method: 'POST',
-                body: { classId, numberOfWeeks, isTimeslotInThePast },
+                body: { classId, numberOfWeeks, isTimeslotInThePast, studentId },
             }),
             invalidatesTags: ['StudentPackages', 'StudentDailyClasses'],
         }),
