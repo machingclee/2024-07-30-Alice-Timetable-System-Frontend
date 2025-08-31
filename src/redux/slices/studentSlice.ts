@@ -56,6 +56,7 @@ const initialState: StudentSliceState = {
         student_code: '',
         wechat_id: '',
         shouldAutoRenewPackage: false,
+        remark: '',
     },
     students: {},
     studentDetailTimetablePage: {

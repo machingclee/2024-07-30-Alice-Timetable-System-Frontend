@@ -5,7 +5,7 @@ import { Box } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import AddClassEventDialog from '../../../components/AddClassEventDialog';
 import AddClassEventForm from '../../../components/AddClassEventForm';
-import { PropsWithChildren, useCallback, useEffect, useState } from 'react';
+import { PropsWithChildren, useCallback, useState } from 'react';
 import DeleteClassForm from '../../../components/DeleteClassForm';
 import DeleteClassDialog from '../../../components/DeleteClassDialog';
 import DuplicateClassDialog from '../../../components/DuplicateClassDialog';
@@ -121,7 +121,6 @@ export default function StudentClassForWeeklyTimetableCell(props: {
     const showLabel = lesson != null;
     const showAll = useAppSelector(s => s.student.studentDetailTimetablePage.showAllClassesForOneStudent);
 
-    const [classNumber, setClassNumber] = useState<number>(0);
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
 
     const { dayUnixTimestamp: day_unix_timestamp = 0, hourUnixTimestamp: classUnixTimestamp = 0 } = lesson?.class || {};
@@ -191,45 +190,7 @@ export default function StudentClassForWeeklyTimetableCell(props: {
         [lesson, selectedPackageId]
     );
 
-    // To account for the numbering of classes
-    // get hrUnixTimestampToLesson
-    const { hrUnixTimestampToLesson = {} } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
-        { studentId },
-        {
-            skip: !studentId,
-            selectFromResult: ({ data }) => {
-                return {
-                    hrUnixTimestampToLesson: data?.hrUnixTimestampToLesson,
-                };
-            },
-        }
-    );
-
-    // detach api
     const [detachFromGroupMutation] = studentApi.endpoints.detachFromGroup.useMutation();
-
-    useEffect(() => {
-        if (lesson && hrUnixTimestampToLesson) {
-            let currentClassNumber = 0;
-
-            const sortedClasses = Object.values(hrUnixTimestampToLesson).sort((a, b) => {
-                return a.class.hourUnixTimestamp - b.class.hourUnixTimestamp;
-            });
-
-            sortedClasses.forEach(item => {
-                const classStatus = item.class.classStatus;
-                if (
-                    item.course.courseName === lesson.course.courseName &&
-                    (classStatus === 'PRESENT' || classStatus === 'MAKEUP' || classStatus === 'ILLEGIT_ABSENCE')
-                ) {
-                    currentClassNumber++;
-                    if (item.class.hourUnixTimestamp === lesson.class.hourUnixTimestamp) {
-                        setClassNumber(currentClassNumber);
-                    }
-                }
-            });
-        }
-    }, [lesson, hrUnixTimestampToLesson]);
 
     const [moveStudentEvent] = studentApi.endpoints.moveStudentEvent.useMutation();
     const onValidDrop = async (fromClassEvent: TimetableLesson) => {
@@ -548,7 +509,7 @@ export default function StudentClassForWeeklyTimetableCell(props: {
                                                             top: 0,
                                                             left: 0,
                                                             height: getHeight(),
-                                                            transition: 'height 0.18s ease-in-out',
+                                                            transition: 'height 0.18failure_reasons ease-in-out',
                                                             width: '100%',
                                                       
                                                         }}
@@ -561,7 +522,7 @@ export default function StudentClassForWeeklyTimetableCell(props: {
                                                     >
                                                         {lesson?.course.courseName}
                                                     </div>
-                                                    {classNumber !== 0 && (
+                                                    {lesson?.class?.classNumber > -1 && (
                                                         <div
                                                             style={{
                                                                 marginTop: 5,
@@ -577,9 +538,26 @@ export default function StudentClassForWeeklyTimetableCell(props: {
                                                                 alignItems: 'center',
                                                             }}
                                                         >
-                                                            Class: {classNumber}
+                                                            {`Class: ${lesson?.class?.classNumber || 0}`}
                                                         </div>
                                                     )}
+                                                    {/* <div
+                                                        style={{
+                                                            marginTop: 5,
+                                                            paddingTop: 5,
+                                                            paddingBottom: 5,
+                                                            marginLeft: 10,
+                                                            width: '80%',
+                                                            backgroundColor: 'white',
+                                                            color: 'black',
+                                                            borderRadius: '5px',
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                        }}
+                                                    >
+                                                        {`Class: ${classNumber}`}
+                                                    </div> */}
                                                     {lesson.classExtendedTo && (
                                                         <div className="!text-xs">
                                                             <Spacer height={2} />

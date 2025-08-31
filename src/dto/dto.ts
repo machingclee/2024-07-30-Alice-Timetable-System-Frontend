@@ -149,7 +149,7 @@ export type DeleteClassRequest = {
 };
 
 export type UpdateStudentRenewalStatusRequest = {
-    autoRewPackage: boolean;
+    autoRenewPackage: boolean;
 };
 
 export type DuplicateClassRequest = {

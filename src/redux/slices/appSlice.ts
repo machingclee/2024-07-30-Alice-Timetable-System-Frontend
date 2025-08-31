@@ -25,6 +25,9 @@ const appSlice = createSlice({
     name: 'app',
     initialState,
     reducers: {
+        closeLoading: state => {
+            state.loading = false;
+        },
         setTheme: (state, action: PayloadAction<AppSliceState['theme']>) => {
             state.theme = action.payload;
         },

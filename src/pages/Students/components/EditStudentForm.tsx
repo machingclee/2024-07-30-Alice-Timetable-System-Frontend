@@ -48,6 +48,7 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
         schoolName: student?.schoolName || '',
         phoneNumber: student?.phoneNumber || '',
         wechatId: student?.wechatId || '',
+        remark: student?.remark || '',
     });
 
     const update = (update_: Partial<UpdateStudentRequest>) => {
