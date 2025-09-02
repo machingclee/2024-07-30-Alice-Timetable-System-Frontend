@@ -6,7 +6,7 @@
     "scripts": {
         "prettier": "npx prettier --write .",
         "addui": "npx shadcn@latest add",
-        "start:local": "vite",
+        "start": "vite",
         "start:dev": "vite --mode prod",
         "build:prod": "vite build --mode prod",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",

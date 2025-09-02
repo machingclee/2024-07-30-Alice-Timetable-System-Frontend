@@ -72,9 +72,6 @@ export default function StudentPackage(props: { packageId: string }) {
     const courseId = studentPkg?.courseId;
     const consumedClasses = toOneDecimal((consumedMinutes || 0) / (studentPkg?.min || 1));
     const consumedExtendedClass = toOneDecimal((consumedextendedClassMins || 0) / (studentPkg?.min || 1));
-    const totalClassesConsumed = toOneDecimal(
-        ((consumedMinutes || 0) + (consumedextendedClassMins || 0)) / (studentPkg?.min || 1)
-    );
     console.log('consumed_minutes:', consumedMinutes);
     // const finishedClasses = Math.floor(((consumedMinutes || 0) / (studentPkg?.min || 1)) * 10) / 10;
 
@@ -272,8 +269,14 @@ export default function StudentPackage(props: { packageId: string }) {
                                     <td>{`${consumedExtendedClass}/${numOfExtendedClass || 0}`}</td>
                                 </tr>
                                 <tr>
-                                    <td>Finished Classes</td>
-                                    <td>{`${totalClassesConsumed}/${studentPkg.numOfClasses + (numOfExtendedClass || 0)}`}</td>
+                                    <td>Classes not Assigned</td>
+                                    <td>
+                                        {Math.max(
+                                            0,
+                                            studentPkg.numOfClasses -
+                                                ((numOfNormalClasses || 0) + (numOfExtendedClass || 0))
+                                        )}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Payment Status</td>
