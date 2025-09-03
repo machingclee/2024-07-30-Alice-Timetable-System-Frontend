@@ -63,9 +63,8 @@ export default function StudentPackage(props: { packageId: string }) {
     const {
         consumedMinutes,
         consumedextendedClassMins,
-        scheduledMinutes: _schedumeMinutes,
+        scheduledMinutes: _scheduledMinutes,
         studentPackage: studentPkg,
-        numOfNormalClasses,
         packageEndDate,
         numOfExtendedClass,
     } = studentPackage || {};
@@ -261,20 +260,35 @@ export default function StudentPackage(props: { packageId: string }) {
                                     <td>{dayjs(studentPkg.expiryDate).format('YYYY-MM-DD')}</td>
                                 </tr>
                                 <tr>
-                                    <td>Scheduled Classes</td>
-                                    <td>{`${consumedClasses}/${numOfNormalClasses}`}</td>
+                                    <td>
+                                        <div>
+                                            <div>Scheduled Classes</div>
+                                            <div className="text-xs text-gray-500">(attended/scheduled)</div>
+                                        </div>
+                                    </td>
+                                    <td>{`${consumedClasses}/${toOneDecimal((_scheduledMinutes || 0) / studentPkg.min)}`}</td>
                                 </tr>
                                 <tr>
-                                    <td>Extended Classes</td>
+                                    <td>
+                                        <div>
+                                            <div>Extended Classes</div>
+                                            <div className="text-xs text-gray-500">(attended/scheduled)</div>
+                                        </div>
+                                    </td>
                                     <td>{`${consumedExtendedClass}/${numOfExtendedClass || 0}`}</td>
                                 </tr>
                                 <tr>
-                                    <td>Classes not Assigned</td>
                                     <td>
-                                        {Math.max(
-                                            0,
-                                            studentPkg.numOfClasses -
-                                                ((numOfNormalClasses || 0) + (numOfExtendedClass || 0))
+                                        <div>Classes not </div>
+                                        <div>Scheduled</div>
+                                    </td>
+                                    <td>
+                                        {toOneDecimal(
+                                            Math.max(
+                                                0,
+                                                (studentPkg.numOfClasses * studentPkg.min - (_scheduledMinutes || 0)) /
+                                                    studentPkg.min
+                                            )
                                         )}
                                     </td>
                                 </tr>
@@ -284,6 +298,10 @@ export default function StudentPackage(props: { packageId: string }) {
                                         {isPaid && paidIcon()}
                                         {!isPaid && unpaidIcon()}
                                     </td>
+                                </tr>
+                                <tr>
+                                    <td>Auto-Renewal</td>
+                                    <td>{studentPkg.shouldAutoRenew ? 'Yes' : 'No'}</td>
                                 </tr>
                             </tbody>
                         </table>

@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import SectionTitle from '../../../../components/SectionTitle';
 import Spacer from '../../../../components/Spacer';
 import { useEffect, useRef, useState } from 'react';
-import { Button, DatePicker, Select } from 'antd';
+import { Button, DatePicker, Select, Switch } from 'antd';
 import EditPackageDialog from './../components/EditPackageDialog';
 import FormInputTitle from '../../../../components/FormInputTitle';
 import { UpdateStudentPackageRequest } from '../../../../dto/dto';
@@ -47,6 +47,7 @@ export default function EditPackageForm(props: { packageId: string }) {
             course_id: formData.current.course_id || packageInfo.packageId,
             num_of_classes: formData.current.num_of_classes || packageInfo.studentPackage.numOfClasses,
             default_classroom: formData.current.default_classroom || packageInfo.studentPackage.defaultClassroom,
+            shouldAutoRenew: formData.current.shouldAutoRenew || packageInfo.studentPackage.shouldAutoRenew,
         };
         EditPackageDialog.setOpen(false);
         await updatePackage({ req: reqBody }).unwrap();
@@ -70,7 +71,20 @@ export default function EditPackageForm(props: { packageId: string }) {
                 overflowY: 'auto',
             }}
         >
-            <SectionTitle>Edit Package Information</SectionTitle>
+            <div className="flex items-center justify-between">
+                <SectionTitle>Edit Package Information</SectionTitle>
+                <div className="flex items-center gap-2">
+                    <FormInputTitle>Auto-Renew</FormInputTitle>
+                    <Switch
+                        size="default"
+                        className="scale-90"
+                        defaultChecked={packageInfo?.studentPackage.shouldAutoRenew}
+                        onChange={checked => {
+                            updateFormData({ shouldAutoRenew: checked });
+                        }}
+                    />
+                </div>
+            </div>
             <Spacer />
             <div style={{ display: 'flex' }}>
                 <FormInputTitle>Select a Course</FormInputTitle>

@@ -49,6 +49,7 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
         phoneNumber: student?.phoneNumber || '',
         wechatId: student?.wechatId || '',
         remark: student?.remark || '',
+        shouldAutoRenewPackage: student?.shouldAutoRenewPackage || false,
     });
 
     const update = (update_: Partial<UpdateStudentRequest>) => {
@@ -141,7 +142,11 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
                                 </div>
                                 <div className="flex items-center gap-2">
                                     Renew Package
-                                    <Switch id="renewal-status" />
+                                    <Switch
+                                        id="renewal-status"
+                                        defaultChecked={student.shouldAutoRenewPackage}
+                                        onCheckedChange={checked => update({ shouldAutoRenewPackage: checked })}
+                                    />
                                 </div>
                             </>
                         )}

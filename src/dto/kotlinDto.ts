@@ -23,6 +23,7 @@ export type StudentPackageDTO = {
     defaultClassroom: ClassRoom;
     uuid: string;
     id: number;
+    shouldAutoRenew: boolean;
 };
 
 export type GENDER = 'MALE' | 'FEMALE';

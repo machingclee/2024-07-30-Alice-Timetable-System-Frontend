@@ -50,6 +50,7 @@ export type UpdateStudentRequest = {
     phoneNumber: string;
     wechatId?: string;
     remark: string;
+    shouldAutoRenewPackage: boolean;
 };
 
 export type CreateUserRequest = {
@@ -189,6 +190,7 @@ export type UpdateStudentPackageRequest = {
     expiry_date: number;
     course_id: number;
     default_classroom: Classroom;
+    shouldAutoRenew: boolean;
 };
 
 export type Competition = {
