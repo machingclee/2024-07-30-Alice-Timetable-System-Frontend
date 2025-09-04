@@ -100,6 +100,9 @@ const CalendarView = () => {
                                     setSeletectedDate(date);
                                     setPathParam({ anchorTimestamp: date.valueOf(), packageId: selectedPackage || '' });
                                 }}
+                                headerRender={() => {
+                                    return <div className="text-sm p-2">{startOfMonth.format('MMMM YYYY')}</div>;
+                                }}
                                 cellRender={(date: dayjs.Dayjs) => {
                                     const className = determineStyle(isSelected(date));
                                     return <CalendarCell className={className} today={date} />;
