@@ -16,6 +16,7 @@ const CalendarDrawer = () => {
             placement="right"
             open={openCalendar}
             onClose={() => setOpenCalendar(false)}
+            zIndex={1000}
         >
             <CalendarView />
         </Drawer>

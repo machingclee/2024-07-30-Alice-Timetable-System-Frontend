@@ -17,6 +17,8 @@ import { studentApi } from '@/!rtk-query/api/studentApi';
 import { useParams } from 'react-router-dom';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import studentSlice from '@/redux/slices/studentSlice';
+import { MessageSquareWarning } from 'lucide-react';
+import clsx from 'clsx';
 
 export type WeeklyCoordinate = {
     [dateUnixTimestamp: string]: {
@@ -29,14 +31,14 @@ const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 export const WeekNavigator = () => {
     const dispatch = useAppDispatch();
     const { anchorTimestamp, setPathParam } = useAnchorTimestamp();
-    const packageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const studentPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const goNextWeek = () => {
         const nextAnchorTimestamp = anchorTimestamp + ONE_DAY_IN_MS * 7;
-        setPathParam({ anchorTimestamp: nextAnchorTimestamp, packageId: packageId || '' });
+        setPathParam({ anchorTimestamp: nextAnchorTimestamp, packageId: studentPackageId || '' });
     };
     const goPrevWeek = () => {
         const nextAnchorTimestamp = anchorTimestamp - ONE_DAY_IN_MS * 7;
-        setPathParam({ anchorTimestamp: nextAnchorTimestamp, packageId: packageId || '' });
+        setPathParam({ anchorTimestamp: nextAnchorTimestamp, packageId: studentPackageId || '' });
     };
 
     const weekStart = useMemo(
@@ -95,11 +97,21 @@ export const WeekNavigator = () => {
             <div className="flex justify-center overflow-auto flex-1">{weekNavigator()}</div>
             <div className="flex items-center">
                 <Button
+                    className={clsx({ '!h-14': !studentPackageId })}
+                    disabled={!studentPackageId}
                     onClick={() => dispatch(studentSlice.actions.setOpenCalendar(true))}
-                    className="flex items-center"
                 >
-                    <FaCalendarAlt />
-                    Show Calendar
+                    <div>
+                        <div className="flex items-center gap-2">
+                            <FaCalendarAlt />
+                            Show Calendar
+                        </div>
+                        {!studentPackageId && (
+                            <div className="text-red-500 flex items-center text-sm gap-2">
+                                <MessageSquareWarning size={14} /> Select a Package
+                            </div>
+                        )}
+                    </div>
                 </Button>
             </div>
         </div>

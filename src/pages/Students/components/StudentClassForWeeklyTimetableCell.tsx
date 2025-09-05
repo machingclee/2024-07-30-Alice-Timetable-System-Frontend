@@ -6,16 +6,11 @@ import { useAppDispatch, useAppSelector } from '../../../redux/hooks';
 import AddClassEventDialog from '../../../components/AddClassEventDialog';
 import AddClassEventForm from '../../../components/AddClassEventForm';
 import { PropsWithChildren, useCallback, useState } from 'react';
-import DeleteClassForm from '../../../components/DeleteClassForm';
-import DeleteClassDialog from '../../../components/DeleteClassDialog';
-import DuplicateClassDialog from '../../../components/DuplicateClassDialog';
-import DuplicateClassForm from '../../../components/DuplicateClassForm';
+
 import studentSlice from '../../../redux/slices/studentSlice';
 import { studentApi } from '../../../!rtk-query/api/studentApi';
 import colors from '../../../constant/colors';
 import Label from '../../../components/Label';
-import ViewClassDialog from '../../../components/ViewClassDialog';
-import ViewClassForm from '../../../components/ViewClassForm';
 import { Classroom } from '../../../prismaTypes/types';
 import { Droppable } from '../../../components/DragAndDrop/Droppable';
 import { Draggable } from '../../../components/DragAndDrop/Draggable';
@@ -30,61 +25,7 @@ import getDisplayNameFromClassStatus from '@/utils/getDisplayNameFromClassStatus
 import useStudentDetailPathParam from '../../../hooks/useStudentDetailPathParam';
 import { MdOutlineKeyboardDoubleArrowDown } from 'react-icons/md';
 import Spacer from '@/components/Spacer';
-
-export const useChangeStatusMenuItem = (props: { lesson: TimetableLesson | undefined }) => {
-    const { lesson } = props;
-    const [updateClass] = studentApi.endpoints.updateClass.useMutation();
-
-    const updateClassStatus = (status: Class_status) => {
-        const cls = lesson?.class;
-        if (cls?.classNumber && cls?.min && cls?.actualClassroom) {
-            updateClass({
-                class_status: status,
-                classId: cls?.id,
-                min: cls?.min,
-                reason_for_absence: '',
-                remark: cls?.remark ? cls?.remark : '',
-                actual_classroom: cls?.actualClassroom as Classroom,
-            }).unwrap();
-        }
-    };
-
-    if (!lesson) {
-        return {
-            item: null,
-            subItems: [],
-        };
-    }
-
-    return {
-        item: (
-            <div>
-                <div>Change Status</div>
-                <div className="flex items-center gap-2">
-                    <span
-                        style={{
-                            color: getColorForClassStatus(lesson.class.classStatus),
-                        }}
-                    >
-                        {getDisplayNameFromClassStatus[lesson.class.classStatus]}
-                    </span>
-                    <div
-                        style={{
-                            background: getColorForClassStatus(lesson.class.classStatus),
-                            width: '15px',
-                            height: '15px',
-                        }}
-                    />
-                </div>
-            </div>
-        ),
-        subItems: Object.keys(getDisplayNameFromClassStatus).map(status => ({
-            disabled: lesson.class.classStatus === status,
-            item: <StatusLabel status={status as Class_status} />,
-            onClick: () => updateClassStatus(status as Class_status),
-        })),
-    };
-};
+import useAliceMenu from '../hooks/useAliceMenu';
 
 export default function StudentClassForWeeklyTimetableCell(props: {
     dayUnixTimestamp: number;
@@ -92,18 +33,19 @@ export default function StudentClassForWeeklyTimetableCell(props: {
     colIndex: number;
     rowIndex: number;
 }) {
-    const { studentId } = useGetStudentIdFromParam();
-    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
-    const { setPathParam } = useStudentDetailPathParam();
-
-    const dispatch = useAppDispatch();
-
     const {
         hourUnixTimestamp: currGridHourUnixTimestamp,
         dayUnixTimestamp: currGridDayUnixTimestamp,
         colIndex,
         rowIndex,
     } = props;
+
+    const { equipAliceMenu } = useAliceMenu({ hourUnitTimestamp: currGridHourUnixTimestamp }) || {};
+    const { studentId } = useGetStudentIdFromParam();
+    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const { setPathParam } = useStudentDetailPathParam();
+
+    const dispatch = useAppDispatch();
 
     const { lesson } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
         { studentId },
@@ -117,7 +59,6 @@ export default function StudentClassForWeeklyTimetableCell(props: {
         }
     );
 
-    const menuItem = useChangeStatusMenuItem({ lesson });
     const showLabel = lesson != null;
     const showAll = useAppSelector(s => s.student.studentDetailTimetablePage.showAllClassesForOneStudent);
 
@@ -143,7 +84,7 @@ export default function StudentClassForWeeklyTimetableCell(props: {
     const invalidData = day_unix_timestamp >= classUnixTimestamp;
     const hasClassEvent = !!lesson;
     const dayAndTime = dayjs(currGridHourUnixTimestamp).format('ddd, HH:mm');
-    const disableDuplicate = lesson?.classGroup != null;
+
     // To adjust place a thick line to indicate the hour unit
     const groupedLabel = () => {
         if (!hasDuplicationGroup) {
@@ -190,8 +131,6 @@ export default function StudentClassForWeeklyTimetableCell(props: {
         [lesson, selectedPackageId]
     );
 
-    const [detachFromGroupMutation] = studentApi.endpoints.detachFromGroup.useMutation();
-
     const [moveStudentEvent] = studentApi.endpoints.moveStudentEvent.useMutation();
     const onValidDrop = async (fromClassEvent: TimetableLesson) => {
         const move = async () => {
@@ -217,6 +156,131 @@ export default function StudentClassForWeeklyTimetableCell(props: {
     const isInTheFuture = () => (lesson?.class?.hourUnixTimestamp || 0) >= new Date().getTime();
     const getHeight = () => {
         return classEventHeight || 1.35 * (lesson?.class.min || 0) - 10;
+    };
+
+    const classEventCell = (lesson: TimetableLesson) => {
+        return (
+            <Box
+                onDoubleClick={() => {
+                    console.log(' lesson.studentPackage.id ', lesson.studentPackage.id + '');
+                    dispatch(
+                        studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp({
+                            type: 'go-to-target-lesson',
+                            packageId: lesson.studentPackage.id + '',
+                            setURLAnchorTimestamp: timestamp =>
+                                setPathParam({
+                                    anchorTimestamp: timestamp,
+                                    packageId: lesson.studentPackage.id + '' || '',
+                                }),
+                            desiredAnchorTimestamp: lesson.class.hourUnixTimestamp,
+                        })
+                    );
+                }}
+                sx={{
+                    '&:hover': { cursor: 'pointer' },
+                }}
+                onMouseEnter={() => {
+                    setClassEventHeight(120);
+                }}
+                onMouseLeave={() => {
+                    setClassEventHeight(null);
+                }}
+                style={{
+                    border: lesson
+                        ? selectedPackageId === lesson.studentPackage.id + ''
+                            ? `1px solid ${colors.ORANGE}`
+                            : '1px solid rgba(0,0,0,0.2)'
+                        : '',
+                    position: 'absolute',
+                    boxShadow: lesson
+                        ? selectedPackageId === lesson.studentPackage.id + ''
+                            ? boxShadow.SHADOW_25
+                            : boxShadow.SHADOW_62
+                        : '',
+                    transition: 'height 0.18s ease-in-out',
+                    zIndex: classEventHeight ? 10 ** 7 : 10 ** 5,
+                    overflow: 'hidden',
+                    top: 5,
+                    left: 5,
+                    width: 'calc(100% - 20px)',
+                    height: getHeight(),
+                    filter: isInTheFuture()
+                        ? ''
+                        : selectedPackageId === lesson.studentPackage.id + ''
+                          ? 'grayscale(90%) brightness(120%) drop-shadow(0px 0px 1px yellow)'
+                          : 'grayscale(90%) brightness(120%)',
+                    backgroundColor: (() => {
+                        if (!lesson) {
+                            return '';
+                        }
+                        if (invalidData) {
+                            return 'red';
+                        } else {
+                            switch (lesson?.class.classStatus) {
+                                case 'PRESENT':
+                                    return colors.GREEN_BLUE;
+                                case 'TRIAL':
+                                    return colors.PINK;
+                                case 'RESERVED':
+                                    return colors.CYAN;
+                                case 'SUSPICIOUS_ABSENCE':
+                                    return colors.ORANGE;
+                                case 'ILLEGIT_ABSENCE':
+                                    return colors.RED;
+                                case 'LEGIT_ABSENCE':
+                                    return colors.GREY;
+                                case 'MAKEUP':
+                                    return colors.BLUE;
+                                case 'CHANGE_OF_CLASSROOM':
+                                    return colors.PURPLE;
+                                case 'BAD_WHETHER':
+                                    return colors.BLACK;
+                            }
+                        }
+                    })(),
+                    borderRadius: 4,
+                    fontSize: 14,
+                    color: 'white',
+                    textAlign: 'center',
+                }}
+                key={currGridHourUnixTimestamp}
+            >
+                <div className="relative">
+                    {showLabel && groupedLabel()}
+                    <div className="p-4">{lesson?.course.courseName}</div>
+                    {lesson?.class?.classNumber > -1 && (
+                        <div
+                            style={{
+                                marginTop: 5,
+                                paddingTop: 5,
+                                paddingBottom: 5,
+                                marginLeft: 10,
+                                width: '80%',
+                                backgroundColor: 'white',
+                                color: 'black',
+                                borderRadius: '5px',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}
+                        >
+                            {`Class: ${lesson?.class?.classNumber || 0}`}
+                        </div>
+                    )}
+
+                    {lesson.classExtendedTo && (
+                        <div className="!text-xs">
+                            <Spacer height={2} />
+                            <div>{`Extended to`}</div>
+                            <div className="flex items-center justify-center">
+                                <MdOutlineKeyboardDoubleArrowDown size={16} />
+                            </div>
+                            <div>{dayjs(lesson.classExtendedTo.hourUnixTimestamp).format('YYYY-MM-DD')}</div>
+                        </div>
+                    )}
+                </div>
+            </Box>
+        );
     };
 
     return (
@@ -282,299 +346,8 @@ export default function StudentClassForWeeklyTimetableCell(props: {
                                         key={lesson?.class.id}
                                         canDrag={!!lesson && isInTheFuture()}
                                     >
-                                        <AliceMenu
-                                            items={[
-                                                {
-                                                    item: 'View class detail',
-                                                    onClick: () => {
-                                                        ViewClassDialog.setContent(() => () => (
-                                                            <ViewClassForm
-                                                                classExtensionRecord={lesson.classExtensionRecord}
-                                                                dateUnixTimestamp={lesson.class.dayUnixTimestamp}
-                                                                cls={lesson.class}
-                                                                course={lesson.course}
-                                                                student={lesson.student}
-                                                            />
-                                                        ));
-                                                        ViewClassDialog.setOpen(true);
-                                                    },
-                                                },
-                                                ...(lesson?.classExtendedTo
-                                                    ? [
-                                                          {
-                                                              item: `View class extended to ${dayjs(lesson.classExtendedTo.hourUnixTimestamp).format('YYYY-MM-DD')}`,
-                                                              onClick: () => {
-                                                                  setPathParam({
-                                                                      anchorTimestamp:
-                                                                          lesson?.classExtendedTo?.hourUnixTimestamp ||
-                                                                          0,
-                                                                      packageId: lesson.studentPackage.id + '',
-                                                                  });
-                                                              },
-                                                          },
-                                                      ]
-                                                    : []),
-                                                ...(lesson?.classExtendedFrom
-                                                    ? [
-                                                          {
-                                                              item: `View class extended from ${dayjs(lesson.classExtendedFrom.hourUnixTimestamp).format('YYYY-MM-DD')}`,
-                                                              onClick: () => {
-                                                                  setPathParam({
-                                                                      anchorTimestamp:
-                                                                          lesson?.classExtendedFrom
-                                                                              ?.hourUnixTimestamp || 0,
-                                                                      packageId: lesson.studentPackage.id + '',
-                                                                  });
-                                                              },
-                                                          },
-                                                      ]
-                                                    : []),
-                                                {
-                                                    item: 'Edit class',
-                                                    onClick: () => {
-                                                        ViewClassDialog.setWidth('xs');
-                                                        ViewClassDialog.setContent(() => () => (
-                                                            <ViewClassForm
-                                                                classExtensionRecord={lesson.classExtensionRecord}
-                                                                isEditing={true}
-                                                                dateUnixTimestamp={lesson.class.dayUnixTimestamp}
-                                                                cls={lesson.class}
-                                                                course={lesson.course}
-                                                                student={lesson.student}
-                                                            />
-                                                        ));
-                                                        ViewClassDialog.setOpen(true);
-                                                    },
-                                                },
-                                                {
-                                                    item: 'Duplicate class',
-                                                    disabled: disableDuplicate || !lesson,
-                                                    onClick: () => {
-                                                        if (!lesson?.class) {
-                                                            return;
-                                                        }
-                                                        DuplicateClassDialog.setWidth('xs');
-                                                        DuplicateClassDialog.setContent(() => () => (
-                                                            <DuplicateClassForm
-                                                                student={lesson.student}
-                                                                studentPackage={lesson.studentPackage}
-                                                                class={lesson?.class}
-                                                                isTimeslotInThePast={isInTheFuture()}
-                                                            />
-                                                        ));
-                                                        DuplicateClassDialog.setOpen(true);
-                                                    },
-                                                },
-                                                {
-                                                    item: 'Detach from group',
-                                                    disabled: !disableDuplicate,
-                                                    onClick: async () => {
-                                                        await detachFromGroupMutation({
-                                                            classId: lesson.class.id,
-                                                            studentId: studentId,
-                                                        }).unwrap();
-                                                    },
-                                                },
-                                                {
-                                                    item: 'Delete a class',
-                                                    onClick: () => {
-                                                        DeleteClassDialog.setWidth('xs');
-                                                        DeleteClassDialog.setContent(() => () => (
-                                                            <DeleteClassForm
-                                                                deleteSingleClass={true}
-                                                                classGroup={lesson.classGroup}
-                                                                cls={lesson.class}
-                                                                course={lesson.course}
-                                                            />
-                                                        ));
-                                                        DeleteClassDialog.setOpen(true);
-                                                    },
-                                                },
-                                                {
-                                                    item: 'Delete a group of classes',
-                                                    onClick: () => {
-                                                        DeleteClassDialog.setWidth('xs');
-                                                        DeleteClassDialog.setContent(() => () => (
-                                                            <DeleteClassForm
-                                                                deleteSingleClass={false}
-                                                                classGroup={lesson.classGroup}
-                                                                cls={lesson.class}
-                                                                course={lesson.course}
-                                                            />
-                                                        ));
-                                                        DeleteClassDialog.setOpen(true);
-                                                    },
-                                                },
-                                                menuItem,
-                                            ]}
-                                        >
-                                            <Box
-                                                onDoubleClick={() => {
-                                                    console.log(
-                                                        ' lesson.studentPackage.id ',
-                                                        lesson.studentPackage.id + ''
-                                                    );
-                                                    dispatch(
-                                                        studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp(
-                                                            {
-                                                                type: 'go-to-target-lesson',
-                                                                packageId: lesson.studentPackage.id + '',
-                                                                setURLAnchorTimestamp: timestamp =>
-                                                                    setPathParam({
-                                                                        anchorTimestamp: timestamp,
-                                                                        packageId: lesson.studentPackage.id + '' || '',
-                                                                    }),
-                                                                desiredAnchorTimestamp: lesson.class.hourUnixTimestamp,
-                                                            }
-                                                        )
-                                                    );
-                                                }}
-                                                sx={{
-                                                    '&:hover': { cursor: 'pointer' },
-                                                }}
-                                                onMouseEnter={() => {
-                                                    setClassEventHeight(120);
-                                                }}
-                                                onMouseLeave={() => {
-                                                    setClassEventHeight(null);
-                                                }}
-                                                style={{
-                                                    border: lesson
-                                                        ? selectedPackageId === lesson.studentPackage.id + ''
-                                                            ? `1px solid ${colors.ORANGE}`
-                                                            : '1px solid rgba(0,0,0,0.2)'
-                                                        : '',
-                                                    position: 'absolute',
-                                                    boxShadow: lesson
-                                                        ? selectedPackageId === lesson.studentPackage.id + ''
-                                                            ? boxShadow.SHADOW_25
-                                                            : boxShadow.SHADOW_62
-                                                        : '',
-                                                    transition: 'height 0.18s ease-in-out',
-                                                    zIndex: classEventHeight ? 10 ** 7 : 10 ** 5,
-                                                    overflow: 'hidden',
-                                                    top: 5,
-                                                    left: 5,
-                                                    width: 'calc(100% - 20px)',
-                                                    height: getHeight(),
-                                                    filter: isInTheFuture()
-                                                        ? ''
-                                                        : selectedPackageId === lesson.studentPackage.id + ''
-                                                          ? 'grayscale(90%) brightness(120%) drop-shadow(0px 0px 1px yellow)'
-                                                          : 'grayscale(90%) brightness(120%)',
-                                                    backgroundColor: (() => {
-                                                        if (!lesson) {
-                                                            return '';
-                                                        }
-                                                        if (invalidData) {
-                                                            return 'red';
-                                                        } else {
-                                                            switch (lesson?.class.classStatus) {
-                                                                case 'PRESENT':
-                                                                    return colors.GREEN_BLUE;
-                                                                case 'TRIAL':
-                                                                    return colors.PINK;
-                                                                case 'RESERVED':
-                                                                    return colors.CYAN;
-                                                                case 'SUSPICIOUS_ABSENCE':
-                                                                    return colors.ORANGE;
-                                                                case 'ILLEGIT_ABSENCE':
-                                                                    return colors.RED;
-                                                                case 'LEGIT_ABSENCE':
-                                                                    return colors.GREY;
-                                                                case 'MAKEUP':
-                                                                    return colors.BLUE;
-                                                                case 'CHANGE_OF_CLASSROOM':
-                                                                    return colors.PURPLE;
-                                                                case 'BAD_WHETHER':
-                                                                    return colors.BLACK;
-                                                            }
-                                                        }
-                                                    })(),
-                                                    borderRadius: 4,
-                                                    fontSize: 14,
-                                                    color: 'white',
-                                                    textAlign: 'center',
-                                                }}
-                                                key={currGridHourUnixTimestamp}
-                                            >
-                                                <div
-                                                    style={{
-                                                        position: 'relative',
-                                                    }}
-                                                >
-                                                    {/* <div
-                                                        style={{
-                                                            position: 'absolute',
-                                                            top: 0,
-                                                            left: 0,
-                                                            height: getHeight(),
-                                                            transition: 'height 0.18failure_reasons ease-in-out',
-                                                            width: '100%',
-                                                      
-                                                        }}
-                                                    ></div> */}
-                                                    {showLabel && groupedLabel()}
-                                                    <div
-                                                        style={{
-                                                            padding: 4,
-                                                        }}
-                                                    >
-                                                        {lesson?.course.courseName}
-                                                    </div>
-                                                    {lesson?.class?.classNumber > -1 && (
-                                                        <div
-                                                            style={{
-                                                                marginTop: 5,
-                                                                paddingTop: 5,
-                                                                paddingBottom: 5,
-                                                                marginLeft: 10,
-                                                                width: '80%',
-                                                                backgroundColor: 'white',
-                                                                color: 'black',
-                                                                borderRadius: '5px',
-                                                                display: 'flex',
-                                                                justifyContent: 'center',
-                                                                alignItems: 'center',
-                                                            }}
-                                                        >
-                                                            {`Class: ${lesson?.class?.classNumber || 0}`}
-                                                        </div>
-                                                    )}
-                                                    {/* <div
-                                                        style={{
-                                                            marginTop: 5,
-                                                            paddingTop: 5,
-                                                            paddingBottom: 5,
-                                                            marginLeft: 10,
-                                                            width: '80%',
-                                                            backgroundColor: 'white',
-                                                            color: 'black',
-                                                            borderRadius: '5px',
-                                                            display: 'flex',
-                                                            justifyContent: 'center',
-                                                            alignItems: 'center',
-                                                        }}
-                                                    >
-                                                        {`Class: ${classNumber}`}
-                                                    </div> */}
-                                                    {lesson.classExtendedTo && (
-                                                        <div className="!text-xs">
-                                                            <Spacer height={2} />
-                                                            <div>{`Extended to`}</div>
-                                                            <div className="flex items-center justify-center">
-                                                                <MdOutlineKeyboardDoubleArrowDown size={16} />
-                                                            </div>
-                                                            <div>
-                                                                {dayjs(lesson.classExtendedTo.hourUnixTimestamp).format(
-                                                                    'YYYY-MM-DD'
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </Box>
-                                        </AliceMenu>
+                                        {equipAliceMenu?.({ children: classEventCell(lesson) }) ||
+                                            classEventCell(lesson)}
                                     </Draggable>
                                 </>
                             )}
@@ -605,3 +378,58 @@ function StatusLabel(props: { status: Class_status }) {
         </div>
     );
 }
+
+export const useChangeStatusMenuItem = (props: { lesson: TimetableLesson | undefined }) => {
+    const { lesson } = props;
+    const [updateClass] = studentApi.endpoints.updateClass.useMutation();
+
+    const updateClassStatus = (status: Class_status) => {
+        const cls = lesson?.class;
+        if (cls?.classNumber && cls?.min && cls?.actualClassroom) {
+            updateClass({
+                class_status: status,
+                classId: cls?.id,
+                min: cls?.min,
+                reason_for_absence: '',
+                remark: cls?.remark ? cls?.remark : '',
+                actual_classroom: cls?.actualClassroom as Classroom,
+            }).unwrap();
+        }
+    };
+
+    if (!lesson) {
+        return {
+            item: null,
+            subItems: [],
+        };
+    }
+
+    return {
+        item: (
+            <div>
+                <div>Change Status</div>
+                <div className="flex items-center gap-2">
+                    <span
+                        style={{
+                            color: getColorForClassStatus(lesson.class.classStatus),
+                        }}
+                    >
+                        {getDisplayNameFromClassStatus[lesson.class.classStatus]}
+                    </span>
+                    <div
+                        style={{
+                            background: getColorForClassStatus(lesson.class.classStatus),
+                            width: '15px',
+                            height: '15px',
+                        }}
+                    />
+                </div>
+            </div>
+        ),
+        subItems: Object.keys(getDisplayNameFromClassStatus).map(status => ({
+            disabled: lesson.class.classStatus === status,
+            item: <StatusLabel status={status as Class_status} />,
+            onClick: () => updateClassStatus(status as Class_status),
+        })),
+    };
+};

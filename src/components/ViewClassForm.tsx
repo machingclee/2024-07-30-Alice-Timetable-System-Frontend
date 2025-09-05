@@ -188,7 +188,7 @@ export default function ViewClassForm(props: {
                 )}
             </div>
             {classExtensionReason && (
-                <div className="border border-1 border-red-100 rounded-sm p-2 text-s mb-3">
+                <div className="border-1 border-red-100 rounded-sm p-2 text-s mb-3">
                     <div className="flex gap-2">
                         <div>
                             <LuStickyNote className="w-5 h-5 text-gray-400" />

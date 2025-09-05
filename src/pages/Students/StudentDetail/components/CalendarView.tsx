@@ -1,13 +1,15 @@
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppSelector } from '@/redux/hooks';
 import { studentApi } from '@/!rtk-query/api/studentApi';
 import { Box } from '@mui/material';
 import { Button, Calendar } from 'antd';
 import useStudentDetailPathParam from '@/hooks/useStudentDetailPathParam';
 import LoadingOverlay from '@/components/LoadingOverlay';
+import useAliceMenu from '../../hooks/useAliceMenu';
+import { memo } from 'react';
 
 const HIGHLIGHT_CALEDAR_DATE_STYLE = clsx(
     'w-7 h-7 bg-emerald-200 rounded-md flex items-center justify-center font-semibold text-emerald-700'
@@ -21,45 +23,86 @@ function determineStyle(isSelected: boolean) {
     return className;
 }
 
-const CalendarCell = (props: { className: string; today: dayjs.Dayjs }) => {
-    const { studentId } = useParams<{ studentId: string }>();
-    const { className, today } = props;
-    const { lessons } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
-        {
-            studentId: studentId || '',
-        },
-        {
-            selectFromResult: result => {
-                const { hrUnixTimestampToLesson, hrUnixTimestamps } = result.data || {};
-                const lessonsOfToday =
-                    hrUnixTimestamps?.filter(timestamp => {
-                        const date = dayjs(timestamp);
-                        return date.isSame(today, 'day');
-                    }) || [];
-                const lessons = lessonsOfToday.map(timestamp => hrUnixTimestampToLesson?.[timestamp]);
-                return { lessons };
+const CalendarCell = memo(
+    (props: { className: string; today: dayjs.Dayjs; selectedPackageId: string; studentId: string }) => {
+        const { className, today, studentId } = props;
+
+        // Get lessons for this specific day
+        const { lessons } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
+            {
+                studentId: studentId || '',
             },
-        }
-    );
-    const hasLesson = lessons?.length > 0;
-    return (
-        <div className={`w-full h-full flex items-center justify-center`} style={{ position: 'relative', zIndex: 1 }}>
-            <div className={className}>{today.date()}</div>
-            {hasLesson && <div className="absolute bottom-0 left-0 w-full h-1 bg-emerald-400" />}
-        </div>
-    );
-};
+            {
+                selectFromResult: result => {
+                    const { hrUnixTimestampToLesson, hrUnixTimestamps } = result.data || {};
+                    const lessonsOfToday =
+                        hrUnixTimestamps?.filter(timestamp => {
+                            const date = dayjs(timestamp);
+                            return date.isSame(today, 'day');
+                        }) || [];
+                    const lessons = lessonsOfToday.map(timestamp => hrUnixTimestampToLesson?.[timestamp]);
+                    return { lessons };
+                },
+            }
+        );
+
+        const hasLesson = lessons?.length > 0;
+
+        // Use the first lesson's timestamp if available, otherwise use start of day + 9 hours (9 AM)
+        const hourUnitTimestamp =
+            hasLesson && lessons[0]?.class?.hourUnixTimestamp
+                ? lessons[0].class.hourUnixTimestamp
+                : today.startOf('day').add(9, 'hour').valueOf();
+
+        const { equipAliceMenu } = useAliceMenu({ hourUnitTimestamp });
+
+        const dayDisplay = () => {
+            return (
+                <div
+                    className={`w-full h-full flex items-center justify-center`}
+                    style={{ position: 'relative', zIndex: 1 }}
+                >
+                    <div className={className}>{today.date()}</div>
+                    {hasLesson && <div className="absolute bottom-0 left-0 w-full h-1 bg-emerald-400" />}
+                </div>
+            );
+        };
+
+        // Always call equipAliceMenu to maintain consistent hook execution
+        return equipAliceMenu({
+            children: dayDisplay(),
+        });
+    }
+);
 
 const CalendarView = () => {
     const { studentId } = useParams<{ studentId: string }>();
     const [seletectedDate, setSeletectedDate] = useState<dayjs.Dayjs>(dayjs());
     const [startingMonth, setStartingMonth] = useState<dayjs.Dayjs>(dayjs().startOf('month'));
     const fourMonthsInARow = [0, 1, 2, 3].map(i => startingMonth.add(i, 'month'));
-    const selectedPackage = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const { setPathParam } = useStudentDetailPathParam();
     const { isFetching } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery({
         studentId: studentId || '',
     });
+
+    // Inject CSS to ensure context menu appears above drawer
+    useEffect(() => {
+        const style = document.createElement('style');
+        style.textContent = `
+            [data-radix-context-menu-content] {
+                z-index: 99999 !important;
+            }
+            [data-slot="context-menu-content"] {
+                z-index: 99999 !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        return () => {
+            document.head.removeChild(style);
+        };
+    }, []);
 
     return (
         <LoadingOverlay isLoading={isFetching}>
@@ -91,21 +134,31 @@ const CalendarView = () => {
                     const isSelected = (date: dayjs.Dayjs) =>
                         isSelectedDateWithinThisMonth ? seletectedDate.isSame(date) : false;
                     return (
-                        <div className="mb-2">
+                        <div className="mb-2" key={startOfMonth.valueOf()}>
                             <Calendar
                                 className="border-1 !border-teal-300 !rounded-sm !text-sm"
                                 fullscreen={false}
                                 value={isSelectedDateWithinThisMonth ? seletectedDate : startOfMonth}
                                 onSelect={(date, _) => {
                                     setSeletectedDate(date);
-                                    setPathParam({ anchorTimestamp: date.valueOf(), packageId: selectedPackage || '' });
+                                    setPathParam({
+                                        anchorTimestamp: date.valueOf(),
+                                        packageId: selectedPackageId || '',
+                                    });
                                 }}
                                 headerRender={() => {
                                     return <div className="text-sm p-2">{startOfMonth.format('MMMM YYYY')}</div>;
                                 }}
                                 cellRender={(date: dayjs.Dayjs) => {
                                     const className = determineStyle(isSelected(date));
-                                    return <CalendarCell className={className} today={date} />;
+                                    return (
+                                        <CalendarCell
+                                            className={className}
+                                            today={date}
+                                            selectedPackageId={selectedPackageId}
+                                            studentId={studentId || ''}
+                                        />
+                                    );
                                 }}
                             />
                         </div>
