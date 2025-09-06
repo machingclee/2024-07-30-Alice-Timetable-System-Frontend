@@ -121,7 +121,6 @@ export type MoveClassRequest = {
 
 export type CreateClassRequest = {
     numOfClasses: number;
-    dayUnixTimestamp: number;
     hourUnixTimestamp: number;
     min: number;
     studentPackageId: number;

@@ -269,14 +269,6 @@ export const studentApi = createApi({
             },
             providesTags: (_result, _error, { studentId }) => [{ type: 'StudentDetail', id: studentId }],
         }),
-        createStudentClassEvent: builder.mutation<StudentDTO, { studentId: string; req: CreateClassRequest }>({
-            query: ({ studentId, req }) => ({
-                url: apiRoutes.POST_CREATE_STUDENT_CLASS(studentId),
-                method: 'POST',
-                body: req,
-            }),
-            invalidatesTags: ['StudentPackages'],
-        }),
         moveStudentEvent: builder.mutation<
             void,
             { fromClassEvent: TimetableLesson; toDayTimestamp: string; toHourTimestamp: string }

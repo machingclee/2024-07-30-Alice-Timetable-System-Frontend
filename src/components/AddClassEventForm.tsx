@@ -23,7 +23,7 @@ export default function AddClassEventForm(props: {
     studentId: string;
     resetDefaultNumOfClasses?: boolean;
 }) {
-    const { dayUnixTimestamp, hourUnixTimestamp, studentId, resetDefaultNumOfClasses, isTimeslotInThePast } = props;
+    const { hourUnixTimestamp, studentId, resetDefaultNumOfClasses, isTimeslotInThePast } = props;
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const [addClass] = studentApi.endpoints.addClass.useMutation();
     const { selectedPackageDetail: selectedPackageDetail } = studentApi.endpoints.getStudentPackages.useQuery(
@@ -52,7 +52,6 @@ export default function AddClassEventForm(props: {
         },
     });
     const formData = useRef<Partial<CreateClassRequest>>({
-        dayUnixTimestamp: dayUnixTimestamp,
         hourUnixTimestamp: hourUnixTimestamp,
         studentPackageId: Number(selectedPackageId || '0'),
         min: defaultMin,

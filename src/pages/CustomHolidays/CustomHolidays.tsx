@@ -3,7 +3,7 @@ import FormInputField from '@/components/FormInputField';
 import SectionTitle from '@/components/SectionTitle';
 import Spacer from '@/components/Spacer';
 import { Button, Calendar } from 'antd';
-import dayjs from 'dayjs';
+import dayjs from '@/utils/dayjsConfig';
 import { DatePicker } from 'antd';
 import { useState } from 'react';
 import { MdOutlineEventBusy } from 'react-icons/md';
@@ -106,7 +106,7 @@ const AddHolidayModal = (props: AliceModalProps) => {
     setOkText('Confirm');
     const [name, setName] = useState('');
     const [desc, setDesc] = useState('');
-    const [date, setDate] = useState<dayjs.Dayjs>(dayjs());
+    const [date, setDate] = useState<dayjs.Dayjs>(dayjs().tz('Asia/Hong_Kong').startOf('day'));
     setOnOk(() => {
         console.log(name, desc);
     });
@@ -131,8 +131,25 @@ const AddHolidayModal = (props: AliceModalProps) => {
             <FormInputField title="Holiday Name" onChange={t => setName(t)} />
             <FormInputField title="Holiday Description" onChange={t => setDesc(t)} />
 
-            <FormInputTitle>Select a Date</FormInputTitle>
-            <DatePicker value={date} onChange={date => setDate(date)} />
+            <FormInputTitle>Select a Date (Hong Kong Time)</FormInputTitle>
+            <DatePicker
+                value={date ? dayjs(date).tz('Asia/Hong_Kong') : null}
+                onChange={newDate => {
+                    if (newDate) {
+                        // Ensure the date is in Hong Kong timezone
+                        setDate(dayjs(newDate).tz('Asia/Hong_Kong'));
+                    }
+                }}
+                className="w-full"
+                showTime={{
+                    format: 'HH:mm',
+                    defaultValue: dayjs().tz('Asia/Hong_Kong').startOf('day'), // 00:00 HK time
+                }}
+                format="YYYY-MM-DD HH:mm"
+                placeholder="Select date and time (Hong Kong Time)"
+                showNow={true}
+                use12Hours={false}
+            />
             <Spacer />
         </div>
     );
@@ -249,15 +266,22 @@ const EditHolidayModal = (props: AliceModalProps<EditModalContext>) => {
             <Spacer />
             <FormInputField value={name} title="Holiday Name" onChange={t => setName(t)} />
             <FormInputField value={desc} title="Holiday Description" onChange={t => setDesc(t)} />
-            <FormInputTitle>Date</FormInputTitle>
+            <FormInputTitle>Date (HK Time)</FormInputTitle>
             <DatePicker
-                value={date}
+                value={date ? dayjs(date).tz('Asia/Hong_Kong') : null}
                 onChange={newDate => {
                     if (newDate) {
-                        setDate(newDate);
+                        // Ensure the date is in Hong Kong timezone
+                        setDate(dayjs(newDate).tz('Asia/Hong_Kong'));
                     }
                 }}
                 className="w-full"
+                showTime={{ format: 'HH:mm' }}
+                format="YYYY-MM-DD HH:mm"
+                placeholder="Select date and time"
+                showNow={false}
+                use12Hours={false}
+                showToday={false}
             />
 
             <Spacer />
