@@ -1,4 +1,5 @@
 /* eslint-disable-file */
+import { errorToast } from '@/hooks/use-toast';
 import {
     // @ts-expect-error - don't want to deal with redux types which are too complex
     UnknownAction,
@@ -8,7 +9,6 @@ import {
     isAnyOf,
 } from '@reduxjs/toolkit';
 import 'react-toastify/dist/ReactToastify.css';
-import toastUtil from './toastUtil';
 
 type Effect = ListenerEffect<any, unknown, ThunkDispatch<unknown, unknown, UnknownAction>, unknown>;
 
@@ -43,7 +43,7 @@ export default (
                     let errMsg = 'Failed';
                     if (msg) {
                         errMsg = msg;
-                        toastUtil.error(errMsg);
+                        errorToast(errMsg);
                     }
                 },
             });

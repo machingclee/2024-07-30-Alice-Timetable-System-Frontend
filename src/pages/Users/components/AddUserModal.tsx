@@ -3,7 +3,7 @@ import Spacer from '../../../components/Spacer';
 import { useRef, useState } from 'react';
 import { CreateUserRequest, RoleInSystem } from '../../../dto/dto';
 import FormInputField from '../../../components/FormInputField';
-import toastUtil from '../../../utils/toastUtil';
+import { useToast } from '@/hooks/use-toast';
 import SectionTitle from '../../../components/SectionTitle';
 import AddUserDialog from './AddUserDialog';
 import { Box } from '@mui/material';
@@ -23,7 +23,7 @@ export default function AddUserModal(props: AliceModalProps) {
     const handleChange = (value: string) => {
         update({ role_in_system: value as RoleInSystem });
     };
-
+    const { successToast } = useToast();
     const roleSelections: { value: RoleInSystem; label: string }[] = [
         { value: 'STAFF', label: 'Staff' },
         { value: 'ADMIN', label: 'Admin' },
@@ -35,7 +35,7 @@ export default function AddUserModal(props: AliceModalProps) {
     const submit = async () => {
         await createUserMutation(formData.current as CreateUserRequest).unwrap();
         AddUserDialog.setOpen(false);
-        toastUtil.success('User Created');
+        successToast('User Created');
     };
     setOnOk(submit);
     setOkText('Submit');

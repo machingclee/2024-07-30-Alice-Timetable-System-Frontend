@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { Box } from '@mui/material';
 import FormInputTitle from '../components/FormInputTitle';
 import { studentApi } from '../!rtk-query/api/studentApi';
-import toastUtil from '../utils/toastUtil';
+
 import AddClassEventDialog from '../components/AddClassEventDialog';
 import { CreateClassRequest } from '../dto/dto';
 import durations from '../constant/durations';
@@ -15,6 +15,10 @@ import range from '../utils/range';
 import { Classroom } from '../prismaTypes/types';
 import appSlice from '../redux/slices/appSlice';
 import { courseApi } from '@/!rtk-query/api/courseApi';
+import { useToast } from '@/hooks/use-toast';
+import { Class_status } from '@/dto/kotlinDto';
+import getDisplayNameFromClassStatus from '@/utils/getDisplayNameFromClassStatus';
+import getColorForClassStatus from '@/utils/getColorForClassStatus';
 
 export default function AddClassEventForm(props: {
     isTimeslotInThePast: boolean;
@@ -23,6 +27,7 @@ export default function AddClassEventForm(props: {
     studentId: string;
     resetDefaultNumOfClasses?: boolean;
 }) {
+    const { successToast } = useToast();
     const { hourUnixTimestamp, studentId, resetDefaultNumOfClasses, isTimeslotInThePast } = props;
     const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
     const [addClass] = studentApi.endpoints.addClass.useMutation();
@@ -40,6 +45,7 @@ export default function AddClassEventForm(props: {
     const defaultClassroom = selectedPackageDetail?.studentPackage.defaultClassroom;
     const defaultCourseId = selectedPackageDetail?.course.id;
     const defaultMin = selectedPackageDetail?.studentPackage.min;
+    const defaultStatus: Class_status = 'MAKEUP';
 
     const defaultNumOfClasses_ = selectedPackageDetail?.studentPackage.numOfClasses || 1;
     const defaultNumOfClasses = resetDefaultNumOfClasses ? 1 : defaultNumOfClasses_;
@@ -55,6 +61,7 @@ export default function AddClassEventForm(props: {
         hourUnixTimestamp: hourUnixTimestamp,
         studentPackageId: Number(selectedPackageId || '0'),
         min: defaultMin,
+        status: defaultStatus,
         numOfClasses: defaultNumOfClasses,
         actualClassroom: defaultClassroom,
     });
@@ -68,10 +75,11 @@ export default function AddClassEventForm(props: {
     const submit = async () => {
         dispatch(appSlice.actions.setLoading(true));
         const createClassForm = formData.current as CreateClassRequest;
+
         try {
             AddClassEventDialog.setOpen(false);
             await addClass({ studentId, createClassRequest: createClassForm }).unwrap();
-            toastUtil.success('Class Created');
+            successToast('Class Created');
         } finally {
             dispatch(appSlice.actions.setLoading(false));
         }
@@ -160,6 +168,33 @@ export default function AddClassEventForm(props: {
                     label: i + '',
                 }))}
             />
+            <Spacer />
+            <div style={{ display: 'flex' }}>
+                <FormInputTitle>Select a Status</FormInputTitle>
+                <Spacer />
+            </div>
+            <Spacer height={5} />
+            <Select
+                dropdownStyle={{ zIndex: 10 ** 4 }}
+                defaultValue={defaultStatus}
+                style={{ width: '100%' }}
+                onChange={value => {
+                    updateFormData({ status: value });
+                }}
+                options={Object.keys(getDisplayNameFromClassStatus).map(status => ({
+                    value: status,
+                    label: (
+                        <div className="flex items-center gap-2">
+                            <div
+                                className="w-4 h-4 rounded-xs ml-2"
+                                style={{ backgroundColor: getColorForClassStatus(status as Class_status) }}
+                            />
+                            <span>{getDisplayNameFromClassStatus[status as Class_status]}</span>
+                        </div>
+                    ),
+                }))}
+            />
+
             <Spacer />
             <Spacer />
             <Button type="primary" block onClick={submit}>

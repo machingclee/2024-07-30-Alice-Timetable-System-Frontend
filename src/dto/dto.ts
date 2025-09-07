@@ -126,6 +126,7 @@ export type CreateClassRequest = {
     studentPackageId: number;
     actualClassroom: Classroom;
     isTimeslotInThePast: boolean;
+    status: Class_status;
 };
 
 export type FilterToGetClassesForDailyTimetable = {

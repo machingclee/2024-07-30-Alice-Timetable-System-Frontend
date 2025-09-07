@@ -1,7 +1,6 @@
 import SectionTitle from '@/components/SectionTitle';
 import Spacer from '@/components/Spacer';
 import { NotificationDTO, NotificationResponse } from '@/dto/kotlinDto';
-import toastUtil from '@/utils/toastUtil';
 import { Button } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FaRegCopy } from 'react-icons/fa6';
@@ -15,6 +14,7 @@ import boxShadow from '@/constant/boxShadow';
 import RouteEnum from '@/enum/RouteEnum';
 import { notificationApi } from '@/!rtk-query/api/notificationApi';
 import { CircularProgress } from '@mui/material';
+import { useToast } from '@/hooks/use-toast';
 
 const notificationTypeToDisplayName: Record<NotificationDTO['type'], string> = {
     PACKAGE_DEADLINE_COMING: 'Package Deadline Coming',
@@ -24,7 +24,6 @@ const notificationTypeToDisplayName: Record<NotificationDTO['type'], string> = {
 export default function Notification() {
     const { data: notifications = [], isLoading: isLoadingNotifications } =
         notificationApi.endpoints.getNotifications.useQuery();
-
     const [scheduleDeadlineNotifications, { isLoading: isLoadingScheduleDeadlineNotifications }] =
         notificationApi.endpoints.activelyScheduleForDeadlineNotifications.useMutation();
 
@@ -61,6 +60,7 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
     const { message } = notification;
     const { phoneNumber } = student;
     const [updateReadOrUnread, { isLoading }] = notificationApi.endpoints.updateReadOrUnread.useMutation();
+    const { successToast } = useToast();
 
     const createWaLink = (props: { phoneNumber: string; text: string }) => {
         const { phoneNumber, text } = props;
@@ -142,7 +142,7 @@ const NotificationRow = (props: { notificationResponse: NotificationResponse }) 
                     <CopyToClipboard
                         text={message}
                         onCopy={() => {
-                            toastUtil.success('Copied to Clipboard');
+                            successToast('Copied to Clipboard');
                         }}
                     >
                         <Button>

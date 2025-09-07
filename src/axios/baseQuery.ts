@@ -2,7 +2,7 @@ import { BaseQueryFn } from '@reduxjs/toolkit/query';
 import { AxiosError, AxiosRequestConfig } from 'axios';
 import apiClient from './apiClient';
 import { CustomResponse } from './responseTypes';
-import toastUtil from '@/utils/toastUtil';
+import { errorToast } from '@/hooks/use-toast';
 
 const baseQuery: BaseQueryFn<
     | {
@@ -47,7 +47,7 @@ const baseQuery: BaseQueryFn<
     } catch (err: unknown) {
         if (err instanceof AxiosError) {
             if (err.response?.data?.errorMessage) {
-                toastUtil.error(err.response?.data?.errorMessage);
+                errorToast(err.response?.data?.errorMessage);
             }
             return {
                 error: {

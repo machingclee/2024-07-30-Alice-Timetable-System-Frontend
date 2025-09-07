@@ -7,7 +7,7 @@ import { Button, Input, Select } from 'antd';
 import Spacer from '../../../components/Spacer';
 import lodash, { debounce } from 'lodash';
 import { userApi } from '@/!rtk-query/api/userApi';
-import toastUtil from '@/utils/toastUtil';
+import { useToast } from '@/hooks/use-toast';
 import authSlice from '@/redux/slices/authSlice';
 
 export default function UserRow(props: { email: string }) {
@@ -17,7 +17,7 @@ export default function UserRow(props: { email: string }) {
     const [startEdit, setStartEdit] = useState(false);
     const dispatch = useAppDispatch();
     const [updateUserMutation] = userApi.endpoints.updateUser.useMutation();
-
+    const { successToast } = useToast();
     const { user } = userApi.endpoints.getUsers.useQuery(undefined, {
         selectFromResult: result => {
             const user = result.data?.userToUser?.[email] || null;
@@ -60,7 +60,7 @@ export default function UserRow(props: { email: string }) {
             return;
         }
         const updatedUser = await updateUserMutation({ ...user, ...formData.current }).unwrap();
-        toastUtil.success('User Updated');
+        successToast('User Updated');
         dispatch(authSlice.actions.updateAuthData(updatedUser));
         setStartEdit(false);
     };

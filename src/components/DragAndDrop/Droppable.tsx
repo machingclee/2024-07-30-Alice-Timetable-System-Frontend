@@ -1,10 +1,9 @@
 import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { ReactNode, HTMLAttributes, useRef, useState, useEffect } from 'react';
 import invariant from 'tiny-invariant';
-import toastUtil from '../../utils/toastUtil';
 import { DraggableDropData } from './Draggable';
 import { Box } from '@mui/material';
-
+import { useToast } from '@/hooks/use-toast';
 enum HoveredState {
     IDLE = 'IDLE',
     VALID_MOVE = 'VALID_MOVE',
@@ -20,6 +19,7 @@ export const Droppable = <T extends Record<string, any>>(
         onValidDrop: (data: T) => void | Promise<void>;
     } & HTMLAttributes<HTMLDivElement>
 ) => {
+    const { errorToast } = useToast();
     const {
         idleColor: idleColor = 'white',
         activeColor = 'yellow',
@@ -82,7 +82,7 @@ export const Droppable = <T extends Record<string, any>>(
                         await onValidDrop(data);
                     }
                 } catch (error) {
-                    toastUtil.error(JSON.stringify(error));
+                    errorToast(JSON.stringify(error));
                 } finally {
                     setHoveredState(HoveredState.IDLE);
                     setDragging(false);

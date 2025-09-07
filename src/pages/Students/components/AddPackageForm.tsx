@@ -13,10 +13,11 @@ import AddPackageDialog from './AddPackageDialog';
 import { Classroom } from '../../../prismaTypes/types';
 import { IoIosInformationCircle } from 'react-icons/io';
 import colors from '../../../constant/colors';
-import toastUtil from '../../../utils/toastUtil';
+
 import useAnchorTimestamp from '../../../hooks/useStudentDetailPathParam';
 import { courseApi } from '@/!rtk-query/api/courseApi';
 import { studentApi } from '@/!rtk-query/api/studentApi';
+import { useToast } from '@/hooks/use-toast';
 
 // Function to convert timestamp to the start of the day (midnight)
 const toMidnight = (timestamp: number): number => {
@@ -32,6 +33,7 @@ const toMidnight = (timestamp: number): number => {
 
 export default function AddPackageForm(props: { studentId: string; studentName: string }) {
     const { studentName, studentId } = props;
+    const { successToast, errorToast } = useToast();
     const [error, _] = useState<Partial<CreateStudentPackageRequest>>({});
     const { setURLAnchorTimestamp } = useAnchorTimestamp();
     const dispatch = useAppDispatch();
@@ -51,7 +53,7 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
         const { course_id, min, start_date, num_of_classes, start_time, default_classroom } = formData.current || {};
 
         if (!(course_id != null && min != null && num_of_classes != null && default_classroom != null)) {
-            toastUtil.error('None of the field can be empty.');
+            errorToast('None of the field can be empty.');
             return;
         }
         console.log('Hi!');
@@ -74,7 +76,7 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
         console.log('reqBody:', reqBody);
         AddPackageDialog.setOpen(false);
         const result = await createStudentPackage({ req: reqBody, studentId }).unwrap();
-        toastUtil.success('Package added successfully.');
+        successToast('Package added successfully.');
         dispatch(
             studentSlice.actions.setSelectedPackageAndActiveAnchorTimestamp({
                 type: 'go-to-target-lesson',
@@ -191,7 +193,7 @@ export default function AddPackageForm(props: { studentId: string; studentName: 
                 freeSolo
                 onChange={(_, newValue) => {
                     if (Number.isNaN(Number(newValue))) {
-                        toastUtil.error(`${newValue} is an invalid input`);
+                        errorToast(`${newValue} is an invalid input`);
                     } else {
                         updateFormData({ num_of_classes: Number(newValue) });
                     }

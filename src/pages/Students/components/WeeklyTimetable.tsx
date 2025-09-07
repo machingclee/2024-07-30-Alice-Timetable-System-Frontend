@@ -260,8 +260,8 @@ export default function WeeklyTimeTable() {
                     .map((dayUnixTimestamp, _colIndex) => {
                         const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
                         return (
-                            <div key={dayUnixTimestamp} className="day-column rounded-sm  p-1">
-                                <div className="bg-teal-100 p-1 rounded-sm">
+                            <div key={dayUnixTimestamp} className="day-column rounded-sm p-1 overflow-hidden">
+                                <div className="bg-teal-100 p-1 rounded-sm h-10 flex items-center justify-center">
                                     {DayColumnHeader(timetableAvailableWidth, dayDayJS)}
                                 </div>
                             </div>
@@ -326,7 +326,7 @@ export default function WeeklyTimeTable() {
 function DayColumnHeader(timetableAvailableWidth: number, dayDayJS: dayjs.Dayjs) {
     return (
         <div
-            className="grid-hour"
+            className="grid-hour text-sm"
             style={{
                 width: '100%',
                 fontWeight: 400,
@@ -335,7 +335,12 @@ function DayColumnHeader(timetableAvailableWidth: number, dayDayJS: dayjs.Dayjs)
             }}
         >
             {timetableAvailableWidth >= 85 && dayDayJS.format('ddd, MMM D')}
-            {timetableAvailableWidth < 85 && dayDayJS.format('ddd')}
+            {timetableAvailableWidth < 85 && (
+                <div className="text-xs">
+                    <div>{dayDayJS.format('ddd')}</div>
+                    <div className="opacity-50 text-ellipsis">{dayDayJS.format('MMM D')}</div>
+                </div>
+            )}
         </div>
     );
 }

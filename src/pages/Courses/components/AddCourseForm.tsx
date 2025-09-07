@@ -4,16 +4,17 @@ import FormInputField from '../../../components/FormInputField';
 import { CreateCourseRequest } from '../../../dto/dto';
 import { useRef, useState } from 'react';
 import { Box } from '@mui/material';
-import toastUtil from '../../../utils/toastUtil';
 import AddClassDialog from './AddCourseDialog';
 import { Button } from 'antd';
 import { courseApi } from '@/!rtk-query/api/courseApi';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AddCourseForm() {
     const formData = useRef<Partial<CreateCourseRequest>>({
         courseName: '',
     });
     const [error, _setError] = useState<Partial<CreateCourseRequest>>({});
+    const { successToast } = useToast();
     const update = (update_: Partial<CreateCourseRequest>) => {
         formData.current = { ...formData.current, ...update_ };
     };
@@ -23,7 +24,7 @@ export default function AddCourseForm() {
 
     const submit = async () => {
         await createCourse({ course: formData.current as CreateCourseRequest });
-        toastUtil.success('Course Created');
+        successToast('Course Created');
         AddClassDialog.setOpen(false);
     };
     return (

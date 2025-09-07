@@ -15,7 +15,7 @@ import classnames from 'classnames';
 import { useState } from 'react';
 import { Modal } from 'antd';
 import documentId from '../../../../constant/documentId';
-import toastUtil from '../../../../utils/toastUtil';
+import { useToast } from '@/hooks/use-toast';
 import { AliceMenu } from '@/components/AliceMenu';
 import useSelectPackage from '@/hooks/useSelectPackage';
 import { studentApi } from '@/!rtk-query/api/studentApi';
@@ -30,7 +30,7 @@ export default function StudentPackage(props: { packageId: string }) {
     const { setPathParam, selectPackageAtFirstLessonTimestamp, anchorTimestamp } = useSelectPackage();
     const dispatch = useAppDispatch();
     const { studentId } = useParams<{ studentId: string }>();
-
+    const { successToast } = useToast();
     const { weeklyClassEvent } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
         { studentId: studentId || '' },
         {
@@ -111,7 +111,7 @@ export default function StudentPackage(props: { packageId: string }) {
             .unwrap()
             .then(() => {
                 dispatch(studentSlice.actions.setStudentDetailPage(StudentDetailPage.STUDENT_TIME_TABLE));
-                toastUtil.success('Class deleted successfully.');
+                successToast('Class deleted successfully.');
             });
     };
 

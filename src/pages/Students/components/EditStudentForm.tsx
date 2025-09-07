@@ -3,7 +3,7 @@ import Spacer from '../../../components/Spacer';
 import { useEffect, useRef, useState } from 'react';
 import { Gender, UpdateStudentRequest } from '../../../dto/dto';
 import FormInputField from '../../../components/FormInputField';
-import toastUtil from '../../../utils/toastUtil';
+
 import SectionTitle from '../../../components/SectionTitle';
 
 import { useAppDispatch } from '../../../redux/hooks';
@@ -15,6 +15,7 @@ import studentSlice from '../../../redux/slices/studentSlice';
 import EditStudentDialog from './EditStudentDialog';
 import { Switch } from '@/components/ui/switch';
 import { studentApi } from '@/!rtk-query/api/studentApi';
+import { useToast } from '@/hooks/use-toast';
 
 export default function EditStudentForm({ studentId }: { studentId: string }) {
     const dispatch = useAppDispatch();
@@ -26,7 +27,7 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
             return { student };
         },
     });
-
+    const { successToast } = useToast();
     const [error, _setError] = useState<Partial<UpdateStudentRequest>>({});
     useEffect(() => {
         if (formData.current) {
@@ -69,7 +70,7 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
         await updateStudent({ studentId, req: formData.current })
             .unwrap()
             .then(() => {
-                toastUtil.success('User Updated');
+                successToast('User Updated');
                 EditStudentDialog.setOpen(false);
                 dispatch(studentSlice.actions.resetStudentDetail());
             });

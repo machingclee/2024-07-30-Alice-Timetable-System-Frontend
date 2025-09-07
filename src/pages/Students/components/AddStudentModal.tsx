@@ -2,7 +2,6 @@ import { Select, Switch } from 'antd';
 import Spacer from '../../../components/Spacer';
 import { CreateStudentRequest, Gender } from '../../../dto/dto';
 import FormInputField from '../../../components/FormInputField';
-import toastUtil from '../../../utils/toastUtil';
 import SectionTitle from '../../../components/SectionTitle';
 import { Box } from '@mui/material';
 import FormInputTitle from '../../../components/FormInputTitle';
@@ -12,13 +11,14 @@ import { AliceModalProps } from '../../../components/AliceModalTrigger';
 import { studentApi } from '@/!rtk-query/api/studentApi';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import studentSlice from '@/redux/slices/studentSlice';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AddStudentModal(props: AliceModalProps) {
     const { setOkText, setOnOk, setOnClose } = props;
 
     const dispatch = useAppDispatch();
     const formData = useAppSelector(state => state.student.addStudentForm);
-
+    const { successToast } = useToast();
     const update = (update_: Partial<CreateStudentRequest>) => {
         dispatch(studentSlice.actions.updateAddStudentForm(update_));
     };
@@ -30,7 +30,7 @@ export default function AddStudentModal(props: AliceModalProps) {
         const createStudetnRequest = { ...formData, wechat_id: wechatId ? wechatId : null };
         await createStudentMutation(createStudetnRequest).unwrap();
         dispatch(studentSlice.actions.resetAddStudentForm());
-        toastUtil.success('User Created');
+        successToast('User Created');
     };
     const resetForm = () => {
         dispatch(studentSlice.actions.resetAddStudentForm());
