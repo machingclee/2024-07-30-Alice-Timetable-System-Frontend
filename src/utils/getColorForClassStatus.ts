@@ -19,5 +19,7 @@ export default (class_status: Class_status) => {
             return colors.CYAN;
         case 'BAD_WHETHER':
             return colors.BLACK;
+        case 'CHANGE_OF_CLASSROOM':
+            return colors.CYAN;
     }
 };

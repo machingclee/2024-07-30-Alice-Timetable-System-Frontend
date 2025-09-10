@@ -216,26 +216,7 @@ export default function StudentClassForWeeklyTimetableCell(props: {
                         if (invalidData) {
                             return 'red';
                         } else {
-                            switch (lesson?.class.classStatus) {
-                                case 'PRESENT':
-                                    return colors.GREEN_BLUE;
-                                case 'TRIAL':
-                                    return colors.PINK;
-                                case 'RESERVED':
-                                    return colors.CYAN;
-                                case 'SUSPICIOUS_ABSENCE':
-                                    return colors.ORANGE;
-                                case 'ILLEGIT_ABSENCE':
-                                    return colors.RED;
-                                case 'LEGIT_ABSENCE':
-                                    return colors.GREY;
-                                case 'MAKEUP':
-                                    return colors.BLUE;
-                                case 'CHANGE_OF_CLASSROOM':
-                                    return colors.PURPLE;
-                                case 'BAD_WHETHER':
-                                    return colors.BLACK;
-                            }
+                            return getColorForClassStatus(lesson?.class.classStatus);
                         }
                     })(),
                     borderRadius: 4,

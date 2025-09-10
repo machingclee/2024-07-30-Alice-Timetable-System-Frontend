@@ -147,7 +147,10 @@ const CalendarView = () => {
                                     });
                                 }}
                                 headerRender={() => {
-                                    return <div className="text-sm p-2">{startOfMonth.format('MMMM YYYY')}</div>;
+                                    const year = startOfMonth.format('YYYY');
+                                    const monthInNumber = startOfMonth.format('MM');
+                                    const monRepsentation = `${monthInNumber} 月, ${year}`;
+                                    return <div className="text-sm p-2">{monRepsentation}</div>;
                                 }}
                                 cellRender={(date: dayjs.Dayjs) => {
                                     const className = determineStyle(isSelected(date));

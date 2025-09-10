@@ -228,12 +228,45 @@ export default function EditStudentForm({ studentId }: { studentId: string }) {
                     onChange={t => update({ schoolName: t })}
                     error={error?.['schoolName']}
                 />
-                <FormInputField
-                    title="Grade"
-                    defaultValue={student.grade}
-                    onChange={t => update({ grade: t })}
-                    error={error?.['grade']}
+                <FormInputTitle>Grade</FormInputTitle>
+                <Select
+                    dropdownStyle={{ zIndex: 10 ** 4 }}
+                    defaultValue={formData.current.grade}
+                    style={{ width: 130 }}
+                    onChange={value => {
+                        update({ grade: value });
+                    }}
+                    options={[
+                        { value: 'K1', label: 'K1' },
+                        { value: 'K2', label: 'K2' },
+                        { value: 'K3', label: 'K3' },
+                        { value: 'P1', label: 'P1' },
+                        { value: 'P2', label: 'P2' },
+                        { value: 'P3', label: 'P3' },
+                        { value: 'P4', label: 'P4' },
+                        { value: 'P5', label: 'P5' },
+                        { value: 'P6', label: 'P6' },
+                        { value: 'F1', label: 'F1' },
+                        { value: 'F2', label: 'F2' },
+                        { value: 'F3', label: 'F3' },
+                        { value: 'F4', label: 'F4' },
+                        { value: 'F5', label: 'F5' },
+                        { value: 'F6', label: 'F6' },
+                        { value: 'G1', label: 'G1' },
+                        { value: 'G2', label: 'G2' },
+                        { value: 'G3', label: 'G3' },
+                        { value: 'G4', label: 'G4' },
+                        { value: 'G5', label: 'G5' },
+                        { value: 'G6', label: 'G6' },
+                        { value: 'G7', label: 'G7' },
+                        { value: 'G8', label: 'G8' },
+                        { value: 'G9', label: 'G9' },
+                        { value: 'G10', label: 'G10' },
+                        { value: 'G11', label: 'G11' },
+                        { value: 'G12', label: 'G12' },
+                    ]}
                 />
+                <Spacer />
                 <FormInputField
                     title="Phone Number"
                     defaultValue={student.phoneNumber}
