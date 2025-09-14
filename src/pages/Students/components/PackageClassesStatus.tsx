@@ -43,7 +43,7 @@ export const Container = (props: PropsWithChildren) => {
 
 export default function PackageClassesStatus() {
     const { studentId } = useParams<{ studentId: string }>();
-    const packageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const packageId = useAppSelector(s => s.student.weeklyTimetablePage.selectedPackageId);
 
     // get studekt package from package id
     const { studentPackage } = studentApi.endpoints.getStudentPackages.useQuery(

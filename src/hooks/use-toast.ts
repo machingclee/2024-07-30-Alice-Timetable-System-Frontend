@@ -139,7 +139,7 @@ type Toast = Omit<ToasterToast, 'id'>;
 
 export function successToast(description: string) {
     toast({
-        title: 'Sucess',
+        title: 'Succeeded',
         description,
     });
 }

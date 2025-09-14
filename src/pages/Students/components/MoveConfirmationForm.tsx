@@ -4,9 +4,23 @@ import { Button } from 'antd';
 
 import MoveConfirmationDialog from './MoveConfirmationDialog';
 import SectionTitle from '../../../components/SectionTitle';
+import { TimetableLesson } from '@/dto/kotlinDto';
+import { studentApi } from '@/!rtk-query/api/studentApi';
 
-export default function MoveConfirmationForm(props: { moveClassesAction: () => Promise<void> }) {
-    const { moveClassesAction: moveClasses } = props;
+export default function MoveConfirmationForm(props: {
+    fromClassEvent: TimetableLesson;
+    toDayTimestamp: number;
+    toHourTimestamp: number;
+}) {
+    const { fromClassEvent, toDayTimestamp, toHourTimestamp } = props;
+    const [moveStudentEvent, { isLoading: isMovingStudentEvent }] = studentApi.endpoints.moveStudentEvent.useMutation();
+
+    const moveClassPayload = {
+        fromClassEvent,
+        toDayTimestamp: String(toDayTimestamp),
+        toHourTimestamp: String(toHourTimestamp),
+    };
+
     return (
         <Box
             style={{
@@ -27,10 +41,11 @@ export default function MoveConfirmationForm(props: { moveClassesAction: () => P
             <Spacer />
             <div>
                 <Button
+                    loading={isMovingStudentEvent}
                     type="primary"
                     block
                     onClick={async () => {
-                        await moveClasses();
+                        await moveStudentEvent(moveClassPayload).unwrap();
                         MoveConfirmationDialog.setOpen(false);
                     }}
                 >
@@ -38,6 +53,7 @@ export default function MoveConfirmationForm(props: { moveClassesAction: () => P
                 </Button>
                 <Spacer height={5} />
                 <Button
+                    disabled={isMovingStudentEvent}
                     type="text"
                     block
                     onClick={async () => {

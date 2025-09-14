@@ -29,7 +29,7 @@ import CalendarDrawer from './components/CanlendarDrawer';
 export default function StudentDetail() {
     const { anchorTimestamp, packageId, setPathParam } = useStudentDetailPathParam();
     const { studentId } = useParams<{ studentId: string }>();
-    const displayType = useAppSelector(s => s.student.studentDetailTimetablePage.activePage);
+    const displayType = useAppSelector(s => s.student.weeklyTimetablePage.activePage);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [collapseTimetable, setCollapseTimetable] = useState(false);
@@ -46,7 +46,7 @@ export default function StudentDetail() {
     );
 
     const { firstName, lastName, chineseFirstName, chineseLastName, studentCode } = studentDetail?.student || {};
-    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const selectedPackageId = useAppSelector(s => s.student.weeklyTimetablePage.selectedPackageId);
 
     const navAttendences = () => {
         const destination = `${RouteEnum.STUDENT_INFO}/${studentId}`;

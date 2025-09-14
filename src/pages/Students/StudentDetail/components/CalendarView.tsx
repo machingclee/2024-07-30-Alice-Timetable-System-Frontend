@@ -80,7 +80,7 @@ const CalendarView = () => {
     const [seletectedDate, setSeletectedDate] = useState<dayjs.Dayjs>(dayjs());
     const [startingMonth, setStartingMonth] = useState<dayjs.Dayjs>(dayjs().startOf('month'));
     const fourMonthsInARow = [0, 1, 2, 3].map(i => startingMonth.add(i, 'month'));
-    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const selectedPackageId = useAppSelector(s => s.student.weeklyTimetablePage.selectedPackageId);
     const { setPathParam } = useStudentDetailPathParam();
     const { isFetching } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery({
         studentId: studentId || '',

@@ -31,7 +31,7 @@ const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 export const WeekNavigator = () => {
     const dispatch = useAppDispatch();
     const { anchorTimestamp, setPathParam } = useAnchorTimestamp();
-    const studentPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const studentPackageId = useAppSelector(s => s.student.weeklyTimetablePage.selectedPackageId);
     const goNextWeek = () => {
         const nextAnchorTimestamp = anchorTimestamp + ONE_DAY_IN_MS * 7;
         setPathParam({ anchorTimestamp: nextAnchorTimestamp, packageId: studentPackageId || '' });
@@ -121,7 +121,7 @@ export const WeekNavigator = () => {
 export default function WeeklyTimeTable() {
     const { anchorTimestamp } = useAnchorTimestamp();
     const [timetableAvailableWidth, setTimetableAvailableWidth] = useState(0);
-    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const selectedPackageId = useAppSelector(s => s.student.weeklyTimetablePage.selectedPackageId);
     const getHalfHourTimeIntervalsForDay = useCallback((date: Date) => {
         const dayJS = dayjs(date);
         const start = dayJS.startOf('day').add(9, 'hour');
@@ -179,7 +179,7 @@ export default function WeeklyTimeTable() {
 
     // got from userParam
     const { studentId = '' } = useParams<{ studentId: string }>();
-    const isMutatingClass = useAppSelector(s => s.student.studentDetailTimetablePage.isMutatingClass);
+    const isMutatingClass = useAppSelector(s => s.student.weeklyTimetablePage.isMutatingClass);
     const { isFetching: isFetchingStudentClasses } = studentApi.endpoints.getStudentClassesForWeeklyTimetable.useQuery(
         { studentId: studentId },
         {

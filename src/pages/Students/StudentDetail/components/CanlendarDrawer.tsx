@@ -5,7 +5,7 @@ import studentSlice from '@/redux/slices/studentSlice';
 
 const CalendarDrawer = () => {
     const dispatch = useAppDispatch();
-    const openCalendar = useAppSelector(s => s.student.studentDetailTimetablePage.openCalendar);
+    const openCalendar = useAppSelector(s => s.student.weeklyTimetablePage.openCalendar);
     const setOpenCalendar = (open: boolean) => {
         dispatch(studentSlice.actions.setOpenCalendar(open));
     };

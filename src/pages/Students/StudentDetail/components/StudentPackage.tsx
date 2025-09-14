@@ -47,7 +47,7 @@ export default function StudentPackage(props: { packageId: string }) {
         }
     );
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const selectedPackageId = useAppSelector(s => s.student.weeklyTimetablePage.selectedPackageId);
     const { studentPackage } = studentApi.endpoints.getStudentPackages.useQuery(
         { studentId: studentId || '' },
         {
@@ -264,6 +264,8 @@ export default function StudentPackage(props: { packageId: string }) {
                                         <div>
                                             <div>Scheduled Classes</div>
                                             <div className="text-xs text-gray-500">(attended/scheduled)</div>
+                                            <div className="text-xs text-gray-500">(not legit absence</div>
+                                            <div className="text-xs text-gray-500">nor makeup)</div>
                                         </div>
                                     </td>
                                     <td>{`${consumedClasses}/${toOneDecimal((_scheduledMinutes || 0) / studentPkg.min)}`}</td>
@@ -271,7 +273,7 @@ export default function StudentPackage(props: { packageId: string }) {
                                 <tr>
                                     <td>
                                         <div>
-                                            <div>Extended Classes</div>
+                                            <div>Makeup Classes</div>
                                             <div className="text-xs text-gray-500">(attended/scheduled)</div>
                                         </div>
                                     </td>

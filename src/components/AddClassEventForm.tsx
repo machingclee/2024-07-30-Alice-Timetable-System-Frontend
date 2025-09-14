@@ -29,7 +29,7 @@ export default function AddClassEventForm(props: {
 }) {
     const { successToast } = useToast();
     const { hourUnixTimestamp, studentId, resetDefaultNumOfClasses, isTimeslotInThePast } = props;
-    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const selectedPackageId = useAppSelector(s => s.student.weeklyTimetablePage.selectedPackageId);
     const [addClass] = studentApi.endpoints.addClass.useMutation();
     const { selectedPackageDetail: selectedPackageDetail } = studentApi.endpoints.getStudentPackages.useQuery(
         { studentId },

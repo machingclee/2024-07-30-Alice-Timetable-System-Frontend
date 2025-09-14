@@ -42,7 +42,7 @@ export default function StudentClassForWeeklyTimetableCell(props: {
 
     const { equipAliceMenu } = useAliceMenu({ hourUnitTimestamp: currGridHourUnixTimestamp }) || {};
     const { studentId } = useGetStudentIdFromParam();
-    const selectedPackageId = useAppSelector(s => s.student.studentDetailTimetablePage.selectedPackageId);
+    const selectedPackageId = useAppSelector(s => s.student.weeklyTimetablePage.selectedPackageId);
     const { setPathParam } = useStudentDetailPathParam();
 
     const dispatch = useAppDispatch();
@@ -60,7 +60,7 @@ export default function StudentClassForWeeklyTimetableCell(props: {
     );
 
     const showLabel = lesson != null;
-    const showAll = useAppSelector(s => s.student.studentDetailTimetablePage.showAllClassesForOneStudent);
+    const showAll = useAppSelector(s => s.student.weeklyTimetablePage.showAllClassesForOneStudent);
 
     const [classEventHeight, setClassEventHeight] = useState<number | null>(null);
 
@@ -132,24 +132,26 @@ export default function StudentClassForWeeklyTimetableCell(props: {
     );
 
     const [moveStudentEvent] = studentApi.endpoints.moveStudentEvent.useMutation();
+
     const onValidDrop = async (fromClassEvent: TimetableLesson) => {
-        const move = async () => {
-            try {
-                await moveStudentEvent({
-                    fromClassEvent,
-                    toDayTimestamp: String(currGridDayUnixTimestamp),
-                    toHourTimestamp: String(currGridHourUnixTimestamp),
-                }).unwrap();
-            } finally {
-                MoveConfirmationDialog.setOpen(false);
-            }
+        const moveClassPayload = {
+            fromClassEvent,
+            toDayTimestamp: String(currGridDayUnixTimestamp),
+            toHourTimestamp: String(currGridHourUnixTimestamp),
         };
+
         if (fromClassEvent.classGroup) {
             MoveConfirmationDialog.setWidth('sm');
-            MoveConfirmationDialog.setContent(() => () => <MoveConfirmationForm moveClassesAction={move} />);
+            MoveConfirmationDialog.setContent(() => () => (
+                <MoveConfirmationForm
+                    fromClassEvent={fromClassEvent}
+                    toDayTimestamp={currGridDayUnixTimestamp}
+                    toHourTimestamp={currGridHourUnixTimestamp}
+                />
+            ));
             MoveConfirmationDialog.setOpen(true);
         } else {
-            await move();
+            moveStudentEvent(moveClassPayload).unwrap();
         }
     };
 

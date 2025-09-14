@@ -22,12 +22,11 @@ export default function DeleteClassForm(props: {
     const classOn = dayjs(class_.dayUnixTimestamp).format('dddd');
     const startedFromDate = dayjs(class_.hourUnixTimestamp).format('YYYY-MM-DD');
     const hasDuplicationGroup = classGroup?.id != null;
-    const [deleteClassMutation] = studentApi.endpoints.deleteClass.useMutation();
-    const [deleteSingleClassMutation] = studentApi.endpoints.deleteSingleClass.useMutation();
+    const [deleteClassMutation, { isLoading: isDeletingClass }] = studentApi.endpoints.deleteClass.useMutation();
+    const [deleteSingleClassMutation, { isLoading: isDeletingSingleClass }] =
+        studentApi.endpoints.deleteSingleClass.useMutation();
 
     const deleteClass = async () => {
-        DeleteClassDialog.setOpen(false);
-
         if (!deleteSingleClass) {
             await deleteClassMutation({
                 classId: class_.id,
@@ -38,6 +37,7 @@ export default function DeleteClassForm(props: {
             }).unwrap();
         }
         onDeletion?.();
+        DeleteClassDialog.setOpen(false);
     };
 
     return (
@@ -93,7 +93,13 @@ export default function DeleteClassForm(props: {
                 </Alert>
             )}
             <Spacer />
-            <Button style={{ backgroundColor: colors.RED }} type="primary" block onClick={deleteClass}>
+            <Button
+                loading={isDeletingClass || isDeletingSingleClass}
+                style={{ backgroundColor: colors.RED }}
+                type="primary"
+                block
+                onClick={deleteClass}
+            >
                 Confirm
             </Button>
             <Spacer height={5} />

@@ -19,7 +19,7 @@ export type StudentSliceState = {
             [key: string]: StudentDTO;
         };
     };
-    studentDetailTimetablePage: {
+    weeklyTimetablePage: {
         openCalendar: boolean;
         isMutatingClass: boolean;
         activePage: StudentDetailPage;
@@ -59,7 +59,7 @@ const initialState: StudentSliceState = {
         remark: '',
     },
     students: {},
-    studentDetailTimetablePage: {
+    weeklyTimetablePage: {
         openCalendar: false,
         isMutatingClass: false,
         activePage: StudentDetailPage.STUDENT_TIME_TABLE,
@@ -93,7 +93,7 @@ const studentSlice = createSlice({
     initialState,
     reducers: {
         setOpenCalendar: (state, action: PayloadAction<boolean>) => {
-            state.studentDetailTimetablePage.openCalendar = action.payload;
+            state.weeklyTimetablePage.openCalendar = action.payload;
         },
         resetAddStudentForm: state => {
             state.addStudentForm = cloneDeep(initialState.addStudentForm);
@@ -102,13 +102,13 @@ const studentSlice = createSlice({
             state.addStudentForm = { ...state.addStudentForm, ...action.payload };
         },
         setMutatingClass: (state, action: PayloadAction<boolean>) => {
-            state.studentDetailTimetablePage.isMutatingClass = action.payload;
+            state.weeklyTimetablePage.isMutatingClass = action.payload;
         },
         seMassTimetableNumOfDaysToDisplay: (state, action: PayloadAction<number>) => {
             state.massTimetablePage.numOfDaysToDisplay = action.payload;
         },
         setStudentDetailPage: (state, action: PayloadAction<StudentDetailPage>) => {
-            state.studentDetailTimetablePage.activePage = action.payload;
+            state.weeklyTimetablePage.activePage = action.payload;
         },
         setNumberOfClassesInHighlight: (state, action: PayloadAction<number>) => {
             state.massTimetablePage.totalClassesInHighlight.numberOfClassesInHighlight = action.payload;
@@ -159,7 +159,7 @@ const studentSlice = createSlice({
             >
         ) => {
             const { packageId, setURLAnchorTimestamp, type } = action.payload;
-            state.studentDetailTimetablePage.selectedPackageId = packageId;
+            state.weeklyTimetablePage.selectedPackageId = packageId;
 
             if (type === 'go-to-target-lesson') {
                 setURLAnchorTimestamp(action.payload.desiredAnchorTimestamp);
@@ -191,7 +191,7 @@ const studentSlice = createSlice({
             }
         },
         resetStudentDetail: state => {
-            state.studentDetailTimetablePage = initialState.studentDetailTimetablePage;
+            state.weeklyTimetablePage = initialState.weeklyTimetablePage;
         },
         resetMassTimetablerFilter: state => {
             state.massTimetablePage = initialState.massTimetablePage;
@@ -200,7 +200,7 @@ const studentSlice = createSlice({
             return initialState;
         },
         setShowAllClassesForOneStudent: (state, action) => {
-            state.studentDetailTimetablePage.showAllClassesForOneStudent = action.payload;
+            state.weeklyTimetablePage.showAllClassesForOneStudent = action.payload;
         },
     },
 });
