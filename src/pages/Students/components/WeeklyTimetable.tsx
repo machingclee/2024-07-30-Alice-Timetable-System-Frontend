@@ -19,6 +19,8 @@ import LoadingOverlay from '@/components/LoadingOverlay';
 import studentSlice from '@/redux/slices/studentSlice';
 import { MessageSquareWarning } from 'lucide-react';
 import clsx from 'clsx';
+import { customHolidayApi } from '@/!rtk-query/api/customHolidayApi';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export type WeeklyCoordinate = {
     [dateUnixTimestamp: string]: {
@@ -190,143 +192,175 @@ export default function WeeklyTimeTable() {
         }
     );
 
-    return (
-        <Box
-            ref={timetableContainerRef}
-            style={{ width: '100%' }}
-            sx={{
-                overflowY: 'hidden',
-                '& .draggable-container': {
-                    position: 'relative',
-                    borderTop: '1px solid rgba(0,0,0,0.1)',
-                    borderLeft: '2px solid rgba(0, 0, 0, 0.1)',
-                },
-                '& .draggable-container:nth-of-type(n+1)': {
-                    borderTop: '0.12rem solid rgba(0,0,0,0.15)',
-                },
-                '& .day-column': {
-                    flex: 1,
-                },
-                '& .day-column:last-child': {
-                    '& .draggable-container': {
-                        borderRight: '2px solid rgba(0, 0, 0, 0.1)',
-                    },
-                },
-                '& .draggable-container:last-child': {
-                    borderBottom: '1px solid rgba(0,0,0,0.1)',
-                },
-                '& .freeze': {
-                    transform: 'translate(0px,0px) !important',
-                },
-                '& .grid-time:nth-of-type(n+2)': {
-                    zIndex: '5 !important',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    paddingRight: '14px',
-                    height: `${gridHeight + 0.8}px`,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    whiteSpace: 'nowrap',
-                },
-                '& .grid-hour': {
-                    '&:nth-of-type(n+1)': {
-                        width: '100%',
-                        height: `${gridHeight - 1}px`,
-                    },
+    const { data: holidays } = customHolidayApi.endpoints.getCustomHolidays.useQuery();
 
-                    '&:hover': {
-                        cursor: 'pointer',
-                        // backgroundColor: 'rgba(22,119,255,0.2)',
+    return (
+        <TooltipProvider>
+            <Box
+                ref={timetableContainerRef}
+                style={{ width: '100%' }}
+                sx={{
+                    overflowY: 'hidden',
+                    '& .draggable-container': {
+                        position: 'relative',
+                        borderTop: '1px solid rgba(0,0,0,0.1)',
+                        borderLeft: '2px solid rgba(0, 0, 0, 0.1)',
                     },
-                },
-                '& .grid-hour.header': {
-                    top: 0,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    padding: 0,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    margin: 0,
-                    zIndex: 10 ** 7,
-                },
-            }}
-        >
-            <div className="flex ml-[62px] mr-[37px]  py-1 mb-1">
-                {Object.keys(timeGrid)
-                    .sort()
-                    .map((dayUnixTimestamp, _colIndex) => {
-                        const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
-                        return (
-                            <div key={dayUnixTimestamp} className="day-column rounded-sm p-1 overflow-hidden">
-                                <div className="bg-teal-100 p-1 rounded-sm h-10 flex items-center justify-center">
+                    '& .draggable-container:nth-of-type(n+1)': {
+                        borderTop: '0.12rem solid rgba(0,0,0,0.15)',
+                    },
+                    '& .day-column': {
+                        flex: 1,
+                    },
+                    '& .day-column:last-child': {
+                        '& .draggable-container': {
+                            borderRight: '2px solid rgba(0, 0, 0, 0.1)',
+                        },
+                    },
+                    '& .draggable-container:last-child': {
+                        borderBottom: '1px solid rgba(0,0,0,0.1)',
+                    },
+                    '& .freeze': {
+                        transform: 'translate(0px,0px) !important',
+                    },
+                    '& .grid-time:nth-of-type(n+2)': {
+                        zIndex: '5 !important',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        paddingRight: '14px',
+                        height: `${gridHeight + 0.8}px`,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        whiteSpace: 'nowrap',
+                    },
+                    '& .grid-hour': {
+                        '&:nth-of-type(n+1)': {
+                            width: '100%',
+                            height: `${gridHeight - 1}px`,
+                        },
+
+                        '&:hover': {
+                            cursor: 'pointer',
+                            // backgroundColor: 'rgba(22,119,255,0.2)',
+                        },
+                    },
+                    '& .grid-hour.header': {
+                        top: 0,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        padding: 0,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        margin: 0,
+                        zIndex: 10 ** 7,
+                    },
+                }}
+            >
+                <div className="flex ml-[62px] mr-[37px]  py-1 mb-1">
+                    {Object.keys(timeGrid)
+                        .sort()
+                        .map((dayUnixTimestamp, _colIndex) => {
+                            const dayDayJS = dayjs(parseInt(dayUnixTimestamp));
+                            const holidayInfo = holidays?.find(
+                                holiday => holiday.startOfTheDate === parseInt(dayUnixTimestamp)
+                            );
+                            const isHoliday = !!holidayInfo;
+
+                            const dayColumnContent = (
+                                <div
+                                    className={clsx(
+                                        'bg-teal-100 p-1 rounded-sm h-10 flex items-center justify-center',
+                                        {
+                                            '!bg-red-400 text-white border-1 border-red-500 cursor-pointer': isHoliday,
+                                        }
+                                    )}
+                                >
                                     {DayColumnHeader(timetableAvailableWidth, dayDayJS)}
                                 </div>
-                            </div>
-                        );
-                    })}
-            </div>
-            <CustomScrollbarContainer className="my-fadein flex flex-col h-[calc(100vh-260px)] mr-4">
-                <LoadingOverlay isLoading={isFetchingStudentClasses || isMutatingClass}>
-                    <FadeIn className="scrollbar-hide">
-                        <div className="flex mt-2">
-                            <div style={{ flex: 1 }}>
-                                <div style={{ display: 'flex' }}>
-                                    <div>
-                                        <Spacer
-                                            height={gridTimeColTop}
-                                            style={{
-                                                position: 'sticky',
-                                                top: 0,
-                                                width: '100%',
-                                            }}
-                                        />
-                                        <div className="grid-time" style={{ width: 60 }}></div>
-                                    </div>
+                            );
 
-                                    {Object.keys(timeGrid)
-                                        .sort()
-                                        .map((dayUnixTimestamp, colIndex) => {
-                                            return (
-                                                <div key={dayUnixTimestamp} className="day-column">
-                                                    <Spacer height={5} />
-                                                    <div>
-                                                        {Object.keys(timeGrid[dayUnixTimestamp])
-                                                            .sort()
-                                                            .map((hourUnixTimestamp, rowIndex) => {
-                                                                return (
-                                                                    <StudentClassForWeeklyTimetableCell
-                                                                        key={hourUnixTimestamp}
-                                                                        colIndex={colIndex}
-                                                                        rowIndex={rowIndex}
-                                                                        dayUnixTimestamp={parseInt(dayUnixTimestamp)}
-                                                                        hourUnixTimestamp={parseInt(hourUnixTimestamp)}
-                                                                    />
-                                                                );
-                                                            })}
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
+                            return (
+                                <div key={dayUnixTimestamp} className="day-column rounded-sm p-1 overflow-hidden">
+                                    {isHoliday ? (
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>{dayColumnContent}</TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>{holidayInfo.name}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    ) : (
+                                        dayColumnContent
+                                    )}
                                 </div>
+                            );
+                        })}
+                </div>
+                <CustomScrollbarContainer className="my-fadein flex flex-col h-[calc(100vh-260px)] mr-4">
+                    <LoadingOverlay isLoading={isFetchingStudentClasses || isMutatingClass}>
+                        <FadeIn className="scrollbar-hide">
+                            <div className="flex mt-2">
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ display: 'flex' }}>
+                                        <div>
+                                            <Spacer
+                                                height={gridTimeColTop}
+                                                style={{
+                                                    position: 'sticky',
+                                                    top: 0,
+                                                    width: '100%',
+                                                }}
+                                            />
+                                            <div className="grid-time" style={{ width: 60 }}></div>
+                                        </div>
+
+                                        {Object.keys(timeGrid)
+                                            .sort()
+                                            .map((dayUnixTimestamp, colIndex) => {
+                                                return (
+                                                    <div key={dayUnixTimestamp} className="day-column">
+                                                        <Spacer height={5} />
+                                                        <div>
+                                                            {Object.keys(timeGrid[dayUnixTimestamp])
+                                                                .sort()
+                                                                .map((hourUnixTimestamp, rowIndex) => {
+                                                                    return (
+                                                                        <StudentClassForWeeklyTimetableCell
+                                                                            key={hourUnixTimestamp}
+                                                                            colIndex={colIndex}
+                                                                            rowIndex={rowIndex}
+                                                                            dayUnixTimestamp={parseInt(
+                                                                                dayUnixTimestamp
+                                                                            )}
+                                                                            hourUnixTimestamp={parseInt(
+                                                                                hourUnixTimestamp
+                                                                            )}
+                                                                        />
+                                                                    );
+                                                                })}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                    </div>
+                                </div>
+
+                                <Spacer />
                             </div>
 
                             <Spacer />
-                        </div>
-
-                        <Spacer />
-                    </FadeIn>
-                </LoadingOverlay>
-            </CustomScrollbarContainer>
-        </Box>
+                        </FadeIn>
+                    </LoadingOverlay>
+                </CustomScrollbarContainer>
+            </Box>
+        </TooltipProvider>
     );
 }
 function DayColumnHeader(timetableAvailableWidth: number, dayDayJS: dayjs.Dayjs) {
     return (
         <div
-            className="grid-hour text-sm"
             style={{
                 width: '100%',
                 fontWeight: 400,
