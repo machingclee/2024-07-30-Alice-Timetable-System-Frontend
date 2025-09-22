@@ -14,7 +14,7 @@
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
         "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
         "prepare": "husky",
-        "deploy": "export AWS_PROFILE=james && yarn build:prod && aws cloudfront create-invalidation --distribution-id E528ATQC51NNO --paths \"/*\" > log.txt && aws s3 sync --delete ./dist/ s3://alice-timetable"
+        "deploy": "export AWS_PROFILE=james && yarn build:prod && aws s3 sync --delete ./dist/ s3://alice-timetable && aws cloudfront create-invalidation --distribution-id E528ATQC51NNO --paths \"/*\" > log.txt"
     },
     "dependencies": {
         "@atlaskit/pragmatic-drag-and-drop": "^1.4.0",

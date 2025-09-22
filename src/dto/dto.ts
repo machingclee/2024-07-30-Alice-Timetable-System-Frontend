@@ -125,7 +125,7 @@ export type CreateClassRequest = {
     min: number;
     studentPackageId: number;
     actualClassroom: Classroom;
-    isTimeslotInThePast: boolean;
+    allowHistoricalRecord: boolean;
     status: Class_status;
 };
 

@@ -324,11 +324,7 @@ export default function StudentClassForWeeklyTimetableCell(props: {
                         {(showAll || (!showAll && Number(selectedPackageId) === lesson?.studentPackage.id)) &&
                             lesson && (
                                 <>
-                                    <Draggable
-                                        data={lesson}
-                                        key={lesson?.class.id}
-                                        canDrag={!!lesson && isInTheFuture()}
-                                    >
+                                    <Draggable data={lesson} key={lesson?.class.id} canDrag={!!lesson}>
                                         {equipAliceMenu?.({ children: classEventCell(lesson) }) ||
                                             classEventCell(lesson)}
                                     </Draggable>

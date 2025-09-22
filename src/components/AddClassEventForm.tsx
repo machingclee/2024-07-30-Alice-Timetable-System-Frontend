@@ -64,6 +64,7 @@ export default function AddClassEventForm(props: {
         status: defaultStatus,
         numOfClasses: defaultNumOfClasses,
         actualClassroom: defaultClassroom,
+        allowHistoricalRecord: true,
     });
     const updateFormData = (update: Partial<CreateClassRequest>) => {
         formData.current = {
