@@ -30,6 +30,7 @@ export default {
         `/logging/get-logs?page=${props.page}&limit=${props.limit}`,
     GET_CUSTOM_HOLIDAYS: '/holidays/custom-holidays',
     GET_CLASS_TIMESTAMPS: (classRoom: ClassRoom) => `/students/classes/all/timestamp-only/classroom/${classRoom}`,
+    GET_EVENTS: (page: number, limit: number) => `/events?page=${page}&limit=${limit}`,
     PUT_UPDATE_USER: '/users',
     PUT_UPDATE_STUDENT: '/students',
     PUT_MOVE_STUDNET_CLASS: '/students/classes/move',

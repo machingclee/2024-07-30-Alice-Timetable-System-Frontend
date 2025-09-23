@@ -311,3 +311,15 @@ export type CreateExtendedClassesForHolidayRequest = {
     dayTimestamp: number;
     classRoom: Classroom;
 };
+
+export type EventDTO = {
+    id?: number;
+    createdAt?: number;
+    createdAtHk?: string;
+    eventType: string;
+    event: any;
+    requestUserEmail: string;
+    requestId?: string;
+    failureReason: string;
+    success?: boolean;
+};

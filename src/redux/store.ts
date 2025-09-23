@@ -16,6 +16,7 @@ import { studentDetailWeeklyTimetablApi } from '@/!rtk-query/api/studentDetailWe
 import { customHolidayApi } from '@/!rtk-query/api/customHolidayApi';
 import { courseApi } from '@/!rtk-query/api/courseApi';
 import { ticketApi } from '@/!rtk-query/api/ticketApi';
+import { eventApi } from '@/!rtk-query/api/eventApi';
 
 // a fix following the guide from https://www.youtube.com/watch?v=fjPIJZ1Eokg
 const createNoopStorage = () => {
@@ -74,6 +75,7 @@ export const store = configureStore({
         studentDetailWeeklyTimetablApi: studentDetailWeeklyTimetablApi.reducer,
         customHolidayApi: customHolidayApi.reducer,
         ticketApi: ticketApi.reducer,
+        eventApi: eventApi.reducer,
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({ serializableCheck: false }).concat([
@@ -86,6 +88,7 @@ export const store = configureStore({
             studentDetailWeeklyTimetablApi.middleware,
             customHolidayApi.middleware,
             ticketApi.middleware,
+            eventApi.middleware,
         ]),
 });
 
