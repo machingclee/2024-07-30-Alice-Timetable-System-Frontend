@@ -1,55 +1,41 @@
 import { Box } from '@mui/material';
 import dayjs from 'dayjs';
 import { eventApi } from '@/!rtk-query/api/eventApi';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect, CSSProperties } from 'react';
 import React from 'react';
 import CustomPagination from '@/components/CustomPagination';
 import Spacer from '@/components/Spacer';
 import { OverlayScrollbarsComponent, OverlayScrollbarsComponentRef } from 'overlayscrollbars-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import LoadingOverlay from '@/components/LoadingOverlay';
-
+import { Button } from '@/components/ui/button';
+import { successToast } from '@/hooks/use-toast';
+import { Copy } from 'lucide-react';
 const LIMIT = 50;
 
 // Tooltip styling constants
-const TOOLTIP_STYLES = {
-    backgroundColor: 'rgba(0,0,0,0.5)',
+const TOOLTIP_STYLES: CSSProperties = {
+    backgroundColor: 'rgba(0,0,0,0.7)',
     backdropFilter: 'blur(25px)',
-    maxHeight: '400px',
+    maxHeight: '500px',
+    maxWidth: '1000px',
+    padding: '10px',
+    display: 'flex',
+    flexDirection: 'column',
 };
 
 const TOOLTIP_CLASS_SMALL = 'max-w-[500px] max-h-[400px] p-0';
 const TOOLTIP_CLASS_LARGE = 'max-w-[1000px] max-h-[400px] p-0';
 
-// Reusable tooltip content component
-function TooltipScrollContent({ children, isLarge = false }: { children: React.ReactNode; isLarge?: boolean }) {
-    return (
-        <TooltipContent className={isLarge ? TOOLTIP_CLASS_LARGE : TOOLTIP_CLASS_SMALL} style={TOOLTIP_STYLES}>
-            <OverlayScrollbarsComponent
-                style={{
-                    height: '100%',
-                    width: '100%',
-                    maxHeight: TOOLTIP_STYLES.maxHeight,
-                }}
-                options={{
-                    scrollbars: { autoHide: 'scroll', autoHideDelay: 100 },
-                }}
-            >
-                <div className="p-3 text-white">{children}</div>
-            </OverlayScrollbarsComponent>
-        </TooltipContent>
-    );
-}
-
 export default function Logging() {
     const [page, setPage] = useState(0);
-    const { data: loggings, isLoading } = eventApi.endpoints.getEvents.useQuery({ page, limit: LIMIT });
+    const { data: loggings, isFetching } = eventApi.endpoints.getEvents.useQuery({ page, limit: LIMIT });
     const ref = useRef<OverlayScrollbarsComponentRef<'div'> | null>(null);
 
     return (
         <TooltipProvider>
             <div>
-                <LoadingOverlay isLoading={isLoading}>
+                <LoadingOverlay isLoading={isFetching}>
                     <CustomPagination
                         consecutivePagesBlockSize={3}
                         currentPageIndex={page}
@@ -64,11 +50,26 @@ export default function Logging() {
                     <Box
                         sx={{
                             height: 'calc(100vh - 100px)',
-                            table: { borderCollapse: 'collapse' },
-                            '& th': { textAlign: 'left', padding: '2px 10px' },
+                            table: { borderCollapse: 'collapse', borderRadius: '10px', overflow: 'hidden' },
+                            '& th': {
+                                textAlign: 'center',
+                                padding: '0px 10px',
+                                fontWeight: 600,
+                                fontSize: 15,
+                                // borderRadius: '10px',
+                                margin: '10px',
+                                backgroundColor: 'rgba(0,0,0,0.2)',
+                            },
                             '& tr': {
                                 fontFamily: 'Consolas, Monaco, "Andale Mono", monospace',
                                 fontSize: 12,
+                            },
+                            '& .user-column': {
+                                maxWidth: 'unset !important',
+                            },
+                            '& .action-column': {
+                                minWidth: '140px',
+                                maxWidth: 'unset !important',
                             },
                             '& td': {
                                 padding: '4px 10px',
@@ -79,6 +80,7 @@ export default function Logging() {
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
                             },
+
                             '& tr:nth-of-type(2n+1)': {
                                 backgroundColor: 'rgba(0,0,0,0.05)',
                             },
@@ -100,11 +102,16 @@ export default function Logging() {
                         >
                             <table>
                                 <thead>
-                                    <th>User</th>
-                                    <th>Action</th>
+                                    <th className="user-column">User</th>
+                                    <th className="action-column">Action</th>
                                     <th>Time</th>
                                     <th>Data</th>
-                                    <th>Failure Reason</th>
+                                    <th>
+                                        <div>
+                                            <div>Failure</div>
+                                            <div>Reason</div>
+                                        </div>
+                                    </th>
                                     <th>Success</th>
                                     <th>Request ID</th>
                                 </thead>
@@ -123,73 +130,60 @@ export default function Logging() {
 
                                         return (
                                             <tr key={id}>
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <td>{requestUserEmail}</td>
-                                                    </TooltipTrigger>
-                                                    <TooltipScrollContent>
-                                                        <p>User: {requestUserEmail}</p>
-                                                    </TooltipScrollContent>
-                                                </Tooltip>
-
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <td>{eventType}</td>
-                                                    </TooltipTrigger>
-                                                    <TooltipScrollContent>
-                                                        <p>Action: {eventType}</p>
-                                                    </TooltipScrollContent>
-                                                </Tooltip>
-
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <td>{dayjs(createdAt).format('YYYY-MM-DD H:mm:ss')}</td>
-                                                    </TooltipTrigger>
-                                                    <TooltipScrollContent>
-                                                        <p>
-                                                            Full timestamp:{' '}
-                                                            {dayjs(createdAt).format('YYYY-MM-DD HH:mm:ss.SSS')}
-                                                        </p>
-                                                    </TooltipScrollContent>
-                                                </Tooltip>
-
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <td>{JSON.stringify(event)}</td>
-                                                    </TooltipTrigger>
-                                                    <TooltipScrollContent>
-                                                        <pre className="text-xs whitespace-pre-wrap">
-                                                            {JSON.stringify(event, null, 2)}
-                                                        </pre>
-                                                    </TooltipScrollContent>
-                                                </Tooltip>
-
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <td>{failureReason}</td>
-                                                    </TooltipTrigger>
-                                                    <TooltipScrollContent isLarge>
-                                                        <p>Failure reason: {failureReason || 'None'}</p>
-                                                    </TooltipScrollContent>
-                                                </Tooltip>
-
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <td>{success ? 'Yes' : 'No'}</td>
-                                                    </TooltipTrigger>
-                                                    <TooltipScrollContent>
-                                                        <p>Status: {success ? 'Success' : 'Failed'}</p>
-                                                    </TooltipScrollContent>
-                                                </Tooltip>
-
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <td>{requestId}</td>
-                                                    </TooltipTrigger>
-                                                    <TooltipScrollContent>
-                                                        <p>Request ID: {requestId}</p>
-                                                    </TooltipScrollContent>
-                                                </Tooltip>
+                                                <td>
+                                                    <UncontrolledTooltip content={<p>{requestUserEmail}</p>}>
+                                                        {requestUserEmail}
+                                                    </UncontrolledTooltip>
+                                                </td>
+                                                <td className="action-column">
+                                                    <UncontrolledTooltip content={<p>{eventType}</p>}>
+                                                        {eventType}
+                                                    </UncontrolledTooltip>
+                                                </td>
+                                                <td>
+                                                    <UncontrolledTooltip
+                                                        content={
+                                                            <p>
+                                                                Full timestamp:{' '}
+                                                                {dayjs(createdAt).format('YYYY-MM-DD HH:mm:ss.SSS')}
+                                                            </p>
+                                                        }
+                                                    >
+                                                        {dayjs(createdAt).format('YYYY-MM-DD H:mm:ss')}
+                                                    </UncontrolledTooltip>
+                                                </td>
+                                                <td>
+                                                    <UncontrolledTooltip
+                                                        content={
+                                                            <pre className="text-xs whitespace-pre-wrap">
+                                                                {JSON.stringify(event, null, 2)}
+                                                            </pre>
+                                                        }
+                                                    >
+                                                        <div className="text-ellipsis max-w-[120px] overflow-hidden">
+                                                            {JSON.stringify(event)}
+                                                        </div>
+                                                    </UncontrolledTooltip>
+                                                </td>
+                                                <td>
+                                                    <UncontrolledTooltip content={<p>{failureReason || 'None'}</p>}>
+                                                        <div className="text-ellipsis max-w-[120px] overflow-hidden">
+                                                            {failureReason}
+                                                        </div>
+                                                    </UncontrolledTooltip>
+                                                </td>
+                                                <td>
+                                                    <UncontrolledTooltip
+                                                        content={<p>{success ? 'Success' : 'Failed'}</p>}
+                                                    >
+                                                        {success ? 'Yes' : 'No'}
+                                                    </UncontrolledTooltip>
+                                                </td>
+                                                <td>
+                                                    <UncontrolledTooltip content={<p>{requestId}</p>}>
+                                                        {requestId?.substring(0, 8) || ''}
+                                                    </UncontrolledTooltip>
+                                                </td>
                                             </tr>
                                         );
                                     })}
@@ -200,5 +194,81 @@ export default function Logging() {
                 </LoadingOverlay>
             </div>
         </TooltipProvider>
+    );
+}
+
+function UncontrolledTooltip({ children, content }: { children: React.ReactNode; content: React.ReactNode }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const tooltipRef = useRef<HTMLDivElement | null>(null);
+    const divRef = useRef<HTMLDivElement | null>(null);
+    const [isClicked, setIsClicked] = useState(false);
+
+    const handleClickOutside = (event: MouseEvent) => {
+        if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
+            setIsOpen(false);
+        }
+        if (divRef.current && !divRef.current.contains(event.target as Node)) {
+            setIsClicked(false);
+        }
+    };
+
+    const handleClick = () => {
+        setIsClicked(c => !c);
+        setIsOpen(prev => !prev);
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    return (
+        <Tooltip open={isOpen && isClicked}>
+            <TooltipTrigger asChild>
+                <div className="cursor-pointer" onClick={handleClick} ref={divRef}>
+                    {children}
+                </div>
+            </TooltipTrigger>
+            <div ref={tooltipRef}>
+                <TooltipScrollContent>{content}</TooltipScrollContent>
+            </div>
+        </Tooltip>
+    );
+}
+
+function TooltipScrollContent({ children, isLarge = false }: { children: React.ReactNode; isLarge?: boolean }) {
+    const handleCopy = () => {
+        navigator.clipboard.writeText(children?.toString() || '');
+        successToast('Content copied to clipboard!');
+    };
+
+    return (
+        <TooltipContent className={isLarge ? TOOLTIP_CLASS_LARGE : TOOLTIP_CLASS_SMALL} style={TOOLTIP_STYLES}>
+            <div className="flex justify-end !text-sm">
+                <Button
+                    variant="ghost"
+                    onClick={handleCopy}
+                    className="mb-2 cursor-pointer px-3 !py-[0px] text-xs bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.2)] hover:text-white h-7
+                    "
+                >
+                    <Copy className="h-4 w-4" />
+                </Button>
+            </div>
+            <OverlayScrollbarsComponent
+                style={{
+                    flex: 1,
+                    height: '100%',
+                    width: '100%',
+                    maxHeight: TOOLTIP_STYLES.maxHeight,
+                }}
+                options={{
+                    scrollbars: { autoHide: 'scroll', autoHideDelay: 100 },
+                }}
+            >
+                <div className="text-white">{children}</div>
+            </OverlayScrollbarsComponent>
+        </TooltipContent>
     );
 }

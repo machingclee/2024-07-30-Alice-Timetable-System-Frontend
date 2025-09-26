@@ -18,19 +18,28 @@ export default function NavButton(props: {
 
     return (
         <>
-            <Button
-                className={`!py-4.5 !p-4 !rounded-md ${!active ? '!bg-[rgb(255,255,255,1)]' : ''} !shadow-none hover:opacity-60 !justify-start`}
-                block
-                type={active ? 'primary' : 'text'}
-                onClick={() => {
+            <a
+                href={routeEnum.toString()}
+                onClick={(event: React.MouseEvent<HTMLAnchorElement>) => {
                     props.onClick?.();
-                    navigate(routeEnum);
+                    if (event.button === 1 || (event.ctrlKey && event.button === 0)) {
+                        // middle-click or ctrl+leftclick
+                        window.open(routeEnum, '_blank');
+                    } else {
+                        navigate(routeEnum);
+                    }
                 }}
             >
-                <div key={path} style={{ textTransform: 'capitalize' }} className="flex items-center gap-2">
-                    {icon} {title}
-                </div>
-            </Button>
+                <Button
+                    className={`!py-4.5 !p-4 !rounded-md ${!active ? '' : ''} !shadow-none hover:opacity-60 !justify-start`}
+                    block
+                    type={active ? 'primary' : 'text'}
+                >
+                    <div key={path} style={{ textTransform: 'capitalize' }} className="flex items-center gap-2">
+                        {icon} {title}
+                    </div>
+                </Button>
+            </a>
         </>
     );
 }
